@@ -168,9 +168,9 @@ public class SmolBotManual extends SmolBotTemplate
 
         telemetry.addLine()
                 .addData("a", colors.alpha )
-                .addData("r", (colors.red/(colors.blue + colors.red + colors.green)))
-                .addData("g", (colors.green/(colors.blue + colors.red + colors.green)))
-                .addData("b", (colors.blue/(colors.blue + colors.red + colors.green)));
+                .addData("r", (colors.red / (colors.blue + colors.red + colors.green)))
+                .addData("g", (colors.green / (colors.blue + colors.red + colors.green)))
+                .addData("b", (colors.blue / (colors.blue + colors.red + colors.green)));
 
         telemetry.addLine()
                 .addData("status", new Func<String>() {
