@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.Func;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -22,15 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 /**
  * Created by The Saminator on 06-29-2017.
  */
-public abstract class SmolBotTemplate extends OpMode {
+@Autonomous(name = "ballsensor", group = "bepis")
+public abstract class SmolBotArm extends OpMode {
     DcMotor left, right, arm, hand;
     Servo grab;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
-   /* Orientation angle;
-    Acceleration gravity;
-    BNO055IMU imu;
-*/
+
     @Override
     public void init() {
         left = hardwareMap.dcMotor.get("lm");
@@ -39,17 +32,6 @@ public abstract class SmolBotTemplate extends OpMode {
         hand = hardwareMap.dcMotor.get("hm");
         grab = hardwareMap.servo.get("gr");
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "color sensor");
-      /*  BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-*/
-
         left.setDirection(Constants.LEFT_DIR);
         right.setDirection(Constants.RIGHT_DIR);
         arm.setDirection(Constants.ARM_DIR);
@@ -58,8 +40,55 @@ public abstract class SmolBotTemplate extends OpMode {
 
 
     }
+    public SmolBotArm() {
 
+        // Initialize base classes.
+        //
+        // All via self-construction.
+        //
+        // Initialize class members.
+        //
+        // All via self-construction.
+
+    }
     @Override
+    public void start() {
+    }
+    @Override
+    public void loop(){
+        colors = colorSensor.getNormalizedColors();
+        double blue = colors.blue;
+        double red = colors.red;
+        double redRatio = colors.red / (colors.red + colors.blue + colors.green);
+        double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
+        boolean blueAliance = true;
+
+
+/*        right.setPower(1);
+        left.setPower(1);
+        if(blueAliance == true)
+            if (red == 0 && redRatio * 1 > blueRatio)
+                stop();
+                setGrabPow (1);
+            if (blue == 0 && redRatio * 1 < blueRatio)
+                stop();
+                setGrabPow (-1);
+        if(blueAliance == false)
+            if (red == 0 && redRatio * 1 > blueRatio)
+                stop();
+                setGrabPow (-1);
+            if (blue == 0 && redRatio * 1 < blueRatio)
+                stop();
+                setGrabPow (1);
+                */
+        telemetry.addLine()
+                .addData("a", colors.alpha )
+                .addData("red Ratio", (colors.red/(colors.blue + colors.red + colors.green)))
+                .addData("green Ratio", (colors.green/(colors.blue + colors.red + colors.green)))
+                .addData("blue Ratio", (colors.blue/(colors.blue + colors.red + colors.green)))
+                .addData("blue", colors.blue)
+                .addData("red", colors.red);
+    }
     public void stop() {
         setLeftPow(0.0);
         setRightPow(0.0);

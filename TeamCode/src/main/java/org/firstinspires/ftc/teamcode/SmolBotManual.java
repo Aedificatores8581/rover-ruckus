@@ -60,7 +60,7 @@ public class SmolBotManual extends SmolBotTemplate
     //--------
     @Override
     public void init() {
-        super.init();
+        /*super.init();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -70,7 +70,7 @@ public class SmolBotManual extends SmolBotTemplate
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.getAll(BNO055IMU.class).get(0);
         imu.initialize(parameters);
-    }
+    */}
 
 
     public SmolBotManual() {
@@ -146,22 +146,22 @@ public class SmolBotManual extends SmolBotTemplate
             setHandPow(-handpower);
         else
             setHandPow(0);
-        if (colors.green/(colors.blue + colors.red + colors.green) > .4)
-            setLeftPow(-1);
-            setRightPow(1);
+    //    if (colors.green/(colors.blue + colors.red + colors.green) > .4)
+      //      setLeftPow(-1);
+        //    setRightPow(1);
 
 
 
 
 
 
-        telemetry.addAction(new Runnable() { @Override public void run()
+   /*     telemetry.addAction(new Runnable() { @Override public void run()
         {
             angle   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             gravity  = imu.getGravity();
         }
         });
-
+*/
         telemetry.addData("Left Pow", left);
         telemetry.addData("Right Pow", right);
         colors = colorSensor.getNormalizedColors();
@@ -172,7 +172,7 @@ public class SmolBotManual extends SmolBotTemplate
                 .addData("g", (colors.green/(colors.blue + colors.red + colors.green)))
                 .addData("b", (colors.blue/(colors.blue + colors.red + colors.green)));
 
-        telemetry.addLine()
+ /*       telemetry.addLine()
                 .addData("status", new Func<String>() {
                     @Override public String value() {
                         return imu.getSystemStatus().toShortString();
@@ -200,12 +200,12 @@ public class SmolBotManual extends SmolBotTemplate
                                         + gravity.yAccel*gravity.yAccel
                                         + gravity.zAccel*gravity.zAccel));
                     }
-                });
+                });*/
         telemetry.update();
     }
 
 
-    String formatAngle(AngleUnit angleUnit, double angle) {
+    /*String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
@@ -215,11 +215,7 @@ public class SmolBotManual extends SmolBotTemplate
 
 
 
-        /*
-         * white red about .36111
-         * white green about .34722
-         * white blue about .29166
-         */
+        */
 
 
 }
