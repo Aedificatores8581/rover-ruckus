@@ -137,10 +137,19 @@ public class SmolBotManual extends SmolBotTemplate
             setHandPow(-handpower);
         else
             setHandPow(0);
-
         telemetry.addData("Left Pow", left);
         telemetry.addData("Right Pow", right);
+        colors = colorSensor.getNormalizedColors();
+
+        telemetry.addLine()
+                .addData("a", colors.alpha )
+                .addData("r", (colors.red / (colors.blue + colors.red + colors.green)))
+                .addData("g", (colors.green / (colors.blue + colors.red + colors.green)))
+                .addData("b", (colors.blue / (colors.blue + colors.red + colors.green)));
+        
     }
+
+
 
 
         /*
