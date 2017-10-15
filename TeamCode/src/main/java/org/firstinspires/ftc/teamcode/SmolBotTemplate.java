@@ -23,6 +23,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Created by The Saminator on 06-29-2017.
  */
 public abstract class SmolBotTemplate extends OpMode {
+    public static class Constants {
+        public static final DcMotor.Direction LEFT_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction RIGHT_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction ARM_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction HAND_DIR = DcMotor.Direction.FORWARD;
+        public static final Servo.Direction GRAB = Servo.Direction.FORWARD;
+
+        public static final double LEFT_SPEED = 0.375; // Always positive and between 0 and 1.
+        public static final double RIGHT_SPEED = 0.375; // Always positive and between 0 and 1.
+        public static final double ARM_SPEED = 0.50; // Always positive and between 0 and 1.
+        public static final double HAND_SPEED = 0.50; // Always positive and between 0 and 1.
+        public static final double GRAB_SPEED = 0.25; // Always positive and between 0 and 1.
+    }
+
     DcMotor left, right, arm, hand;
     Servo grab;
     NormalizedColorSensor colorSensor;
