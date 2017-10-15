@@ -61,8 +61,10 @@ public class RevBotTeleTest extends RevBotTemplate
     @Override public void loop () {
         if (gamepad1.dpad_up)
             motor.setPower(-0.2);
-        else if (gamepad1.dpad_down)
+        if (gamepad1.dpad_down)
             motor.setPower(0.2);
+        if (!(gamepad1.dpad_up ^ gamepad1.dpad_down))
+            motor.setPower(0);
 
         crs1.setPower(gamepad1.left_stick_y);
         crs2.setPower(gamepad1.right_stick_y);
