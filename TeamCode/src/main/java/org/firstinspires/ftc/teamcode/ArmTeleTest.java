@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -20,9 +22,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ArmTeleTest extends LinearOpMode {
     // Define class members
     DcMotor motor;
-    Servo s1, s2, s3, s4;
+    Servo s1, s2;
+    CRServo crs1, crs2;
 
-    double s1position = 0;
+    double s1position = 0.75;
     double s2position = 0;
     double s3position = 0;
     double s4position = 0;
@@ -41,13 +44,13 @@ public class ArmTeleTest extends LinearOpMode {
     public void runOpMode() {
         double INCREMENT = 0.005;     // amount to slew servo each CYCLE_MS cyclE
         double INCREMENT2 = .02;
-        double MAX_POS = 1;     // Maximum rotational position
-        double MIN_POS = 0;     // Minimum rotational position
+        double MAX_POS = .75;     // Maximum rotational position
+        double MIN_POS = .25;     // Minimum rotational position
         motor = hardwareMap.dcMotor.get("motor");
         s1 = hardwareMap.servo.get("s1");
         s2 = hardwareMap.servo.get("s2");
-        s3 = hardwareMap.servo.get("s3");
-        s4 = hardwareMap.servo.get("s4");
+        crs2 = hardwareMap.crservo.get("crs2");
+        crs1 = hardwareMap.crservo.get("crs1");
 
         telemetry.update();
         waitForStart();
@@ -75,59 +78,36 @@ public class ArmTeleTest extends LinearOpMode {
                 }
                 s1.setPosition(s1position);
             }
+            if (gamepad1.right_stick_y == 0) {
+                crs1.setPower(0);
+            }
             if (gamepad1.right_stick_y < 0) {
-                // Keep stepping up until we hit the max value.
-                s2position += INCREMENT;
-                if (s2position >= MAX_POS) {
-                    s2position = MAX_POS;
-                }
-                s2.setPosition(s2position);
+                crs1.setDirection(DcMotorSimple.Direction.REVERSE);
+                crs1.setPower(.2);
             }
             if (gamepad1.right_stick_y > 0) {
-                s2position -= INCREMENT;
-                if (s2position <= MIN_POS) {
-                    s2position = MIN_POS;
-                }
-                s2.setPosition(s2position);
+                crs1.setDirection(DcMotorSimple.Direction.FORWARD);
+                crs1.setPower(.2);
             }
             if (gamepad1.x) {
-                s3position += INCREMENT2;
-                if (s3position >= MAX_POS) {
-                    s3position = MAX_POS;
-                }
-                s3.setPosition(s3position);
+                crs2.setPower(0);
             }
             if (gamepad1.y) {
-                s3position -= INCREMENT2;
-                if (s3position <= MIN_POS) {
-                    s3position = MIN_POS;
-                }
-                s3.setPosition(s3position);
+                crs2.setDirection(DcMotorSimple.Direction.REVERSE);
+                crs2.setPower(.2);
             }
 
             if (gamepad1.a) {
-                s4position += INCREMENT2;
-                if (s4position >= MAX_POS) {
-                    s4position = MAX_POS;
-                }
-                s4.setPosition(s4position);
+                crs2.setDirection(DcMotorSimple.Direction.FORWARD);
+                crs2.setPower(.2);
             }
 
-            if (gamepad1.b) {
-                s4position -= INCREMENT2;
-                if (s4position <= MIN_POS) {
-                    s4position = MIN_POS;
-                }
-                s4.setPosition(s4position);
-            }
 
             sleep(30);
             idle();
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo Position 1", "%5.2f", s1.getPosition());
             telemetry.addData("Servo Position 2", "%5.2f", s2.getPosition());
-            telemetry.addData("Servo Position 3", "%5.2f", s3.getPosition());
-            telemetry.addData("Servo Position 4", "%5.2f", s4.getPosition());
             telemetry.update();
 
         }
