@@ -60,16 +60,7 @@ public class SmolBotManual extends SmolBotTemplate
     //--------
     @Override
     public void init() {
-        super.init();
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.getAll(BNO055IMU.class).get(0);
-        imu.initialize(parameters);
+
     }
 
 
@@ -107,25 +98,9 @@ public class SmolBotManual extends SmolBotTemplate
         double green = colors.green;
         double blue = colors.blue;
         double red = colors.red;
-
         setLeftPow(left);
         setRightPow(right);
-        /**while (gamepad1.a)
-            while (gamepad1.x)
-                if (green/(blue + red + green) < .38)
-                    setLeftPow(1);
-                    setRightPow(1);
-                if (green/(blue + red + green) > .4)
-                    setLeftPow (0);
-                    setRightPow(1);
-            while (gamepad1.b)
-                if (green/(blue + red + green) < .38)
-                    setLeftPow(1);
-                    setRightPow(1);
-                if (green/(blue + red + green) > .4)
-                    setLeftPow (1);
-                    setRightPow(0);
-**/
+
         if (gamepad1.left_stick_button)
             setGrabPow(1);
         else if (gamepad1.right_stick_button)
@@ -146,21 +121,12 @@ public class SmolBotManual extends SmolBotTemplate
             setHandPow(-handpower);
         else
             setHandPow(0);
-        if (colors.green/(colors.blue + colors.red + colors.green) > .4)
-            setLeftPow(-1);
-            setRightPow(1);
 
 
 
 
 
 
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            angle   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            gravity  = imu.getGravity();
-        }
-        });
 
         telemetry.addData("Left Pow", left);
         telemetry.addData("Right Pow", right);
@@ -172,56 +138,6 @@ public class SmolBotManual extends SmolBotTemplate
                 .addData("g", (colors.green / (colors.blue + colors.red + colors.green)))
                 .addData("b", (colors.blue / (colors.blue + colors.red + colors.green)));
 
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("angle", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angle.angleUnit, angle.firstAngle);
-                    }
-                });
-
-
-        telemetry.addLine()
-                .addData("gravity", new Func<String>() {
-                    @Override public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override public String value() {
-                        return String.format(Locale.getDefault(), "",
-                                Math.sqrt(gravity.xAccel*gravity.xAccel
-                                        + gravity.yAccel*gravity.yAccel
-                                        + gravity.zAccel*gravity.zAccel));
-                    }
-                });
-        telemetry.update();
+            telemetry.update();
     }
-
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "", AngleUnit.DEGREES.normalize(degrees));
-    }
-
-
-
-        /*
-         * white red about .36111
-         * white green about .34722
-         * white blue about .29166
-         */
-
-
 }
-
- // PootisBotManual
