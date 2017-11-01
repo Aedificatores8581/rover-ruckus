@@ -41,8 +41,6 @@ public abstract class SmolBotTemplate extends OpMode {
     Servo grab;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
-
-
     @Override
     public void init() {
         left = hardwareMap.dcMotor.get("lm");
@@ -51,7 +49,6 @@ public abstract class SmolBotTemplate extends OpMode {
         hand = hardwareMap.dcMotor.get("hm");
         grab = hardwareMap.servo.get("gr");
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "color sensor");
-
 
         left.setDirection(Constants.LEFT_DIR);
         right.setDirection(Constants.RIGHT_DIR);

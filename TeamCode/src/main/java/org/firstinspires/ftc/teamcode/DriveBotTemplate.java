@@ -29,14 +29,23 @@ public abstract class DriveBotTemplate extends OpMode {
         public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction ARM_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction LIFT_1_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LIFT_2_DIR = DcMotor.Direction.REVERSE;
         
         public static final double LEFT_FORE_SPEED = 1.0;
         public static final double LEFT_REAR_SPEED = 1.0;
         public static final double RIGHT_FORE_SPEED = 1.0;
         public static final double RIGHT_REAR_SPEED = 1.0;
+        public static final double ARM_SPEED = 1.0;
+        public static final double LIFT_1_SPEED = 1.0;
+        public static final double LIFT_2_SPEED = 1.0;
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
+    DcMotor armMotor, liftMtr1, liftMtr2;
+    // Lift motor 1 is for lifting the glyph onto the platorm.
+    // List motor 2 is for dispensing the glyph onto the cryptobox.
 
     @Override
     public void init() {
@@ -44,11 +53,25 @@ public abstract class DriveBotTemplate extends OpMode {
         leftRear = hardwareMap.dcMotor.get("lrm");
         rightFore = hardwareMap.dcMotor.get("rfm");
         rightRear = hardwareMap.dcMotor.get("rrm");
+        armMotor = hardwareMap.dcMotor.get("am");
+        liftMtr1 = hardwareMap.dcMotor.get("lm1");
+        liftMtr2 = hardwareMap.dcMotor.get("lm2");
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
         rightRear.setDirection(Constants.RIGHT_REAR_DIR);
+        armMotor.setDirection(Constants.ARM_DIR);
+        liftMtr1.setDirection(Constants.LIFT_1_DIR);
+        liftMtr2.setDirection(Constants.LIFT_2_DIR);
+
+        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setDirection(Constants.LEFT_REAR_DIR);
+        rightFore.setDirection(Constants.RIGHT_FORE_DIR);
+        rightRear.setDirection(Constants.RIGHT_REAR_DIR);
+        armMotor.setDirection(Constants.ARM_DIR);
+        liftMtr1.setDirection(Constants.LIFT_1_DIR);
+        liftMtr2.setDirection(Constants.LIFT_2_DIR);
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
     }
@@ -79,6 +102,18 @@ public abstract class DriveBotTemplate extends OpMode {
     protected void setRightPow(double pow) {
         rightFore.setPower(pow * Constants.RIGHT_FORE_SPEED);
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
+    }
+
+    protected void setArmPow(double pow) {
+        armMotor.setPower(pow * Constants.ARM_SPEED);
+    }
+
+    protected void setLift1Pow(double pow) {
+        liftMtr1.setPower(pow * Constants.LIFT_1_SPEED);
+    }
+
+    protected void setLift2Pow(double pow) {
+        liftMtr2.setPower(pow * Constants.LIFT_2_SPEED);
     }
 
     protected boolean checkEncoder(int ticks) {

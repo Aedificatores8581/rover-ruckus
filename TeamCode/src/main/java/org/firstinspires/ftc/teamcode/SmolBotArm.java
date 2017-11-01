@@ -58,15 +58,13 @@ public  class SmolBotArm extends OpMode {
 
     }
     @Override
-    public void loop() {
+    public void loop(){
         colors = colorSensor.getNormalizedColors();
         double blue = colors.blue;
         double red = colors.red;
         double redRatio = colors.red / (colors.red + colors.blue + colors.green);
         double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
         boolean blueAliance = true;
-
-
         right.setPower(1);
         left.setPower(1);
         if (blueAliance == true) {
@@ -87,6 +85,22 @@ public  class SmolBotArm extends OpMode {
             stop();
             setGrabPow(1);
         }
+        right.setPower(1);
+        left.setPower(1);
+        if(blueAliance == true)
+            if (red == 0 && redRatio * 1 > blueRatio)
+                stop();
+                setGrabPow (1);
+            if (blue == 0 && redRatio * 1 < blueRatio)
+                stop();
+                setGrabPow (-1);
+        if(blueAliance == false)
+            if (red == 0 && redRatio * 1 > blueRatio)
+                stop();
+                setGrabPow (-1);
+            if (blue == 0 && redRatio * 1 < blueRatio)
+                stop();
+                setGrabPow (1);
         telemetry.addLine()
                 .addData("a", colors.alpha )
                 .addData("red Ratio", (colors.red/(colors.blue + colors.red + colors.green)))

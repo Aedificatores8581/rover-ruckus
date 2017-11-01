@@ -117,7 +117,7 @@ public class SensorBotBalance extends SensorBotTemplate {
                 z2 = cartesian.z * cartesian.z;
         double r = Math.sqrt(x2 + y2 + z2);
         double theta = Math.acos(cartesian.z / r) * Constants.RADS_TO_DEGS;
-        double phi = Math.atan(cartesian.y / cartesian.x) * Constants.RADS_TO_DEGS;
+        double phi = Math.atan2(cartesian.y, cartesian.x) * Constants.RADS_TO_DEGS;
         return new Spherical3D(r, theta, phi);
     }
 

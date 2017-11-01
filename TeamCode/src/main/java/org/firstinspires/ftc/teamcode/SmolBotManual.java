@@ -60,7 +60,7 @@ public class SmolBotManual extends SmolBotTemplate
     //--------
     @Override
     public void init() {
-
+        super.init();
     }
 
 
@@ -121,10 +121,6 @@ public class SmolBotManual extends SmolBotTemplate
             setHandPow(-handpower);
         else
             setHandPow(0);
-
-
-
-
 
 
 
