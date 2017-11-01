@@ -1,4 +1,17 @@
- * This program detects one of the three VuMark Picture, and based on the picture, will move a set distance.
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+/* This program detects one of the three VuMark Picture, and based on the picture, will move a set distance.
  *      1. If pictureState is set to PictureState.LEFT, then it will move (X + a constant) encoder ticks
  *      2. If the same variable is set to PictureState.CENTER, then it will move (X + 2 times a constant)encoder ticks
  *      3. If the same variable is set to PicutreState.RIGHT, then it will move (X + 3 times a constant)encoder ticks
@@ -39,7 +52,15 @@ public class PictureDetectionTest extends OpMode{
 
     public void start(){
         relicTrackables.activate();
+
         telemetry.addData("activated", "");
+
+        try{
+            Thread.sleep(1000);
+        }
+        catch(InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     @Override public void loop(){
