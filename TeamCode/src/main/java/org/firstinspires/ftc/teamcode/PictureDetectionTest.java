@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+/*
+ * Created by Mister-Minister-Master on 11/1/2017.
+ */
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -18,19 +21,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 
 @TeleOp(name = "SensorBot: Vuforia Test", group = "anti-bepis")
-public class PictureDetectionTest extends OpMode{
+public class PictureDetectionTest extends OpMode {
 
-    VuforiaLocalizer vuforia;
-    DcMotor left, right;
-    int encoderAmount;
+    private VuforiaLocalizer vuforia;
+    private DcMotor left, right;
+    private int encoderAmount;
+    private final int ONE_SECOND = 1000;
 
-    int cameraMonitorViewId;
-    VuforiaLocalizer.Parameters parameters;
-    VuforiaTrackables relicTrackables;
-    VuforiaTrackable relicTemplate;
+    private int cameraMonitorViewId;
+    private VuforiaLocalizer.Parameters parameters;
+    private VuforiaTrackables relicTrackables;
+    private VuforiaTrackable relicTemplate;
 
-    enum ROBOT_ACTIVITY_STATE {reading, moving};
-    ROBOT_ACTIVITY_STATE state;
+    private enum ROBOT_ACTIVITY_STATE {reading, moving}
+    private ROBOT_ACTIVITY_STATE state;
 
     @Override public void init(){
         state = ROBOT_ACTIVITY_STATE.reading;
@@ -40,12 +44,12 @@ public class PictureDetectionTest extends OpMode{
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "NOT PRESENT FOR GIT REPOSITORY";
+        parameters.vuforiaLicenseKey = "AdNikLv/////AAAAGWU+M9z3/00mqU+dDTTtHfZ20J0oyIXsfm2hNe0Oy/LXv4LbAaeEkgXQoLcO6ks5K0ixdWt+3WIRzmcncN31UCbuk1UJkfKtJ8IcaY+zBJe8jTlAyupXFBvONjLNShkis/kU0LHMVhFTgJZVCVaVWjaQ21nnfYHq9I2UNU1bq8+CHBDYD62VvGdSY4jwwJRgR4Rq+HYOpj/4m6P/XyqnDmFPWzF/V3If1FJaQj5E3ZZRm4lKSzvWhClfrdX/LwTkTpf3/j8QOJYEvhe9JkUwppMiKXp1iy/wEgNRFMjJKPLU5VtAqQYh/zsSEhfpeyryPGfU123eSJQoCQpq/f3Sjn37iR0ILx8dsnT1mlVStrm8";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
 
     }
@@ -56,7 +60,7 @@ public class PictureDetectionTest extends OpMode{
         telemetry.addData("activated", "");
 
         try{
-            Thread.sleep(1000);
+            Thread.sleep(ONE_SECOND);
         }
         catch(InterruptedException e){
             e.printStackTrace();
@@ -64,9 +68,10 @@ public class PictureDetectionTest extends OpMode{
     }
 
     @Override public void loop(){
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
 
-        if(state == ROBOT_ACTIVITY_STATE.moving) {
+        RelicRecoveryVuMark vuMark;
+        if(state == ROBOT_ACTIVITY_STATE.reading) {
+            vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
                 case LEFT:
                     state = ROBOT_ACTIVITY_STATE.moving;
