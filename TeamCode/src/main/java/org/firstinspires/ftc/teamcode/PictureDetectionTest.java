@@ -28,10 +28,14 @@ public class PictureDetectionTest extends OpMode {
     private int encoderAmount;
     private final int ONE_SECOND = 1000;
 
+    private final int ENCODER_CONSTANT = 500;
+
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
     private VuforiaTrackable relicTemplate;
+
+    private RelicRecoveryVuMark vuMark;
 
     private enum ROBOT_ACTIVITY_STATE {reading, moving}
     private ROBOT_ACTIVITY_STATE state;
@@ -68,36 +72,36 @@ public class PictureDetectionTest extends OpMode {
     }
 
     @Override public void loop(){
-
-        RelicRecoveryVuMark vuMark;
         if(state == ROBOT_ACTIVITY_STATE.reading) {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
                 case LEFT:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 8000;
+                    encoderAmount = ENCODER_CONSTANT;
                     break;
                 case CENTER:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 12000;
+                    encoderAmount = ENCODER_CONSTANT*2;
                     break;
                 case RIGHT:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 16000;
+                    encoderAmount = ENCODER_CONSTANT*3;
                     break;
                 default:
                     state = ROBOT_ACTIVITY_STATE.reading;
                     break;
             }
-        } else {
+        } else if(state == ROBOT_ACTIVITY_STATE.moving) {
             if (!checkEncoder(encoderAmount)){
-                setLeftPow(1.0);
-                setRightPow(1.0);
-            }else{
+                setLeftPow(.5);
+                setRightPow(-.5);
+            }else {
                 setLeftPow(0.0);
                 setRightPow(0.0);
             }
         }
+        telemetry.addData("Left: ", left.getCurrentPosition());
+        telemetry.addData("Right: ", right.getCurrentPosition());
     }
 
     public void stop(){
