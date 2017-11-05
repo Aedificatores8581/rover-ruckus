@@ -75,15 +75,15 @@ public class PictureDetectionTest extends OpMode {
             switch (vuMark) {
                 case LEFT:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 30;
+                    encoderAmount = 8000;
                     break;
                 case CENTER:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 60;
+                    encoderAmount = 12000;
                     break;
                 case RIGHT:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 90;
+                    encoderAmount = 16000;
                     break;
                 default:
                     state = ROBOT_ACTIVITY_STATE.reading;
@@ -93,6 +93,9 @@ public class PictureDetectionTest extends OpMode {
             if (!checkEncoder(encoderAmount)){
                 setLeftPow(1.0);
                 setRightPow(1.0);
+            }else{
+                setLeftPow(0.0);
+                setRightPow(0.0);
             }
         }
     }

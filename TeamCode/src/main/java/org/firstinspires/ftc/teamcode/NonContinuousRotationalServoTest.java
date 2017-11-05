@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by Mister-Minister-Master on 11/5/2017.
  */
 
-@TeleOp(name = "Continuous Servo Test", group = "8581")
+@TeleOp(name = "Non Continuous Servo Test", group = "8581")
 
 public class NonContinuousRotationalServoTest extends OpMode{
     Servo servo;
