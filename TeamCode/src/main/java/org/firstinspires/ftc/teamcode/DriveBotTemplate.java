@@ -6,12 +6,14 @@ import android.os.Looper;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -32,6 +34,11 @@ public abstract class DriveBotTemplate extends OpMode {
         public static final DcMotor.Direction ARM_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction LIFT_1_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction LIFT_2_DIR = DcMotor.Direction.REVERSE;
+
+        public static final DcMotor.Direction LEFT_INTAKE1_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LEFT_INTAKE2_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction RIGHT_INTAKE1_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction RIGHT_INTAKE2_DIR = DcMotor.Direction.FORWARD;
         
         public static final double LEFT_FORE_SPEED = 1.0;
         public static final double LEFT_REAR_SPEED = 1.0;
@@ -46,6 +53,8 @@ public abstract class DriveBotTemplate extends OpMode {
     DcMotor armMotor, liftMtr1, liftMtr2;
     // Lift motor 1 is for lifting the glyph onto the platorm.
     // List motor 2 is for dispensing the glyph onto the cryptobox.
+    CRServo leftIntake1, leftIntake2, rightIntake1, rightIntake2;
+    Servo relicGrabber, relicGrabMover, armTilter, jewelArm, jewelFlipper, rightHinge, leftHinge;
 
     @Override
     public void init() {
@@ -57,6 +66,19 @@ public abstract class DriveBotTemplate extends OpMode {
         liftMtr1 = hardwareMap.dcMotor.get("lm1");
         liftMtr2 = hardwareMap.dcMotor.get("lm2");
 
+        relicGrabber = hardwareMap.servo.get("rg");
+        relicGrabMover = hardwareMap.servo.get("rgm");
+        armTilter = hardwareMap.servo.get("ts");
+        jewelArm = hardwareMap.servo.get("ja");
+        jewelFlipper = hardwareMap.servo.get("jf");
+        rightHinge = hardwareMap.servo.get("rh");
+        leftHinge = hardwareMap.servo.get("lh");
+
+        rightIntake1 = hardwareMap.crservo.get("ri1");
+        rightIntake2 = hardwareMap.crservo.get("ri2");
+        leftIntake1 = hardwareMap.crservo.get("li1");
+        leftIntake2 = hardwareMap.crservo.get("li2");
+
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
@@ -66,12 +88,17 @@ public abstract class DriveBotTemplate extends OpMode {
         liftMtr2.setDirection(Constants.LIFT_2_DIR);
 
         leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setDirection(Constants.LEFT_REAR_DIR);
-        rightFore.setDirection(Constants.RIGHT_FORE_DIR);
-        rightRear.setDirection(Constants.RIGHT_REAR_DIR);
-        armMotor.setDirection(Constants.ARM_DIR);
-        liftMtr1.setDirection(Constants.LIFT_1_DIR);
-        liftMtr2.setDirection(Constants.LIFT_2_DIR);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMtr1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMtr2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rightIntake1.setDirection(Constants.RIGHT_INTAKE1_DIR);
+        rightIntake2.setDirection(Constants.RIGHT_INTAKE2_DIR);
+        leftIntake1.setDirection(Constants.LEFT_INTAKE1_DIR);
+        leftIntake2.setDirection(Constants.LEFT_INTAKE2_DIR);
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
     }
@@ -114,6 +141,17 @@ public abstract class DriveBotTemplate extends OpMode {
 
     protected void setLift2Pow(double pow) {
         liftMtr2.setPower(pow * Constants.LIFT_2_SPEED);
+    }
+
+    protected void setIntakePow(double pow) {
+        rightIntake1.setPower(pow);
+        rightIntake2.setPower(pow);
+        leftIntake1.setPower(pow);
+        leftIntake2.setPower(pow);
+    }
+
+    protected double getIntakePow() {
+        return rightIntake1.getPower();
     }
 
     protected boolean checkEncoder(int ticks) {
