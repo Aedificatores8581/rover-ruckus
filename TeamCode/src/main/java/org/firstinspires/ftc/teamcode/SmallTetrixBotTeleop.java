@@ -8,24 +8,6 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.UltrasonicSensor;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
 import java.util.Locale;
 
@@ -41,25 +23,23 @@ import java.util.TimerTask;
  */
 @TeleOp(name = "Teleop from Akron Minimaker Fair", group = "bepis")
 
-public class SmallTetrixBotTeleop extends TestBotTemplate   // TestBot Template is used due to it only having the left and right
-                                                            // Motors included
-                                                            // TODO: Rename TestBotTemplate
+public class SmallTetrixBotTeleop extends OpMode
 {
 
-    //--------------------------------------------------------------------------
-    //
-    //
-    //
-    //--------
-    // Constructs the class.
-    //
-    // The system calls this member when the class is instantiated.
-    //--------
 
+    DcMotor left, right;
 
     double leftPow = 0.0;
     double rightPow = 0.0;
     public void start() {
+    }
+
+    public void init(){
+        left = hardwareMap.dcMotor.get("lm");
+        right = hardwareMap.dcMotor.get("rm");
+
+        left.setDirection(Constants.LEFT_DIR);
+        right.setDirection(Constants.RIGHT_DIR);
     }
 
     @Override public void loop () {
@@ -81,6 +61,23 @@ public class SmallTetrixBotTeleop extends TestBotTemplate   // TestBot Template 
 
         setLeftPow(leftPow);
         setRightPow(rightPow);
+    }
+
+    protected void setLeftPow(double pow) {
+        left.setPower(pow * Constants.LEFT_SPEED);
+    }
+
+    protected void setRightPow(double pow) {
+        right.setPower(pow * Constants.RIGHT_SPEED);
+    }
+
+
+    protected boolean checkEncoder(int ticks) {
+        int distance = Math.abs(ticks);
+        int leftDist = Math.abs(left.getCurrentPosition());
+        int rightDist = Math.abs(right.getCurrentPosition());
+
+        return (distance <= leftDist) || (distance <= rightDist);
     }
 }
 
