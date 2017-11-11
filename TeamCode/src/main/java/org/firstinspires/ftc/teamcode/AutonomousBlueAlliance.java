@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous(name = "Autonomous Relic Recovery: Blue Aliance", group = "bepis")
 @Disabled
-public abstract class autonomousBlueAliance extends OpMode{
+public abstract class AutonomousBlueAlliance extends OpMode {
     DcMotorController motorController;
     DcMotor forwardLeftMotor, forwardRightMotor, backwardLeftMotor, backwardRightMotor;
     NormalizedColorSensor colorSensor;
@@ -25,7 +25,7 @@ public abstract class autonomousBlueAliance extends OpMode{
     Orientation angle;
     Acceleration gravity;
 
-    //@Override
+    @Override
     public void init(){
         forwardRightMotor = hardwareMap.dcMotor.get("fr");
         forwardLeftMotor = hardwareMap.dcMotor.get("fl");
@@ -36,6 +36,7 @@ public abstract class autonomousBlueAliance extends OpMode{
 
         //configuration goes here
     }
+
     public enum State {
         STATE_SCAN_PICTURE,
         STATE_EXTEND_ARM,
@@ -51,7 +52,8 @@ public abstract class autonomousBlueAliance extends OpMode{
         STATE_DRIVE_BACK,
         STATE_END,
     }
-    //@Override
+
+    @Override
     public void loop() {
 
     }
