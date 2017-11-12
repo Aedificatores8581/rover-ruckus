@@ -77,11 +77,7 @@ public class PictureDetectionTest extends OpMode {
             switch (vuMark) {
                 case LEFT:
                     state = ROBOT_ACTIVITY_STATE.moving;
-//<<<<<<< HEAD
-                    encoderAmount = 1000;
-//=======
                     encoderAmount = ENCODER_CONSTANT;
-//>>>>>>> 5492e335d63b25ab6406f50552c116e7d1cebbe7
                     break;
                 case CENTER:
                     state = ROBOT_ACTIVITY_STATE.moving;
