@@ -45,9 +45,9 @@ import java.util.TimerTask;
  *
  * @author Pootis Man
  */
-@TeleOp(name = "RevBot: Tele-Op", group = "bepis")
+@Autonomous(name = "RevBot: Autonomous", group = "bepis")
 
-public class SmolBotManual extends SmolBotTemplate
+public class SmolBotAutonomous extends SmolBotTemplate
 {
 
     //--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ public class SmolBotManual extends SmolBotTemplate
     }
 
 
-    public SmolBotManual() {
+    public SmolBotAutonomous() {
         //
         // Initialize base classes.
         //
@@ -102,6 +102,7 @@ public class SmolBotManual extends SmolBotTemplate
         double red = colors.red;
         setLeftPow(left);
         setRightPow(right);
+        
 
 /*        if (gamepad1.left_stick_button)
             setGrabPow(1);
@@ -136,6 +137,6 @@ public class SmolBotManual extends SmolBotTemplate
                 .addData("g", (colors.green / (colors.blue + colors.red + colors.green)))
                 .addData("b", (colors.blue / (colors.blue + colors.red + colors.green)));
 
-            telemetry.update();
+        telemetry.update();
     }
 }
