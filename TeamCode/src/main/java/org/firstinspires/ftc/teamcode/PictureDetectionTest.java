@@ -28,10 +28,14 @@ public class PictureDetectionTest extends OpMode {
     private int encoderAmount;
     private final int ONE_SECOND = 1000;
 
+    private final int ENCODER_CONSTANT = 500;
+
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
     private VuforiaTrackable relicTemplate;
+
+    private RelicRecoveryVuMark vuMark;
 
     private enum ROBOT_ACTIVITY_STATE {reading, moving}
     private ROBOT_ACTIVITY_STATE state;
@@ -44,8 +48,8 @@ public class PictureDetectionTest extends OpMode {
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "AdNikLv/////AAAAGWU+M9z3/00mqU+dDTTtHfZ20J0oyIXsfm2hNe0Oy/LXv4LbAaeEkgXQoLcO6ks5K0ixdWt+3WIRzmcncN31UCbuk1UJkfKtJ8IcaY+zBJe8jTlAyupXFBvONjLNShkis/kU0LHMVhFTgJZVCVaVWjaQ21nnfYHq9I2UNU1bq8+CHBDYD62VvGdSY4jwwJRgR4Rq+HYOpj/4m6P/XyqnDmFPWzF/V3If1FJaQj5E3ZZRm4lKSzvWhClfrdX/LwTkTpf3/j8QOJYEvhe9JkUwppMiKXp1iy/wEgNRFMjJKPLU5VtAqQYh/zsSEhfpeyryPGfU123eSJQoCQpq/f3Sjn37iR0ILx8dsnT1mlVStrm8";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
@@ -68,36 +72,40 @@ public class PictureDetectionTest extends OpMode {
     }
 
     @Override public void loop(){
-
-        RelicRecoveryVuMark vuMark;
         if(state == ROBOT_ACTIVITY_STATE.reading) {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
                 case LEFT:
                     state = ROBOT_ACTIVITY_STATE.moving;
+//<<<<<<< HEAD
                     encoderAmount = 1000;
+//=======
+                    encoderAmount = ENCODER_CONSTANT;
+//>>>>>>> 5492e335d63b25ab6406f50552c116e7d1cebbe7
                     break;
                 case CENTER:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 12000;
+                    encoderAmount = ENCODER_CONSTANT*2;
                     break;
                 case RIGHT:
                     state = ROBOT_ACTIVITY_STATE.moving;
-                    encoderAmount = 16000;
+                    encoderAmount = ENCODER_CONSTANT*3;
                     break;
                 default:
                     state = ROBOT_ACTIVITY_STATE.reading;
                     break;
             }
-        } else {
+        } else if(state == ROBOT_ACTIVITY_STATE.moving) {
             if (!checkEncoder(encoderAmount)){
-                setLeftPow(1.0);
-                setRightPow(1.0);
-            }else{
+                setLeftPow(.5);
+                setRightPow(-.5);
+            }else {
                 setLeftPow(0.0);
                 setRightPow(0.0);
             }
         }
+        telemetry.addData("Left: ", left.getCurrentPosition());
+        telemetry.addData("Right: ", right.getCurrentPosition());
     }
 
     public void stop(){
