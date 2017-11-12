@@ -30,7 +30,7 @@ import java.util.TimerTask;
  * @author Pootis Man
  * @version 1.0
  */
-@TeleOp(name = "LennyBot: Tele Test 1", group = "( \u0361\u00B0 \u035C\u0296 \u0361\u00B0 )")
+@TeleOp(name = "LennyBot: Tele-Op", group = "( \u0361\u00B0 \u035C\u0296 \u0361\u00B0 )")
 public class LennyBotManual extends OpMode
 {
     TouchSensor ts1, ts2;

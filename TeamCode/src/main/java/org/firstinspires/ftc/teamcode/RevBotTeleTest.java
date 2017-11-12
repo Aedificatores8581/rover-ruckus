@@ -118,8 +118,6 @@ public class RevBotTeleTest extends RevBotTemplate
             telemetry.addData("Servo Position 2", s2.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo Position 2", "%5.2f", s2.getPosition());
-            telemetry.addData(">", "Press Stop to end test." );
-            telemetry.update();
 
         }
         // Display the current value

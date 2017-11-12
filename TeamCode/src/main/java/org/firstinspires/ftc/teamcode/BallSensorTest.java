@@ -126,6 +126,7 @@ public class BallSensorTest extends OpMode {
                 finger.setPosition(0.6044444);
         }
 
+
         telemetry.addLine()
                 .addData("a", colors.alpha )
                 .addData("red Ratio", (colors.red/(colors.blue + colors.red + colors.green)))
@@ -166,6 +167,15 @@ public class BallSensorTest extends OpMode {
             }
         }
         */
+
+        telemetry.addData("a", colors.alpha);
+        telemetry.addData("red Ratio", (colors.red / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("green Ratio", (colors.green / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("blue Ratio", (colors.blue / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("blue", colors.blue);
+        telemetry.addData("red", colors.red);
+        telemetry.addData("finger", finger.getPosition());
+
     }
 
     public void stop() {

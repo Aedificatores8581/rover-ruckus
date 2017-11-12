@@ -35,8 +35,8 @@ public abstract class DriveBotTemplate extends OpMode {
         public static final DcMotor.Direction LIFT_1_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction LIFT_2_DIR = DcMotor.Direction.REVERSE;
 
-        public static final DcMotor.Direction LEFT_INTAKE1_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction LEFT_INTAKE2_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LEFT_INTAKE1_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction LEFT_INTAKE2_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction RIGHT_INTAKE1_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction RIGHT_INTAKE2_DIR = DcMotor.Direction.FORWARD;
         

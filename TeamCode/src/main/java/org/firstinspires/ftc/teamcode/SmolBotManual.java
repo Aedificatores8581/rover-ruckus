@@ -130,12 +130,10 @@ public class SmolBotManual extends SmolBotTemplate
         telemetry.addData("Right Pow", right);
 
 
-        telemetry.addLine()
-                .addData("a", colors.alpha )
-                .addData("r", (colors.red / (colors.blue + colors.red + colors.green)))
-                .addData("g", (colors.green / (colors.blue + colors.red + colors.green)))
-                .addData("b", (colors.blue / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("a", colors.alpha);
+        telemetry.addData("r", (colors.red / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("g", (colors.green / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("b", (colors.blue / (colors.blue + colors.red + colors.green)));
 
-            telemetry.update();
     }
 }
