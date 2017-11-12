@@ -51,7 +51,7 @@ public class Constants {
     public static final double RIGHT_SPEED = 0.375; // Always positive and between 0 and 1.
     public static final double ARM_SPEED = 0.50; // Always positive and between 0 and 1.
     public static final double HAND_SPEED = 0.50; // Always positive and between 0 and 1.
-    public static final double GRAB_SPEED = 0.25; // Always positive and between 0 and 1.
+    public static final double GRAB_RANGE = 0.25; // Always positive and between 0 and 1.
     public static final double COLOR_ARM_SPEED = 1; // Always positive and between 0 and 1.
 
     public static final double RADS_TO_DEGS = 57.32484;

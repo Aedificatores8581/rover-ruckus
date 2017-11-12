@@ -10,7 +10,7 @@ import java.util.TimerTask;
 /**
  * Created by The Saminator on 10-01-2017.
  */
-@TeleOp(name = "Drivetrain Tele-Op Test", group = "SPECIALMAN")
+@TeleOp(name = "Tele-Op", group = "actually not a test")
 public class DriveBotTeleop extends DriveBotTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
@@ -30,53 +30,62 @@ public class DriveBotTeleop extends DriveBotTemplate {
 
     protected void highDelivery() {
         lifting = true;
-        async.schedule(new TimerTask() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 setLift2Pow(0.5);
                 while (Math.abs(liftMtr2.getCurrentPosition()) <= 225);
                 setLift2Pow(0.0);
-                // TODO: Ask Hadley what servo releases the glyph.
+                leftHinge.setPosition(1.0);
+                rightHinge.setPosition(1.0);
                 setLift2Pow(-0.5);
                 while (Math.abs(liftMtr2.getCurrentPosition()) >= 0);
                 setLift2Pow(0.0);
+                leftHinge.setPosition(0.0);
+                rightHinge.setPosition(0.0);
                 lifting = false;
             }
-        }, 0);
+        }).run();
     }
 
     protected void midDelivery() {
         lifting = true;
-        async.schedule(new TimerTask() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 setLift2Pow(0.5);
                 while (Math.abs(liftMtr2.getCurrentPosition()) <= 150);
                 setLift2Pow(0.0);
-                // TODO: Ask Hadley what servo releases the glyph.
+                leftHinge.setPosition(1.0);
+                rightHinge.setPosition(1.0);
                 setLift2Pow(-0.5);
                 while (Math.abs(liftMtr2.getCurrentPosition()) >= 0);
                 setLift2Pow(0.0);
+                leftHinge.setPosition(0.0);
+                rightHinge.setPosition(0.0);
                 lifting = false;
             }
-        }, 0);
+        }).run();
     }
 
     protected void lowDelivery() {
         lifting = true;
-        async.schedule(new TimerTask() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 setLift2Pow(0.5);
                 while (Math.abs(liftMtr2.getCurrentPosition()) <= 75);
                 setLift2Pow(0.0);
-                // TODO: Ask Hadley what servo releases the glyph.
+                leftHinge.setPosition(1.0);
+                rightHinge.setPosition(1.0);
                 setLift2Pow(-0.5);
                 while (Math.abs(liftMtr2.getCurrentPosition()) >= 0);
                 setLift2Pow(0.0);
+                leftHinge.setPosition(0.0);
+                rightHinge.setPosition(0.0);
                 lifting = false;
             }
-        }, 0);
+        }).run();
     }
 
     protected void toggleSpeed() {
@@ -132,7 +141,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
         if (gamepad1.left_bumper && !prev1.left_bumper)
             toggleSpeed();
 
-        if (gamepad1.dpad_up && !prev1.dpad_up)
+        /*if (gamepad1.dpad_up && !prev1.dpad_up)
             setIntakePow(0.5);
 
         if (gamepad1.dpad_down && !prev1.dpad_down)
@@ -158,7 +167,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
 
         relicGrabMover.setPosition(relicGrabMover.getPosition() + (gamepad2.right_stick_y * 0.1));
 
-        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.1));
+        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.1));*/
 
         try {
             prev1.fromByteArray(gamepad1.toByteArray());

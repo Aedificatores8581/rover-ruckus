@@ -99,15 +99,13 @@ public class BallSensorTest extends OpMode {
             }
         }
 
-        telemetry.addLine()
-                .addData("a", colors.alpha )
-                .addData("red Ratio", (colors.red/(colors.blue + colors.red + colors.green)))
-                .addData("green Ratio", (colors.green/(colors.blue + colors.red + colors.green)))
-                .addData("blue Ratio", (colors.blue/(colors.blue + colors.red + colors.green)))
-                .addData("blue", colors.blue)
-                .addData("red", colors.red)
-                .addData("finger", finger.getPosition());
-        telemetry.update();
+        telemetry.addData("a", colors.alpha);
+        telemetry.addData("red Ratio", (colors.red / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("green Ratio", (colors.green / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("blue Ratio", (colors.blue / (colors.blue + colors.red + colors.green)));
+        telemetry.addData("blue", colors.blue);
+        telemetry.addData("red", colors.red);
+        telemetry.addData("finger", finger.getPosition());
     }
 
     public void stop() {
