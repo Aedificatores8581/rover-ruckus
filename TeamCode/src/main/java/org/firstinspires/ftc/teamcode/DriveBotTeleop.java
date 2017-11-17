@@ -126,8 +126,8 @@ public class DriveBotTeleop extends DriveBotTemplate {
 
     @Override
     public void loop() {
-        setLeftPow(gamepad1.left_stick_y * 0.5);
-        setRightPow(gamepad1.right_stick_y * 0.5);
+        setLeftPow(gamepad1.left_stick_y * speedMult);
+        setRightPow(gamepad1.right_stick_y * speedMult);
 
         if (gamepad1.a && !prev1.a)
             scream();

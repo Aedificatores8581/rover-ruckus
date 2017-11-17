@@ -1,23 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
+        import android.media.MediaPlayer;
+        import android.os.Handler;
+        import android.os.Looper;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+        import com.qualcomm.robotcore.hardware.CRServo;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.DcMotorSimple;
+        import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+        import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+        import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+        import org.firstinspires.ftc.robotcore.external.Const;
+        import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        import org.firstinspires.ftc.robotcore.external.navigation.Position;
+        import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
  * Created by The Saminator on 06-29-2017.
@@ -39,7 +39,7 @@ public abstract class DriveBotTemplate extends OpMode {
         public static final DcMotor.Direction LEFT_INTAKE2_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction RIGHT_INTAKE1_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction RIGHT_INTAKE2_DIR = DcMotor.Direction.FORWARD;
-        
+
         public static final double LEFT_FORE_SPEED = 1.0;
         public static final double LEFT_REAR_SPEED = 1.0;
         public static final double RIGHT_FORE_SPEED = 1.0;
@@ -162,8 +162,8 @@ public abstract class DriveBotTemplate extends OpMode {
         int rightRearDist = Math.abs(rightRear.getCurrentPosition());
 
         return (distance <= leftForeDist)
-            || (distance <= leftRearDist)
-            || (distance <= rightForeDist)
-            || (distance <= rightRearDist);
+                || (distance <= leftRearDist)
+                || (distance <= rightForeDist)
+                || (distance <= rightRearDist);
     }
 }
