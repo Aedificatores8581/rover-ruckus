@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,19 +17,19 @@ import java.util.TimerTask;
 public class DriveBotTeleop extends DriveBotTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
-    private Timer async;
 
     private double speedMult;
 
     private boolean lifting;
 
     @Override
-    public void init() {
+    public void init() { // Configuration for this is in the Google Drive
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
         speedMult = 0.7;
     }
+
 
     protected void highDelivery() {
         lifting = true;
