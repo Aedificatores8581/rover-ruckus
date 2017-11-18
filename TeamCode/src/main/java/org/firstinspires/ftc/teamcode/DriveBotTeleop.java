@@ -191,5 +191,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
         } catch (RobotCoreException e) {
             telemetry.addData("Exception", e);
         }
+
+        super.loop();
     }
 }
