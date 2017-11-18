@@ -13,10 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp (name = "Solon Scrimmage TeleOp For Sensor Bot", group = "8581")
 public class SolonScrimmageTeleop extends OpMode{
 
-    private Gamepad prev1;
-    private Gamepad prev2;
-
-
     private DcMotor rearLeft, rearRight;
     private Servo glyphGrabberRight, glyphGrabberCenter, glyphGrabberLeft, ballSensorArm;
 
@@ -92,49 +88,61 @@ public class SolonScrimmageTeleop extends OpMode{
             setLeftPow(0.0);
         }
 
-        if (gamepad1.dpad_up){
+        if (gamepad1.left_bumper){
             telemetry.addLine("Pressing up");
 
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
 
             glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
 
-        }else if (gamepad1.dpad_down){
-            telemetry.addLine("Pressing down");
+        }
+        if (gamepad1.left_trigger > .5){
+            telemetry.addLine("Pressing trigger down");
 
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
 
             glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
 
-        }else if (!gamepad1.dpad_down && !gamepad1.dpad_up){
+        }else if(gamepad1.left_bumper) {
+            telemetry.addLine("Pressing bumperdown");
+
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+
+            glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
+
         }
 
         if (gamepad1.right_bumper){
-            telemetry.addLine("Pressing left_bumper");
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-
-            glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-        } else if (gamepad1.right_trigger > .5){
-            telemetry.addLine("Pressing left_bumper");
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-
-            glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-        }
-
-        if(gamepad1.left_bumper) {
             telemetry.addLine("Pressing right_bumper");
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
             telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
 
             glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
-        } else if (gamepad1.left_trigger > .5){
+            telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+
+            glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+        } else if (gamepad1.right_trigger > .5){
             telemetry.addLine("Pressing right_trigger");
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
             telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
 
             glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
+            glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+        }
+
+
+
+        if(gamepad1.x){
+            position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+
+            ballSensorArm.setPosition(position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX]);
+        }else if(gamepad1.a){
+            position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+
+            ballSensorArm.setPosition(position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX]);
         }
 
 

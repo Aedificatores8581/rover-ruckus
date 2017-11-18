@@ -59,6 +59,7 @@ public class SolonScrimmageAutonomous extends OpMode {
         STATE_MOVE_DOWN_BALL_SENSOR_ARM,
         STATE_MOVE_UP_BALL_SENSOR_ARM,
         STATE_SCAN_PICTURE,
+        STATE_MOVE_PLACES,
         STATE_READ_COLOR_SENSOR,
         STATE_DRIVE_TO_SHELF,
         STATE_ORIENT_WITH_SHELF,
@@ -70,7 +71,6 @@ public class SolonScrimmageAutonomous extends OpMode {
         STATE_DRIVE_BACK,
         STATE_END,
     }
-
     State state; // current state the robot this is in
 
     @Override
@@ -93,20 +93,22 @@ public class SolonScrimmageAutonomous extends OpMode {
     @Override
     public void start() {
         state = State.STATE_MOVE_DOWN_BALL_SENSOR_ARM;
+        rearLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        glyphGrabberLeft.setPosition(.8);
+        glyphGrabberRight.setPosition(.8);
     }
 
     @Override
     public void loop() {
         telemetry.update();
-        if (state == State.STATE_READ_COLOR_SENSOR){
-            telemetry.addLine("Ball Sensor Down");
-        }
+
         // telemetry.addData("ballSensorArm", ballSensorArm.getPosition());
 
         switch (state) {
             case STATE_MOVE_DOWN_BALL_SENSOR_ARM:
                 state = State.STATE_READ_COLOR_SENSOR;
-                ballSensorArm.setPosition(.061);
+                ballSensorArm.setPosition(.052);
                 break;
 
             case STATE_SCAN_PICTURE:
@@ -122,7 +124,16 @@ public class SolonScrimmageAutonomous extends OpMode {
                 break;
             case STATE_MOVE_UP_BALL_SENSOR_ARM:
                 ballSensorArm.setPosition(.59);
-                state = State.STATE_SCAN_PICTURE;
+                state = State.STATE_MOVE_PLACES;
+                break;
+            case STATE_MOVE_PLACES:
+                if(checkEncoder(250)) {
+                    setRightPow(1.0);
+                    setLeftPow(1.0);
+                }else{
+                    setRightPow(0.0);
+                    setLeftPow(0.0);
+                }
                 break;
 
             default:
@@ -133,6 +144,12 @@ public class SolonScrimmageAutonomous extends OpMode {
 
     }
 
+
+    @Override public void stop(){
+        rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
     private boolean detectColors() {
         colors = colorSensor.getNormalizedColors();
         redRatio = colors.red / (colors.red + colors.blue + colors.green);
@@ -144,36 +161,53 @@ public class SolonScrimmageAutonomous extends OpMode {
 
         if (redAliance == true) {
             if (redRatio >= 0.55 && redRatio > blueRatio) {
-                hasFlipped = true;
-                if (!checkEncoder(100)) {
+                if (!checkEncoder(50)) {
                     setRightPow(1.0);
                     setLeftPow(1.0);
+                }else{
+                    hasFlipped = true;
+                    setRightPow(0.0);
+                    setLeftPow(0.0);
                 }
             } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                hasFlipped = true;
-                if (!checkEncoder(100)) {
+                if (!checkEncoder(50)) {
                     setRightPow(-1.0);
                     setLeftPow(-1.0);
+                }else{
+                    hasFlipped = true;
+                    setRightPow(0.0);
+                    setLeftPow(0.0);
                 }
             }
         }
 
         if (redAliance == false) {
             if (redRatio >= 0.55 && redRatio > blueRatio) {
-                if (!checkEncoder(100)) {
-                    hasFlipped = true;
+                if (!checkEncoder(50)) {
+
                     setRightPow(-1.0);
                     setLeftPow(-1.0);
+                }else{
+                    hasFlipped = true;
+                    setRightPow(0.0);
+                    setLeftPow(0.0);
                 }
             } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                if (!checkEncoder(100)) {
-                    hasFlipped = true;
+                if (!checkEncoder(50)) {
+
                     setRightPow(1.0);
                     setLeftPow(1.0);
+                }else{
+                    hasFlipped = true;
+                    setRightPow(0.0);
+                    setLeftPow(0.0);
                 }
             }
+
         }
 
+        telemetry.addData("Left", rearLeft.getCurrentPosition());
+        telemetry.addData("Right", rearRight.getCurrentPosition());
         telemetry.addLine()
                 .addData("a", colors.alpha)
                 .addData("red Ratio", (colors.red / (colors.blue + colors.red + colors.green)))
@@ -182,8 +216,6 @@ public class SolonScrimmageAutonomous extends OpMode {
                 .addData("blue", colors.blue)
                 .addData("red", colors.red);
         telemetry.update();
-
-
         return hasFlipped;
 
     }
