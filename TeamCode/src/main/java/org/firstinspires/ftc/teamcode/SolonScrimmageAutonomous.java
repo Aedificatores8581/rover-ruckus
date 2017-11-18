@@ -71,7 +71,9 @@ public class SolonScrimmageAutonomous extends OpMode {
         STATE_DRIVE_BACK,
         STATE_END,
     }
+
     State state; // current state the robot this is in
+    long delay;
 
     @Override
     public void init() {
@@ -127,10 +129,10 @@ public class SolonScrimmageAutonomous extends OpMode {
                 state = State.STATE_MOVE_PLACES;
                 break;
             case STATE_MOVE_PLACES:
-                if(checkEncoder(250)) {
+                if (checkEncoder(250)) {
                     setRightPow(1.0);
                     setLeftPow(1.0);
-                }else{
+                } else {
                     setRightPow(0.0);
                     setLeftPow(0.0);
                 }
@@ -145,11 +147,13 @@ public class SolonScrimmageAutonomous extends OpMode {
     }
 
 
-    @Override public void stop(){
+    @Override
+    public void stop() {
         rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+
     private boolean detectColors() {
         colors = colorSensor.getNormalizedColors();
         redRatio = colors.red / (colors.red + colors.blue + colors.green);
@@ -161,19 +165,25 @@ public class SolonScrimmageAutonomous extends OpMode {
 
         if (redAliance == true) {
             if (redRatio >= 0.55 && redRatio > blueRatio) {
-                if (!checkEncoder(50)) {
+                if (delay == 0L) {
+                    delay = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - delay < 200) {
                     setRightPow(1.0);
                     setLeftPow(1.0);
-                }else{
+                } else {
                     hasFlipped = true;
                     setRightPow(0.0);
                     setLeftPow(0.0);
                 }
             } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                if (!checkEncoder(50)) {
+                if (delay == 0L) {
+                    delay = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - delay < 200) {
                     setRightPow(-1.0);
                     setLeftPow(-1.0);
-                }else{
+                } else {
                     hasFlipped = true;
                     setRightPow(0.0);
                     setLeftPow(0.0);
@@ -183,21 +193,27 @@ public class SolonScrimmageAutonomous extends OpMode {
 
         if (redAliance == false) {
             if (redRatio >= 0.55 && redRatio > blueRatio) {
-                if (!checkEncoder(50)) {
+                if (delay == 0L) {
+                    delay = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - delay < 200) {
 
                     setRightPow(-1.0);
                     setLeftPow(-1.0);
-                }else{
+                } else {
                     hasFlipped = true;
                     setRightPow(0.0);
                     setLeftPow(0.0);
                 }
             } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                if (!checkEncoder(50)) {
+                if (delay == 0L) {
+                    delay = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - delay < 200) {
 
                     setRightPow(1.0);
                     setLeftPow(1.0);
-                }else{
+                } else {
                     hasFlipped = true;
                     setRightPow(0.0);
                     setLeftPow(0.0);
