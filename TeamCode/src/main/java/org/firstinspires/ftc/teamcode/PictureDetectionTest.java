@@ -38,9 +38,11 @@ public class PictureDetectionTest extends OpMode {
     private RelicRecoveryVuMark vuMark;
 
     private enum RobotActivityState {READING, MOVING}
+
     private RobotActivityState state;
 
-    @Override public void init(){
+    @Override
+    public void init() {
         state = RobotActivityState.READING;
 
         left = hardwareMap.dcMotor.get("lm");
@@ -58,20 +60,20 @@ public class PictureDetectionTest extends OpMode {
 
     }
 
-    public void start(){
+    public void start() {
         relicTrackables.activate();
 
         telemetry.addData("activated", "");
 
-        try{
+        try {
             Thread.sleep(ONE_SECOND);
-        }
-        catch(InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    @Override public void loop(){
+    @Override
+    public void loop() {
         if (state == RobotActivityState.READING) {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
@@ -81,11 +83,11 @@ public class PictureDetectionTest extends OpMode {
                     break;
                 case CENTER:
                     state = RobotActivityState.MOVING;
-                    encoderAmount = ENCODER_CONSTANT*2;
+                    encoderAmount = ENCODER_CONSTANT * 2;
                     break;
                 case RIGHT:
                     state = RobotActivityState.MOVING;
-                    encoderAmount = ENCODER_CONSTANT*3;
+                    encoderAmount = ENCODER_CONSTANT * 3;
                     break;
                 default:
                     state = RobotActivityState.READING;
@@ -104,7 +106,7 @@ public class PictureDetectionTest extends OpMode {
         telemetry.addData("Right", right.getCurrentPosition());
     }
 
-    public void stop(){
+    public void stop() {
         setLeftPow(0.0);
         left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -114,11 +116,11 @@ public class PictureDetectionTest extends OpMode {
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private void setLeftPow(double pow){
+    private void setLeftPow(double pow) {
         left.setPower(pow * Constants.LEFT_SPEED);
     }
 
-    private void setRightPow(double pow){
+    private void setRightPow(double pow) {
         right.setPower(pow * Constants.RIGHT_SPEED);
     }
 

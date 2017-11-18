@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /**
  * Created by The Saminator on 11-12-2017.
  */
+@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
 public class DriveBotAutoBlueNear extends DriveBotTemplate {
 
     State state;
@@ -34,7 +36,7 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
             Thread.sleep(1000);
         }
         catch (InterruptedException e) {
-            telemetry.addData("EXCEPTION", e);
+            telemetry.addData("Exception", e);
         }
     }
 
@@ -99,8 +101,11 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
                 break;
             // TODO: Implement collection of additional glyphs?
             case STATE_END:
+                telemetry.addData("Finished", "Very Yes");
                 break;
         }
+
+        telemetry.addData("State", state.name());
     }
 
     enum State {

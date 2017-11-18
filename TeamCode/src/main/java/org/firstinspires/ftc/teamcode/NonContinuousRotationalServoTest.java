@@ -10,18 +10,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Non Continuous Servo Test", group = "8581")
 
-public class NonContinuousRotationalServoTest extends OpMode{
+public class NonContinuousRotationalServoTest extends OpMode {
     Servo servo;
     double INCREMENT = 0.005;     // amount to slew servo each CYCLE_MS cyclE
     double MAX_POS = .75;     // Maximum rotational position
     double MIN_POS = .25;     // Minimum rotational position
 
     double servoPos;
-    @Override public void init(){
+
+    @Override
+    public void init() {
         servo = hardwareMap.servo.get("servo");
     }
 
-    @Override public void loop(){
+    @Override
+    public void loop() {
         if (gamepad1.left_stick_y < 0) {
             // Keep stepping up until we hit the max value.
             servoPos += INCREMENT;
@@ -37,6 +40,6 @@ public class NonContinuousRotationalServoTest extends OpMode{
             }
             servo.setPosition(servoPos);
         }
-        telemetry.addData("Position: ",servo.getPosition());
+        telemetry.addData("Position: ", servo.getPosition());
     }
 }
