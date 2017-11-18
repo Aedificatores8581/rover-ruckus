@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 @Autonomous(name = "Solon Scrimmage Autonomous For Sensor Bot", group = "8581")
-public class SolonScrimmageAutonomous extends OpMode{
+public class SolonScrimmageAutonomous extends OpMode {
 
     private Gamepad prev1;
     private Gamepad prev2;
@@ -25,7 +25,9 @@ public class SolonScrimmageAutonomous extends OpMode{
     private DcMotor rearLeft, rearRight;
     private Servo glyphGrabberRight, glyphGrabberCenter, glyphGrabberLeft, ballSensorArm;
 
-    double position[] = new double[4]; /************
+    double position[] = new double[4];
+
+    /************
      * Position for different servos:
      * position[0] ----> glyphGrabberRight
      * position[1] ----> glyphGrabberCenter
@@ -46,8 +48,6 @@ public class SolonScrimmageAutonomous extends OpMode{
     }
 
 
-
-
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
 
@@ -57,6 +57,7 @@ public class SolonScrimmageAutonomous extends OpMode{
 
     public enum State {
         STATE_MOVE_DOWN_BALL_SENSOR_ARM,
+        STATE_MOVE_UP_BALL_SENSOR_ARM,
         STATE_SCAN_PICTURE,
         STATE_READ_COLOR_SENSOR,
         STATE_DRIVE_TO_SHELF,
@@ -72,7 +73,8 @@ public class SolonScrimmageAutonomous extends OpMode{
 
     State state; // current state the robot this is in
 
-    @Override public void init() {
+    @Override
+    public void init() {
         rearLeft = hardwareMap.dcMotor.get("lm");
         rearRight = hardwareMap.dcMotor.get("rm");
 
@@ -93,23 +95,36 @@ public class SolonScrimmageAutonomous extends OpMode{
         state = State.STATE_MOVE_DOWN_BALL_SENSOR_ARM;
     }
 
-    @Override public void loop(){
+    @Override
+    public void loop() {
         telemetry.update();
+        if (state == State.STATE_READ_COLOR_SENSOR){
+            telemetry.addLine("Ball Sensor Down");
+        }
         // telemetry.addData("ballSensorArm", ballSensorArm.getPosition());
 
-        switch (state){
+        switch (state) {
             case STATE_MOVE_DOWN_BALL_SENSOR_ARM:
                 state = State.STATE_READ_COLOR_SENSOR;
-                ballSensorArm.setPosition(-.7);
-                telemetry.addLine("Ball Sensor Down");
+                ballSensorArm.setPosition(.061);
                 break;
 
             case STATE_SCAN_PICTURE:
                 break;
 
             case STATE_READ_COLOR_SENSOR:
-                detectColors();
+
+                boolean doneWithColorSensor = detectColors();
+                if (doneWithColorSensor) {
+                    state = State.STATE_MOVE_UP_BALL_SENSOR_ARM;
+                }
+
                 break;
+            case STATE_MOVE_UP_BALL_SENSOR_ARM:
+                ballSensorArm.setPosition(.59);
+                state = State.STATE_SCAN_PICTURE;
+                break;
+
             default:
                 break;
 
@@ -118,67 +133,66 @@ public class SolonScrimmageAutonomous extends OpMode{
 
     }
 
-    private void detectColors(){
+    private boolean detectColors() {
         colors = colorSensor.getNormalizedColors();
         redRatio = colors.red / (colors.red + colors.blue + colors.green);
         blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
 
 
-
-        boolean redAliance = false;
+        boolean redAliance = true;
         boolean hasFlipped = false;
 
-
-        while(!hasFlipped) {
-            if (redAliance == true) {
-                if (redRatio >= 0.55 && redRatio > blueRatio) {
-                    hasFlipped = true;
-                    if (!checkEncoder(100)) {
-                        setRightPow(1.0);
-                        setLeftPow(1.0);
-                    }
-                } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                    hasFlipped = true;
-                    if (!checkEncoder(100)) {
-                        setRightPow(-1.0);
-                        setLeftPow(-1.0);
-                    }
-                } else {
-
+        if (redAliance == true) {
+            if (redRatio >= 0.55 && redRatio > blueRatio) {
+                hasFlipped = true;
+                if (!checkEncoder(100)) {
+                    setRightPow(1.0);
+                    setLeftPow(1.0);
+                }
+            } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
+                hasFlipped = true;
+                if (!checkEncoder(100)) {
+                    setRightPow(-1.0);
+                    setLeftPow(-1.0);
                 }
             }
-            if (redAliance == false) {
-                if (redRatio >= 0.55 && redRatio > blueRatio) {
-                    if (!checkEncoder(100)) {
-                        hasFlipped = true;
-                        setRightPow(-1.0);
-                        setLeftPow(-1.0);
-                    }
-                } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                    if (!checkEncoder(100)) {
-                        hasFlipped = true;
-                        setRightPow(1.0);
-                        setLeftPow(1.0);
-                    }
-                } else {
-
-                }
-            }
-
-            telemetry.addLine()
-                    .addData("a", colors.alpha )
-                    .addData("red Ratio", (colors.red/(colors.blue + colors.red + colors.green)))
-                    .addData("green Ratio", (colors.green/(colors.blue + colors.red + colors.green)))
-                    .addData("blue Ratio", (colors.blue/(colors.blue + colors.red + colors.green)))
-                    .addData("blue", colors.blue)
-                    .addData("red", colors.red);
         }
+
+        if (redAliance == false) {
+            if (redRatio >= 0.55 && redRatio > blueRatio) {
+                if (!checkEncoder(100)) {
+                    hasFlipped = true;
+                    setRightPow(-1.0);
+                    setLeftPow(-1.0);
+                }
+            } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
+                if (!checkEncoder(100)) {
+                    hasFlipped = true;
+                    setRightPow(1.0);
+                    setLeftPow(1.0);
+                }
+            }
+        }
+
+        telemetry.addLine()
+                .addData("a", colors.alpha)
+                .addData("red Ratio", (colors.red / (colors.blue + colors.red + colors.green)))
+                .addData("green Ratio", (colors.green / (colors.blue + colors.red + colors.green)))
+                .addData("blue Ratio", (colors.blue / (colors.blue + colors.red + colors.green)))
+                .addData("blue", colors.blue)
+                .addData("red", colors.red);
+        telemetry.update();
+
+
+        return hasFlipped;
+
     }
 
 
     protected void setLeftPow(double pow) {
         rearLeft.setPower(pow * SmolBotTemplate.Constants.LEFT_SPEED);
     }
+
     protected void setRightPow(double pow) {
         rearRight.setPower(pow * SmolBotTemplate.Constants.RIGHT_SPEED);
     }
