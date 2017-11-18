@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
  * Created by The Saminator on 10-01-2017.
  */
@@ -21,6 +18,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
     private double speedMult;
 
     private boolean lifting;
+    private boolean armExtended;
 
     @Override
     public void init() { // Configuration for this is in the Google Drive
@@ -28,8 +26,9 @@ public class DriveBotTeleop extends DriveBotTemplate {
         prev1 = new Gamepad();
         prev2 = new Gamepad();
         speedMult = 0.7;
-    }
 
+        armExtended = false;
+    }
 
     protected void highDelivery() {
         lifting = true;
@@ -37,12 +36,12 @@ public class DriveBotTeleop extends DriveBotTemplate {
             @Override
             public void run() {
                 setLift2Pow(0.5);
-                while (Math.abs(liftMtr2.getCurrentPosition()) <= 225);
+                while (Math.abs(liftMtr2.getCurrentPosition()) <= 225) ;
                 setLift2Pow(0.0);
                 leftHinge.setPosition(1.0);
                 rightHinge.setPosition(1.0);
                 setLift2Pow(-0.5);
-                while (Math.abs(liftMtr2.getCurrentPosition()) >= 0);
+                while (Math.abs(liftMtr2.getCurrentPosition()) >= 0) ;
                 setLift2Pow(0.0);
                 leftHinge.setPosition(0.0);
                 rightHinge.setPosition(0.0);
@@ -57,12 +56,12 @@ public class DriveBotTeleop extends DriveBotTemplate {
             @Override
             public void run() {
                 setLift2Pow(0.5);
-                while (Math.abs(liftMtr2.getCurrentPosition()) <= 150);
+                while (Math.abs(liftMtr2.getCurrentPosition()) <= 150) ;
                 setLift2Pow(0.0);
                 leftHinge.setPosition(1.0);
                 rightHinge.setPosition(1.0);
                 setLift2Pow(-0.5);
-                while (Math.abs(liftMtr2.getCurrentPosition()) >= 0);
+                while (Math.abs(liftMtr2.getCurrentPosition()) >= 0) ;
                 setLift2Pow(0.0);
                 leftHinge.setPosition(0.0);
                 rightHinge.setPosition(0.0);
@@ -77,12 +76,12 @@ public class DriveBotTeleop extends DriveBotTemplate {
             @Override
             public void run() {
                 setLift2Pow(0.5);
-                while (Math.abs(liftMtr2.getCurrentPosition()) <= 75);
+                while (Math.abs(liftMtr2.getCurrentPosition()) <= 75) ;
                 setLift2Pow(0.0);
                 leftHinge.setPosition(1.0);
                 rightHinge.setPosition(1.0);
                 setLift2Pow(-0.5);
-                while (Math.abs(liftMtr2.getCurrentPosition()) >= 0);
+                while (Math.abs(liftMtr2.getCurrentPosition()) >= 0) ;
                 setLift2Pow(0.0);
                 leftHinge.setPosition(0.0);
                 rightHinge.setPosition(0.0);
@@ -113,15 +112,27 @@ public class DriveBotTeleop extends DriveBotTemplate {
     }
 
     protected void extendArm() {
-        setArmPow(0.5);
-        while (Math.abs(armMotor.getCurrentPosition()) <= 150);
-        setArmPow(0.0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setArmPow(0.5);
+                while (Math.abs(armMotor.getCurrentPosition()) <= 150) ;
+                armExtended = true;
+                setArmPow(0.0);
+            }
+        }).run();
     }
 
     protected void retractArm() {
-        setArmPow(-0.5);
-        while (Math.abs(armMotor.getCurrentPosition()) >= 0);
-        setArmPow(0.0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setArmPow(-0.5);
+                while (Math.abs(armMotor.getCurrentPosition()) >= 0) ;
+                armExtended = false;
+                setArmPow(0.0);
+            }
+        }).run();
     }
 
     @Override
@@ -144,7 +155,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
         if (gamepad1.left_bumper && !prev1.left_bumper)
             toggleSpeed();
 
-        /*if (gamepad1.dpad_up && !prev1.dpad_up)
+        if (gamepad1.dpad_up && !prev1.dpad_up)
             setIntakePow(0.5);
 
         if (gamepad1.dpad_down && !prev1.dpad_down)
@@ -170,13 +181,15 @@ public class DriveBotTeleop extends DriveBotTemplate {
 
         relicGrabMover.setPosition(relicGrabMover.getPosition() + (gamepad2.right_stick_y * 0.1));
 
-        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.1));*/
+        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.1));
+
+        telemetry.addData("Arm extended", armExtended);
 
         try {
             prev1.fromByteArray(gamepad1.toByteArray());
             prev2.fromByteArray(gamepad2.toByteArray());
         } catch (RobotCoreException e) {
-            telemetry.addData("Exception", e.getMessage());
+            telemetry.addData("Exception", e);
         }
     }
 }
