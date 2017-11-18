@@ -25,14 +25,14 @@ public class NonContinuousRotationalServoTest extends OpMode{
         if (gamepad1.left_stick_y < 0) {
             // Keep stepping up until we hit the max value.
             servoPos += INCREMENT;
-            if (servoPos >= MAX_POS) {
+            if (servoPos > MAX_POS) {
                 servoPos = MAX_POS;
             }
             servo.setPosition(servoPos);
         }
         if (gamepad1.left_stick_y > 0) {
             servoPos -= INCREMENT;
-            if (servoPos <= MIN_POS) {
+            if (servoPos < MIN_POS) {
                 servoPos = MIN_POS;
             }
             servo.setPosition(servoPos);

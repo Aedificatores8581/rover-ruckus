@@ -37,18 +37,18 @@ public class PictureDetectionTest extends OpMode {
 
     private RelicRecoveryVuMark vuMark;
 
-    private enum ROBOT_ACTIVITY_STATE {reading, moving}
-    private ROBOT_ACTIVITY_STATE state;
+    private enum RobotActivityState {READING, MOVING}
+    private RobotActivityState state;
 
     @Override public void init(){
-        state = ROBOT_ACTIVITY_STATE.reading;
+        state = RobotActivityState.READING;
 
         left = hardwareMap.dcMotor.get("lm");
         right = hardwareMap.dcMotor.get("rm");
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
+        //parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
@@ -72,36 +72,36 @@ public class PictureDetectionTest extends OpMode {
     }
 
     @Override public void loop(){
-        if(state == ROBOT_ACTIVITY_STATE.reading) {
+        if (state == RobotActivityState.READING) {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
                 case LEFT:
-                    state = ROBOT_ACTIVITY_STATE.moving;
+                    state = RobotActivityState.MOVING;
                     encoderAmount = ENCODER_CONSTANT;
                     break;
                 case CENTER:
-                    state = ROBOT_ACTIVITY_STATE.moving;
+                    state = RobotActivityState.MOVING;
                     encoderAmount = ENCODER_CONSTANT*2;
                     break;
                 case RIGHT:
-                    state = ROBOT_ACTIVITY_STATE.moving;
+                    state = RobotActivityState.MOVING;
                     encoderAmount = ENCODER_CONSTANT*3;
                     break;
                 default:
-                    state = ROBOT_ACTIVITY_STATE.reading;
+                    state = RobotActivityState.READING;
                     break;
             }
-        } else if(state == ROBOT_ACTIVITY_STATE.moving) {
-            if (!checkEncoder(encoderAmount)){
+        } else if (state == RobotActivityState.MOVING) {
+            if (!checkEncoder(encoderAmount)) {
                 setLeftPow(.5);
                 setRightPow(-.5);
-            }else {
+            } else {
                 setLeftPow(0.0);
                 setRightPow(0.0);
             }
         }
-        telemetry.addData("Left: ", left.getCurrentPosition());
-        telemetry.addData("Right: ", right.getCurrentPosition());
+        telemetry.addData("Left", left.getCurrentPosition());
+        telemetry.addData("Right", right.getCurrentPosition());
     }
 
     public void stop(){

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by The Saminator on 06-29-2017.
  */
 @Autonomous(name = "ballsensor", group = "bepis")
-public  class SmolBotArm extends OpMode {
+public class SmolBotArm extends OpMode {
     DcMotor left, right, arm, hand;
     Servo grab;
     NormalizedColorSensor colorSensor;
@@ -34,6 +34,7 @@ public  class SmolBotArm extends OpMode {
 
 
     }
+
     public SmolBotArm() {
 
         // Initialize base classes.
@@ -45,14 +46,16 @@ public  class SmolBotArm extends OpMode {
         // All via self-construction.
 
     }
+
     @Override
     public void start() {
-       // if (colors.red/(colors.blue + colors.red + colors.green) == 0 || colors.green/(colors.blue + colors.red + colors.green) == 0 || colors.blue/(colors.blue + colors.red + colors.green) == 0)
-         //   stop();
+        // if (colors.red/(colors.blue + colors.red + colors.green) == 0 || colors.green/(colors.blue + colors.red + colors.green) == 0 || colors.blue/(colors.blue + colors.red + colors.green) == 0)
+        //   stop();
 
     }
+
     @Override
-    public void loop(){
+    public void loop() {
         colors = colorSensor.getNormalizedColors();
         double blue = colors.blue;
         double red = colors.red;
@@ -66,11 +69,11 @@ public  class SmolBotArm extends OpMode {
                 stop();
             setGrabPos(1);
         }
-        if (blue >= 0.4 && redRatio < blueRatio){
+        if (blue >= 0.4 && redRatio < blueRatio) {
             stop();
-        setGrabPos(-1);
-    }
-        if(blueAliance == false)
+            setGrabPos(-1);
+        }
+        if (blueAliance == false)
             if (redRatio >= 0.55 && redRatio > blueRatio) {
                 stop();
                 setGrabPos(-1);
@@ -81,20 +84,26 @@ public  class SmolBotArm extends OpMode {
         }
         right.setPower(1);
         left.setPower(1);
-        if(blueAliance == true)
-            if (red == 0 && redRatio * 1 > blueRatio)
+        if (blueAliance == true) {
+            if (red == 0 && redRatio * 1 > blueRatio) {
                 stop();
                 setGrabPos(1);
-            if (blue == 0 && redRatio * 1 < blueRatio)
+            }
+            if (blue == 0 && redRatio * 1 < blueRatio) {
                 stop();
                 setGrabPos(-1);
-        if(blueAliance == false)
-            if (red == 0 && redRatio * 1 > blueRatio)
+            }
+        }
+        if (blueAliance == false) {
+            if (red == 0 && redRatio * 1 > blueRatio) {
                 stop();
                 setGrabPos(-1);
-            if (blue == 0 && redRatio * 1 < blueRatio)
+            }
+            if (blue == 0 && redRatio * 1 < blueRatio) {
                 stop();
                 setGrabPos(1);
+            }
+        }
         telemetry.addData("alpha", colors.alpha);
         telemetry.addData("red Ratio", (colors.red / (colors.blue + colors.red + colors.green)));
         telemetry.addData("green Ratio", (colors.green / (colors.blue + colors.red + colors.green)));
@@ -113,6 +122,7 @@ public  class SmolBotArm extends OpMode {
     protected void setLeftPow(double pow) {
         left.setPower(pow * Constants.LEFT_SPEED);
     }
+
     protected void setRightPow(double pow) {
         right.setPower(pow * Constants.RIGHT_SPEED);
     }
