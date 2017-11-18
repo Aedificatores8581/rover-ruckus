@@ -10,25 +10,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 /*
  * Created by Mister-Minister-Master on 11/12/2017.
  */
-@TeleOp(name = "Solon Scrimmage TeleOp For Sensor Bot", group = "8581")
-public class SolonScrimmageTeleop extends OpMode {
-
-    private Gamepad prev1;
-    private Gamepad prev2;
-
+@TeleOp (name = "Solon Scrimmage TeleOp For Sensor Bot", group = "8581")
+public class SolonScrimmageTeleop extends OpMode{
 
     private DcMotor rearLeft, rearRight;
     private Servo glyphGrabberRight, glyphGrabberCenter, glyphGrabberLeft, ballSensorArm;
 
-    double position[] = new double[4];
-
-    /************
-     * Position for different servos:
-     * position[0] ----> glyphGrabberRight
-     * position[1] ----> glyphGrabberCenter
-     * position[2] ----> glyphGrabberLeft
-     * position[3] ----> ballSensorArm (Never used in TeleOp)
-     */
+    double position[] = new double[4]; /************
+                                        * Position for different servos:
+                                        * position[0] ----> glyphGrabberRight
+                                        * position[1] ----> glyphGrabberCenter
+                                        * position[2] ----> glyphGrabberLeft
+                                        * position[3] ----> ballSnsorArm (Never used in TeleOp)*/
 
     private abstract class SERVO_CONSTANTS {
 
@@ -44,9 +37,10 @@ public class SolonScrimmageTeleop extends OpMode {
     }
 
 
+
     ColorSensor colorSensor;
 
-    public void init() {
+    public void init(){
 
         rearLeft = hardwareMap.dcMotor.get("lm");
         rearRight = hardwareMap.dcMotor.get("rm");
@@ -64,9 +58,10 @@ public class SolonScrimmageTeleop extends OpMode {
         colorSensor = hardwareMap.colorSensor.get("cs");
 
 
+
     }
 
-    public void start() {
+    public void start(){
         glyphGrabberRight.setPosition(0.0);
         glyphGrabberCenter.setPosition(0.0);
         glyphGrabberLeft.setPosition(0.0);
@@ -74,6 +69,9 @@ public class SolonScrimmageTeleop extends OpMode {
     }
 
     public void loop() {
+        telemetry.clear();
+        telemetry.update();
+
         position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] = glyphGrabberRight.getPosition();
         position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] = glyphGrabberCenter.getPosition();
         position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] = glyphGrabberLeft.getPosition();
@@ -81,57 +79,77 @@ public class SolonScrimmageTeleop extends OpMode {
 
         if (Math.abs(gamepad1.left_stick_y) > .5) {
             setRightPow(gamepad1.left_stick_y * 1.2);
-        } else {
+        }else{
             setRightPow(0.0);
         }
-
-        if (Math.abs(gamepad1.right_stick_y) > .5) {
+        if (Math.abs(gamepad1.right_stick_y) > .5){
             setLeftPow(-gamepad1.right_stick_y * 1.2);
-        } else {
+        }else{
             setLeftPow(0.0);
         }
 
-        if (gamepad1.dpad_up) {
+        if (gamepad1.left_bumper){
             telemetry.addLine("Pressing up");
 
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
 
             glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
 
-        } else if (gamepad1.dpad_down) {
-            telemetry.addLine("Pressing down");
+        }
+        if (gamepad1.left_trigger > .5){
+            telemetry.addLine("Pressing trigger down");
 
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
 
             glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
 
+        }else if(gamepad1.left_bumper) {
+            telemetry.addLine("Pressing bumperdown");
+
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+
+            glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
+
         }
 
-        if (gamepad1.left_bumper) {
-            telemetry.addLine("Pressing left_bumper");
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            telemetry.addData("position[right]", position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
-            telemetry.addData("position[left]", position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-
-            glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
-            glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-        } else if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper){
             telemetry.addLine("Pressing right_bumper");
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
+
+            glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
+            telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+
+            glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+        } else if (gamepad1.right_trigger > .5){
+            telemetry.addLine("Pressing right_trigger");
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            telemetry.addData("position[right]", position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
-            telemetry.addData("position[left]", position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+            telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
 
             glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
             glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
         }
 
 
-        telemetry.addData("Right glyph: ", glyphGrabberRight.getPosition());
-        telemetry.addData("Center glyph: ", glyphGrabberCenter.getPosition());
-        telemetry.addData("Left glyph: ", glyphGrabberLeft.getPosition());
-        telemetry.addData("ball sensor: ", ballSensorArm.getPosition());
+
+        if(gamepad1.x){
+            position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+
+            ballSensorArm.setPosition(position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX]);
+        }else if(gamepad1.a){
+            position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+
+            ballSensorArm.setPosition(position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX]);
+        }
+
+
+        telemetry.addData("Right glyph: ",glyphGrabberRight.getPosition());
+        telemetry.addData("Center glyph: ",glyphGrabberCenter.getPosition());
+        telemetry.addData("Left glyph: ",glyphGrabberLeft.getPosition());
+        telemetry.addData("ball sensor: ",ballSensorArm.getPosition());
 
 
         //ballSensorArm.setPosition(position[SERVO_CONSTANTS.BALL_SENSOR_ARM_INDEX]);
@@ -141,7 +159,6 @@ public class SolonScrimmageTeleop extends OpMode {
     protected void setLeftPow(double pow) {
         rearLeft.setPower(pow * SmolBotTemplate.Constants.LEFT_SPEED);
     }
-
     protected void setRightPow(double pow) {
         rearRight.setPower(pow * SmolBotTemplate.Constants.RIGHT_SPEED);
     }
