@@ -100,17 +100,17 @@ public class BallSensorTest extends OpMode {
 
 
 
-        boolean redAliance = false;
-        grab.setPosition(0.385);
+                boolean redAliance = false;
+                grab.setPosition(0.385);
 //        if(blueRatio < 0.4 && redRatio < 0.55 && )
 
-        if(redAliance == true) {
-            if (redRatio >= 0.55 && redRatio > blueRatio) {
-                finger.setPosition(1.0);
+                if(redAliance == true) {
+                    if (redRatio >= 0.55 && redRatio > blueRatio) {
+                        finger.setPosition(1.0);
 
-            }
-            else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                finger.setPosition(0.0);
+                    }
+                    else if (blueRatio >= 0.4 && redRatio < blueRatio) {
+                        finger.setPosition(0.0);
             }
             else
                 finger.setPosition(0.6044444);

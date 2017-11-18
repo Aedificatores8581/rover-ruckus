@@ -109,25 +109,32 @@ public class SolonScrimmageTeleop extends OpMode{
         }else if (!gamepad1.dpad_down && !gamepad1.dpad_up){
         }
 
-        if (gamepad1.left_bumper){
+        if (gamepad1.right_bumper){
             telemetry.addLine("Pressing left_bumper");
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
             telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
 
-            glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
             glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-        } else if(gamepad1.right_bumper) {
-            telemetry.addLine("Pressing right_bumper");
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+        } else if (gamepad1.right_trigger > .5){
+            telemetry.addLine("Pressing left_bumper");
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-            telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
             telemetry.addData("position[left]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
 
-            glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
             glyphGrabberLeft.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_LEFT]);
-        }else if (!gamepad1.right_bumper && !gamepad1.left_bumper){
+        }
+
+        if(gamepad1.left_bumper) {
+            telemetry.addLine("Pressing right_bumper");
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
+
+            glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
+        } else if (gamepad1.left_trigger > .5){
+            telemetry.addLine("Pressing right_trigger");
+            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
+            telemetry.addData("position[right]",position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
+
+            glyphGrabberRight.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_RIGHT]);
         }
 
 
