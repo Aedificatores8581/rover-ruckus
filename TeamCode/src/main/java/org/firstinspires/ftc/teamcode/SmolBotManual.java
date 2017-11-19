@@ -130,6 +130,7 @@ public class SmolBotManual extends SmolBotTemplate
         telemetry.addData("Right Pow", right);
 
 
+
         telemetry.addData("a", colors.alpha);
         telemetry.addData("r", (colors.red / (colors.blue + colors.red + colors.green)));
         telemetry.addData("g", (colors.green / (colors.blue + colors.red + colors.green)));
