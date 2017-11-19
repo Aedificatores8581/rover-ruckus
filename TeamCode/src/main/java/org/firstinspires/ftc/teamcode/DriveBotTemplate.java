@@ -58,15 +58,16 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
 
     @Override
     public void init() {
-        leftFore = hardwareMap.dcMotor.get("lfm");
-        leftRear = hardwareMap.dcMotor.get("lrm");
-        rightFore = hardwareMap.dcMotor.get("rfm");
-        rightRear = hardwareMap.dcMotor.get("rrm");
+        //region Configuration section
+        leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
+        leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
+        rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
+        rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
         armMotor = hardwareMap.dcMotor.get("am");
         liftMtr1 = hardwareMap.dcMotor.get("lm1");
         liftMtr2 = hardwareMap.dcMotor.get("lm2");
 
-        relicGrabber = hardwareMap.servo.get("rg");
+        relicGrabber = hardwareMap.servo.get("rg"); // port 0
         relicGrabMover = hardwareMap.servo.get("rgm");
         armTilter = hardwareMap.servo.get("ts");
         jewelArm = hardwareMap.servo.get("ja");
@@ -78,6 +79,7 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         rightIntake2 = hardwareMap.crservo.get("ri2");
         leftIntake1 = hardwareMap.crservo.get("li1");
         leftIntake2 = hardwareMap.crservo.get("li2");
+        //endregion
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);

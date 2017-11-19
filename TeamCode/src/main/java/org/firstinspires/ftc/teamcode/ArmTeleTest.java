@@ -113,5 +113,5 @@ public class ArmTeleTest extends LinearOpMode {
         }
     }
 }
-    // Display the current value
+// Display the current value
 
