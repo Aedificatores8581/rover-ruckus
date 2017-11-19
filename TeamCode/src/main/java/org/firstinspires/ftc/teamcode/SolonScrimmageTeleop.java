@@ -89,22 +89,14 @@ public class SolonScrimmageTeleop extends OpMode{
         }
 
         if (gamepad1.left_bumper){
-            telemetry.addLine("Pressing up");
-
-            position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
-
-            glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
-
-        }
-        if (gamepad1.left_trigger > .5){
-            telemetry.addLine("Pressing trigger down");
+            telemetry.addLine("L1 Down");
 
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] -= SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
 
             glyphGrabberCenter.setPosition(position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER]);
 
-        }else if(gamepad1.left_bumper) {
-            telemetry.addLine("Pressing bumperdown");
+        }else if(gamepad1.left_trigger > .5) {
+            telemetry.addLine("L2 Down");
 
             position[SERVO_CONSTANTS.GLYPH_GRABBER_INDEX_CENTER] += SERVO_CONSTANTS.GRABBER_INCREMENT_VALUE;
 

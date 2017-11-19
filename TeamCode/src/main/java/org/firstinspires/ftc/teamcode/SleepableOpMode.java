@@ -14,7 +14,7 @@ public abstract class SleepableOpMode extends OpMode {
         private long timeGoal;
 
         public SleepableTask(int millisToWait) {
-            timeGoal = System.currentTimeMillis() - millisToWait;
+            timeGoal = System.currentTimeMillis() + millisToWait;
         }
 
         public long getTimeGoal() {

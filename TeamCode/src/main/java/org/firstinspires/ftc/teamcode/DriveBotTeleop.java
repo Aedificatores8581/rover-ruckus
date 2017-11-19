@@ -135,6 +135,14 @@ public class DriveBotTeleop extends DriveBotTemplate {
         }).run();
     }
 
+    protected void lowerJewelArm() {
+        jewelArm.setPosition(jewelArm.getPosition() + 0.2);
+    }
+
+    protected void raiseJewelArm() {
+        jewelArm.setPosition(jewelArm.getPosition() - 0.2);
+    }
+
     @Override
     public void loop() {
         setLeftPow(gamepad1.left_stick_y * speedMult);
@@ -179,9 +187,15 @@ public class DriveBotTeleop extends DriveBotTemplate {
         if (gamepad2.dpad_down && !prev2.dpad_down)
             retractArm();
 
+        if (gamepad2.a && !prev2.a)
+            lowerJewelArm();
+
+        if (gamepad2.y && !prev2.y)
+            raiseJewelArm();
+
         relicGrabMover.setPosition(relicGrabMover.getPosition() + (gamepad2.right_stick_y * 0.1));
 
-        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.1));
+        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.05));
 
         telemetry.addData("Arm extended", armExtended);
 
