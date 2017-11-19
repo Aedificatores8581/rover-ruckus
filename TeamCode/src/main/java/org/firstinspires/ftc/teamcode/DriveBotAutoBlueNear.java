@@ -106,6 +106,8 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
         }
 
         telemetry.addData("State", state.name());
+
+        super.loop();
     }
 
     enum State {
