@@ -18,12 +18,12 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp(name = "TestBot: Tele-Op", group = "the revolution never ends")
 
-public class RevBotTeleTest extends RevBotTemplate
-{
+public class RevBotTeleTest extends RevBotTemplate {
     // Define class members
-    Servo   servo;
-    double  s1position = 0;
-    double  s2position = 0;
+    Servo servo;
+    double s1position = 0;
+    double s2position = 0;
+
     //--------------------------------------------------------------------------
     //
     //
@@ -69,10 +69,11 @@ public class RevBotTeleTest extends RevBotTemplate
     // The system calls this member repeatedly while the OpMode is running.
     //--------
 
-    @Override public void loop () {
-        double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cyclE
-        double MAX_POS     =  1.0;     // Maximum rotational position
-        double MIN_POS     =  0.0;     // Minimum rotational position
+    @Override
+    public void loop() {
+        double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cyclE
+        double MAX_POS = 1.0;     // Maximum rotational position
+        double MIN_POS = 0.0;     // Minimum rotational position
 
         if (gamepad1.dpad_up)
             motor.setPower(-0.5);
@@ -82,27 +83,27 @@ public class RevBotTeleTest extends RevBotTemplate
             motor.setPower(0);
         if (gamepad1.left_stick_y > 0) {
             // Keep stepping up until we hit the max value.
-            s1position += INCREMENT ;
-            if (s1position >= MAX_POS ) {
+            s1position += INCREMENT;
+            if (s1position >= MAX_POS) {
                 s1position = MAX_POS;
             }
             s1.setPosition(s1position);
         }
-        if(gamepad1.left_stick_y < 0) {
+        if (gamepad1.left_stick_y < 0) {
             s1position -= INCREMENT;
             if (s1position <= MIN_POS) {
                 s1position = MIN_POS;
             }
             s1.setPosition(s1position);
         }
-        if(gamepad1.right_stick_y > 0) {
+        if (gamepad1.right_stick_y > 0) {
             s2position -= INCREMENT;
             if (s2position <= MIN_POS) {
                 s2position = MIN_POS;
             }
             s2.setPosition(s2position);
         }
-        if(gamepad1.right_stick_y < 0) {
+        if (gamepad1.right_stick_y < 0) {
             s2position -= INCREMENT;
             if (s2position <= MIN_POS) {
                 s2position = MIN_POS;
@@ -112,17 +113,17 @@ public class RevBotTeleTest extends RevBotTemplate
 
         //    sleep(20);
         //    idle();
-            telemetry.addData("Servo Position 1", s1.getPosition());
-            telemetry.addData("Status", "Running");
-            telemetry.addData("Servo Position 1", "%5.2f", s1.getPosition());
-            telemetry.addData("Servo Position 2", s2.getPosition());
-            telemetry.addData("Status", "Running");
-            telemetry.addData("Servo Position 2", "%5.2f", s2.getPosition());
-
-        }
-        // Display the current value
+        telemetry.addData("Servo Position 1", s1.getPosition());
+        telemetry.addData("Status", "Running");
+        telemetry.addData("Servo Position 1", "%5.2f", s1.getPosition());
+        telemetry.addData("Servo Position 2", s2.getPosition());
+        telemetry.addData("Status", "Running");
+        telemetry.addData("Servo Position 2", "%5.2f", s2.getPosition());
 
     }
+    // Display the current value
+
+}
 
 
- // PootisBotManual
+// PootisBotManual
