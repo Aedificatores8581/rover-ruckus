@@ -56,6 +56,11 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     CRServo leftIntake1, leftIntake2, rightIntake1, rightIntake2;
     Servo relicGrabber, relicGrabMover, armTilter, jewelArm, jewelFlipper, rightHinge, leftHinge;
 
+    protected int prevLeftForeEncr = 0;
+    protected int prevLeftRearEncr = 0;
+    protected int prevRightForeEncr = 0;
+    protected int prevRightRearEncr = 0;
+
     @Override
     public void init() {
         leftFore = hardwareMap.dcMotor.get("lfm");
@@ -150,10 +155,25 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftIntake2.setPower(pow);
     }
 
+    protected boolean checkLeftEncoder(int target) {
+        boolean fore = (Math.abs(leftFore.getCurrentPosition() - prevLeftForeEncr) >= target);
+        boolean rear = (Math.abs(leftRear.getCurrentPosition() - prevLeftRearEncr) >= target);
+        return fore || rear;
+    }
+
+    protected boolean checkRightEncoder(int target) {
+
+        boolean fore = (Math.abs(rightFore.getCurrentPosition() - prevRightForeEncr) >= target);
+        boolean rear = (Math.abs(rightRear.getCurrentPosition() - prevRightRearEncr) >= target);
+        return fore || rear;
+    }
+
     protected double getIntakePow() {
         return rightIntake1.getPower();
     }
 
+    //place value for ticks for right motor here
+    //place value for ticks  for left motor here
     protected boolean checkEncoder(int ticks) {
         int distance = Math.abs(ticks);
         int leftForeDist = Math.abs(leftFore.getCurrentPosition());
