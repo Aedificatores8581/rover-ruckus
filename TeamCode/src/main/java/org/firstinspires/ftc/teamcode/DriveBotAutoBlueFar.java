@@ -11,11 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-/**
- * Created by The Saminator on 11-12-2017.
- */
 @Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
-public class DriveBotAutoBlueNear extends DriveBotTemplate {
+public class DriveBotAutoBlueFar extends DriveBotTemplate {
 
     State state;
 
@@ -26,7 +23,7 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
-    int forLeftEncoder, forRightEncoder, backLeftEncoder, backRightEncoder, leftForwEnc, rightForwEnc;;
+    int forLeftEncoder= 0, forLeftLeftEnc, forLeftCentEnc, forLeftRightEnc, forRightEncoder = 0, forRightLeftEnc, forRightCentEnc, forRightRightEnc, backLeftEncoder, backLeftLeftEnc, backLeftCentEnc, backLeftRightEnc, backRightEncoder, backRightLeftEnc, backRightCentEnc, backRightRightEnc, leftForwEnc, rightForwEnc;;
     String column;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
@@ -35,6 +32,11 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
     public void start() {
         relicTrackables.activate();
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            telemetry.addData("Exception", e);
+        }
     }
 
     @Override
@@ -113,6 +115,13 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
+                if(checkLeftEncoder(forLeftEncoder) == true || checkRightEncoder(forRightEncoder) == true) {
+                    setLeftPow(speed);
+                    setRightPow(-speed);
+                }
+                //if the gyro sensor senses that a 90 degree turn has been made{
+                    setLeftPow(speed);
+                    setRightPow(speed);
                 //use the distance sensor to read one shelf
                     state = state.STATE_CRYPTOBOX_LEFT_SLOT;
 
@@ -135,19 +144,19 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
                     state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                    setLeftPow(adjustLeftSpeed);
-                    setRightPow(adjustRightSpeed);
-                    if (checkLeftEncoder((backLeftEncoder + forLeftEncoder / 2)) == true || checkRightEncoder((backRightEncoder + forRightEncoder / 2)) == true ) {
-                        setLeftPow(speed);
-                        setRightPow(speed);
-                        //(if the gyroscope senses that a 90 degree turn has been made){
-                            setLeftPow(speed);
-                            setRightPow(speed);
-                            if(checkLeftEncoder(leftForwEnc) || checkRightEncoder(rightForwEnc)){
-                                //dispense the glyph
-                                state = State.STATE_END;
-                            }
-                        //}
+                setLeftPow(adjustLeftSpeed);
+                setRightPow(adjustRightSpeed);
+                if (checkLeftEncoder(backLeftEncoder) == true || checkRightEncoder((backRightEncoder)) == true ) {
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    //(if the gyroscope senses that a 90 degree turn has been made){
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    if(checkLeftEncoder(leftForwEnc) || checkRightEncoder(rightForwEnc)){
+                        //dispense the glyph
+                        state = State.STATE_END;
+                    }
+                    //}
                 }
                 break;
             // TODO: Implement collection of additional glyphs?
