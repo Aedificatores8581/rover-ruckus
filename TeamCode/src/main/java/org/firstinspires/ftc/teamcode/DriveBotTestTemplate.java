@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by The Saminator on 06-29-2017.
+ * Conjured into existence by The Saminator on 06-29-2017.
  */
 public abstract class DriveBotTestTemplate extends SleepableOpMode {
 

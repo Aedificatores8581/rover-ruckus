@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 /**
- * Created by The Saminator on 10-01-2017.
+ * Conjured into existence by The Saminator on 10-01-2017.
  */
 @TeleOp(name = "DriveBot Test Tele-Op", group = "this is a test")
 public class DriveBotTestTeleop extends DriveBotTestTemplate {

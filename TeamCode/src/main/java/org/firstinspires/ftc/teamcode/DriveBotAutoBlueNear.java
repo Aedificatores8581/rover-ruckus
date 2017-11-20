@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
- * Created by The Saminator on 11-12-2017.
+ * Conjured into existence by The Saminator on 11-12-2017.
  */
 @Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
 public class DriveBotAutoBlueNear extends DriveBotTemplate {
@@ -26,7 +26,7 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
-    String column;
+    CryptoboxColumn column;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
 
@@ -71,15 +71,15 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
                     case LEFT:
                         //state = ROBOT_ACTIVITY_STATE.moving;
                         //encoderAmount = 8000;
-                        column = "Left";
+                        column = CryptoboxColumn.LEFT;
                         break;
                     case CENTER:
 
-                        column = "Center";
+                        column = CryptoboxColumn.CENTER;
                         break;
                     case RIGHT:
 
-                        column = "Right";
+                        column = CryptoboxColumn.RIGHT;
                         break;
                     default:
                         break;
@@ -118,40 +118,40 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
                 setLeftPow(speed);
                 setRightPow(speed);
                 //use the distance sensor to read one shelf
-                    state = state.STATE_CRYPTOBOX_LEFT_SLOT;
+                state = state.STATE_CRYPTOBOX_LEFT_SLOT;
 
 
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if(column == "Left")
+                if (column == CryptoboxColumn.LEFT)
                     state = State.STATE_DISPENSE_GLYPH;
                 else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if(column == "Center")
+                if (column == CryptoboxColumn.CENTER)
                     state = State.STATE_DISPENSE_GLYPH;
                 else
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if(column == "Right")
+                if (column == CryptoboxColumn.RIGHT)
                     state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                    setLeftPow(adjustLeftSpeed);
-                    setRightPow(adjustRightSpeed);
-                    if (checkLeftEncoder(50 /* placeholder value */) == true || checkRightEncoder(50 /* placeholder value */) == true ) {
-                        setLeftPow(speed);
-                        setRightPow(speed);
-                        //(if the gyroscope senses that a 90 degree turn has been made){
-                            setLeftPow(speed);
-                            setRightPow(speed);
-                            if(checkLeftEncoder(50 /* placeholder value */) || checkRightEncoder(50 /* placeholder value */)){
-                                //dispense the glyph
-                                state = State.STATE_END;
-                            }
-                        //}
+                setLeftPow(adjustLeftSpeed);
+                setRightPow(adjustRightSpeed);
+                if (checkLeftEncoder(50 /* placeholder value */) == true || checkRightEncoder(50 /* placeholder value */) == true) {
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    // if (the gyroscope senses that a 90 degree turn has been made) {
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    if (checkLeftEncoder(50 /* placeholder value */) || checkRightEncoder(50 /* placeholder value */)) {
+                        //dispense the glyph
+                        state = State.STATE_END;
+                    }
+                    //}
                 }
                 break;
             // TODO: Implement collection of additional glyphs?

@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
- * Created by The Saminator on 06-29-2017.
+ * Conjured into existence by The Saminator on 06-29-2017.
  */
 public abstract class DriveBotTemplate extends SleepableOpMode {
 
