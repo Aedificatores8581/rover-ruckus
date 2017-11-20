@@ -37,12 +37,13 @@ public abstract class SleepableOpMode extends OpMode {
 
     @Override
     public void loop() {
-        for (;;) {
-            SleepableTask task = tasks.get(0);
-            if (System.currentTimeMillis() <= task.getTimeGoal())
-                break;
-            task.run();
-            tasks.remove(0);
-        }
+        if (tasks.size() > 0)
+            for (;;) {
+                SleepableTask task = tasks.get(0);
+                if (System.currentTimeMillis() <= task.getTimeGoal())
+                    break;
+                task.run();
+                tasks.remove(0);
+            }
     }
 }

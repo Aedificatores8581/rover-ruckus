@@ -26,7 +26,6 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
-    int forLeftEncoder, forLeftLeftEnc, forLeftCentEnc, forLeftRightEnc, forRightEncoder, forRightLeftEnc, forRightCentEnc, forRightRightEnc, backLeftEncoder, backLeftLeftEnc, backLeftCentEnc, backLeftRightEnc, backRightEncoder, backRightLeftEnc, backRightCentEnc, backRightRightEnc, leftForwEnc, rightForwEnc;;
     String column;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
@@ -142,13 +141,13 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
             case STATE_DISPENSE_GLYPH:
                     setLeftPow(adjustLeftSpeed);
                     setRightPow(adjustRightSpeed);
-                    if (checkLeftEncoder((backLeftEncoder + forLeftEncoder / 2)) == true || checkRightEncoder((backRightEncoder + forRightEncoder / 2)) == true ) {
+                    if (checkLeftEncoder(50 /* placeholder value */) == true || checkRightEncoder(50 /* placeholder value */) == true ) {
                         setLeftPow(speed);
                         setRightPow(speed);
                         //(if the gyroscope senses that a 90 degree turn has been made){
                             setLeftPow(speed);
                             setRightPow(speed);
-                            if(checkLeftEncoder(leftForwEnc) || checkRightEncoder(rightForwEnc)){
+                            if(checkLeftEncoder(50 /* placeholder value */) || checkRightEncoder(50 /* placeholder value */)){
                                 //dispense the glyph
                                 state = State.STATE_END;
                             }

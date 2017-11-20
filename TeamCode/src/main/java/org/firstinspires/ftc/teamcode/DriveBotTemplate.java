@@ -164,7 +164,6 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     }
 
     protected boolean checkRightEncoder(int target) {
-
         boolean fore = (Math.abs(rightFore.getCurrentPosition() - prevRightForeEncr) >= target);
         boolean rear = (Math.abs(rightRear.getCurrentPosition() - prevRightRearEncr) >= target);
         return fore || rear;
@@ -175,7 +174,7 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     }
 
     //place value for ticks for right motor here
-    //place value for ticks  for left motor here
+    //place value for ticks for left motor here
     protected boolean checkEncoder(int ticks) {
         int distance = Math.abs(ticks);
         int leftForeDist = Math.abs(leftFore.getCurrentPosition());
