@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /*
  * Created by Mister-Minister-Master on 11/12/2017.
  */
+@Disabled
 @TeleOp(name = "Solon Scrimmage TeleOp For Sensor Bot", group = "8581")
 public class SolonScrimmageTeleop extends OpMode {
 

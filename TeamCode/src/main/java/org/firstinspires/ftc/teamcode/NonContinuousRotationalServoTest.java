@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Non Continuous Servo Test", group = "8581")
 
+@Disabled
 public class NonContinuousRotationalServoTest extends OpMode {
     Servo servo;
     double INCREMENT = 0.005;     // amount to slew servo each CYCLE_MS cyclE

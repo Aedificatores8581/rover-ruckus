@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -24,6 +25,7 @@ import java.util.Locale;
  * @author Pootis Man
  */
 @Autonomous(name = "SensorBot: Telemetry", group = "feelz")
+@Disabled
 public class SensorBotTelemetry extends SensorBotTemplate {
 
     Orientation angles;

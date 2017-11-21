@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
  * Created by Mister-Minister-Master on 11/1/2017.
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,7 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  *      3. If the same variable is set to PicutreState.RIGHT, then it will move (X + 3 times a constant)encoder ticks
  */
 
-@TeleOp(name = "SensorBot: Vuforia Test", group = "anti-bepis")
+@TeleOp(name = "SensorBot: Vuforia Test", group = "pro-bepis")
+@Disabled
 public class PictureDetectionTest extends OpMode {
 
     private VuforiaLocalizer vuforia;

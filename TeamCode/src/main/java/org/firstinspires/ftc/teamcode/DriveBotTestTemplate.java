@@ -30,8 +30,7 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
     DcMotor relicArm;
-    Servo jewelArm, jewelFlipper, relicHand;
-    CRServo relicFingers;
+    Servo jewelArm, jewelFlipper, relicHand, relicFingers;
 
     ColorSensor color;
 
@@ -48,7 +47,7 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
 
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
-        relicFingers = hardwareMap.crservo.get("rf");
+        relicFingers = hardwareMap.servo.get("rf");
 
         color = hardwareMap.colorSensor.get("jcolor");
         //endregion

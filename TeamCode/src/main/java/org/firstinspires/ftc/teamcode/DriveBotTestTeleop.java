@@ -60,19 +60,16 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         else
             jewelFlipper.setPosition(0.5);
 
-        if (gamepad2.a && !gamepad1.a) {
-            if (relicHand.getPosition() > 0.5)
-                relicHand.setPosition(0.25);
-            else
-                relicHand.setPosition(0.75);
-        }
+        if (gamepad2.a && !gamepad1.a)
+            relicHand.setPosition(relicHand.getPosition() + 0.05);
+
+        if (gamepad2.b && !gamepad1.b)
+            relicHand.setPosition(relicHand.getPosition() + 0.05);
 
         if (gamepad2.left_bumper && !prev2.left_bumper)
-            relicFingers.setPower(0.35);
+            relicFingers.setPosition(relicFingers.getPosition() + 0.05);
         else if (gamepad2.right_bumper && !prev2.right_bumper)
-            relicFingers.setPower(-0.35);
-        else
-            relicFingers.setPower(0.0);
+            relicFingers.setPosition(relicFingers.getPosition() - 0.05);
 
         telemetry.addData("Arm extended", armExtended);
 
@@ -84,6 +81,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
         telemetry.addData("Jewel Flip. Pos.", jewelFlipper.getPosition());
         telemetry.addData("Relic Hand Pos.", relicHand.getPosition());
+        telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
 
         telemetry.addData("Color Sensor RGB", "[" + color.red() + "," + color.green() + "," + color.blue() + "]");
 
