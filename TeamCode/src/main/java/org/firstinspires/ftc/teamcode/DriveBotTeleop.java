@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by The Saminator on 10-01-2017.
+ * Conjured into existence by The Saminator on 10-01-2017.
  */
 @TeleOp(name = "Tele-Op", group = "actually not a test")
 public class DriveBotTeleop extends DriveBotTemplate {

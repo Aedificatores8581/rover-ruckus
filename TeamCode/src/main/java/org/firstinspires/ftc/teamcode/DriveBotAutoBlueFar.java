@@ -23,8 +23,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
-    int forLeftEncoder= 0, forRightEncoder = 0, backLeftEncoder, backRightEncoder, leftForwEnc, rightForwEnc;;
-    String column;
+    CryptoboxColumn column;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
 
@@ -69,15 +68,15 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
                     case LEFT:
                         //state = ROBOT_ACTIVITY_STATE.moving;
                         //encoderAmount = 8000;
-                        column = "Left";
+                        column = CryptoboxColumn.LEFT;
                         break;
                     case CENTER:
 
-                        column = "Center";
+                        column = CryptoboxColumn.CENTER;
                         break;
                     case RIGHT:
 
-                        column = "Right";
+                        column = CryptoboxColumn.RIGHT;
                         break;
                     default:
                         break;
@@ -89,7 +88,6 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
                 jewelArm.setPosition(armPosition);
                 break;
             case STATE_SCAN_JEWEL:
-                NormalizedRGBA colors = colorSensor.getNormalizedColors();
                 if (redRatio >= redColor && redRatio > blueRatio)
                     state = State.STATE_HIT_RIGHT_JEWEL;
                     //this could be state = State.STATE_HIT_LEFT_JEWEL; depending on what side the color sensor is facing
@@ -115,7 +113,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if(checkLeftEncoder(forLeftEncoder) == true || checkRightEncoder(forRightEncoder) == true) {
+                if(checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/)) {
                     setLeftPow(speed);
                     setRightPow(-speed);
                 }
@@ -128,31 +126,33 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
 
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if(column == "Left")
+                // TODO: check for cryptobox divider thingy using distance sensor
+                if(column == CryptoboxColumn.LEFT)
                     state = State.STATE_DISPENSE_GLYPH;
                 else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if(column == "Center")
+                // TODO: check for cryptobox divider thingy using distance sensor
+                if(column == CryptoboxColumn.CENTER)
                     state = State.STATE_DISPENSE_GLYPH;
                 else
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if(column == "Right")
-                    state = State.STATE_DISPENSE_GLYPH;
+                // TODO: check for cryptobox divider thingy using distance sensor
+                state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(backLeftEncoder) == true || checkRightEncoder((backRightEncoder)) == true ) {
+                if (checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/) ) {
                     setLeftPow(speed);
                     setRightPow(speed);
                     //(if the gyroscope senses that a 90 degree turn has been made){
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if(checkLeftEncoder(leftForwEnc) || checkRightEncoder(rightForwEnc)){
+                    if(checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/)){
                         //dispense the glyph
                         state = State.STATE_END;
                     }
