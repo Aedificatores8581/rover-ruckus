@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Conjured into existence by The Saminator on 10-01-2017.
  */
 @TeleOp(name = "Tele-Op", group = "actually not a test")
+@Disabled
 public class DriveBotTeleop extends DriveBotTemplate {
     private Gamepad prev1;
     private Gamepad prev2;

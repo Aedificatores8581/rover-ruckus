@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
 @TeleOp(name = "ballSensorTele", group = "bepis")
+@Disabled
 public class BallSensorTele extends OpMode {
     DcMotor left, right, motor;
     Servo grab, finger, s1, s2;

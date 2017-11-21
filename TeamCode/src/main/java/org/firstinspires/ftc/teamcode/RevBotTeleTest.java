@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp(name = "TestBot: Tele-Op", group = "the revolution never ends")
 
+@Disabled
 public class RevBotTeleTest extends RevBotTemplate {
     // Define class members
     Servo servo;

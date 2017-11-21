@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by The Saminator on 06-29-2017.
  */
 @Autonomous(name = "ballsensor", group = "bepis")
+@Disabled
 public class SmolBotArm extends OpMode {
     DcMotor left, right, arm, hand;
     Servo grab;
