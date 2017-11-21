@@ -23,7 +23,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
-    int forLeftEncoder= 0, forLeftLeftEnc, forLeftCentEnc, forLeftRightEnc, forRightEncoder = 0, forRightLeftEnc, forRightCentEnc, forRightRightEnc, backLeftEncoder, backLeftLeftEnc, backLeftCentEnc, backLeftRightEnc, backRightEncoder, backRightLeftEnc, backRightCentEnc, backRightRightEnc, leftForwEnc, rightForwEnc;;
+    int forLeftEncoder= 0, forRightEncoder = 0, backLeftEncoder, backRightEncoder, leftForwEnc, rightForwEnc;;
     String column;
     NormalizedColorSensor colorSensor;
     NormalizedRGBA colors;
