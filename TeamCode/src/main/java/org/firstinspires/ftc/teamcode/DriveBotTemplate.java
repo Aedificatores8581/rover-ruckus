@@ -70,10 +70,10 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
-        armMotor = hardwareMap.dcMotor.get("am");
-        liftMtr1 = hardwareMap.dcMotor.get("lm1");
+        armMotor = hardwareMap.dcMotor.get("ra");
+/*        liftMtr1 = hardwareMap.dcMotor.get("lm1");
         liftMtr2 = hardwareMap.dcMotor.get("lm2");
-
+*/
         colors = colorSensor.getNormalizedColors();
 
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "JColor");
