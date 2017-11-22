@@ -12,9 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
-
-public class DriveBotAutoBlueFar extends DriveBotTemplate {
+@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
+@Disabled
+public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     State state;
 
@@ -24,8 +24,8 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
-    int encToDispenseL = 0, encToAdjustL = 0, encToDismountL = 0, encToDispenseR = 0, encToAdjustR = 0, encToDismountR = 0;
+    double redColor = 0, blueColor = 0, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
+    int encToDispense = 0, encToAdjust = 0, encToDismount = 0, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
     CryptoboxColumn column;
 
 
@@ -58,9 +58,9 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
 
     @Override
     public void loop() {
-        colors = colorSensor.getNormalizedColors();
-        double redRatio = colors.red / (colors.red + colors.blue + colors.green);
-        double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
+        // colors = colorSensor.getNormalizedColors(); // TODO: uncomment when color sensor is attached.
+        // double redRatio = colors.red / (colors.red + colors.blue + colors.green); // TODO: uncomment when color sensor is attached.
+        // double blueRatio = colors.blue / (colors.red + colors.blue + colors.green); // TODO: uncomment when color sensor is attached.
         switch (state) {
             case STATE_SCAN_KEY:
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -85,24 +85,20 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
                     state = State.STATE_LOWER_JEWEL_ARM;
                 break;
             case STATE_LOWER_JEWEL_ARM:
-                jewelArm.setPosition(0.423 + .17);
+                jewelArm.setPosition(0.25);
                 break;
             case STATE_SCAN_JEWEL:
-                if (redRatio >= redColor && redRatio > blueRatio)
+                if (redRatio >= redColor && redRatio > blueRatio) // TODO: uncomment when color sensor is attached.
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                    //this could be state = State.STATE_HIT_LEFT_JEWEL; depending on what side the color sensor is facing
                 else if (blueRatio >= blueColor && redRatio < blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                //this could be state = State.STATE_HIT_RIGHT_JEWEL; depending on what side the color sensor is facing
                 break;
             case STATE_HIT_LEFT_JEWEL:
-                jewelFlipper.setPosition(1.0);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
+                jewelFlipper.setPosition(0.95);
                 state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
-                jewelFlipper.setPosition(0);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
+                jewelFlipper.setPosition(0.05);
                 state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
@@ -113,52 +109,51 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if(checkLeftEncoder(encToDismountL /* placeholder value*/) || checkRightEncoder(encToDismountR /* placeholder value*/)) {
+                if (checkEncoder(encToDismount /* placeholder value*/)) {
                     setLeftPow(speed);
                     setRightPow(-speed);
                 }
                 //if the gyro sensor senses that a 90 degree turn has been made{
-                    setLeftPow(speed);
-                    setRightPow(speed);
-                //use the distance sensor to read one shelf
-                    state = state.STATE_CRYPTOBOX_LEFT_SLOT;
+                setLeftPow(speed);
+                setRightPow(speed);
+                state = state.STATE_CRYPTOBOX_LEFT_SLOT;
 
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                // TODO: check for cryptobox divider thingy using distance sensor
-                if(column == CryptoboxColumn.LEFT)
-                    state = State.STATE_DISPENSE_GLYPH;
-                else
-                    state = State.STATE_CRYPTOBOX_CENTER_SLOT;
+                if (checkEncoder(encToArriveAtCryptobox)) {
+                    if (column == CryptoboxColumn.LEFT)
+                        state = State.STATE_DISPENSE_GLYPH;
+                    else
+                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
+                }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                // TODO: check for cryptobox divider thingy using distance sensor
-                if(column == CryptoboxColumn.CENTER)
-                    state = State.STATE_DISPENSE_GLYPH;
-                else
-                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
+                if (checkEncoder(encToMoveToNextColumn)) {
+                    if (column == CryptoboxColumn.CENTER)
+                        state = State.STATE_DISPENSE_GLYPH;
+                    else
+                        state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
+                }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                // TODO: check for cryptobox divider thingy using distance sensor
-                state = State.STATE_DISPENSE_GLYPH;
+                if (checkEncoder(encToMoveToNextColumn))
+                    state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(encToAdjustL /* placeholder value*/) || checkRightEncoder(encToAdjustR /* placeholder value*/) ) {
+                if (checkEncoder(encToAdjust /* placeholder value*/)) {
                     setLeftPow(speed);
                     setRightPow(speed);
-                    //(if the gyroscope senses that a 90 degree turn has been made){
+                    // if (the gyroscope senses that a 90 degree turn has been made) {
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if(checkLeftEncoder(encToDispenseL /* placeholder value*/) || checkRightEncoder(encToDispenseR /* placeholder value*/)){
+                    if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
                         //dispense the glyph
                         state = State.STATE_END;
                     }
-                    //}
+                    // }
                 }
-
-
                 break;
             // TODO: Implement collection of additional glyphs?
             case STATE_END:
@@ -168,12 +163,12 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
 
         telemetry.addData("State", state.name());
 
-        super.loop();
         telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
         telemetry.addData("Jewel Flip. Pos.", jewelFlipper.getPosition());
-        telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]");
+        // telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]"); // TODO: uncomment when color sensor is attached.
 
     }
+
     enum State {
         STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
@@ -188,9 +183,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
         STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
         // TODO: Collect more glyph and dispense them to the cryptobox?
         STATE_END // Ends when the universe dies.
-
     }
-
 
 
 }

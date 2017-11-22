@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Conjured into existence by The Saminator on 06-29-2017.
  */
-public abstract class DriveBotTestTemplate extends SleepableOpMode {
+public abstract class DriveBotTestTemplate extends OpMode {
 
     MediaPlayer wilhelmScream;
 
@@ -121,8 +122,8 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
         int rightRearDist = Math.abs(rightRear.getCurrentPosition());
 
         return (distance <= leftForeDist)
-                || (distance <= leftRearDist)
-                || (distance <= rightForeDist)
-                || (distance <= rightRearDist);
+            || (distance <= leftRearDist)
+            || (distance <= rightForeDist)
+            || (distance <= rightRearDist);
     }
 }
