@@ -143,13 +143,13 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(50 /* placeholder value */) == true || checkRightEncoder(50 /* placeholder value */) == true) {
+                if (checkLeftEncoder(50 /* TODO: placeholder value */) == true || checkRightEncoder(50 /* TODO: placeholder value */) == true) {
                     setLeftPow(speed);
                     setRightPow(speed);
                     // if (the gyroscope senses that a 90 degree turn has been made) {
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if (checkLeftEncoder(50 /* placeholder value */) || checkRightEncoder(50 /* placeholder value */)) {
+                    if (checkLeftEncoder(50 /* TODO: placeholder value */) || checkRightEncoder(50 /* TODO: placeholder value */)) {
                         //dispense the glyph
                         state = State.STATE_END;
                     }

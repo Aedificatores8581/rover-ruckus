@@ -115,7 +115,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if(checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/)) {
+                if(checkLeftEncoder(100 /* TODO: placeholder value*/) || checkRightEncoder(100 /* TODO: placeholder value*/)) {
                     setLeftPow(speed);
                     setRightPow(-speed);
                 }
@@ -148,13 +148,13 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/) ) {
+                if (checkLeftEncoder(100 /* TODO: placeholder value*/) || checkRightEncoder(100 /* TODO: placeholder value*/) ) {
                     setLeftPow(speed);
                     setRightPow(speed);
                     //(if the gyroscope senses that a 90 degree turn has been made){
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if(checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/)){
+                    if(checkLeftEncoder(100 /* TODO: placeholder value*/) || checkRightEncoder(100 /* TODO: placeholder value*/)){
                         //dispense the glyph
                         state = State.STATE_END;
                     }

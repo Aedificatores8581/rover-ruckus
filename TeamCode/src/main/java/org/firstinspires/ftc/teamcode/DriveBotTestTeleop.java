@@ -48,10 +48,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             toggleSpeed();
 
         if (gamepad1.dpad_down && !prev1.dpad_down)
-            jewelArm.setPosition(jewelArm.getPosition() + 0.2);
+            jewelArm.setPosition(jewelArm.getPosition() + 0.05);
 
         if (gamepad1.dpad_up && !prev1.dpad_up)
-            jewelArm.setPosition(jewelArm.getPosition() - 0.2);
+            jewelArm.setPosition(jewelArm.getPosition() - 0.05);
 
         if (gamepad1.dpad_left && !prev1.dpad_left)
             jewelFlipper.setPosition(0.2);
@@ -72,6 +72,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingers.setPosition(relicFingers.getPosition() - 0.05);
 
         telemetry.addData("Arm extended", armExtended);
+
+        telemetry.addData("Left front power", leftFore.getPower());
+        telemetry.addData("Left back power", leftRear.getPower());
+        telemetry.addData("Right front power", rightFore.getPower());
+        telemetry.addData("Right back power", rightRear.getPower());
 
         telemetry.addData("Left front encoder", leftFore.getCurrentPosition());
         telemetry.addData("Left back encoder", leftRear.getCurrentPosition());

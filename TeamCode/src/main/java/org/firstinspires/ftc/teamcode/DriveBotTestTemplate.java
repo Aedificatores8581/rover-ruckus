@@ -22,8 +22,8 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
 
-        public static final double LEFT_FORE_SPEED = 1.0;
-        public static final double LEFT_REAR_SPEED = 1.0;
+        public static final double LEFT_FORE_SPEED = -1.0;
+        public static final double LEFT_REAR_SPEED = -1.0;
         public static final double RIGHT_FORE_SPEED = 1.0;
         public static final double RIGHT_REAR_SPEED = 1.0;
     }
