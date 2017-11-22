@@ -12,11 +12,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-/**
+/*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
 @Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
-@Disabled
+
 public class DriveBotAutoBlueNear extends DriveBotTemplate {
 
     State state;
@@ -27,11 +27,9 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
+    double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed = 0, adjustRightSpeed = 0;
+    int encToDispenseL = 0, encToAdjustL = 0, encToDispenseR = 0, encToAdjustR ;
     CryptoboxColumn column;
-    NormalizedColorSensor colorSensor;
-    NormalizedRGBA colors;
-
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
         relicTrackables.activate();
@@ -143,13 +141,13 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(50 /* placeholder value */) == true || checkRightEncoder(50 /* placeholder value */) == true) {
+                if (checkLeftEncoder(encToAdjustL /* placeholder value */) == true || checkRightEncoder(encToAdjustR /* placeholder value */) == true) {
                     setLeftPow(speed);
                     setRightPow(speed);
                     // if (the gyroscope senses that a 90 degree turn has been made) {
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if (checkLeftEncoder(50 /* placeholder value */) || checkRightEncoder(50 /* placeholder value */)) {
+                    if (checkLeftEncoder(encToDispenseL /* placeholder value */) || checkRightEncoder(encToDispenseR /* placeholder value */)) {
                         //dispense the glyph
                         state = State.STATE_END;
                     }

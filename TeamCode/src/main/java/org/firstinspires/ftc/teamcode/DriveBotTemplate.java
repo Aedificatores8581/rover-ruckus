@@ -55,7 +55,9 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     // List motor 2 is for dispensing the glyph onto the cryptobox.
     CRServo leftIntake1, leftIntake2, rightIntake1, rightIntake2;
     Servo relicGrabber, relicGrabMover, armTilter, jewelArm, jewelFlipper, rightHinge, leftHinge;
+    NormalizedRGBA colors;
 
+    NormalizedColorSensor colorSensor;
     protected int prevLeftForeEncr = 0;
     protected int prevLeftRearEncr = 0;
     protected int prevRightForeEncr = 0;
@@ -71,6 +73,10 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         armMotor = hardwareMap.dcMotor.get("am");
         liftMtr1 = hardwareMap.dcMotor.get("lm1");
         liftMtr2 = hardwareMap.dcMotor.get("lm2");
+
+        colors = colorSensor.getNormalizedColors();
+
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "JColor");
 
         relicGrabber = hardwareMap.servo.get("rg"); // port 0
         relicGrabMover = hardwareMap.servo.get("rgm");

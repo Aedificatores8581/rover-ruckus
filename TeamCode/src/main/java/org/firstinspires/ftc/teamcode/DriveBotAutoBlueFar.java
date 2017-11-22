@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
-@Disabled
+@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
+
 public class DriveBotAutoBlueFar extends DriveBotTemplate {
 
     State state;
@@ -25,9 +25,9 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed, adjustRightSpeed;
+    int encToDispenseL = 0, encToAdjustL = 0, encToDismountL = 0, encToDispenseR = 0, encToAdjustR = 0, encToDismountR = 0;
     CryptoboxColumn column;
-    NormalizedColorSensor colorSensor;
-    NormalizedRGBA colors;
+
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -54,8 +54,6 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
-
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "cs");
     }
 
     @Override
@@ -87,7 +85,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
                     state = State.STATE_LOWER_JEWEL_ARM;
                 break;
             case STATE_LOWER_JEWEL_ARM:
-                jewelArm.setPosition(armPosition);
+                jewelArm.setPosition(0.423 + .17);
                 break;
             case STATE_SCAN_JEWEL:
                 if (redRatio >= redColor && redRatio > blueRatio)
@@ -115,7 +113,7 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if(checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/)) {
+                if(checkLeftEncoder(encToDismountL /* placeholder value*/) || checkRightEncoder(encToDismountR /* placeholder value*/)) {
                     setLeftPow(speed);
                     setRightPow(-speed);
                 }
@@ -124,7 +122,6 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
                     setRightPow(speed);
                 //use the distance sensor to read one shelf
                     state = state.STATE_CRYPTOBOX_LEFT_SLOT;
-
 
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
@@ -148,18 +145,20 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/) ) {
+                if (checkLeftEncoder(encToAdjustL /* placeholder value*/) || checkRightEncoder(encToAdjustR /* placeholder value*/) ) {
                     setLeftPow(speed);
                     setRightPow(speed);
                     //(if the gyroscope senses that a 90 degree turn has been made){
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if(checkLeftEncoder(100 /* placeholder value*/) || checkRightEncoder(100 /* placeholder value*/)){
+                    if(checkLeftEncoder(encToDispenseL /* placeholder value*/) || checkRightEncoder(encToDispenseR /* placeholder value*/)){
                         //dispense the glyph
                         state = State.STATE_END;
                     }
                     //}
                 }
+
+
                 break;
             // TODO: Implement collection of additional glyphs?
             case STATE_END:
@@ -170,8 +169,11 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
         telemetry.addData("State", state.name());
 
         super.loop();
-    }
+        telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
+        telemetry.addData("Jewel Flip. Pos.", jewelFlipper.getPosition());
+        telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]");
 
+    }
     enum State {
         STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
@@ -186,6 +188,9 @@ public class DriveBotAutoBlueFar extends DriveBotTemplate {
         STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
         // TODO: Collect more glyph and dispense them to the cryptobox?
         STATE_END // Ends when the universe dies.
+
     }
+
+
 
 }
