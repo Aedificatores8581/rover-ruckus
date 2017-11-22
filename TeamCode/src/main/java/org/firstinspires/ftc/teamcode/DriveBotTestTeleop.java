@@ -83,7 +83,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Relic Hand Pos.", relicHand.getPosition());
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
 
-        telemetry.addData("Color Sensor RGB", "[" + color.red() + "," + color.green() + "," + color.blue() + "]");
+        telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
+
 
         try {
             prev1.copy(gamepad1);

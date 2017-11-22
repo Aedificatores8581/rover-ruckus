@@ -7,6 +7,8 @@ import android.os.Looper;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -32,7 +34,13 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
     DcMotor relicArm;
     Servo jewelArm, jewelFlipper, relicHand, relicFingers;
 
-    ColorSensor color;
+    NormalizedRGBA colors;
+
+    NormalizedColorSensor colorSensor;
+    protected int prevLeftForeEncr = 0;
+    protected int prevLeftRearEncr = 0;
+    protected int prevRightForeEncr = 0;
+    protected int prevRightRearEncr = 0;
 
     @Override
     public void init() {
@@ -49,7 +57,9 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
 
-        color = hardwareMap.colorSensor.get("jcolor");
+        colors = colorSensor.getNormalizedColors();
+
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
@@ -92,7 +102,17 @@ public abstract class DriveBotTestTemplate extends SleepableOpMode {
         rightFore.setPower(pow * Constants.RIGHT_FORE_SPEED);
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
     }
+    protected boolean checkLeftEncoder(int target) {
+        boolean fore = (Math.abs(leftFore.getCurrentPosition() - prevLeftForeEncr) >= target);
+        boolean rear = (Math.abs(leftRear.getCurrentPosition() - prevLeftRearEncr) >= target);
+        return fore || rear;
+    }
 
+    protected boolean checkRightEncoder(int target) {
+        boolean fore = (Math.abs(rightFore.getCurrentPosition() - prevRightForeEncr) >= target);
+        boolean rear = (Math.abs(rightRear.getCurrentPosition() - prevRightRearEncr) >= target);
+        return fore || rear;
+    }
     protected boolean checkEncoder(int ticks) {
         int distance = Math.abs(ticks);
         int leftForeDist = Math.abs(leftFore.getCurrentPosition());

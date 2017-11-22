@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 @Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
 
-public class DriveBotAutoBlueNear extends DriveBotTemplate {
+public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     State state;
 
@@ -28,20 +28,10 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0, blueColor = 0, armPosition = 0, centerFinger = 0, speed = 0, adjustLeftSpeed = 0, adjustRightSpeed = 0;
-    int encToDispenseL = 0, encToAdjustL = 0, encToDispenseR = 0, encToAdjustR ;
+    int encToDispenseL = 0, encToAdjustL = 0, encToDispenseR = 0, encToAdjustR = 0;
     CryptoboxColumn column;
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
-    public void start() {
-        relicTrackables.activate();
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            telemetry.addData("Exception", e);
-        }
-    }
-
-    @Override
     public void init() {
         super.init();
         state = State.STATE_SCAN_KEY;
@@ -55,9 +45,19 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
-
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "cs");
     }
+
+    @Override
+    public void start() {
+        relicTrackables.activate();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            telemetry.addData("Exception", e);
+        }
+    }
+
 
     @Override
     public void loop() {
@@ -91,7 +91,6 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
                 jewelArm.setPosition(armPosition);
                 break;
             case STATE_SCAN_JEWEL:
-                NormalizedRGBA colors = colorSensor.getNormalizedColors();
                 if (redRatio >= redColor && redRatio > blueRatio)
                     state = State.STATE_HIT_RIGHT_JEWEL;
                     //this could be state = State.STATE_HIT_LEFT_JEWEL; depending on what side the color sensor is facing
@@ -100,6 +99,7 @@ public class DriveBotAutoBlueNear extends DriveBotTemplate {
                 //this could be state = State.STATE_HIT_RIGHT_JEWEL; depending on what side the color sensor is facing
                 break;
             case STATE_HIT_LEFT_JEWEL:
+
                 jewelFlipper.setPosition(1.0);
                 //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 state = State.STATE_RESET_JEWEL_HITTER;
