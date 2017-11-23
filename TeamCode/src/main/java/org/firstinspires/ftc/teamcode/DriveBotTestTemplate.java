@@ -58,11 +58,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
 
-        colors = colorSensor.getNormalizedColors();
-
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
-        //endregion
 
+        colors = colorSensor.getNormalizedColors();
+        //endregion
+//
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
