@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -33,7 +34,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     DcMotor relicArm;
     Servo jewelArm, jewelFlipper, relicHand, relicFingers;
 
-    ColorSensor color;
+    NormalizedColorSensor color;
 
     @Override
     public void init() {
@@ -50,7 +51,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
 
-        color = hardwareMap.colorSensor.get("jcolor");
+        color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
@@ -101,9 +102,25 @@ public abstract class DriveBotTestTemplate extends OpMode {
         int rightForeDist = Math.abs(rightFore.getCurrentPosition());
         int rightRearDist = Math.abs(rightRear.getCurrentPosition());
 
-        return (distance <= leftForeDist)
-            || (distance <= leftRearDist)
-            || (distance <= rightForeDist)
-            || (distance <= rightRearDist);
+        boolean mtrsHere = (distance <= leftForeDist)
+                        || (distance <= leftRearDist)
+                        || (distance <= rightForeDist)
+                        || (distance <= rightRearDist);
+
+        if (mtrsHere) {
+            leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        return mtrsHere;
+    }
+
+    protected void enableMotors() {
+        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

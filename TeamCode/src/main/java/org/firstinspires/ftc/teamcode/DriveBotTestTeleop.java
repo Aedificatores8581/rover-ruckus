@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
@@ -32,7 +33,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     @Override
     public void start() {
         jewelArmServoValue = 0.71;
-        jewelFlipperServoValue = 0.05;
+        jewelFlipperServoValue = 0.05; // Midpoint value =
         relicHandServoValue = 0.29;
         relicFingersServoValue = 0.9;
     }
@@ -149,7 +150,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
 
-        telemetry.addData("Color Sensor RGB", "[" + color.red() + "," + color.green() + "," + color.blue() + "]");
+        NormalizedRGBA colors = color.getNormalizedColors();
+        telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
 
         try {
             prev1.copy(gamepad1);
