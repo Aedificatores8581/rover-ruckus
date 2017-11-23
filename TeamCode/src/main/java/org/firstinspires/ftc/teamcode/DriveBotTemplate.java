@@ -50,7 +50,8 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor armMotor, liftMtr1, liftMtr2;
+    DcMotor liftMtr1, liftMtr2;
+//    DcMotor armMotor;
     // Lift motor 1 is for lifting the glyph onto the platorm.
     // List motor 2 is for dispensing the glyph onto the cryptobox.
     CRServo leftIntake1, leftIntake2, rightIntake1, rightIntake2;
@@ -70,13 +71,13 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
-        armMotor = hardwareMap.dcMotor.get("am");
-        liftMtr1 = hardwareMap.dcMotor.get("lm1");
+//        armMotor = hardwareMap.dcMotor.get("ra");
+/*        liftMtr1 = hardwareMap.dcMotor.get("lm1");
         liftMtr2 = hardwareMap.dcMotor.get("lm2");
-
+*/
         colors = colorSensor.getNormalizedColors();
 
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "JColor");
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
 
         relicGrabber = hardwareMap.servo.get("rg"); // port 0
         relicGrabMover = hardwareMap.servo.get("rgm");
@@ -96,7 +97,7 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
         rightRear.setDirection(Constants.RIGHT_REAR_DIR);
-        armMotor.setDirection(Constants.ARM_DIR);
+//        armMotor.setDirection(Constants.ARM_DIR);
         liftMtr1.setDirection(Constants.LIFT_1_DIR);
         liftMtr2.setDirection(Constants.LIFT_2_DIR);
 
@@ -104,7 +105,7 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMtr1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMtr2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -144,10 +145,10 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
     }
 
-    protected void setArmPow(double pow) {
+/*    protected void setArmPow(double pow) {
         armMotor.setPower(pow * Constants.ARM_SPEED);
     }
-
+*/
     protected void setLift1Pow(double pow) {
         liftMtr1.setPower(pow * Constants.LIFT_1_SPEED);
     }
@@ -194,3 +195,5 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
                 || (distance <= rightRearDist);
     }
 }
+//0.15 = finger
+//0.25 = jewel arm up

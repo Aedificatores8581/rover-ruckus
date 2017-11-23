@@ -59,7 +59,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
 
-        prevTime = 0;
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "cs");
     }
 
     @Override

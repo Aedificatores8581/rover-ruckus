@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -35,6 +36,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     Servo jewelArm, jewelFlipper, relicHand, relicFingers;
 
     NormalizedColorSensor color;
+    NormalizedRGBA colors;
 
     @Override
     public void init() {
@@ -51,7 +53,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
 
-        color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
+        color = hardwareMap.colorSensor.get("jcolor");
         //endregion
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);

@@ -113,7 +113,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
             relicGrabber.setPosition(1.0);
     }
 
-    protected void extendArm() {
+/*    protected void extendArm() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -136,7 +136,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
             }
         }).run();
     }
-
+*/
     protected void lowerJewelArm() {
         jewelArm.setPosition(jewelArm.getPosition() + 0.2);
     }
@@ -183,12 +183,12 @@ public class DriveBotTeleop extends DriveBotTemplate {
         if (gamepad2.right_bumper && !prev2.right_bumper)
             toggleGrabber();
 
-        if (gamepad2.dpad_up && !prev2.dpad_up)
+/*        if (gamepad2.dpad_up && !prev2.dpad_up)
             extendArm();
 
         if (gamepad2.dpad_down && !prev2.dpad_down)
             retractArm();
-
+*/
         if (gamepad2.a && !prev2.a)
             lowerJewelArm();
 

@@ -33,7 +33,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     @Override
     public void start() {
         jewelArmServoValue = 0.71;
-        jewelFlipperServoValue = 0.05; // Midpoint value =
+        jewelFlipperServoValue = 0.05;
         relicHandServoValue = 0.29;
         relicFingersServoValue = 0.9;
     }
@@ -152,6 +152,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
+ 
 
         try {
             prev1.copy(gamepad1);
