@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -28,15 +29,21 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustLeftSpeed = 0.075, adjustRightSpeed = -0.075;
-    int encToDispense = 0, encToAdjust = 75, encToArriveAtCryptobox = 100, encToMoveToNextColumn = 50;
+    int encToDispenseLeft = 2205, encToDispenseRight = 1975, encToAdjustLeft = 2205, encToAdjustRight = 1975, encToMoveToLeft = 1370, encToMoveToCenter = 1730, encToMoveToRight = 2090;
     CryptoboxColumn column;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
+        super.start();
         relicTrackables.activate();
 
         try {
             Thread.sleep(1000);
+
+            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -58,6 +65,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         relicTemplate.setName("relicVuMarkTemplate");
 
         prevTime = 0;
+
+        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
@@ -128,42 +140,37 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = state.STATE_CRYPTOBOX_LEFT_SLOT;
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (checkEncoder(encToArriveAtCryptobox)) {
+                if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.LEFT)
                         state = State.STATE_FACE_CRYPTOBOX;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
-                    enableMotors();
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (checkEncoder(encToMoveToNextColumn)) {
+                if (checkEncoder(encToMoveToCenter)) {
                     if (column == CryptoboxColumn.CENTER)
                         state = State.STATE_FACE_CRYPTOBOX;
                     else
                         state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
-                    enableMotors();
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (checkEncoder(encToMoveToNextColumn)) {
+                if (checkEncoder(encToMoveToRight)) {
                     state = State.STATE_FACE_CRYPTOBOX;
-                    enableMotors();
                 }
                 break;
             case STATE_FACE_CRYPTOBOX:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkEncoder(encToAdjust /* placeholder value */)) {
+                if (checkLeftEncoder(encToAdjustLeft /* placeholder value */) || checkRightEncoder(encToAdjustRight /* placeholder value */)) {
                     state = State.STATE_DISPENSE_GLYPH;
-                    enableMotors();
                 }
                 break;
             case STATE_DISPENSE_GLYPH:
-                if (checkEncoder(encToDispense /* placeholder value */)) {
+                if (checkLeftEncoder(encToDispenseLeft /* placeholder value */) || checkRightEncoder(encToDispenseRight /* placeholder value */)) {
                     // TODO: Dispense the glyph
                     state = State.STATE_END;
-                    enableMotors();
                 }
                 break;
             // TODO: Implement collection of additional glyphs?
