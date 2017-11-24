@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -11,6 +12,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * Conjured into existence by The Saminator on 06-29-2017.
@@ -36,6 +40,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
     Servo jewelArm, jewelFlipper, relicHand, relicFingers;
 
     NormalizedRGBA colors;
+
+    BNO055IMU imu;
+
+    Orientation angles;
+    Acceleration gravity;
 
     NormalizedColorSensor colorSensor;
     protected int prevLeftForeEncr = 0;
