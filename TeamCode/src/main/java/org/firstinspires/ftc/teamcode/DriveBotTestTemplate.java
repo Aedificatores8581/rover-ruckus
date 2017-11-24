@@ -15,6 +15,9 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
@@ -25,8 +28,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
     MediaPlayer wilhelmScream;
     BNO055IMU imu;
 
-    Orientation angles;
-    Acceleration gravity;
+    Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    Acceleration gravity = imu.getGravity();
+
     public static class Constants {
         public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.FORWARD;
