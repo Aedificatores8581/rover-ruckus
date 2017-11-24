@@ -66,7 +66,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     //0.71 = up position
     @Override
     public void loop() {
-        colors = colorSensor.getNormalizedColors();
+        colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.blue + colors.green);
         double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
         switch (state) {
@@ -217,6 +217,10 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         telemetry.addData("leftFore position ", leftFore.getCurrentPosition());
         telemetry.addData("rightFore position ", rightFore.getCurrentPosition());
         telemetry.addData("Angles: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+        telemetry.addData("Total LF Encoder", leftFore.getCurrentPosition());
+        telemetry.addData("Total LR Encoder", leftRear.getCurrentPosition());
+        telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
+        telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
     }
 
