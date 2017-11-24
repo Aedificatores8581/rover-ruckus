@@ -26,7 +26,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         prev1 = new Gamepad();
         prev2 = new Gamepad();
         speedMult = 0.7;
-
         armExtended = false;
     }
 
@@ -60,10 +59,16 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampRelicHandServo() {
-        if (relicHandServoValue > 0.50) // Maximum position
-            relicHandServoValue = 0.50;
-        if (relicHandServoValue < 0.29) // Minimum position
-            relicHandServoValue = 0.29;
+        if (relicHandServoValue > 0.25) // Maximum position
+            relicHandServoValue = 0.25;
+        if (relicHandServoValue < 0.165) // Minimum position
+            relicHandServoValue = 0.165;
+        /*
+        arm position of servos
+        relic hand 270 degrees = 0.25
+        relic hand 0 degrees = 0.2
+        relic hand start position = 0.165
+         */
     }
 
     protected void clampRelicFingersServo() {
@@ -150,7 +155,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
 
-        NormalizedRGBA colors = color.getNormalizedColors();
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
  
 

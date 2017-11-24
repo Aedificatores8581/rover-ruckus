@@ -3,17 +3,21 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
-public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
+@Autonomous(name = "Autonomous Red Far", group = "competition bepis")
+public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     State state;
 
@@ -25,8 +29,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0, adjustLeftSpeed = 0, adjustRightSpeed = 0;
-    int encToDispense = 0, encToAdjust = 0, encToDismount = 0, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
+    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.25, adjustLeftSpeed = 0, adjustRightSpeed = 0;
+    int encToDispense = 0, encToAdjust = 0, encToDismount = 100, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
     long waiting = 0, waitTime = 1500;
 
     CryptoboxColumn column;
@@ -59,7 +63,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
     }
-//0.71 = up position
+    //0.71 = up position
     @Override
     public void loop() {
         colors = colorSensor.getNormalizedColors();
@@ -107,10 +111,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_SCAN_JEWEL:
-                if (redRatio >= redColor && redRatio > blueRatio) // TODO: uncomment when color sensor is attached.
-                    state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (blueRatio >= blueColor && redRatio < blueRatio)
+                if (redRatio >= redColor && redRatio > blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
+                else if (blueRatio >= blueColor && redRatio < blueRatio)
+                    state = State.STATE_HIT_RIGHT_JEWEL;
 
                 break;
             case STATE_HIT_LEFT_JEWEL:
@@ -141,11 +145,21 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
+                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
                 setLeftPow(speed);
                 setRightPow(speed);
                 if (checkEncoder(encToDismount /* placeholder value*/)) {
-                    setLeftPow(speed);
-                    setRightPow(-speed);
+                    state = State.STATE_END;
+                    break;
+                    //setLeftPow(speed);
+                    //setRightPow(-speed);
                 }
                 //if the gyro sensor senses that a 90 degree turn has been made{
                 setLeftPow(speed);
@@ -200,6 +214,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
         telemetry.addData("Jewel Flip. Pos.", jewelFlipper.getPosition());
         telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]");
+        telemetry.addData("leftFore position ", leftFore.getCurrentPosition());
+        telemetry.addData("rightFore position ", rightFore.getCurrentPosition());
 
     }
 
