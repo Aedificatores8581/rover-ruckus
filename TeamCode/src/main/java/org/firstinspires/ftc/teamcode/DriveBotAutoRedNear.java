@@ -28,9 +28,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustLeftSpeed = 0.075, adjustRightSpeed = -0.075;
-    int encToDispenseLeft = 2205, encToDispenseRight = 1975, encToAdjustLeft = 2205, encToAdjustRight = 1975, encToMoveToLeft = 1370, encToMoveToCenter = 1730, encToMoveToRight = 2090;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustLeftSpeed = 0.05, adjustRightSpeed = -0.05;
+    int encToDispenseLeft = 2240, encToDispenseRight = 1940, encToMoveToLeft = 1370, encToMoveToCenter = 1730, encToMoveToRight = 2090;
     CryptoboxColumn column;
+    GyroAngles gyroAngles;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -142,7 +143,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.LEFT)
-                        state = State.STATE_FACE_CRYPTOBOX;
+                        state = State.STATE_RECORD_FACING;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 }
@@ -150,25 +151,29 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_CRYPTOBOX_CENTER_SLOT:
                 if (checkEncoder(encToMoveToCenter)) {
                     if (column == CryptoboxColumn.CENTER)
-                        state = State.STATE_FACE_CRYPTOBOX;
+                        state = State.STATE_RECORD_FACING;
                     else
                         state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (checkEncoder(encToMoveToRight)) {
-                    state = State.STATE_FACE_CRYPTOBOX;
+                    state = State.STATE_RECORD_FACING;
                 }
+                break;
+            case STATE_RECORD_FACING:
+                gyroAngles = new GyroAngles(angles);
+                state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkLeftEncoder(encToAdjustLeft /* placeholder value */) || checkRightEncoder(encToAdjustRight /* placeholder value */)) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -90) {
                     state = State.STATE_DISPENSE_GLYPH;
                 }
                 break;
             case STATE_DISPENSE_GLYPH:
-                if (checkLeftEncoder(encToDispenseLeft /* placeholder value */) || checkRightEncoder(encToDispenseRight /* placeholder value */)) {
+                if (checkLeftEncoder(encToDispenseLeft) || checkRightEncoder(encToDispenseRight)) {
                     // TODO: Dispense the glyph
                     state = State.STATE_END;
                 }
@@ -207,6 +212,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_RIGHT_SLOT
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_DISPENSE_GLYPH.
+        STATE_RECORD_FACING, // Ends when current orientation is recorded. Always -> STATE_FACE_CRYPTOBOX
         STATE_FACE_CRYPTOBOX, // Ends when motors are at position. Always -> STATE_DISPENSE_GLYPH
         STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
         // TODO: Collect more glyph and dispense them to the cryptobox?

@@ -62,7 +62,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 //0.71 = up position
     @Override
     public void loop() {
-        colors = colorSensor.getNormalizedColors();
+        colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.blue + colors.green);
         double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
         switch (state) {

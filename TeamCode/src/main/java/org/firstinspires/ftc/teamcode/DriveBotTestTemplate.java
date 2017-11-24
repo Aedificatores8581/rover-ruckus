@@ -50,8 +50,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
     NormalizedRGBA colors;
     BNO055IMU imu;
 
-    Orientation angles;
-    Acceleration gravity;
+    protected Orientation angles;
+    protected Acceleration gravity;
 
     @Override
     public void init() {
@@ -100,7 +100,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         telemetry.addAction(new Runnable() {
             @Override
             public void run() {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
                 gravity = imu.getGravity();
             }
         });
