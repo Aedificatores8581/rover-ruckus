@@ -94,8 +94,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-
-
     }
 
     public void start() {
