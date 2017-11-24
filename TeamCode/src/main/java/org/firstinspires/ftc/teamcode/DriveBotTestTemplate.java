@@ -23,7 +23,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public abstract class DriveBotTestTemplate extends OpMode {
 
     MediaPlayer wilhelmScream;
+    BNO055IMU imu;
 
+    Orientation angles;
+    Acceleration gravity;
     public static class Constants {
         public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.FORWARD;
@@ -42,10 +45,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     NormalizedRGBA colors;
 
-    BNO055IMU imu;
 
-    Orientation angles;
-    Acceleration gravity;
 
     NormalizedColorSensor colorSensor;
     protected int prevLeftForeEncr = 0;
