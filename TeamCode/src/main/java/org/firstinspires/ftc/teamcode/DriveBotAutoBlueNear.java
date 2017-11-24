@@ -30,8 +30,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0, adjustLeftSpeed = 0, adjustRightSpeed = 0;
-    int encToDispense = 0, encToAdjust = 0, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustLeftSpeed = 0.075, adjustRightSpeed = 0.075;
+    int encToDispense = 0, encToAdjust = 0, encToArriveAtCryptobox = 2740, encToMoveToNextColumn = 360;
     CryptoboxColumn column;
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -58,8 +58,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
-
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "cs");
     }
 
     @Override
@@ -131,7 +129,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 setLeftPow(speed);
                 setRightPow(speed);
                 //use the distance sensor to read one shelf
-                state = state.STATE_CRYPTOBOX_LEFT_SLOT;
+                state = State.STATE_CRYPTOBOX_LEFT_SLOT;
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (checkEncoder(encToArriveAtCryptobox)) {
