@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -70,8 +71,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
 
         colors = colorSensor.getNormalizedColors();
-        //endregion
-//
+
+
+
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
@@ -83,6 +85,18 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
     }
 
     @Override
