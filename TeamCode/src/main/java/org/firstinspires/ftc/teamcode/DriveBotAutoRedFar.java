@@ -216,6 +216,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]");
         telemetry.addData("leftFore position ", leftFore.getCurrentPosition());
         telemetry.addData("rightFore position ", rightFore.getCurrentPosition());
+        telemetry.addData("Angles: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+        telemetry.addData("Total LF Encoder", leftFore.getCurrentPosition());
+        telemetry.addData("Total LR Encoder", leftRear.getCurrentPosition());
+        telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
+        telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
     }
 
