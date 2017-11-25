@@ -78,15 +78,18 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingersServoValue = 0.58;
     }
     protected void clampGlyphDispenserServo() {
-       if (relicFingersServoValue > 0.33) // Maximum position
+        if (relicFingersServoValue > 0.33) // Maximum position
             relicFingersServoValue = 0.33;
+        if (relicFingersServoValue < 0) // Minimum position
+            relicFingersServoValue = 0;
     }
+
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
-        glyphoutput.setPosition(glyphServoValue);
+        glyphOutput.setPosition(glyphServoValue);
     }
 
     @Override
@@ -167,7 +170,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
-        telemetry.addData("glyph dispenser: ", glyphoutput.getPosition());
+        telemetry.addData("Glyph Dispenser: ", glyphOutput.getPosition());
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
  

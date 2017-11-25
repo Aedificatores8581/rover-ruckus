@@ -33,7 +33,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispenseLeft = 2240, encToDispenseRight = 1940, encToMoveToLeft = 1370, encToMoveToCenter = 1730, encToMoveToRight = 2090;
+    int encToDispense = 120, encToDispenseLeft, encToDispenseRight, encToMoveToLeft = 1370, encToChangeColumn = 360, encToMoveToCenter, encToMoveToRight;
+    int leftEncAfterTurn, rightEncAfterTurn;
+    double glyphHold = 0, glyphDrop = 0.33;
     double targetAngle = 75;
 
     CryptoboxColumn column;
@@ -43,6 +45,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     public void start() {
         super.start();
         relicTrackables.activate();
+        encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
+        encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
 
         try {
             Thread.sleep(1000);
@@ -84,9 +88,21 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     @Override
     public void init_loop() {
         if (gamepad1.dpad_up && !prev1.dpad_up)
-            targetAngle += 1;
+            speed += 0.01;
 
         if (gamepad1.dpad_down && !prev1.dpad_down)
+            speed -= 0.01;
+
+        if (gamepad1.dpad_right && !prev1.dpad_right)
+            adjustSpeed += 0.005;
+
+        if (gamepad1.dpad_left && !prev1.dpad_left)
+            adjustSpeed -= 0.005;
+
+        if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger))
+            targetAngle += 1;
+
+        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger))
             targetAngle -= 1;
 
         if (gamepad1.a && !prev1.a)
@@ -96,35 +112,23 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             encToMoveToLeft -= 10;
 
         if (gamepad1.x && !prev1.x)
-            encToMoveToCenter += 10;
+            encToChangeColumn += 10;
 
         if (gamepad1.y && !prev1.y)
-            encToMoveToCenter -= 10;
+            encToChangeColumn -= 10;
 
-        if (gamepad1.left_bumper && !prev1.left_bumper)
-            encToMoveToRight += 10;
+        if (gamepad1.x && !prev1.x)
+            encToDispense += 5;
 
-        if (gamepad1.right_bumper && !prev1.right_bumper)
-            encToMoveToRight -= 10;
+        if (gamepad1.y && !prev1.y)
+            encToDispense -= 5;
 
-        if (gamepad1.dpad_right && !prev1.dpad_right)
-            speed += 0.01;
-
-        if (gamepad1.dpad_left && !prev1.dpad_left)
-            speed -= 0.01;
-
-        if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger))
-            adjustSpeed += 0.005;
-
-        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger))
-            adjustSpeed -= 0.005;
-
-        telemetry.addData("Driving Speed (DPad right/left)", speed);
-        telemetry.addData("Turning Speed (Left/right triggers)", adjustSpeed);
-        telemetry.addData("Target Angle Degrees (DPad up/down)", targetAngle);
+        telemetry.addData("Driving Speed (DPad up/down)", speed);
+        telemetry.addData("Turning Speed (DPad right/left)", adjustSpeed);
+        telemetry.addData("Target Angle Degrees (Left/right triggers)", targetAngle);
         telemetry.addData("Distance to Nearest Cryptobox (A/B)", encToMoveToLeft);
-        telemetry.addData("Distance to Center Cryptobox (X/Y)", encToMoveToCenter);
-        telemetry.addData("Distance to Farthest Cryptobox (Left/right bumpers)", encToDispenseRight);
+        telemetry.addData("Distance to Next Cryptobox Column (X/Y)", encToChangeColumn);
+        telemetry.addData("Distance to Dispense Glyph (Left/right bumpers)", encToDispense);
 
         try {
             prev1.copy(gamepad1);
@@ -142,6 +146,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_LOWER_JEWEL_ARM:
                 jewelFlipper.setPosition(jewelFlipperUp);
                 jewelArm.setPosition(jewelArmDownPosition);
+                glyphOutput.setPosition(glyphHold);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -227,12 +232,14 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 setLeftPow(adjustSpeed);
                 setRightPow(-adjustSpeed);
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
+                    leftEncAfterTurn = leftFore.getCurrentPosition();
+                    rightEncAfterTurn = rightFore.getCurrentPosition();
                     state = State.STATE_DISPENSE_GLYPH;
                 }
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkLeftEncoder(encToDispenseLeft) || checkRightEncoder(encToDispenseRight)) {
-                    // TODO: Dispense the glyph
+                    glyphOutput.setPosition(glyphDrop);
                     state = State.STATE_END;
                 }
                 break;

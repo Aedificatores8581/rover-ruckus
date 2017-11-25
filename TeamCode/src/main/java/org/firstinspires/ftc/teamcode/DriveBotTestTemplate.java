@@ -7,8 +7,6 @@ import android.os.Looper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -17,7 +15,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
@@ -44,7 +41,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
     DcMotor relicArm;
-    Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphoutput;
+    Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
 
     NormalizedColorSensor color;
     NormalizedRGBA colors;
@@ -67,7 +64,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
-        glyphoutput = hardwareMap.servo.get("gd");
+        glyphOutput = hardwareMap.servo.get("gd");
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
