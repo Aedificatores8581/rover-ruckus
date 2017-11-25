@@ -31,6 +31,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     CryptoboxColumn column;
 
+    GyroAngles gyroAngles;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -155,7 +156,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     setLeftPow(speed);
                     setRightPow(-speed);
                 }
-                if(angles.thirdAngle > 90) {
+
+                gyroAngles = new GyroAngles(angles);
+                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -90) {
                     state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                     break;
                 }

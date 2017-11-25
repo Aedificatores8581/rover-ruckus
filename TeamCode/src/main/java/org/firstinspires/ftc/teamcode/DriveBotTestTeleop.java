@@ -14,10 +14,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev2;
 
     private double speedMult;
-
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphServoValue;
-
-    private boolean lifting;
+    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphOutputServoValue;
     private boolean armExtended;
 
     @Override
@@ -33,13 +30,13 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void start() {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
-        relicHandServoValue = 0.25;
-        relicFingersServoValue = 0.9;
+        relicHandServoValue = 0.139;
+        relicFingersServoValue = 0.4;
     }
 
     protected void toggleSpeed() {
-        if (speedMult > 0.5)
-            speedMult = 0.3;
+        if (speedMult >= 0.5)
+            speedMult = 0.175;
         else
             speedMult = 0.7;
     }
@@ -59,10 +56,13 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampRelicHandServo() {
-        if (relicHandServoValue > 0.25) // Maximum position
-            relicHandServoValue = (0.25);
-        if (relicHandServoValue < 0.165) // Minimum position
-            relicHandServoValue = (0.165);
+
+        if (relicHandServoValue > 0.23) // Maximum position
+            relicHandServoValue = 0.23;
+        if (relicHandServoValue < 0.139) // Minimum position
+            relicHandServoValue = 0.139;
+//0.188 = 0
+        //0.23 = 270
         /*
         arm position of servos
         relic hand 270 degrees = 0.25
@@ -74,14 +74,14 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     protected void clampRelicFingersServo() {
         if (relicFingersServoValue > 0.9) // Maximum position
             relicFingersServoValue = 0.9;
-        if (relicFingersServoValue < 0.58) // Minimum position
-            relicFingersServoValue = 0.58;
+        if (relicFingersServoValue < 0.4) // Minimum position
+            relicFingersServoValue = 0.4;
     }
     protected void clampGlyphDispenserServo() {
-        if (relicFingersServoValue > 0.33) // Maximum position
-            relicFingersServoValue = 0.33;
-        if (relicFingersServoValue < 0) // Minimum position
-            relicFingersServoValue = 0;
+        if (glyphOutputServoValue > 0.33) // Maximum position
+            glyphOutputServoValue = 0.33;
+        if (glyphOutputServoValue < 0) // Minimum position
+            glyphOutputServoValue = 0;
     }
 
     protected void refreshServos() {
@@ -89,7 +89,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
-        glyphOutput.setPosition(glyphServoValue);
+        glyphOutput.setPosition(glyphOutputServoValue);
     }
 
     @Override
@@ -126,9 +126,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampJewelFlipperServo();
         }
 
-        relicHandServoValue += gamepad2.right_stick_y * 0.02;
-        clampRelicHandServo();
-
         if (gamepad2.left_bumper) {
             relicFingersServoValue -= 0.01;
             clampRelicFingersServo();
@@ -139,11 +136,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicFingersServo();
         }
         if (gamepad2.y) {
-            glyphServoValue += 0.01;
+            glyphOutputServoValue += 0.01;
             clampGlyphDispenserServo();
         }
         if (gamepad2.x) {
-            glyphServoValue -= 0.01;
+            glyphOutputServoValue -= 0.01;
             clampGlyphDispenserServo();
         }
 
@@ -170,7 +167,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
-        telemetry.addData("Glyph Dispenser: ", glyphOutput.getPosition());
+        telemetry.addData("glyph dispenser: ", glyphOutput.getPosition());
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
  
