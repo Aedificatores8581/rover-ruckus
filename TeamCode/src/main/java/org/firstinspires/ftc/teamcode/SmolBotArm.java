@@ -107,7 +107,7 @@ public class SmolBotArm extends OpMode {
 
 
     protected void setGrabPow(double position) {
-        grab.setPosition(position * Constants.GRAB_SPEED);
+        grab.setPosition(position * Constants.GRAB_RANGE);
     }
 
     protected void setHandPow(double pow) {

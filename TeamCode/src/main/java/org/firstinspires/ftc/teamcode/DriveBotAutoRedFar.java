@@ -194,7 +194,13 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     setLeftPow(speed);
                     setRightPow(speed);
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
-                        //dispense the glyph
+                        glyphoutput.setPosition(0.33);
+                        if(waiting == 0 )
+                            waiting = System.currentTimeMillis();
+                        if(System.currentTimeMillis() - waiting >= waitTime) {
+                            waiting = 0;
+                        }
+                        glyphoutput.setPosition(0);
                         state = State.STATE_END;
                     }
                     // }
