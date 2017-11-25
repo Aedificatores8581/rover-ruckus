@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
@@ -99,6 +100,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
+
+        if(gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
+            leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+            leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+        }
 
         if (gamepad1.a && !prev1.a)
             scream();
