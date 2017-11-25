@@ -33,7 +33,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void start() {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
-        relicHandServoValue = 0.29;
+        relicHand.setPosition(0.25);
         relicFingersServoValue = 0.9;
     }
 
@@ -59,10 +59,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampRelicHandServo() {
-        if (relicHandServoValue > 0.25) // Maximum position
-            relicHandServoValue = 0.25;
-        if (relicHandServoValue < 0.165) // Minimum position
-            relicHandServoValue = 0.165;
+        if (relicHand.getPosition() >= 0.25) // Maximum position
+            relicHand.setPosition (0.25);
+        if (relicHandServoValue <= 0.165) // Minimum position
+            relicHand.setPosition (0.165);
         /*
         arm position of servos
         relic hand 270 degrees = 0.25
@@ -89,6 +89,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void loop() {
         setLeftPow(gamepad1.left_stick_y * speedMult);
         setRightPow(gamepad1.right_stick_y * speedMult);
+        refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
 
@@ -166,6 +167,5 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             telemetry.addData("Exception", e);
         }
 
-        refreshServos();
     }
 }
