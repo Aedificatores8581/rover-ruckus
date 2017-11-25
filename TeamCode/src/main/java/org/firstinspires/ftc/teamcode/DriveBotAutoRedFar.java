@@ -29,8 +29,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.25, adjustLeftSpeed = 0, adjustRightSpeed = 0;
-    int encToDispense = 0, encToAdjust = 0, encToDismount = 100, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
+    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.25, adjustLeftSpeed = 0, adjustRightSpeed = 0, angle = 0;
+    int encToDispense = 0, encToAdjust = 0, encToDismount = 1200, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
     long waiting = 0, waitTime = 1500;
 
     CryptoboxColumn column;
@@ -155,21 +155,18 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
                 setLeftPow(speed);
                 setRightPow(speed);
-                if (checkEncoder(encToDismount /* placeholder value*/)) {
-                    state = State.STATE_END;
-                    break;
-                    //setLeftPow(speed);
-                    //setRightPow(-speed);
+                if (checkEncoder(encToDismount /* placeholder value*/) == true) {
+                    setLeftPow(speed);
+                    setRightPow(-speed);
                 }
-                //if the gyro sensor senses that a 90 degree turn has been made{
-                setLeftPow(speed);
-                setRightPow(speed);
-                state = state.STATE_CRYPTOBOX_LEFT_SLOT;
+                if(angles.thirdAngle > 90) {
+                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    break;
+                }
 
-                break;
-            case STATE_CRYPTOBOX_LEFT_SLOT:
+            case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (checkEncoder(encToArriveAtCryptobox)) {
-                    if (column == CryptoboxColumn.LEFT)
+                    if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_DISPENSE_GLYPH;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
@@ -183,7 +180,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                         state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
-            case STATE_CRYPTOBOX_RIGHT_SLOT:
+            case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (checkEncoder(encToMoveToNextColumn))
                     state = State.STATE_DISPENSE_GLYPH;
                 break;
@@ -197,7 +194,13 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     setLeftPow(speed);
                     setRightPow(speed);
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
-                        //dispense the glyph
+                        glyphoutput.setPosition(0.33);
+                        if(waiting == 0 )
+                            waiting = System.currentTimeMillis();
+                        if(System.currentTimeMillis() - waiting >= waitTime) {
+                            waiting = 0;
+                        }
+                        glyphoutput.setPosition(0);
                         state = State.STATE_END;
                     }
                     // }
