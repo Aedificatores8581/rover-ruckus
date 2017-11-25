@@ -44,7 +44,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
     DcMotor relicArm;
-    Servo jewelArm, jewelFlipper, relicHand, relicFingers;
+    Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphDispenser;
 
     NormalizedColorSensor color;
     NormalizedRGBA colors;
