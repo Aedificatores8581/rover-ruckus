@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode;
 // PootisBotManual
 //
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *
  * @author Pootis Man
  */
+@Disabled
 @TeleOp(name = "SensorBot: Tele-Op", group = "feelz")
 public class SensorBotManual extends SensorBotTemplate {
 

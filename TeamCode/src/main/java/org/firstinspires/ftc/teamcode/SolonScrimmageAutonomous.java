@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -10,12 +9,8 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
 @Autonomous(name = "Solon Scrimmage Autonomous For Sensor Bot", group = "8581")
+@Disabled
 public class SolonScrimmageAutonomous extends OpMode {
 
     private Gamepad prev1;
@@ -59,7 +54,7 @@ public class SolonScrimmageAutonomous extends OpMode {
         STATE_MOVE_DOWN_BALL_SENSOR_ARM,
         STATE_MOVE_UP_BALL_SENSOR_ARM,
         STATE_SCAN_PICTURE,
-        STATE_MOVE_PLACES,
+        STATE_MOVE_PARKING_ZONE,
         STATE_READ_COLOR_SENSOR,
         STATE_DRIVE_TO_SHELF,
         STATE_ORIENT_WITH_SHELF,
@@ -77,6 +72,7 @@ public class SolonScrimmageAutonomous extends OpMode {
 
     @Override
     public void init() {
+        delay = 0L;
         rearLeft = hardwareMap.dcMotor.get("lm");
         rearRight = hardwareMap.dcMotor.get("rm");
 
@@ -124,24 +120,25 @@ public class SolonScrimmageAutonomous extends OpMode {
                 }
 
                 break;
+
             case STATE_MOVE_UP_BALL_SENSOR_ARM:
                 ballSensorArm.setPosition(.59);
-                state = State.STATE_MOVE_PLACES;
+                delay = 0L;
+                state = State.STATE_MOVE_PARKING_ZONE;
                 break;
-            case STATE_MOVE_PLACES:
-                if (checkEncoder(250)) {
-                    setRightPow(1.0);
-                    setLeftPow(1.0);
-                } else {
-                    setRightPow(0.0);
-                    setLeftPow(0.0);
-                }
+
+            case STATE_MOVE_PARKING_ZONE:
+
+
+
                 break;
 
             default:
                 break;
 
         }
+
+        telemetry.addData("STATE", state);
 
 
     }
@@ -168,59 +165,59 @@ public class SolonScrimmageAutonomous extends OpMode {
                 if (delay == 0L) {
                     delay = System.currentTimeMillis();
                 }
-                if (System.currentTimeMillis() - delay < 200) {
-                    setRightPow(1.0);
+                if (System.currentTimeMillis() - delay < 400) {
+                    setRightPow(-1.0);
                     setLeftPow(1.0);
                 } else {
-                    hasFlipped = true;
-                    setRightPow(0.0);
-                    setLeftPow(0.0);
+                        hasFlipped = true;
+                        setRightPow(0.0);
+                        setLeftPow(0.0);
                 }
             } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
                 if (delay == 0L) {
                     delay = System.currentTimeMillis();
                 }
-                if (System.currentTimeMillis() - delay < 200) {
-                    setRightPow(-1.0);
+                if (System.currentTimeMillis() - delay < 400) {
+                    setRightPow(1.0);
                     setLeftPow(-1.0);
-                } else {
+                } else
                     hasFlipped = true;
-                    setRightPow(0.0);
-                    setLeftPow(0.0);
+                setRightPow(0.0);
+                setLeftPow(0.0);
                 }
             }
-        }
 
         if (redAliance == false) {
             if (redRatio >= 0.55 && redRatio > blueRatio) {
                 if (delay == 0L) {
                     delay = System.currentTimeMillis();
                 }
-                if (System.currentTimeMillis() - delay < 200) {
+                if (System.currentTimeMillis() - delay < 400) {
 
-                    setRightPow(-1.0);
+                    setRightPow(1.0);
                     setLeftPow(-1.0);
-                } else {
+                } else
                     hasFlipped = true;
                     setRightPow(0.0);
                     setLeftPow(0.0);
                 }
             } else if (blueRatio >= 0.4 && redRatio < blueRatio) {
-                if (delay == 0L) {
-                    delay = System.currentTimeMillis();
-                }
-                if (System.currentTimeMillis() - delay < 200) {
-
-                    setRightPow(1.0);
-                    setLeftPow(1.0);
-                } else {
-                    hasFlipped = true;
-                    setRightPow(0.0);
-                    setLeftPow(0.0);
-                }
+            if (delay == 0L) {
+                delay = System.currentTimeMillis();
             }
+            if (System.currentTimeMillis() - delay < 400) {
 
+                setRightPow(-1.0);
+                setLeftPow(1.0);
+            } else {
+
+                hasFlipped = true;
+                setRightPow(0.0);
+                setLeftPow(0.0);
+
+            }
         }
+
 
         telemetry.addData("Left", rearLeft.getCurrentPosition());
         telemetry.addData("Right", rearRight.getCurrentPosition());

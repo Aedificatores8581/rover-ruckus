@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Sterrett
  */
 @TeleOp(name = "ArmBot: Tele-Op", group = "the revolution never ends")
+@Disabled
 
 public class ArmTeleTest extends LinearOpMode {
     // Define class members
@@ -113,5 +114,5 @@ public class ArmTeleTest extends LinearOpMode {
         }
     }
 }
-    // Display the current value
+// Display the current value
 

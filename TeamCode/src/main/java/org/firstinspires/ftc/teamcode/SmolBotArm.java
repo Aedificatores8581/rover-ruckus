@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
 @Autonomous(name = "ballsensor", group = "bepis")
+@Disabled
 public class SmolBotArm extends OpMode {
     DcMotor left, right, arm, hand;
     Servo grab;

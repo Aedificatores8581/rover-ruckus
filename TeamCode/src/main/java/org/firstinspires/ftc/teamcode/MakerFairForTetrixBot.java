@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "Maker Fair Teleop (30 second version)", group = "super-bepis")
 
+@Disabled
 public class MakerFairForTetrixBot extends OpMode {
     DcMotor left, right;
 

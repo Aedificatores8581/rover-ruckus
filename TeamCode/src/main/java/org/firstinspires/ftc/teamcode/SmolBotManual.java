@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
@@ -47,6 +48,7 @@ import java.util.TimerTask;
  */
 @TeleOp(name = "RevBot: Tele-Op", group = "bepis")
 
+@Disabled
 public class SmolBotManual extends SmolBotTemplate
 {
 
@@ -128,6 +130,7 @@ public class SmolBotManual extends SmolBotTemplate
 
         telemetry.addData("Left Pow", left);
         telemetry.addData("Right Pow", right);
+
 
 
         telemetry.addData("a", colors.alpha);

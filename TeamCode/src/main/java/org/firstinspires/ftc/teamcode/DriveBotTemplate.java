@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
- * Created by The Saminator on 06-29-2017.
+ * Conjured into existence by The Saminator on 06-29-2017.
  */
 public abstract class DriveBotTemplate extends SleepableOpMode {
 
@@ -50,23 +50,36 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor armMotor, liftMtr1, liftMtr2;
+    DcMotor liftMtr1, liftMtr2;
+//    DcMotor armMotor;
     // Lift motor 1 is for lifting the glyph onto the platorm.
     // List motor 2 is for dispensing the glyph onto the cryptobox.
     CRServo leftIntake1, leftIntake2, rightIntake1, rightIntake2;
     Servo relicGrabber, relicGrabMover, armTilter, jewelArm, jewelFlipper, rightHinge, leftHinge;
+    NormalizedRGBA colors;
+
+    NormalizedColorSensor colorSensor;
+    protected int prevLeftForeEncr = 0;
+    protected int prevLeftRearEncr = 0;
+    protected int prevRightForeEncr = 0;
+    protected int prevRightRearEncr = 0;
 
     @Override
     public void init() {
-        leftFore = hardwareMap.dcMotor.get("lfm");
-        leftRear = hardwareMap.dcMotor.get("lrm");
-        rightFore = hardwareMap.dcMotor.get("rfm");
-        rightRear = hardwareMap.dcMotor.get("rrm");
-        armMotor = hardwareMap.dcMotor.get("am");
-        liftMtr1 = hardwareMap.dcMotor.get("lm1");
+        //region Configuration section
+        leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
+        leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
+        rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
+        rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
+//        armMotor = hardwareMap.dcMotor.get("ra");
+/*        liftMtr1 = hardwareMap.dcMotor.get("lm1");
         liftMtr2 = hardwareMap.dcMotor.get("lm2");
+*/
+        colors = colorSensor.getNormalizedColors();
 
-        relicGrabber = hardwareMap.servo.get("rg");
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
+
+        relicGrabber = hardwareMap.servo.get("rg"); // port 0
         relicGrabMover = hardwareMap.servo.get("rgm");
         armTilter = hardwareMap.servo.get("ts");
         jewelArm = hardwareMap.servo.get("ja");
@@ -78,12 +91,13 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         rightIntake2 = hardwareMap.crservo.get("ri2");
         leftIntake1 = hardwareMap.crservo.get("li1");
         leftIntake2 = hardwareMap.crservo.get("li2");
+        //endregion
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
         rightRear.setDirection(Constants.RIGHT_REAR_DIR);
-        armMotor.setDirection(Constants.ARM_DIR);
+//        armMotor.setDirection(Constants.ARM_DIR);
         liftMtr1.setDirection(Constants.LIFT_1_DIR);
         liftMtr2.setDirection(Constants.LIFT_2_DIR);
 
@@ -91,7 +105,7 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMtr1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMtr2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -131,10 +145,10 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
     }
 
-    protected void setArmPow(double pow) {
+/*    protected void setArmPow(double pow) {
         armMotor.setPower(pow * Constants.ARM_SPEED);
     }
-
+*/
     protected void setLift1Pow(double pow) {
         liftMtr1.setPower(pow * Constants.LIFT_1_SPEED);
     }
@@ -150,10 +164,24 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
         leftIntake2.setPower(pow);
     }
 
+    protected boolean checkLeftEncoder(int target) {
+        boolean fore = (Math.abs(leftFore.getCurrentPosition() - prevLeftForeEncr) >= target);
+        boolean rear = (Math.abs(leftRear.getCurrentPosition() - prevLeftRearEncr) >= target);
+        return fore || rear;
+    }
+
+    protected boolean checkRightEncoder(int target) {
+        boolean fore = (Math.abs(rightFore.getCurrentPosition() - prevRightForeEncr) >= target);
+        boolean rear = (Math.abs(rightRear.getCurrentPosition() - prevRightRearEncr) >= target);
+        return fore || rear;
+    }
+
     protected double getIntakePow() {
         return rightIntake1.getPower();
     }
 
+    //place value for ticks for right motor here
+    //place value for ticks for left motor here
     protected boolean checkEncoder(int ticks) {
         int distance = Math.abs(ticks);
         int leftForeDist = Math.abs(leftFore.getCurrentPosition());
@@ -167,3 +195,5 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
                 || (distance <= rightRearDist);
     }
 }
+//0.15 = finger
+//0.25 = jewel arm up

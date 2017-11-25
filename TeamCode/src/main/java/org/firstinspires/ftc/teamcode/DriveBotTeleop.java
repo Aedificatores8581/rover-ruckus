@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -8,9 +9,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Created by The Saminator on 10-01-2017.
+ * Conjured into existence by The Saminator on 10-01-2017.
  */
 @TeleOp(name = "Tele-Op", group = "actually not a test")
+@Disabled
 public class DriveBotTeleop extends DriveBotTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
@@ -111,7 +113,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
             relicGrabber.setPosition(1.0);
     }
 
-    protected void extendArm() {
+/*    protected void extendArm() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -133,6 +135,14 @@ public class DriveBotTeleop extends DriveBotTemplate {
                 setArmPow(0.0);
             }
         }).run();
+    }
+*/
+    protected void lowerJewelArm() {
+        jewelArm.setPosition(jewelArm.getPosition() + 0.2);
+    }
+
+    protected void raiseJewelArm() {
+        jewelArm.setPosition(jewelArm.getPosition() - 0.2);
     }
 
     @Override
@@ -173,15 +183,21 @@ public class DriveBotTeleop extends DriveBotTemplate {
         if (gamepad2.right_bumper && !prev2.right_bumper)
             toggleGrabber();
 
-        if (gamepad2.dpad_up && !prev2.dpad_up)
+/*        if (gamepad2.dpad_up && !prev2.dpad_up)
             extendArm();
 
         if (gamepad2.dpad_down && !prev2.dpad_down)
             retractArm();
+*/
+        if (gamepad2.a && !prev2.a)
+            lowerJewelArm();
+
+        if (gamepad2.y && !prev2.y)
+            raiseJewelArm();
 
         relicGrabMover.setPosition(relicGrabMover.getPosition() + (gamepad2.right_stick_y * 0.1));
 
-        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.1));
+        armTilter.setPosition(armTilter.getPosition() + (gamepad2.left_stick_y * 0.05));
 
         telemetry.addData("Arm extended", armExtended);
 

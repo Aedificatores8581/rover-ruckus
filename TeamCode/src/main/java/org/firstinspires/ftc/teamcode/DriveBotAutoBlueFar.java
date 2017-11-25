@@ -12,27 +12,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-/*
- * Conjured into existence by The Saminator on 11-12-2017.
- */
-@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
-
-public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
+@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
+public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     State state;
 
     private int cameraMonitorViewId;
+
+
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
+    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0, adjustLeftSpeed = 0, adjustRightSpeed = 0;
+    int encToDispense = 0, encToAdjust = 0, encToDismount = 0, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
+    long waiting = 0, waitTime = 1500;
 
-    long waitTime = 2000L;
-    long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustLeftSpeed = 0.075, adjustRightSpeed = 0.075;
-    int encToDispense = 0, encToAdjust = 0, encToArriveAtCryptobox = 2740, encToMoveToNextColumn = 360;
     CryptoboxColumn column;
+
+
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
         relicTrackables.activate();
@@ -47,8 +46,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     @Override
     public void init() {
         super.init();
-        state = State.STATE_LOWER_JEWEL_ARM;
 
+        state = State.STATE_SCAN_KEY;
+        jewelArm.setPosition(0.71);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
@@ -59,12 +59,12 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
     }
-
+//0.71 = up position
     @Override
     public void loop() {
-        NormalizedRGBA colors = color.getNormalizedColors();
-        double redRatio = colors.red / (colors.red + colors.green + colors.blue);
-        double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+        colors = color.getNormalizedColors();
+        double redRatio = colors.red / (colors.red + colors.blue + colors.green);
+        double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
         switch (state) {
             case STATE_SCAN_KEY:
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -86,50 +86,72 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                    state = State.STATE_CENTER_FINGER;
+                break;
+            case STATE_CENTER_FINGER:
+                jewelFlipper.setPosition(0.6);
+                if(waiting == 0 )
+                    waiting = System.currentTimeMillis();
+                if(System.currentTimeMillis() - waiting >= waitTime) {
+                    waiting = 0;
                     state = State.STATE_LOWER_JEWEL_ARM;
+                }
                 break;
             case STATE_LOWER_JEWEL_ARM:
-                jewelFlipper.setPosition(jewelFlipperUp);
-                jewelArm.setPosition(jewelArmDownPosition);
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime)
+                jewelArm.setPosition(0.25);
+                if(waiting == 0 )
+                    waiting = System.currentTimeMillis();
+                if(System.currentTimeMillis() - waiting >= waitTime) {
+                    waiting = 0;
                     state = State.STATE_SCAN_JEWEL;
+                }
                 break;
             case STATE_SCAN_JEWEL:
-                prevTime = 0;
-                if (redRatio < blueRatio)
+                if (redRatio >= redColor && redRatio > blueRatio) // TODO: uncomment when color sensor is attached.
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (redRatio > blueRatio)
+                else if (blueRatio >= blueColor && redRatio < blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
+
                 break;
             case STATE_HIT_LEFT_JEWEL:
-                jewelFlipper.setPosition(0.95);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime)
-                state = State.STATE_RESET_JEWEL_HITTER;
+                jewelFlipper.setPosition(0.05);
+                if(waiting == 0 )
+                    waiting = System.currentTimeMillis();
+                if(System.currentTimeMillis() - waiting >= waitTime) {
+                    waiting = 0;
+                    state = State.STATE_RESET_JEWEL_HITTER;
+                }
                 break;
             case STATE_HIT_RIGHT_JEWEL:
-                jewelFlipper.setPosition(0.05);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime)
-                state = State.STATE_RESET_JEWEL_HITTER;
+                jewelFlipper.setPosition(0.95);
+                if(waiting == 0 )
+                    waiting = System.currentTimeMillis();
+                if(System.currentTimeMillis() - waiting >= waitTime) {
+                    waiting = 0;
+                    state = State.STATE_RESET_JEWEL_HITTER;
+                }
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
-                jewelArm.setPosition(jewelArmUpPosition);
-                state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                jewelArm.setPosition(0.71);
+                if(waiting == 0 )
+                    waiting = System.currentTimeMillis();
+                if(System.currentTimeMillis() - waiting >= waitTime) {
+                    waiting = 0;
+                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                }
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                //use the distance sensor to read one shelf
-                state = State.STATE_CRYPTOBOX_LEFT_SLOT;
+                if (checkEncoder(encToDismount /* placeholder value*/)) {
+                    setLeftPow(speed);
+                    setRightPow(-speed);
+                }
+                //if the gyro sensor senses that a 90 degree turn has been made{
+                setLeftPow(speed);
+                setRightPow(speed);
+                state = state.STATE_CRYPTOBOX_LEFT_SLOT;
+
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (checkEncoder(encToArriveAtCryptobox)) {
@@ -154,17 +176,17 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkEncoder(encToAdjust /* placeholder value */)) {
+                if (checkEncoder(encToAdjust /* placeholder value*/)) {
                     setLeftPow(speed);
                     setRightPow(speed);
                     // if (the gyroscope senses that a 90 degree turn has been made) {
                     setLeftPow(speed);
                     setRightPow(speed);
-                    if (checkEncoder(encToDispense /* placeholder value */)) {
-                        // TODO: Dispense the glyph
+                    if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
+                        //dispense the glyph
                         state = State.STATE_END;
                     }
-                    //}
+                    // }
                 }
                 break;
             // TODO: Implement collection of additional glyphs?
@@ -174,17 +196,16 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         }
 
         telemetry.addData("State", state.name());
-        telemetry.addData("Red Ratio", redRatio);
-        telemetry.addData("Blue Ratio", blueRatio);
-        telemetry.addData("Red Color", colors.red);
-        telemetry.addData("Blue Color", colors.blue);
 
-        if (column != null)
-            telemetry.addData("Column", column.name());
+        telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
+        telemetry.addData("Jewel Flip. Pos.", jewelFlipper.getPosition());
+        telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]");
+
     }
 
     enum State {
         STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
+        STATE_CENTER_FINGER,
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
         STATE_SCAN_JEWEL, // Ends when right jewel color is read. Right jewel == blue -> STATE_HIT_LEFT_JEWEL. Right jewel == red -> STATE_HIT_RIGHT_JEWEL
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
@@ -198,5 +219,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         // TODO: Collect more glyph and dispense them to the cryptobox?
         STATE_END // Ends when the universe dies.
     }
+
 
 }
