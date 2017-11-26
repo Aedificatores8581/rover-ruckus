@@ -15,7 +15,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev2;
 
     private double speedMult;
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphOutputServoValue;
+    private byte armPos = 1;
+    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphServoValue;
+    private boolean lifting, valueChange;
     private boolean armExtended;
 
     @Override
@@ -23,7 +25,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
-        speedMult = 0.7;
+        speedMult = 0.7
+        ;
         armExtended = false;
     }
 
@@ -36,7 +39,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void toggleSpeed() {
-        if (speedMult >= 0.5)
+        if (speedMult == 0.7)
             speedMult = 0.175;
         else
             speedMult = 0.7;
@@ -79,18 +82,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingersServoValue = 0.4;
     }
     protected void clampGlyphDispenserServo() {
-        if (glyphOutputServoValue > 0.33) // Maximum position
-            glyphOutputServoValue = 0.33;
-        if (glyphOutputServoValue < 0) // Minimum position
-            glyphOutputServoValue = 0;
+       if (glyphServoValue > 0.33) // Maximum position
+            glyphServoValue = 0.33;
     }
-
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
-        glyphOutput.setPosition(glyphOutputServoValue);
+        glyphOutput.setPosition(glyphServoValue);
     }
 
     @Override
@@ -137,7 +137,63 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelFlipperServoValue -= 0.01;
             clampJewelFlipperServo();
         }
+        if(gamepad2.b){
+            relicHandServoValue = 0.188;
 
+        }
+        if(gamepad1.b) {
+            double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
+            if (angleValue > new GyroAngles(angles).getZ()) {
+                setLeftPow(-0.1);
+                setRightPow(0.1);
+                if (angleValue <= 45) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                }
+            } else if (angleValue < new GyroAngles(angles).getZ()) {
+                setLeftPow(0.1);
+                setRightPow(-0.1);
+                if (angleValue >= 45) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                }
+            }
+        }
+
+       /*
+        if(gamepad2.a == false){
+            valueChange = true;
+        }
+        if(gamepad2.b == false){
+            valueChange = true;
+        }
+        if(gamepad2.a){
+            while(valueChange = true) {
+                if (armPos > 1)
+                    armPos--;
+                valueChange = false;
+            }
+        }
+        if(gamepad2.b) {
+            while (valueChange = true) {
+                if (armPos < 3)
+                    armPos++;
+                valueChange = false;
+            }
+        }
+
+        if(armPos == 1)
+            relicHandServoValue = 0.5;
+        if(armPos == 2)
+            relicHandServoValue = 0.36;
+        if(armPos == 3)
+            relicHandServoValue = 0.0;
+*/
+        relicHandServoValue += gamepad2.right_stick_y * 0.005;
+        clampRelicHandServo();
+//down = 0.36
+        //0.3 up
+        //0.5
         if (gamepad2.left_bumper) {
             relicFingersServoValue -= 0.01;
             clampRelicFingersServo();
@@ -149,11 +205,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (gamepad2.y) {
-            glyphOutputServoValue += 0.01;
+            glyphServoValue = 0.33;
             clampGlyphDispenserServo();
         }
         if (gamepad2.x) {
-            glyphOutputServoValue -= 0.01;
+            glyphServoValue = 0.0;
             clampGlyphDispenserServo();
         }
 

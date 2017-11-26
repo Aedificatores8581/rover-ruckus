@@ -49,7 +49,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     protected Orientation angles;
     protected Acceleration gravity;
-
+    public double angleAtStart;
     @Override
     public void init() {
         //region Configuration section
@@ -57,7 +57,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
-
+        angleAtStart = new GyroAngles(angles).getZ();
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
 
