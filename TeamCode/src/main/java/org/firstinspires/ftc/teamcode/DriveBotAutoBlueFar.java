@@ -43,7 +43,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     @Override
     public void init() {
         super.init();
-
+        glyphOutput.setPosition(0.1);
         state = State.STATE_SCAN_KEY;
         jewelArm.setPosition(0.71);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
