@@ -19,7 +19,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphServoValue;
     private boolean lifting, valueChange;
     private boolean armExtended;
-
+    long waiting = 0, waitTime = 500;
     @Override
     public void init() { // Configuration for this is in the Google Drive
         super.init();
@@ -34,8 +34,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void start() {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
-        relicHandServoValue = 0.139;
-        relicFingersServoValue = 0.4;
+        speedMult = 0.175;
     }
 
     protected void toggleSpeed() {
@@ -141,6 +140,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue = 0.188;
 
         }
+        if(gamepad2.a){
+            relicHandServoValue = 0.23;
+            if(waiting == 0 )
+                waiting = System.currentTimeMillis();
+            if(System.currentTimeMillis() - waiting >= waitTime) {
+                waiting = 0;
+                relicFingersServoValue = 0.9;
+            }
+        }
         if(gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
@@ -154,6 +162,24 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 setLeftPow(0.1);
                 setRightPow(-0.1);
                 if (angleValue >= 45) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                }
+            }
+        }
+        if(gamepad1.x) {
+            double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
+            if (angleValue > new GyroAngles(angles).getZ()) {
+                setLeftPow(-0.1);
+                setRightPow(0.1);
+                if (angleValue <= 135) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                }
+            } else if (angleValue < new GyroAngles(angles).getZ()) {
+                setLeftPow(0.1);
+                setRightPow(-0.1);
+                if (angleValue >= 135) {
                     setLeftPow(0);
                     setRightPow(0);
                 }
@@ -189,18 +215,18 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if(armPos == 3)
             relicHandServoValue = 0.0;
 */
-        relicHandServoValue += gamepad2.right_stick_y * 0.005;
-        clampRelicHandServo();
+        //relicHandServoValue += gamepad2.right_stick_y * 0.005;
+        //clampRelicHandServo();
 //down = 0.36
         //0.3 up
         //0.5
         if (gamepad2.left_bumper) {
-            relicFingersServoValue -= 0.01;
+            relicFingersServoValue -= 0.02;
             clampRelicFingersServo();
         }
 
         if (gamepad2.right_bumper) {
-            relicFingersServoValue += 0.01;
+            relicFingersServoValue += 0.02;
             clampRelicFingersServo();
         }
 
