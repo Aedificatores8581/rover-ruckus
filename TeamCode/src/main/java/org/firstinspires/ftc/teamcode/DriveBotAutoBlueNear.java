@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -72,15 +69,15 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     case LEFT:
                         //state = ROBOT_ACTIVITY_STATE.moving;
                         //encoderAmount = 8000;
-                        column = CryptoboxColumn.LEFT;
+                        column = CryptoboxColumn.RIGHT;
                         break;
                     case CENTER:
 
-                        column = CryptoboxColumn.CENTER;
+                        column = CryptoboxColumn.MID;
                         break;
                     case RIGHT:
 
-                        column = CryptoboxColumn.RIGHT;
+                        column = CryptoboxColumn.LEFT;
                         break;
                     default:
                         break;
@@ -133,7 +130,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (checkEncoder(encToArriveAtCryptobox)) {
-                    if (column == CryptoboxColumn.LEFT)
+                    if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_DISPENSE_GLYPH;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
@@ -141,7 +138,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
                 if (checkEncoder(encToMoveToNextColumn)) {
-                    if (column == CryptoboxColumn.CENTER)
+                    if (column == CryptoboxColumn.MID)
                         state = State.STATE_DISPENSE_GLYPH;
                     else
                         state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
@@ -190,9 +187,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
-        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_LEFT_SLOT
+        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
-        STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_RIGHT_SLOT
+        STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_DISPENSE_GLYPH.
         STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
         // TODO: Collect more glyph and dispense them to the cryptobox?

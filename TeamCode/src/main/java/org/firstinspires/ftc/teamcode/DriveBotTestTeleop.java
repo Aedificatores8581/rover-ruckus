@@ -33,6 +33,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void start() {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
+        speedMult = 0.175;
     }
 
     protected void toggleSpeed() {
@@ -92,12 +93,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        /*while(Math.abs(rightFore.getCurrentPosition()) < 500){
-            setLeftPow(0.1);
-            setRightPow(0.1);
-        }
-        */
-
         setLeftPow(gamepad1.left_stick_y * speedMult);
         setRightPow(gamepad1.right_stick_y * speedMult);
         refreshServos();
@@ -238,8 +233,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicFingersServo();
         }
 
-        //glyph intake motor power = gamepad2.left_trigger;
-        glyphServoValue = gamepad2.right_trigger;
+        if (gamepad2.y) {
+            glyphServoValue = 0.33;
+            clampGlyphDispenserServo();
+        }
+        if (gamepad2.x) {
+            glyphServoValue = 0.0;
+            clampGlyphDispenserServo();
+        }
+
         telemetry.addData("Arm extended", armExtended);
 
         telemetry.addData("Left front power", leftFore.getPower());
