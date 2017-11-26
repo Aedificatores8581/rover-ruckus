@@ -47,7 +47,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     @Override
     public void init() {
         super.init();
-
+        glyphOutput.setPosition(0.1);
         state = State.STATE_SCAN_KEY;
         jewelArm.setPosition(0.71);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -193,13 +193,13 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     setLeftPow(speed);
                     setRightPow(speed);
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
-                        glyphoutput.setPosition(0.33);
+                        glyphOutput.setPosition(0.33);
                         if(waiting == 0 )
                             waiting = System.currentTimeMillis();
                         if(System.currentTimeMillis() - waiting >= waitTime) {
                             waiting = 0;
                         }
-                        glyphoutput.setPosition(0);
+                        glyphOutput.setPosition(0);
                         state = DriveBotAutoBlueFar.State.STATE_END;
                     }
                     // }
