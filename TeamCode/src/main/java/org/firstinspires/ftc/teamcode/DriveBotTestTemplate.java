@@ -208,6 +208,21 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return checkLeftEncoder(ticks) || checkRightEncoder(ticks);
     }
 
+    protected boolean checkEncodersReverse(int ticks) {
+        int distance = Math.abs(ticks);
+        int leftForeDist = Math.abs(leftFore.getCurrentPosition());
+        int leftRearDist = Math.abs(leftRear.getCurrentPosition());
+        int rightForeDist = Math.abs(rightFore.getCurrentPosition());
+        int rightRearDist = Math.abs(rightRear.getCurrentPosition());
+
+        boolean mtrsHere = (distance >= leftForeDist)
+                        || (distance >= leftRearDist)
+                        || (distance >= rightRearDist)
+                        || (distance >= rightRearDist);
+
+        return mtrsHere;
+    }
+
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
