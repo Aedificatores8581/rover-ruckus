@@ -33,8 +33,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 250, encToMoveToLeft = 1370, encToChangeColumn = 360, encToMoveToCenter, encToMoveToRight;
-    double glyphHold = 0.05, glyphDrop = 0.33;
+    int encToDispense = 250, encToRamGlyph = 400, encToBackUp = 100, encToMoveToLeft = 1090, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 75;
 
     CryptoboxColumn column;
@@ -237,17 +237,39 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_REINIT_MOTORS:
                 reinitMotors(-speed, -speed);
+                state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                if (checkLeftEncoder(encToDispense) || checkRightEncoder(encToDispense)) {
+                if (checkEncoder(encToDispense)) {
                     glyphOutput.setPosition(glyphDrop);
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    state = State.STATE_BACK_UP_TO_RAM_GLYPH;
+                }
+                break;
+            case STATE_BACK_UP_TO_RAM_GLYPH:
+                if (checkEncodersReverse(encToBackUp)) {
+                    glyphOutput.setPosition(glyphHold);
+                    setLeftPow(-speed);
+                    setRightPow(-speed * 0.81);
+                    state = State.STATE_RAM_GLYPH_INTO_BOX;
+                }
+                break;
+            case STATE_RAM_GLYPH_INTO_BOX:
+                if (checkEncoder(encToRamGlyph)) {
+                    setLeftPow(speed);
+                    setRightPow(speed * 0.81);
+                    state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
+                }
+                break;
+            case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
+                if (checkEncodersReverse(encToBackUp)) {
+                    setLeftPow(0);
+                    setRightPow(0);
                     state = State.STATE_END;
                 }
                 break;
-            // TODO: Implement collection of additional glyphs?
             case STATE_END:
-                setLeftPow(0.0);
-                setRightPow(0.0);
                 telemetry.addData("Finished", "Very Yes");
                 break;
         }
@@ -281,9 +303,12 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         STATE_RECORD_FACING, // Ends when current orientation is recorded. Always -> STATE_FACE_CRYPTOBOX
         STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS
         STATE_REINIT_MOTORS, // Ends when the motors' mode is RUN_USING_ENCODER. Always -> STATE_DISPENSE_GLYPH
-        STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
-        // TODO: Collect more glyph and dispense them to the cryptobox?
-        STATE_END // Ends when the universe dies.
+        STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always -> STATE_BACK_UP_TO_RAM_GLYPH
+        STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
+        STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
+        STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
+        STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
+        // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }
 
 }
