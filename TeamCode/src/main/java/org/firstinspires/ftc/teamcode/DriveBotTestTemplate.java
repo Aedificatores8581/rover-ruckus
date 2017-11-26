@@ -57,7 +57,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
-        angleAtStart = new GyroAngles(angles).getZ();
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
 
@@ -98,6 +97,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
             @Override
             public void run() {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
+                if (angleAtStart == 0.0)
+                    angleAtStart = new GyroAngles(angles).getZ();
                 gravity = imu.getGravity();
             }
         });

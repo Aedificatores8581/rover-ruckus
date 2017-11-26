@@ -25,8 +25,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
-        speedMult = 0.7
-        ;
+        speedMult = 0.175;
         armExtended = false;
     }
 
@@ -34,7 +33,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void start() {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
-        speedMult = 0.175;
     }
 
     protected void toggleSpeed() {
