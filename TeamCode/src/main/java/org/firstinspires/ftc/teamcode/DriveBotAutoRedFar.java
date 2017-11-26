@@ -26,7 +26,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
     double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.25, adjustLeftSpeed = 0, adjustRightSpeed = 0, angle = 0;
-    int encToDispense = 0, encToAdjust = 0, encToDismount = 1200, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
+    int encToDispense = 0, encToAdjust = 0, encToDismount = 850, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
     long waiting = 0, waitTime = 1500;
 
     CryptoboxColumn column;
@@ -47,7 +47,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     @Override
     public void init() {
         super.init();
-        glyphOutput.setPosition(0.1);
+        glyphOutput.setPosition(0.05);
         state = State.STATE_SCAN_KEY;
         jewelArm.setPosition(0.71);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -63,6 +63,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     //0.71 = up position
     @Override
     public void loop() {
+        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
         colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.blue + colors.green);
         double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);

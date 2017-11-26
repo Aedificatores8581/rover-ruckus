@@ -92,6 +92,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
+        /*while(Math.abs(rightFore.getCurrentPosition()) < 500){
+            setLeftPow(0.1);
+            setRightPow(0.1);
+        }
+        */
+
         setLeftPow(gamepad1.left_stick_y * speedMult);
         setRightPow(gamepad1.right_stick_y * speedMult);
         refreshServos();
@@ -147,6 +153,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 relicFingersServoValue = 0.9;
             }
         }
+        /*
         if(gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
@@ -165,6 +172,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
+        //850 encoder ticks to get off of the platform (600)
+        //320 for right column
+        //260 to enter
+        //600 to turn
         if(gamepad1.x) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
@@ -183,8 +194,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
-
-       /*
+        */
         if(gamepad2.a == false){
             valueChange = true;
         }
@@ -212,7 +222,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue = 0.36;
         if(armPos == 3)
             relicHandServoValue = 0.0;
-*/
+
         //relicHandServoValue += gamepad2.right_stick_y * 0.005;
         //clampRelicHandServo();
 //down = 0.36
@@ -228,15 +238,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicFingersServo();
         }
 
-        if (gamepad2.y) {
-            glyphServoValue = 0.33;
-            clampGlyphDispenserServo();
-        }
-        if (gamepad2.x) {
-            glyphServoValue = 0.0;
-            clampGlyphDispenserServo();
-        }
-
+        //glyph intake motor power = gamepad2.left_trigger;
+        glyphServoValue = gamepad2.right_trigger;
         telemetry.addData("Arm extended", armExtended);
 
         telemetry.addData("Left front power", leftFore.getPower());
