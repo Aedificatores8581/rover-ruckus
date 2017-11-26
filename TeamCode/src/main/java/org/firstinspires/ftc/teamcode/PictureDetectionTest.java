@@ -16,9 +16,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /* This program detects one of the three VuMark Picture, and based on the picture, will move a set distance.
- *      1. If pictureState is set to PictureState.NEAR, then it will move (X + a constant) encoder ticks
+ *      1. If pictureState is set to PictureState.RIGHT, then it will move (X + a constant) encoder ticks
  *      2. If the same variable is set to PictureState.MID, then it will move (X + 2 times a constant)encoder ticks
- *      3. If the same variable is set to PicutreState.FAR, then it will move (X + 3 times a constant)encoder ticks
+ *      3. If the same variable is set to PicutreState.LEFT, then it will move (X + 3 times a constant)encoder ticks
  */
 
 @TeleOp(name = "SensorBot: Vuforia Test", group = "pro-bepis")

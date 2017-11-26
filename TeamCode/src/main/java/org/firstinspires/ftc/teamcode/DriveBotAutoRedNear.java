@@ -33,7 +33,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 360, encToMoveToLeft = 1370, encToChangeColumn = 360, encToMoveToCenter, encToMoveToRight;
+    int encToDispense = 250, encToMoveToLeft = 1370, encToChangeColumn = 360, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.05, glyphDrop = 0.33;
     double targetAngle = 75;
 
@@ -184,13 +184,13 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 switch (vuMark) {
                     case LEFT:
-                        column = CryptoboxColumn.FAR;
+                        column = CryptoboxColumn.LEFT;
                         break;
                     case CENTER:
                         column = CryptoboxColumn.MID;
                         break;
                     case RIGHT:
-                        column = CryptoboxColumn.NEAR;
+                        column = CryptoboxColumn.RIGHT;
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
@@ -200,11 +200,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 setLeftPow(speed);
                 setRightPow(speed);
                 //use the distance sensor to read one shelf
-                state = state.STATE_CRYPTOBOX_NEARER_SLOT;
+                state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
-            case STATE_CRYPTOBOX_NEARER_SLOT:
+            case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (checkEncoder(encToMoveToLeft)) {
-                    if (column == CryptoboxColumn.NEAR)
+                    if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
@@ -215,10 +215,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_RECORD_FACING;
                     else
-                        state = State.STATE_CRYPTOBOX_FARTHER_SLOT;
+                        state = State.STATE_CRYPTOBOX_LEFT_SLOT;
                 }
                 break;
-            case STATE_CRYPTOBOX_FARTHER_SLOT:
+            case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (checkEncoder(encToMoveToRight)) {
                     state = State.STATE_RECORD_FACING;
                 }
@@ -274,10 +274,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
-        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_NEARER_SLOT
-        STATE_CRYPTOBOX_NEARER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
-        STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_FARTHER_SLOT
-        STATE_CRYPTOBOX_FARTHER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_RECORD_FACING.
+        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
+        STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
+        STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
+        STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_RECORD_FACING.
         STATE_RECORD_FACING, // Ends when current orientation is recorded. Always -> STATE_FACE_CRYPTOBOX
         STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS
         STATE_REINIT_MOTORS, // Ends when the motors' mode is RUN_USING_ENCODER. Always -> STATE_DISPENSE_GLYPH

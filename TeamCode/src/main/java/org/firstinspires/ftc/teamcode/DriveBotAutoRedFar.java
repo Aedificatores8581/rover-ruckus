@@ -73,7 +73,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     case LEFT:
                         //state = ROBOT_ACTIVITY_STATE.moving;
                         //encoderAmount = 8000;
-                        column = CryptoboxColumn.NEAR;
+                        column = CryptoboxColumn.RIGHT;
                         break;
                     case CENTER:
 
@@ -81,7 +81,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                         break;
                     case RIGHT:
 
-                        column = CryptoboxColumn.FAR;
+                        column = CryptoboxColumn.LEFT;
                         break;
                     default:
                         break;
@@ -165,7 +165,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (checkEncoder(encToArriveAtCryptobox)) {
-                    if (column == CryptoboxColumn.FAR)
+                    if (column == CryptoboxColumn.LEFT)
                         state = State.STATE_DISPENSE_GLYPH;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
@@ -234,9 +234,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
-        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_NEARER_SLOT
+        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
-        STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_FARTHER_SLOT
+        STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_DISPENSE_GLYPH.
         STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
         // TODO: Collect more glyph and dispense them to the cryptobox?

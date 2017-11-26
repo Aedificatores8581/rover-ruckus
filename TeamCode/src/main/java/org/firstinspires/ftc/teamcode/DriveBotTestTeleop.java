@@ -20,13 +20,13 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
+
     @Override
     public void init() { // Configuration for this is in the Google Drive
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
-        speedMult = 0.7
-        ;
+        speedMult = 0.7;
         armExtended = false;
     }
 
@@ -64,7 +64,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue = 0.23;
         if (relicHandServoValue < 0.139) // Minimum position
             relicHandServoValue = 0.139;
-//0.188 = 0
+        //0.188 = 0
         //0.23 = 270
         /*
         arm position of servos
@@ -80,10 +80,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (relicFingersServoValue < 0.4) // Minimum position
             relicFingersServoValue = 0.4;
     }
+
     protected void clampGlyphDispenserServo() {
-       if (glyphServoValue > 0.33) // Maximum position
+        if (glyphServoValue > 0.33) // Maximum position
             glyphServoValue = 0.33;
     }
+
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
@@ -100,15 +102,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-        if(gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
+        if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         if (gamepad1.a && !prev1.a)
@@ -136,20 +138,20 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelFlipperServoValue -= 0.01;
             clampJewelFlipperServo();
         }
-        if(gamepad2.b){
+        if (gamepad2.b) {
             relicHandServoValue = 0.188;
 
         }
-        if(gamepad2.a){
+        if (gamepad2.a) {
             relicHandServoValue = 0.23;
-            if(waiting == 0 )
+            if (waiting == 0)
                 waiting = System.currentTimeMillis();
-            if(System.currentTimeMillis() - waiting >= waitTime) {
+            if (System.currentTimeMillis() - waiting >= waitTime) {
                 waiting = 0;
                 relicFingersServoValue = 0.9;
             }
         }
-        if(gamepad1.b) {
+        if (gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
                 setLeftPow(-0.1);
@@ -167,7 +169,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
-        if(gamepad1.x) {
+        if (gamepad1.x) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
                 setLeftPow(-0.1);
@@ -186,8 +188,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             }
         }
 
-       /*
-        if(gamepad2.a == false){
+        /*if(gamepad2.a == false){
             valueChange = true;
         }
         if(gamepad2.b == false){
@@ -213,11 +214,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if(armPos == 2)
             relicHandServoValue = 0.36;
         if(armPos == 3)
-            relicHandServoValue = 0.0;
-*/
+            relicHandServoValue = 0.0;*/
+
         //relicHandServoValue += gamepad2.right_stick_y * 0.005;
         //clampRelicHandServo();
-//down = 0.36
+        //down = 0.36
         //0.3 up
         //0.5
         if (gamepad2.left_bumper) {
@@ -265,7 +266,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("glyph dispenser: ", glyphOutput.getPosition());
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
- 
+
 
         try {
             prev1.copy(gamepad1);
