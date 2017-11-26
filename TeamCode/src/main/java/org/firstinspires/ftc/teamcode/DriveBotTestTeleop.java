@@ -147,6 +147,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingersServoValue += 0.01;
             clampRelicFingersServo();
         }
+
         if (gamepad2.y) {
             glyphOutputServoValue += 0.01;
             clampGlyphDispenserServo();
