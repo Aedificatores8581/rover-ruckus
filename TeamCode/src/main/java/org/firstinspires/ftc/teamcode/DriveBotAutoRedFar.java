@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -197,13 +193,13 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     setLeftPow(speed);
                     setRightPow(speed);
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
-                        glyphoutput.setPosition(0.33);
+                        glyphOutput.setPosition(0.33);
                         if(waiting == 0 )
                             waiting = System.currentTimeMillis();
                         if(System.currentTimeMillis() - waiting >= waitTime) {
                             waiting = 0;
                         }
-                        glyphoutput.setPosition(0);
+                        glyphOutput.setPosition(0);
                         state = State.STATE_END;
                     }
                     // }
