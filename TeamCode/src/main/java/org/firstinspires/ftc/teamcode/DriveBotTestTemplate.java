@@ -245,24 +245,4 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected boolean triggered(double value) {
         return value >= 0.3;
     }
-
-    protected void resetEncoders() {
-        setLeftPow(0);
-        setRightPow(0);
-
-        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    protected void reinitMotors(double leftSpeed, double rightSpeed) {
-        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        setLeftPow(leftSpeed);
-        setRightPow(rightSpeed);
-    }
 }
