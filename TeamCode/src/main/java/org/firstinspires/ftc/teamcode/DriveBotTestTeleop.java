@@ -244,7 +244,14 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Arm extended", armExtended);
 
-        telemetry.addData("Left front power", leftFore.getPower());
+        telemetry.addData("Left frontleftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
+                "        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
+                "        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n" +
+                "        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );\n" +
+                "        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
+                "        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
+                "        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n" +
+                "        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );ch power", leftFore.getPower());
         telemetry.addData("Left back power", leftRear.getPower());
         telemetry.addData("Right front power", rightFore.getPower());
         telemetry.addData("Right back power", rightRear.getPower());

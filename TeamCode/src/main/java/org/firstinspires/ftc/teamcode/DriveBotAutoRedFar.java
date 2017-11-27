@@ -25,8 +25,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.25, adjustLeftSpeed = 0, adjustRightSpeed = 0, angle = 0;
-    int encToDispense = 0, encToAdjust = 0, encToDismount = 850, encToArriveAtCryptobox = 0, encToMoveToNextColumn = 0;
+    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.15, adjustLeftSpeed = 0, adjustRightSpeed = 0, angle = 0;
+    int encToDispense = 250, encToDismount = 1130, encToArriveAtCryptobox = 175, encToMoveToNextColumn = 0;
     long waiting = 0, waitTime = 1500;
 
     CryptoboxColumn column;
@@ -61,6 +61,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         relicTemplate.setName("relicVuMarkTemplate");
     }
     //0.71 = up position
+
     @Override
     public void loop() {
         leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -146,10 +147,30 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     waiting = System.currentTimeMillis();
                 if(System.currentTimeMillis() - waiting >= waitTime) {
                     waiting = 0;
+                    leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                    leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
+                setLeftPow(speed);
+                setRightPow(speed);
+                if (checkEncoder(encToDismount)) {
+                    setLeftPow(-speed);
+                    setRightPow(speed);
+                    state = State.STATE_TURN;
+                }
+                break;
+            case STATE_TURN:
+                gyroAngles = new GyroAngles(angles);
+                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -75)
+                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -160,26 +181,25 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
                 setLeftPow(speed);
                 setRightPow(speed);
-                if (checkEncoder(encToDismount /* placeholder value*/) == true) {
-                    setLeftPow(speed);
-                    setRightPow(-speed);
-                }
-
-                gyroAngles = new GyroAngles(angles);
-                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -90) {
-                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                    break;
-                }
+                break;
 
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (checkEncoder(encToArriveAtCryptobox)) {
-                    if (column == CryptoboxColumn.LEFT)
+                    if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_DISPENSE_GLYPH;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
+                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
                 if (checkEncoder(encToMoveToNextColumn)) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_DISPENSE_GLYPH;
@@ -188,19 +208,38 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
+                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
                 if (checkEncoder(encToMoveToNextColumn))
                     state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
                 setLeftPow(adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                if (checkEncoder(encToAdjust /* placeholder value*/)) {
-                    setLeftPow(speed);
+                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+
+                    setLeftPow(-speed);
                     setRightPow(speed);
-                    // if (the gyroscope senses that a 90 degree turn has been made) {
-                    setLeftPow(speed);
-                    setRightPow(speed);
-                    if (checkEncoder(encToDispense /* placeholder value*/) || checkEncoder(encToDispense /* placeholder value*/)) {
+                    gyroAngles = new GyroAngles(angles);
+                    if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= 75) {
+                        setLeftPow(-speed);
+                        setRightPow(-speed);
+
+
+                    if (checkEncoder(encToDispense /* placeholder value*/) || checkLeftEncoder(encToDispense /* placeholder value*/)) {
                         glyphOutput.setPosition(0.33);
                         if(waiting == 0 )
                             waiting = System.currentTimeMillis();
@@ -208,9 +247,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                             waiting = 0;
                         }
                         glyphOutput.setPosition(0);
+
                         state = State.STATE_END;
                     }
-                    // }
+                    //1130 for getting off of the platform
+                    //after first turn, -175 for right column
                 }
                 break;
             // TODO: Implement collection of additional glyphs?
@@ -243,6 +284,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
         STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
+        STATE_TURN,
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_DISPENSE_GLYPH.
