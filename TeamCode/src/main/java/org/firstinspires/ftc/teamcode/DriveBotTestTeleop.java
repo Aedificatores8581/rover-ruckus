@@ -98,11 +98,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void loop() {
         setLeftPow(gamepad1.left_stick_y * speedMult);
         setRightPow(gamepad1.right_stick_y * speedMult);
+
+        glyphIntakeLeft.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * 0.75);
+        glyphIntakeRight.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * -0.75);
+
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-        if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1) {
+        /*if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -111,7 +115,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+        }*/ // Commented because left and right triggers are used for glyph intake.
 
         if (gamepad1.a && !prev1.a)
             scream();
@@ -138,6 +142,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelFlipperServoValue -= 0.01;
             clampJewelFlipperServo();
         }
+
         if (gamepad2.b) {
             relicHandServoValue = 0.188;
 

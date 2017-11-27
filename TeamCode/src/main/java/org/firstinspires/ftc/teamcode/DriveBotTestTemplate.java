@@ -33,6 +33,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
 
+        public static final DcMotor.Direction LEFT_GLYPH_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction RIGHT_GLYPH_DIR = DcMotor.Direction.REVERSE;
+
         public static final double LEFT_FORE_SPEED = 1.0;
         public static final double LEFT_REAR_SPEED = 1.0;
         public static final double RIGHT_FORE_SPEED = 1.0;
@@ -40,7 +43,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor relicArm;
+    DcMotor relicArm, glyphIntakeLeft, glyphIntakeRight;
     Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
 
     NormalizedColorSensor color;
@@ -57,7 +60,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
-        //angleAtStart = new GyroAngles(angles).getZ();
+
+        glyphIntakeLeft = hardwareMap.dcMotor.get("gil");
+        glyphIntakeRight = hardwareMap.dcMotor.get("gir");
+
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
 
@@ -68,6 +74,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
+        //angleAtStart = new GyroAngles(angles).getZ();
+
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
@@ -77,6 +85,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        glyphIntakeLeft.setDirection(Constants.LEFT_GLYPH_DIR);
+        glyphIntakeRight.setDirection(Constants.RIGHT_GLYPH_DIR);
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
 
