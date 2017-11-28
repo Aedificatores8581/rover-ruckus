@@ -42,6 +42,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
+
         super.start();
         relicTrackables.activate();
         encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
@@ -231,12 +232,12 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 setLeftPow(-adjustSpeed);
                 setRightPow(adjustSpeed);
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
-                    resetEncoders();
+                    //resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
                 break;
             case STATE_REINIT_MOTORS:
-                reinitMotors(-speed, -speed);
+                //reinitMotors(-speed, -speed);
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkLeftEncoder(encToDispense) || checkRightEncoder(encToDispense)) {

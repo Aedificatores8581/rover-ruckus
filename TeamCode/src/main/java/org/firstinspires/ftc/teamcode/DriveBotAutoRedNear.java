@@ -231,12 +231,12 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 setLeftPow(adjustSpeed);
                 setRightPow(-adjustSpeed);
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
-                    resetEncoders();
+                    //resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
                 break;
             case STATE_REINIT_MOTORS:
-                reinitMotors(-speed, -speed);
+                //reinitMotors(-speed, -speed);
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
