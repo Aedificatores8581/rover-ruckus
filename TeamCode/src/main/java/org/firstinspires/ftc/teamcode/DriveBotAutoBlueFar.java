@@ -42,6 +42,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     @Override
     public void init() {
+        this.msStuckDetectInit = 10000;
         super.init();
         glyphOutput.setPosition(0.1);
         state = State.STATE_SCAN_KEY;

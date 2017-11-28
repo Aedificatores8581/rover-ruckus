@@ -25,7 +25,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.15, adjustLeftSpeed = 0, adjustRightSpeed = 0, angle = 0;
+    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.15, adjustLeftSpeed = 0.06, adjustRightSpeed = 0.06, angle = 0;
     int encToDispense = 250, encToDismount = 1130, encToArriveAtCryptobox = 175, encToMoveToNextColumn = 0;
     long waiting = 0, waitTime = 1500;
 
@@ -46,6 +46,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     @Override
     public void init() {
+        this.msStuckDetectInit = 10000;
         super.init();
         glyphOutput.setPosition(0.05);
         state = State.STATE_SCAN_KEY;
@@ -59,6 +60,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
+
     }
     //0.71 = up position
 
@@ -161,15 +163,15 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if (checkEncoder(encToDismount)) {
-                    setLeftPow(-speed);
-                    setRightPow(speed);
-                    state = State.STATE_TURN;
-                }
                 break;
             case STATE_TURN:
+                if (checkEncoder(encToDismount)) {
+                    setLeftPow(-adjustLeftSpeed);
+                    setRightPow(adjustRightSpeed);
+                    state = State.STATE_TURN;
+                }
                 gyroAngles = new GyroAngles(angles);
-                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -75)
+                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30)
                     state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -234,7 +236,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     setLeftPow(-speed);
                     setRightPow(speed);
                     gyroAngles = new GyroAngles(angles);
-                    if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= 75) {
+                    if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= 30) {
                         setLeftPow(-speed);
                         setRightPow(-speed);
 
