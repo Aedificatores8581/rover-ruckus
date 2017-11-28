@@ -22,6 +22,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     long waiting = 0, waitTime = 500;
 
     @Override
+    protected boolean isAutonomous() {
+        return true;
+    }
+
+    @Override
     public void init() { // Configuration for this is in the Google Drive
         super.init();
         prev1 = new Gamepad();
@@ -250,7 +255,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampGlyphDispenserServo();
         }
 
-        telemetry.addData("Arm extended", armExtended);
+        telemetry.addData("Arm Extended", armExtended);
 
         telemetry.addData("Left front power", leftFore.getPower());
         telemetry.addData("Left back power", leftRear.getPower());
@@ -273,7 +278,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
-        telemetry.addData("glyph dispenser: ", glyphOutput.getPosition());
+        telemetry.addData("Glyph Dispenser: ", glyphOutput.getPosition());
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
  

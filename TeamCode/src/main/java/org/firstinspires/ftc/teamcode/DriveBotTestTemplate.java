@@ -55,6 +55,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     public double angleAtStart;
     @Override
     public void init() {
+        this.msStuckDetectInit = 10000;
         //region Configuration section
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
@@ -91,16 +92,18 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        if (isAutonomous()) {
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
+            imu.initialize(parameters);
+        }
 
     }
 
@@ -265,4 +268,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         setLeftPow(leftSpeed);
         setRightPow(rightSpeed);
     }
+
+    // This is here for not loading the gyro sensor when in teleop.
+    protected abstract boolean isAutonomous();
 }

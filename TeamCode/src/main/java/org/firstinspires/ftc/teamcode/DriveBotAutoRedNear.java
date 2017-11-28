@@ -60,6 +60,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     }
 
     @Override
+    protected boolean isAutonomous() {
+        return true;
+    }
+
+    @Override
     public void init() {
         super.init();
         state = State.STATE_LOWER_JEWEL_ARM;

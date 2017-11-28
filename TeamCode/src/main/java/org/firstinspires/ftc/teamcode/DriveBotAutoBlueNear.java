@@ -33,10 +33,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 250, encToRamGlyph = 450, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 1090, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    int encToDispense = 500, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 75;
-
+    double targetAngle = 30;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
 
@@ -57,6 +56,11 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
+    }
+
+    @Override
+    protected boolean isAutonomous() {
+        return true;
     }
 
     @Override
@@ -122,12 +126,33 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         if (gamepad1.left_bumper && !prev1.left_bumper)
             encToDispense -= 5;
 
+        if (triggered(gamepad1.left_stick_y) && !triggered(prev1.left_stick_y))
+            encToBackUp += 5;
+
+        if (triggered(-gamepad1.left_stick_y) && !triggered(-prev1.left_stick_y))
+            encToBackUp -= 5;
+
+        if (triggered(gamepad1.left_stick_x) && !triggered(prev1.left_stick_x))
+            encToRamGlyph += 5;
+
+        if (triggered(-gamepad1.left_stick_x) && !triggered(-prev1.left_stick_x))
+            encToRamGlyph -= 5;
+
+        if (triggered(gamepad1.right_stick_y) && !triggered(prev1.right_stick_y))
+            encToBackUpAgain += 5;
+
+        if (triggered(-gamepad1.right_stick_y) && !triggered(-prev1.right_stick_y))
+            encToBackUpAgain -= 5;
+
         telemetry.addData("Driving Speed (DPad up/down)", speed);
         telemetry.addData("Turning Speed (DPad right/left)", adjustSpeed);
         telemetry.addData("Target Angle Degrees (Right/left triggers)", targetAngle);
         telemetry.addData("Distance to Nearest Cryptobox (A/B)", encToMoveToLeft);
         telemetry.addData("Distance to Next Cryptobox Column (X/Y)", encToChangeColumn);
         telemetry.addData("Distance to Dispense Glyph (Right/left bumpers)", encToDispense);
+        telemetry.addData("Distance to Back Up First (Left stick up/down)", encToBackUp);
+        telemetry.addData("Distance to Ram Glyph (Left stick right/left)", encToRamGlyph);
+        telemetry.addData("Distance to Back Up Final (Right stick up/down)", encToBackUpAgain);
 
         try {
             prev1.copy(gamepad1);
