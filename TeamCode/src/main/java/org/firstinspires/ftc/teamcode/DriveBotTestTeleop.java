@@ -20,6 +20,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
+
     @Override
     public void init() { // Configuration for this is in the Google Drive
         super.init();
@@ -63,7 +64,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue = 0.23;
         if (relicHandServoValue < 0.139) // Minimum position
             relicHandServoValue = 0.139;
-//0.188 = 0
+        //0.188 = 0
         //0.23 = 270
         /*
         arm position of servos
@@ -79,10 +80,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (relicFingersServoValue < 0.4) // Minimum position
             relicFingersServoValue = 0.4;
     }
+    
     protected void clampGlyphDispenserServo() {
-       if (glyphServoValue > 0.33) // Maximum position
+        if (glyphServoValue > 0.33) // Maximum position
             glyphServoValue = 0.33;
     }
+    
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
@@ -95,15 +98,19 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void loop() {
         setLeftPow(gamepad1.left_stick_y * speedMult);
         setRightPow(gamepad1.right_stick_y * speedMult);
+
+        glyphIntakeLeft.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * 0.75);
+        glyphIntakeRight.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * -0.75);
+
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-        if(gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
+        if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -135,21 +142,22 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelFlipperServoValue -= 0.01;
             clampJewelFlipperServo();
         }
-        if(gamepad2.b){
-            relicHandServoValue = 0.188;
 
+        if (gamepad2.b) {
+            relicHandServoValue = 0.188;
         }
-        if(gamepad2.a){
+        
+        if (gamepad2.a) {
             relicHandServoValue = 0.23;
-            if(waiting == 0 )
+            if (waiting == 0)
                 waiting = System.currentTimeMillis();
-            if(System.currentTimeMillis() - waiting >= waitTime) {
+            if (System.currentTimeMillis() - waiting >= waitTime) {
                 waiting = 0;
                 relicFingersServoValue = 0.9;
             }
         }
         /*
-        if(gamepad1.b) {
+        if (gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
                 setLeftPow(-0.1);
@@ -220,7 +228,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         //relicHandServoValue += gamepad2.right_stick_y * 0.005;
         //clampRelicHandServo();
-//down = 0.36
+        //down = 0.36
         //0.3 up
         //0.5
         if (gamepad2.left_bumper) {
@@ -244,14 +252,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Arm extended", armExtended);
 
-        telemetry.addData("Left frontleftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
-                "        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
-                "        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n" +
-                "        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );\n" +
-                "        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
-                "        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n" +
-                "        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n" +
-                "        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );ch power", leftFore.getPower());
+        telemetry.addData("Left front power", leftFore.getPower());
         telemetry.addData("Left back power", leftRear.getPower());
         telemetry.addData("Right front power", rightFore.getPower());
         telemetry.addData("Right back power", rightRear.getPower());

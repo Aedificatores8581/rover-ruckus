@@ -33,7 +33,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 250, encToRamGlyph = 400, encToBackUp = 100, encToMoveToLeft = 1090, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    int encToDispense = 250, encToRamGlyph = 400, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 1090, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 75;
 
@@ -251,19 +251,19 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 if (checkEncodersReverse(encToBackUp)) {
                     glyphOutput.setPosition(glyphHold);
                     setLeftPow(-speed);
-                    setRightPow(-speed * 0.81);
+                    setRightPow(-speed * 0.75);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
                 if (checkEncoder(encToRamGlyph)) {
                     setLeftPow(speed);
-                    setRightPow(speed * 0.81);
+                    setRightPow(speed * 0.75);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
-                if (checkEncodersReverse(encToBackUp)) {
+                if (checkEncodersReverse(encToBackUpAgain)) {
                     setLeftPow(0);
                     setRightPow(0);
                     state = State.STATE_END;
