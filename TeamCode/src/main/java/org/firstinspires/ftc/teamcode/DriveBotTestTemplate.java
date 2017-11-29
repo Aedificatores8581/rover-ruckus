@@ -43,7 +43,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor relicArm, glyphIntakeLeft, glyphIntakeRight;
+    DcMotor relicArm, glyphIntakeLeft, glyphIntakeRight, glyphDispense;
     Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
 
     NormalizedColorSensor color;
@@ -65,13 +65,15 @@ public abstract class DriveBotTestTemplate extends OpMode {
         glyphIntakeLeft = hardwareMap.dcMotor.get("gil");
         glyphIntakeRight = hardwareMap.dcMotor.get("gir");
 
+        glyphDispense = hardwareMap.dcMotor.get("gd");
+
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
 
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
-        glyphOutput = hardwareMap.servo.get("gd");
+        //glyphOutput = hardwareMap.servo.get("gd");
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
@@ -231,7 +233,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         boolean mtrsHere = (distance >= leftForeDist)
                         || (distance >= leftRearDist)
-                        || (distance >= rightRearDist)
+                        || (distance >= rightForeDist)
                         || (distance >= rightRearDist);
 
         return mtrsHere;
