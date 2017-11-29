@@ -74,6 +74,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     @Override
     public void init() {
+        this.msStuckDetectInit = 10000;
         super.init();
         state = State.STATE_LOWER_JEWEL_ARM;
 
@@ -223,15 +224,15 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_KEY:
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                switch (vuMark) { // Blue is weird.
+                switch (vuMark) {
                     case LEFT:
-                        column = CryptoboxColumn.RIGHT;
+                        column = CryptoboxColumn.LEFT;
                         break;
                     case CENTER:
                         column = CryptoboxColumn.MID;
                         break;
                     case RIGHT:
-                        column = CryptoboxColumn.LEFT;
+                        column = CryptoboxColumn.RIGHT;
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
