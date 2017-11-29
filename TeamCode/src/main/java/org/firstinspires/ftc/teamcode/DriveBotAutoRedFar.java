@@ -163,29 +163,32 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
+                state = State.STATE_TURN;
                 break;
             case STATE_TURN:
                 if (checkEncoder(encToDismount)) {
                     setLeftPow(-adjustLeftSpeed);
                     setRightPow(adjustRightSpeed);
-                    state = State.STATE_TURN;
+
+                    gyroAngles = new GyroAngles(angles);
+
+                    if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30) {
+                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
                 }
-                gyroAngles = new GyroAngles(angles);
-                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30)
-                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
-                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
-                setLeftPow(speed);
-                setRightPow(speed);
                 break;
 
             case STATE_CRYPTOBOX_RIGHT_SLOT:
+                setLeftPow(speed);
+                setRightPow(speed);
                 if (checkEncoder(encToArriveAtCryptobox)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_DISPENSE_GLYPH;
