@@ -85,12 +85,14 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (relicFingersServoValue < 0.4) // Minimum position
             relicFingersServoValue = 0.4;
     }
-    
+
     protected void clampGlyphDispenserServo() {
-        if (glyphServoValue > 0.33) // Maximum position
-            glyphServoValue = 0.33;
+        if (glyphServoValue > 0.95) // Maximum position
+            glyphServoValue = 0.95;
+        if (glyphServoValue < 0.05) // Minimum position
+            glyphServoValue = 0.05;
     }
-    
+
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
@@ -111,7 +113,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-        if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
+        if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -119,7 +121,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         if (gamepad1.a && !prev1.a)
@@ -148,6 +150,16 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampJewelFlipperServo();
         }
 
+        if (gamepad2.a && !prev2.a) {
+            relicHandServoValue += 0.01;
+            clampRelicHandServo();
+        }
+
+        if (gamepad2.b && !prev2.b) {
+            relicHandServoValue -= 0.01;
+            clampRelicHandServo();
+        }
+        /*
         if (gamepad2.b) {
             relicHandServoValue = 0.188;
         }
@@ -161,7 +173,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 relicFingersServoValue = 0.9;
             }
         }
-        /*
+
         if (gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
@@ -202,7 +214,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
-        */
+
         if(gamepad2.a == false){
             valueChange = true;
         }
@@ -230,28 +242,30 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue = 0.36;
         if(armPos == 3)
             relicHandServoValue = 0.0;
+        */
 
         //relicHandServoValue += gamepad2.right_stick_y * 0.005;
         //clampRelicHandServo();
         //down = 0.36
         //0.3 up
         //0.5
-        if (gamepad2.left_bumper) {
+        if (gamepad2.left_bumper && !prev2.left_bumper) { // TODO: Frank stop forgetting the previous gamepad condition it's necessary to make the button only trigger the action one instead of constantly.
             relicFingersServoValue -= 0.02;
             clampRelicFingersServo();
         }
 
-        if (gamepad2.right_bumper) {
+        if (gamepad2.right_bumper && !prev2.right_bumper) {
             relicFingersServoValue += 0.02;
             clampRelicFingersServo();
         }
 
-        if (gamepad2.y) {
-            glyphServoValue = 0.33;
+        if (gamepad2.x && !prev1.x) {
+            glyphServoValue += 0.01;
             clampGlyphDispenserServo();
         }
-        if (gamepad2.x) {
-            glyphServoValue = 0.0;
+
+        if (gamepad2.y && !prev2.y) {
+            glyphServoValue -= 0.01;
             clampGlyphDispenserServo();
         }
 
@@ -281,7 +295,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Glyph Dispenser: ", glyphOutput.getPosition());
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
- 
+
 
         try {
             prev1.copy(gamepad1);

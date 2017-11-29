@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.exception.RobotCoreException;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.Gamepad;
-        import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-        import org.firstinspires.ftc.robotcore.external.ClassFactory;
-        import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-        import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-        import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-        import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
@@ -33,10 +33,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 250, encToRamGlyph = 400, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 1090, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    int encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 75;
-
+    double targetAngle = 30;
+    double ramLeftMod, ramRightMod, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
 
@@ -46,6 +46,14 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         relicTrackables.activate();
         encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
         encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
+        if (ramAngle > 1.0) {
+            ramRightMod = 1.0;
+            ramLeftMod = 1.0 / ramAngle;
+        }
+        else {
+            ramRightMod = ramAngle;
+            ramLeftMod = 1.0;
+        }
 
         try {
             Thread.sleep(1000);
@@ -127,12 +135,40 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         if (gamepad1.left_bumper && !prev1.left_bumper)
             encToDispense -= 5;
 
+        if (triggered(gamepad1.left_stick_y) && !triggered(prev1.left_stick_y))
+            encToBackUp += 5;
+
+        if (triggered(-gamepad1.left_stick_y) && !triggered(-prev1.left_stick_y))
+            encToBackUp -= 5;
+
+        if (triggered(gamepad1.left_stick_x) && !triggered(prev1.left_stick_x))
+            encToRamGlyph += 5;
+
+        if (triggered(-gamepad1.left_stick_x) && !triggered(-prev1.left_stick_x))
+            encToRamGlyph -= 5;
+
+        if (triggered(gamepad1.right_stick_y) && !triggered(prev1.right_stick_y))
+            encToBackUpAgain += 5;
+
+        if (triggered(-gamepad1.right_stick_y) && !triggered(-prev1.right_stick_y))
+            encToBackUpAgain -= 5;
+
+        if (triggered(gamepad1.right_stick_x) && !triggered(prev1.right_stick_x))
+            ramAngle += 0.05;
+
+        if (triggered(-gamepad1.right_stick_x) && !triggered(-prev1.right_stick_x))
+            ramAngle -= 0.05;
+
         telemetry.addData("Driving Speed (DPad up/down)", speed);
         telemetry.addData("Turning Speed (DPad right/left)", adjustSpeed);
         telemetry.addData("Target Angle Degrees (Right/left triggers)", targetAngle);
         telemetry.addData("Distance to Nearest Cryptobox (A/B)", encToMoveToLeft);
         telemetry.addData("Distance to Next Cryptobox Column (X/Y)", encToChangeColumn);
         telemetry.addData("Distance to Dispense Glyph (Right/left bumpers)", encToDispense);
+        telemetry.addData("Distance to Back Up First (Left stick up/down)", encToBackUp);
+        telemetry.addData("Distance to Ram Glyph (Left stick right/left)", encToRamGlyph);
+        telemetry.addData("Distance to Back Up Final (Right stick up/down)", encToBackUpAgain);
+        telemetry.addData("Angle to Ram Glyph Second (Right Speed Mult) (Right stick right/left)", ramAngle);
 
         try {
             prev1.copy(gamepad1);
@@ -159,9 +195,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
                 if (redRatio > blueRatio)
-                    state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (redRatio < blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
+                else if (redRatio < blueRatio)
+                    state = State.STATE_HIT_RIGHT_JEWEL;
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.95);
@@ -187,15 +223,15 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_KEY:
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                switch (vuMark) {
+                switch (vuMark) { // Blue is weird.
                     case LEFT:
-                        column = CryptoboxColumn.LEFT;
+                        column = CryptoboxColumn.RIGHT;
                         break;
                     case CENTER:
                         column = CryptoboxColumn.MID;
                         break;
                     case RIGHT:
-                        column = CryptoboxColumn.RIGHT;
+                        column = CryptoboxColumn.LEFT;
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
@@ -255,15 +291,15 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_BACK_UP_TO_RAM_GLYPH:
                 if (checkEncodersReverse(encToBackUp)) {
                     glyphOutput.setPosition(glyphHold);
-                    setLeftPow(-speed);
-                    setRightPow(-speed * 0.75);
+                    setLeftPow(-speed * ramLeftMod);
+                    setRightPow(-speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
                 if (checkEncoder(encToRamGlyph)) {
-                    setLeftPow(speed);
-                    setRightPow(speed * 0.75);
+                    setLeftPow(speed * ramLeftMod);
+                    setRightPow(speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;

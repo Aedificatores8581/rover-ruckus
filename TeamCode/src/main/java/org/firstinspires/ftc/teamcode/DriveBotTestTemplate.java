@@ -270,5 +270,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     // This is here for not loading the gyro sensor when in teleop.
-    protected abstract boolean isAutonomous();
+    protected boolean isAutonomous() {
+        return true;
+    }
 }
