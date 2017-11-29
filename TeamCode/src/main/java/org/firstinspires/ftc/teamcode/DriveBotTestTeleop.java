@@ -249,7 +249,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         //down = 0.36
         //0.3 up
         //0.5
-        if (gamepad2.left_bumper && !prev2.left_bumper) { // TODO: Frank stop forgetting the previous gamepad condition it's necessary to make the button only trigger the action one instead of constantly.
+        if (gamepad2.left_bumper && !prev2.left_bumper) { // TODO: Frank stop forgetting the previous gamepad condition; it's necessary to make the button only trigger the action once instead of constantly.
             relicFingersServoValue -= 0.02;
             clampRelicFingersServo();
         }
@@ -292,7 +292,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
-        telemetry.addData("Glyph Dispenser: ", glyphOutput.getPosition());
+
+        telemetry.addData("Glyph Dispenser Pos.", glyphOutput.getPosition());
+        telemetry.addData("Glyph Dispenser Set Value", glyphServoValue);
+
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
 
