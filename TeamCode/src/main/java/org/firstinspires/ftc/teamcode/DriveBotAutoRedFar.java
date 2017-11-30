@@ -46,9 +46,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     @Override
     public void init() {
-        this.msStuckDetectInit = 10000;
         super.init();
-        glyphOutput.setPosition(0.05);
         state = State.STATE_SCAN_KEY;
         jewelArm.setPosition(0.71);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -163,27 +161,30 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
+                state = State.STATE_CHECK_TURN;
+                break;
+            case STATE_CHECK_TURN:
+                if(checkEncoder(encToDismount))
+                    state = State.STATE_READ_GYRO;
+                break;
+            case STATE_READ_GYRO:
+                gyroAngles = new GyroAngles(angles);
                 state = State.STATE_TURN;
                 break;
             case STATE_TURN:
-                if (checkEncoder(encToDismount)) {
-                    setLeftPow(-adjustLeftSpeed);
-                    setRightPow(adjustRightSpeed);
-
-                    gyroAngles = new GyroAngles(angles);
-
-                    if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30) {
-                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    }
-                }
+                setLeftPow(-adjustLeftSpeed);
+                setRightPow(adjustRightSpeed);
+                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30) {
+                     state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                     leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                     rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                     rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                     leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                     leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                     rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                     rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                     leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                 }
                 break;
 
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -245,13 +246,13 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
 
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkLeftEncoder(encToDispense /* placeholder value*/)) {
-                        glyphOutput.setPosition(0.33);
+                        //glyphOutput.setPosition(0.33);
                         if(waiting == 0 )
                             waiting = System.currentTimeMillis();
                         if(System.currentTimeMillis() - waiting >= waitTime) {
                             waiting = 0;
                         }
-                        glyphOutput.setPosition(0);
+                       //glyphOutput.setPosition(0);
 
                         state = State.STATE_END;
                     }
@@ -289,6 +290,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
         STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
+        STATE_CHECK_TURN,
+        STATE_READ_GYRO,
         STATE_TURN,
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
