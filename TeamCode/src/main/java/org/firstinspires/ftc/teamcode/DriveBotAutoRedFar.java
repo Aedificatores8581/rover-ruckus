@@ -48,7 +48,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
-        glyphOutput.setPosition(0.05);
         state = State.STATE_SCAN_KEY;
         jewelArm.setPosition(0.71);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -245,13 +244,13 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
 
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkLeftEncoder(encToDispense /* placeholder value*/)) {
-                        glyphOutput.setPosition(0.33);
+                        //glyphOutput.setPosition(0.33);
                         if(waiting == 0 )
                             waiting = System.currentTimeMillis();
                         if(System.currentTimeMillis() - waiting >= waitTime) {
                             waiting = 0;
                         }
-                        glyphOutput.setPosition(0);
+                       //glyphOutput.setPosition(0);
 
                         state = State.STATE_END;
                     }
