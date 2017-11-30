@@ -39,6 +39,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void start() {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
+        relicFingersServoValue = 0.5;
         speedMult = 0.175;
     }
 
@@ -236,12 +237,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         //down = 0.36
         //0.3 up
         //0.5
-        if (gamepad2.left_bumper && !prev2.left_bumper) { // TODO: Frank stop forgetting the previous gamepad condition; it's necessary to make the button only trigger the action once instead of constantly.
+        if (gamepad2.left_bumper) {
             relicFingersServoValue -= 0.02;
             clampRelicFingersServo();
         }
 
-        if (gamepad2.right_bumper && !prev2.right_bumper) {
+        if (gamepad2.right_bumper) {
             relicFingersServoValue += 0.02;
             clampRelicFingersServo();
         }
