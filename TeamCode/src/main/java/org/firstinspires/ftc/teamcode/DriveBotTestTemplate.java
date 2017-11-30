@@ -43,9 +43,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor relicArm, glyphIntakeLeft, glyphIntakeRight, glyphDispense;
+    DcMotor relicArm, glyphDispense, winchPinch;
     Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
-
+    Servo leftPinch, rightPinch;
     NormalizedColorSensor color;
     NormalizedRGBA colors;
     BNO055IMU imu;
@@ -62,13 +62,15 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        glyphIntakeLeft = hardwareMap.dcMotor.get("gil");
-        glyphIntakeRight = hardwareMap.dcMotor.get("gir");
+        winchPinch = hardwareMap.dcMotor.get("wp");
 
         glyphDispense = hardwareMap.dcMotor.get("gd");
 
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
+
+        leftPinch = hardwareMap.servo.get("lp");
+        rightPinch = hardwareMap.servo.get("rp");
 
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
@@ -89,8 +91,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        glyphIntakeLeft.setDirection(Constants.LEFT_GLYPH_DIR);
-        glyphIntakeRight.setDirection(Constants.RIGHT_GLYPH_DIR);
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
 

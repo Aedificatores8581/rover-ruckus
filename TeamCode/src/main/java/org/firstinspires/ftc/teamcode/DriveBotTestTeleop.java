@@ -16,7 +16,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     private double speedMult;
     private byte armPos = 1;
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue;
+    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, leftPinchServoValue, rightPinchServoValue, winchPinchPower;
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
@@ -41,6 +41,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipperServoValue = 0.05;
         relicFingersServoValue = 0.5;
         speedMult = 0.175;
+        leftPinchServoValue = 0.5;
+        rightPinchServoValue = 0.5;
     }
 
     protected void toggleSpeed() {
@@ -55,6 +57,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelArmServoValue = 0.71;
         if (jewelArmServoValue < 0.25) // Minimum position
             jewelArmServoValue = 0.25;
+    }
+
+    protected void clampLRPinchServo() {
+        if (leftPinchServoValue > 1) // Maximum position
+            leftPinchServoValue = 1;
+        if (leftPinchServoValue < 0) // Minimum position
+            leftPinchServoValue = 0;
+        if (rightPinchServoValue > 1) // Maximum position
+            rightPinchServoValue = 1;
+        if (rightPinchServoValue < 0) // Minimum position
+            rightPinchServoValue = 0;
     }
 
     protected void clampJewelFlipperServo() {
@@ -92,21 +105,20 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
+        leftPinch.setPosition(leftPinchServoValue);
+        rightPinch.setPosition(rightPinchServoValue);
     }
 
     @Override
     public void loop() {
         setLeftPow(gamepad1.left_stick_y * speedMult);
         setRightPow(gamepad1.right_stick_y * speedMult);
-
-        glyphIntakeLeft.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * 0.75);
-        glyphIntakeRight.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * -0.75);
-
+        winchPinch.setPower(winchPinchPower);
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-        if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1) {
+       /* if (gamepad1.right_trigger == 1) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -116,12 +128,37 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-
-        if (gamepad1.a && !prev1.a)
+       */
+       if(gamepad1.right_trigger > 0) {
+           if (winchPinchPower < 0) {
+               winchPinchPower = 0;
+               winchPinchPower = 0.2 * gamepad1.right_trigger;
+           }
+       }
+       else
+           winchPinch.setPower(0);
+       if(gamepad1.left_trigger > 0) {
+           if (winchPinchPower > 0) {
+               winchPinchPower = 0;
+               winchPinchPower = -0.2 * gamepad1.right_trigger;
+           }
+       }
+       else
+           winchPinch.setPower(0);
+       if (gamepad1.a && !prev1.a)
             scream();
-
-        if (gamepad1.left_bumper && !prev1.left_bumper)
+       if (gamepad1.left_bumper && !prev1.left_bumper)
             toggleSpeed();
+        if(gamepad1.right_bumper){
+            leftPinchServoValue += 0.05;
+            rightPinchServoValue += 0.05;
+            clampLRPinchServo();
+        }
+        if(gamepad1.left_bumper){
+            leftPinchServoValue += 0.05;
+            rightPinchServoValue += 0.05;
+            clampLRPinchServo();
+        }
 
         if (gamepad1.dpad_down) {
             jewelArmServoValue += 0.01;
@@ -151,7 +188,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (gamepad2.b) {
             relicHandServoValue = 0.188;
         }
-        
+
+        //increase servo range of relic hand servo
+        // program the new servos and motor
+
         if (gamepad2.a) {
             relicHandServoValue = 0.23;
             if (waiting == 0)
@@ -161,7 +201,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 relicFingersServoValue = 0.9;
             }
         }
-
+*/
         if (gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
@@ -202,13 +242,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
-
-        if(gamepad2.a == false){
-            valueChange = true;
-        }
-        if(gamepad2.b == false){
-            valueChange = true;
-        }
+/*
         if(gamepad2.a){
             while(valueChange = true) {
                 if (armPos > 1)
@@ -230,9 +264,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue = 0.36;
         if(armPos == 3)
             relicHandServoValue = 0.0;
-        */
+*/
 
-        //relicHandServoValue += gamepad2.right_stick_y * 0.005;
+        relicHandServoValue += gamepad2.right_stick_y * 0.005;
         //clampRelicHandServo();
         //down = 0.36
         //0.3 up
@@ -243,6 +277,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (gamepad2.right_bumper) {
+            relicFingersServoValue += 0.02;
+            clampRelicFingersServo();
+        }
+        if (gamepad2.left_trigger > 0) {
+            relicFingersServoValue -= 0.02;
+            clampRelicFingersServo();
+        }
+
+        if (gamepad2.right_trigger > 0) {
             relicFingersServoValue += 0.02;
             clampRelicFingersServo();
         }
@@ -282,7 +325,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
-
+        telemetry.addData("winch pinch", winchPinchPower);
+        telemetry.addData("left pinch", leftPinchServoValue);
+        telemetry.addData("right pinch", rightPinchServoValue);
 
         try {
             prev1.copy(gamepad1);
