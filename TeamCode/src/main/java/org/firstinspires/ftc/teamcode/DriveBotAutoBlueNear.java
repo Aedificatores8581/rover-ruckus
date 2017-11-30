@@ -39,6 +39,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
+    boolean dispenseGlyph, retractDispenser;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -49,8 +50,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         if (ramAngle > 1.0) {
             ramRightMod = 1.0;
             ramLeftMod = 1.0 / ramAngle;
-        }
-        else {
+        } else {
             ramRightMod = ramAngle;
             ramLeftMod = 1.0;
         }
@@ -62,6 +62,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -90,10 +91,14 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         prevTime = 0;
 
+        dispenseGlyph = false;
+        retractDispenser = false;
+
         leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
     }
@@ -187,7 +192,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_LOWER_JEWEL_ARM:
                 jewelFlipper.setPosition(jewelFlipperUp);
                 jewelArm.setPosition(jewelArmDownPosition);
-                glyphOutput.setPosition(glyphHold);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -226,13 +230,13 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 switch (vuMark) {
                     case LEFT:
-                        column = CryptoboxColumn.LEFT;
+                        column = CryptoboxColumn.RIGHT;
                         break;
                     case CENTER:
                         column = CryptoboxColumn.MID;
                         break;
                     case RIGHT:
-                        column = CryptoboxColumn.RIGHT;
+                        column = CryptoboxColumn.LEFT;
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
@@ -241,7 +245,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(-speed);
                 setRightPow(-speed);
-                //use the distance sensor to read one shelf
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -283,7 +286,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
-                    glyphOutput.setPosition(glyphDrop);
+                    dispenseGlyph = true;
                     setLeftPow(speed);
                     setRightPow(speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
@@ -291,7 +294,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
                 if (checkEncodersReverse(encToBackUp)) {
-                    glyphOutput.setPosition(glyphHold);
                     setLeftPow(-speed * ramLeftMod);
                     setRightPow(-speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
@@ -314,6 +316,20 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_END:
                 telemetry.addData("Finished", "Very Yes");
                 break;
+        }
+
+        if (dispenseGlyph) {
+            glyphDispense.setPower(-1);
+            if (glyphDispense.getCurrentPosition() <= -175)
+                retractDispenser = true;
+
+            if (retractDispenser) {
+                glyphDispense.setPower(0.5);
+                if (glyphDispense.getCurrentPosition() >= -5) {
+                    glyphDispense.setPower(0.0);
+                    dispenseGlyph = false;
+                }
+            }
         }
 
         telemetry.addData("State", state.name());
@@ -345,7 +361,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         STATE_RECORD_FACING, // Ends when current orientation is recorded. Always -> STATE_FACE_CRYPTOBOX
         STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS
         STATE_REINIT_MOTORS, // Ends when the motors' mode is RUN_USING_ENCODER. Always -> STATE_DISPENSE_GLYPH
-        STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always -> STATE_BACK_UP_TO_RAM_GLYPH
+        STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always -> STATE_WAIT_FOR_GLYPH_DISPENSED
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
         STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
         STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END

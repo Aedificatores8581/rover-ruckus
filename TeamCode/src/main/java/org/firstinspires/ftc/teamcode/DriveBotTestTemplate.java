@@ -55,7 +55,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     public double angleAtStart;
     @Override
     public void init() {
-        this.msStuckDetectInit = 10000;
+        this.msStuckDetectInit = 60000;
         //region Configuration section
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3

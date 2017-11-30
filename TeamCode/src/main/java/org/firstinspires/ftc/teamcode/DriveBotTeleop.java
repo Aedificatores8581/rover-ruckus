@@ -49,7 +49,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
                 rightHinge.setPosition(0.0);
                 lifting = false;
             }
-        }).run();
+        }).start();
     }
 
     protected void midDelivery() {
@@ -69,7 +69,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
                 rightHinge.setPosition(0.0);
                 lifting = false;
             }
-        }).run();
+        }).start();
     }
 
     protected void lowDelivery() {
@@ -89,7 +89,7 @@ public class DriveBotTeleop extends DriveBotTemplate {
                 rightHinge.setPosition(0.0);
                 lifting = false;
             }
-        }).run();
+        }).start();
     }
 
     protected void toggleSpeed() {
