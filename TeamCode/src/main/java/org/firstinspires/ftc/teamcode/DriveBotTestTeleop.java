@@ -31,7 +31,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
-        speedMult = 0.175;
+        speedMult = 4.375;
         armExtended = false;
     }
 
@@ -48,6 +48,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     protected void toggleSpeed() {
         if (speedMult == 0.7)
             speedMult = 0.175;
+        else if (speedMult == 0.175)
+            speedMult = 4.375;
         else
             speedMult = 0.7;
     }
@@ -79,10 +81,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     protected void clampRelicHandServo() {
 
-        if (relicHandServoValue > 0.95) // Maximum position
-            relicHandServoValue = 0.95;
-        if (relicHandServoValue < 0.05) // Minimum position
-            relicHandServoValue = 0.05;
+        if (relicHandServoValue > 1) // Maximum position
+            relicHandServoValue = 1;
+        if (relicHandServoValue < 0) // Minimum position
+            relicHandServoValue = 0;
         //0.188 = 0
         //0.23 = 270
         /*
@@ -111,8 +113,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        setLeftPow(gamepad1.left_stick_y * speedMult);
-        setRightPow(gamepad1.right_stick_y * speedMult);
+        setRightPow(gamepad1.left_stick_y * -speedMult);
+        setLeftPow(gamepad1.right_stick_y * -speedMult);
         winchPinch.setPower(winchPinchPower);
         refreshServos();
 
@@ -129,33 +131,26 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
        */
-       if(gamepad1.right_trigger > 0) {
-           if (winchPinchPower < 0) {
-               winchPinchPower = 0;
-               winchPinchPower = 0.2 * gamepad1.right_trigger;
-           }
+        if(gamepad1.left_trigger > 0) {
+            winchPinchPower = -0.5;
+        }
+       else if(gamepad1.right_trigger > 0) {
+               winchPinchPower = 1;
        }
        else
-           winchPinch.setPower(0);
-       if(gamepad1.left_trigger > 0) {
-           if (winchPinchPower > 0) {
-               winchPinchPower = 0;
-               winchPinchPower = -0.2 * gamepad1.right_trigger;
-           }
-       }
-       else
-           winchPinch.setPower(0);
+           winchPinchPower = 0;
+
        if (gamepad1.a && !prev1.a)
             scream();
-       if (gamepad1.left_bumper && !prev1.left_bumper)
+       if (gamepad1.x && !prev1.x)
             toggleSpeed();
         if(gamepad1.right_bumper){
             leftPinchServoValue += 0.05;
-            rightPinchServoValue += 0.05;
+            rightPinchServoValue -= 0.05;
             clampLRPinchServo();
         }
         if(gamepad1.left_bumper){
-            leftPinchServoValue += 0.05;
+            leftPinchServoValue -= 0.05;
             rightPinchServoValue += 0.05;
             clampLRPinchServo();
         }
@@ -181,17 +176,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (Math.abs(gamepad2.right_stick_y) >= 0.25) {
-            relicHandServoValue += gamepad2.right_stick_y * 0.0025;
+            relicHandServoValue += gamepad2.right_stick_y * 0.03;
             clampRelicHandServo();
         }
-        /*
+
         if (gamepad2.b) {
             relicHandServoValue = 0.188;
         }
 
         //increase servo range of relic hand servo
         // program the new servos and motor
-
+/*
         if (gamepad2.a) {
             relicHandServoValue = 0.23;
             if (waiting == 0)
@@ -201,7 +196,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 relicFingersServoValue = 0.9;
             }
         }
-*/
+
         if (gamepad1.b) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
@@ -220,11 +215,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
+        */
         //850 encoder ticks to get off of the platform (600)
         //320 for right column
         //260 to enter
         //600 to turn
-        if(gamepad1.x) {
+        /*if(gamepad1.x) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
                 setLeftPow(-0.1);
@@ -242,6 +238,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
             }
         }
+        */
 /*
         if(gamepad2.a){
             while(valueChange = true) {
@@ -291,9 +288,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (gamepad2.x)
-            glyphDispense.setPower(0.75);
+            glyphDispense.setPower(0.2);
         else if (gamepad2.y)
-            glyphDispense.setPower(-0.5);
+            glyphDispense.setPower(-0.1);
         else
             glyphDispense.setPower(0);
 
