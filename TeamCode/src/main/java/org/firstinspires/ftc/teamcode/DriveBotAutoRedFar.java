@@ -64,14 +64,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
         colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.blue + colors.green);
         double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
