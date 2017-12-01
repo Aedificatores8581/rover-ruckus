@@ -129,32 +129,30 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
        */
-       if(gamepad1.right_trigger > 0) {
-           if (winchPinchPower < 0) {
-               winchPinchPower = 0;
-               winchPinchPower = 0.2 * gamepad1.right_trigger;
-           }
-       }
-       else
-           winchPinch.setPower(0);
-       if(gamepad1.left_trigger > 0) {
-           if (winchPinchPower > 0) {
-               winchPinchPower = 0;
-               winchPinchPower = -0.2 * gamepad1.right_trigger;
-           }
-       }
-       else
-           winchPinch.setPower(0);
-       if (gamepad1.a && !prev1.a)
+        if (gamepad1.right_trigger > 0) {
+            if (winchPinchPower < 0) {
+                winchPinchPower = 0;
+                winchPinchPower = 0.2 * gamepad1.right_trigger;
+            }
+        } else
+            winchPinch.setPower(0);
+        if (gamepad1.left_trigger > 0) {
+            if (winchPinchPower > 0) {
+                winchPinchPower = 0;
+                winchPinchPower = -0.2 * gamepad1.right_trigger;
+            }
+        } else
+            winchPinch.setPower(0);
+        if (gamepad1.a && !prev1.a)
             scream();
-       if (gamepad1.left_bumper && !prev1.left_bumper)
+        if (gamepad1.left_bumper && !prev1.left_bumper)
             toggleSpeed();
-        if(gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             leftPinchServoValue += 0.05;
             rightPinchServoValue += 0.05;
             clampLRPinchServo();
         }
-        if(gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             leftPinchServoValue += 0.05;
             rightPinchServoValue += 0.05;
             clampLRPinchServo();
@@ -224,7 +222,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         //320 for right column
         //260 to enter
         //600 to turn
-        if(gamepad1.x) {
+        if (gamepad1.x) {
             double angleValue = new GyroAngles(angles).getZ() - angleAtStart;
             if (angleValue > new GyroAngles(angles).getZ()) {
                 setLeftPow(-0.1);
