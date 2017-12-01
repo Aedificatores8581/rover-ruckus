@@ -45,10 +45,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         rightPinchServoValue = 0.5;
     }
 
-    protected void toggleSpeed() {
-        if (speedMult == 0.7)
+    protected void toggleSpeed() { // Frank you can't directly check doubles for equality. Floating-point numbers are rounded when in binary.
+        if (speedMult > 0.5)
             speedMult = 0.175;
-        else if (speedMult == 0.175)
+        else if (speedMult < 0.2)
             speedMult = 4.375;
         else
             speedMult = 0.7;
@@ -131,25 +131,23 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
        */
-        if(gamepad1.left_trigger > 0) {
-            winchPinchPower = -0.5;
-        }
-       else if(gamepad1.right_trigger > 0) {
-               winchPinchPower = 1;
-       }
-       else
-           winchPinchPower = 0;
+        if (gamepad1.left_trigger > 0) {
+            winchPinchPower = -0.2;
+        } else if (gamepad1.right_trigger > 0) {
+            winchPinchPower = 1;
+        } else
+            winchPinchPower = 0;
 
-       if (gamepad1.a && !prev1.a)
+        if (gamepad1.a && !prev1.a)
             scream();
-       if (gamepad1.x && !prev1.x)
+        if (gamepad1.x && !prev1.x)
             toggleSpeed();
-        if(gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             leftPinchServoValue += 0.05;
             rightPinchServoValue -= 0.05;
             clampLRPinchServo();
         }
-        if(gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             leftPinchServoValue -= 0.05;
             rightPinchServoValue += 0.05;
             clampLRPinchServo();
