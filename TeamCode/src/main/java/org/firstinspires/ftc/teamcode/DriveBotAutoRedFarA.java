@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 @Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
 
-public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
+public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     State state;
 
@@ -242,8 +242,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                setLeftPow(-speed);
-                setRightPow(-speed);
+                setLeftPow(speed);
+                setRightPow(speed);
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CHECK_SLOT:
