@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
-@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
+@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
 
 public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
@@ -334,7 +334,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
 
             if (retractDispenser) {
-                glyphDispense.setPower(-0.5);
+                glyphDispense.setPower(-1);
                 if (glyphDispense.getCurrentPosition() >= -5) {
                     glyphDispense.setPower(0.0);
                     dispenseGlyph = false;
