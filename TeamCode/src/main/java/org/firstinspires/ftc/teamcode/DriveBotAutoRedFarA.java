@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
-@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
+@Autonomous(name = "Autonomous Red Far", group = "competition bepis")
 
 public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
@@ -32,10 +32,15 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 500, encToRamGlyph = 520, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 1130, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.22, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = -0.15, adjustSpeed = 0.06;
+    //210 to move forward to left
+//325 to move to mid
+//400 to move to right
+//350 to place glyph
+//
+    int encToDispense = 350, encToRamGlyph = 520, encToBackUp = 100, encToBackUpAgain = 200, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 75;
+    double targetAngle = 90;
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -205,7 +210,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 break;
             case STATE_HIT_LEFT_JEWEL:
-                jewelFlipper.setPosition(0.5);
+                jewelFlipper.setPosition(0.05);
                 //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -239,20 +244,27 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
-                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                state = state.STATE_RECORD_FACING;
                 break;
+            case STATE_GYRO_ANGLES:
+                    gyroAngles = new GyroAngles(angles);
+                    state = State.STATE_FIRST_TURN;
+                break;
+            case STATE_FIRST_TURN:
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
+                state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
-                if(column == CryptoboxColumn.RIGHT)
-                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
-                else if(column == CryptoboxColumn.MID)
-                    state = State.STATE_CRYPTOBOX_CENTER_SLOT;
-                else if(column == CryptoboxColumn.LEFT)
-                    state = State.STATE_CRYPTOBOX_LEFT_SLOT;
+                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
+                    resetEncoders();
+                    reinitMotors(-speed, -speed);
+                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                }
                 /*if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
@@ -261,19 +273,33 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 }*/
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                targetAngle = 5.0;
-                encToDispense = 400;
-                state = State.STATE_RECORD_FACING;
+                    if (column == CryptoboxColumn.LEFT){
+                        targetAngle = 173;
+                        encToDispense = 2000;
+                        state = State.STATE_GYRO_ANGLES;
+                    }
+                    else
+                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                targetAngle = 30.0;
-                encToDispense = 515;
-                state = State.STATE_RECORD_FACING;
+
+                    if (column == CryptoboxColumn.MID){
+                        targetAngle = 160;
+                        encToDispense = 2000;
+                        state = State.STATE_GYRO_ANGLES;
+                    }
+                    else
+                        state = State.STATE_CRYPTOBOX_LEFT_SLOT;
+
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                targetAngle = 45.0;
-                encToDispense = 790;
-                state = State.STATE_RECORD_FACING;
+                    if (column == CryptoboxColumn.RIGHT){
+                        targetAngle = 14;
+                        encToDispense = 2000;
+                        state = State.STATE_GYRO_ANGLES;
+                    }
+
+
                 break;
             case STATE_RECORD_FACING:
                 gyroAngles = new GyroAngles(angles);
@@ -294,10 +320,6 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
                     dispenseGlyph = true;
-                    if (prevTime == 0)
-                        prevTime = System.currentTimeMillis();
-                    if (System.currentTimeMillis() - prevTime >= waitTime)
-                        state = State.STATE_SCAN_JEWEL;
                     setLeftPow(speed);
                     setRightPow(speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
@@ -331,8 +353,10 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
         if (dispenseGlyph) {
             glyphDispense.setPower(0.5);
-
-
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= 250)
+                state = State.STATE_SCAN_JEWEL;
             if (retractDispenser) {
                 glyphDispense.setPower(-0.5);
                 if (glyphDispense.getCurrentPosition() >= -5) {
@@ -366,6 +390,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
         STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
         STATE_CHECK_SLOT,
+        STATE_GYRO_ANGLES,
+        STATE_FIRST_TURN,
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_RECORD_FACING.
@@ -381,3 +407,10 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     }
 
 }
+//move 960 ticks
+//210 to move forward to left
+//325 to move to mid
+//400 to move to right
+//350 to place glyph
+//
+

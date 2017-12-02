@@ -330,6 +330,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
 
+
         telemetry.addData("Glyph Dispenser Pos.", glyphDispense.getCurrentPosition());
 
         NormalizedRGBA colors = color.getNormalizedColors();

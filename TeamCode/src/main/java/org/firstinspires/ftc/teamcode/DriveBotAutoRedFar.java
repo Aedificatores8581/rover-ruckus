@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 @Disabled
-@Autonomous(name = "Autonomous Red Far", group = "competition bepis")
+@Autonomous(name = "Autonomous RedFar", group = "competition bepis")
 public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     State state;
