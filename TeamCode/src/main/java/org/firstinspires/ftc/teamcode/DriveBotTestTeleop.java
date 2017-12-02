@@ -14,12 +14,28 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
-    private double speedMult;
+    private SpeedToggle speedMult;
     private byte armPos = 1;
     private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, leftPinchServoValue, rightPinchServoValue, winchPinchPower;
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
+
+    public enum SpeedToggle {
+        SLOW(0.225),
+        MID(0.7),
+        FAST(4.375);
+
+        private double mult;
+
+        SpeedToggle(double mult) {
+            this.mult = mult;
+        }
+
+        public double getMult() {
+            return mult;
+        }
+    }
 
     @Override
     protected boolean isAutonomous() {
@@ -31,7 +47,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
-        speedMult = 4.375;
         armExtended = false;
     }
 
@@ -40,18 +55,18 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelArmServoValue = 0.71;
         jewelFlipperServoValue = 0.05;
         relicFingersServoValue = 0.5;
-        speedMult = 0.175;
+        speedMult = SpeedToggle.SLOW;
         leftPinchServoValue = 0.5;
         rightPinchServoValue = 0.5;
     }
 
-    protected void toggleSpeed() { // Frank you can't directly check doubles for equality. Floating-point numbers are rounded when in binary.
-        if (speedMult > 0.5)
-            speedMult = 0.175;
-        else if (speedMult < 0.2)
-            speedMult = 4.375;
+    protected void toggleSpeed() {
+        if (speedMult.equals(SpeedToggle.MID))
+            speedMult = SpeedToggle.FAST;
+        else if (speedMult.equals(SpeedToggle.SLOW))
+            speedMult = SpeedToggle.MID;
         else
-            speedMult = 0.7;
+            speedMult = SpeedToggle.SLOW;
     }
 
     protected void clampJewelArmServo() {
@@ -113,14 +128,14 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        setRightPow(gamepad1.left_stick_y * -speedMult);
-        setLeftPow(gamepad1.right_stick_y * -speedMult);
+        setRightPow(gamepad1.left_stick_y * -speedMult.getMult());
+        setLeftPow(gamepad1.right_stick_y * -speedMult.getMult());
         winchPinch.setPower(winchPinchPower);
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-       /* if (gamepad1.right_trigger == 1) {
+        if (gamepad1.left_stick_button) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -130,7 +145,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-       */
         if (gamepad1.left_trigger > 0) {
             winchPinchPower = -0.2;
         } else if (gamepad1.right_trigger > 0) {
