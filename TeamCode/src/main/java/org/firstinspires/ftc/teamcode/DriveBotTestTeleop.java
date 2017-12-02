@@ -135,7 +135,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         relicArm.setPower(gamepad2.left_stick_y);
 
-       /* if (gamepad1.right_trigger == 1) {
+        if (gamepad1.left_stick_button) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -145,7 +145,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-       */
         if (gamepad1.left_trigger > 0) {
             winchPinchPower = -0.2;
         } else if (gamepad1.right_trigger > 0) {
