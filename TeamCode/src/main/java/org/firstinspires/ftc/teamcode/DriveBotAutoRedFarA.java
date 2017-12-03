@@ -38,10 +38,10 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 //400 to move to right
 //350 to place glyph
 //
-    int encToDispense = 350, encToRamGlyph = 520, encToBackUp = 100, encToBackUpAgain = 200, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 90;
-    double ramLeftMod, ramRightMod, ramAngle = 0.75;
+    double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;
@@ -275,7 +275,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                     if (column == CryptoboxColumn.LEFT){
                         targetAngle = 173;
-                        encToDispense = 2000;
+                        encToDispense = 1300;
                         state = State.STATE_GYRO_ANGLES;
                     }
                     else
@@ -285,7 +285,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
                     if (column == CryptoboxColumn.MID){
                         targetAngle = 160;
-                        encToDispense = 2000;
+                        encToDispense = 1300;
                         state = State.STATE_GYRO_ANGLES;
                     }
                     else
@@ -295,11 +295,9 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_CRYPTOBOX_LEFT_SLOT:
                     if (column == CryptoboxColumn.RIGHT){
                         targetAngle = 14;
-                        encToDispense = 2000;
+                        encToDispense = 1300;
                         state = State.STATE_GYRO_ANGLES;
                     }
-
-
                 break;
             case STATE_RECORD_FACING:
                 gyroAngles = new GyroAngles(angles);
@@ -314,40 +312,51 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_REINIT_MOTORS:
-                reinitMotors(-speed, -speed);
+                reinitMotors(speed, speed);
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
+                    stop();
                     dispenseGlyph = true;
-                    if (prevTime == 0)
-                        prevTime = System.currentTimeMillis();
-                    if (System.currentTimeMillis() - prevTime >= waitTime)
-                        state = State.STATE_SCAN_JEWEL;
-                    setLeftPow(speed);
-                    setRightPow(speed);
-                    state = State.STATE_BACK_UP_TO_RAM_GLYPH;
+                    resetEncoders();
+                    reinitMotors(0, 0);
+                        setLeftPow(-speed);
+                        setRightPow(-speed);
+                        state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= 750){
                 if (checkEncodersReverse(encToBackUp)) {
-                    setLeftPow(-speed * ramLeftMod);
-                    setRightPow(-speed * ramRightMod);
+                    resetEncoders();
+                    reinitMotors(0, 0);
+                    setLeftPow(speed * ramLeftMod);
+                    setRightPow(speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
+                }
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
                 if (checkEncoder(encToRamGlyph)) {
-                    setLeftPow(speed * ramLeftMod);
-                    setRightPow(speed * ramRightMod);
+                    resetEncoders();
+                    reinitMotors(0, 0);
+                    setLeftPow(-speed * ramLeftMod);
+                    setRightPow(-speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
-                if (checkEncodersReverse(encToBackUpAgain)) {
-                    setLeftPow(0);
-                    setRightPow(0);
-                    state = State.STATE_END;
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= 750) {
+                    if (checkEncodersReverse(encToBackUpAgain)) {
+                        setLeftPow(0);
+                        setRightPow(0);
+                        state = State.STATE_END;
+                    }
                 }
                 break;
             case STATE_END:
@@ -359,11 +368,15 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             glyphDispense.setPower(0.5);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - prevTime >= 250)
-                state = State.STATE_SCAN_JEWEL;
+            if (System.currentTimeMillis() - prevTime >= 100) {
+                retractDispenser = true;
+                glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
             if (retractDispenser) {
                 glyphDispense.setPower(-0.5);
-                if (glyphDispense.getCurrentPosition() >= -5) {
+
+                if (glyphDispense.getCurrentPosition() <= -5) {
                     glyphDispense.setPower(0.0);
                     dispenseGlyph = false;
                 }

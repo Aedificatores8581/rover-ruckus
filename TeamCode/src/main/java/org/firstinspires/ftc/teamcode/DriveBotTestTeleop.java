@@ -22,7 +22,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     long waiting = 0, waitTime = 500;
 
     public enum SpeedToggle {
-        SLOW(2.275),
+        SLOW(0.25),
         FAST(4.375);
 
         private double mult;
