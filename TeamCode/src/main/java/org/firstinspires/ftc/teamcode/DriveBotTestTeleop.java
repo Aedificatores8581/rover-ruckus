@@ -22,8 +22,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     long waiting = 0, waitTime = 500;
 
     public enum SpeedToggle {
-        SLOW(0.225),
-        MID(0.7),
+        SLOW(2.275),
         FAST(4.375);
 
         private double mult;
@@ -61,10 +60,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void toggleSpeed() {
-        if (speedMult.equals(SpeedToggle.MID))
+        if (speedMult.equals(SpeedToggle.SLOW))
             speedMult = SpeedToggle.FAST;
-        else if (speedMult.equals(SpeedToggle.SLOW))
-            speedMult = SpeedToggle.MID;
         else
             speedMult = SpeedToggle.SLOW;
     }
@@ -300,9 +297,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (gamepad2.x)
-            glyphDispense.setPower(0.2);
+            glyphDispense.setPower(0.75);
         else if (gamepad2.y)
-            glyphDispense.setPower(-0.1);
+            glyphDispense.setPower(-0.5);
         else
             glyphDispense.setPower(0);
 

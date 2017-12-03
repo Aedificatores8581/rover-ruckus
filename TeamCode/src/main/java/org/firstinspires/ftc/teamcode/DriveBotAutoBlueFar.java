@@ -765,7 +765,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             if (System.currentTimeMillis() - prevTime >= 250)
                 state = State.STATE_SCAN_JEWEL;
             if (retractDispenser) {
-                glyphDispense.setPower(-0.5);
+                glyphDispense.setPower(-1);
                 if (glyphDispense.getCurrentPosition() >= -5) {
                     glyphDispense.setPower(0.0);
                     dispenseGlyph = false;

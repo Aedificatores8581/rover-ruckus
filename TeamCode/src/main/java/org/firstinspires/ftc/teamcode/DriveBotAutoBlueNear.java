@@ -33,9 +33,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 500, encToRamGlyph = 520, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    int encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 420, encToChangeColumn = 300, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 30;
+    double targetAngle = 40;
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -319,13 +319,13 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         }
 
         if (dispenseGlyph) {
-            glyphDispense.setPower(-1);
-            if (glyphDispense.getCurrentPosition() <= -175)
+            glyphDispense.setPower(0.2);
+            if (glyphDispense.getCurrentPosition() >= 175)
                 retractDispenser = true;
 
             if (retractDispenser) {
-                glyphDispense.setPower(0.5);
-                if (glyphDispense.getCurrentPosition() >= -5) {
+                glyphDispense.setPower(-0.4);
+                if (glyphDispense.getCurrentPosition() <= 5) {
                     glyphDispense.setPower(0.0);
                     dispenseGlyph = false;
                 }

@@ -320,6 +320,10 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
                     dispenseGlyph = true;
+                    if (prevTime == 0)
+                        prevTime = System.currentTimeMillis();
+                    if (System.currentTimeMillis() - prevTime >= waitTime)
+                        state = State.STATE_SCAN_JEWEL;
                     setLeftPow(speed);
                     setRightPow(speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;

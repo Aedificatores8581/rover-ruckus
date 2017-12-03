@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
+ * ..
  */
 @Autonomous(name = "Autonomous Red Near", group = "competition bepis")
 
