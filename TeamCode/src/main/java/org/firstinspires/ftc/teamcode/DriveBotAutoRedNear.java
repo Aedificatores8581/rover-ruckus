@@ -40,6 +40,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
+    boolean dispenseGlyph, retractDispenser;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -89,6 +90,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         relicTemplate.setName("relicVuMarkTemplate");
 
         prevTime = 0;
+
+        dispenseGlyph = false;
+        retractDispenser = false;
 
         leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -187,7 +191,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_LOWER_JEWEL_ARM:
                 jewelFlipper.setPosition(jewelFlipperUp);
                 jewelArm.setPosition(jewelArmDownPosition);
-                glyphOutput.setPosition(glyphHold);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -283,7 +286,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
-                    glyphOutput.setPosition(glyphDrop);
+                    dispenseGlyph = true;
                     setLeftPow(speed);
                     setRightPow(speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
@@ -291,7 +294,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
                 if (checkEncodersReverse(encToBackUp)) {
-                    glyphOutput.setPosition(glyphHold);
                     setLeftPow(-speed * ramLeftMod);
                     setRightPow(-speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
@@ -314,6 +316,20 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_END:
                 telemetry.addData("Finished", "Very Yes");
                 break;
+        }
+
+        if (dispenseGlyph) {
+            glyphDispense.setPower(0.2);
+            if (glyphDispense.getCurrentPosition() >= 175)
+                retractDispenser = true;
+
+            if (retractDispenser) {
+                glyphDispense.setPower(-0.4);
+                if (glyphDispense.getCurrentPosition() <= 5) {
+                    glyphDispense.setPower(0.0);
+                    dispenseGlyph = false;
+                }
+            }
         }
 
         telemetry.addData("State", state.name());

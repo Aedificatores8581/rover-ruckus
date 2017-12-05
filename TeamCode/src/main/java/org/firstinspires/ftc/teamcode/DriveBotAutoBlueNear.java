@@ -33,7 +33,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 420, encToChangeColumn = 300, encToMoveToCenter, encToMoveToRight;
+    int encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 40;
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
@@ -209,21 +209,24 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime)
+                if (System.currentTimeMillis() - prevTime >= waitTime) {
+                    jewelArm.setPosition(jewelArmUpPosition);
                     state = State.STATE_RESET_JEWEL_HITTER;
+                }
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(0.05);
                 //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime)
+                if (System.currentTimeMillis() - prevTime >= waitTime) {
+                    jewelArm.setPosition(jewelArmUpPosition);
                     state = State.STATE_RESET_JEWEL_HITTER;
+                }
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
-                jewelArm.setPosition(jewelArmUpPosition);
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:

@@ -332,9 +332,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
-        telemetry.addData("winch pinch", winchPinchPower);
-        telemetry.addData("left pinch", leftPinchServoValue);
-        telemetry.addData("right pinch", rightPinchServoValue);
+        telemetry.addData("Winch Pinch", winchPinchPower);
+        telemetry.addData("Left Pinch", leftPinchServoValue);
+        telemetry.addData("Right Pinch", rightPinchServoValue);
 
         try {
             prev1.copy(gamepad1);

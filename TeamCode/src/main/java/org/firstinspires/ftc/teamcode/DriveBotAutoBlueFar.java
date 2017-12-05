@@ -32,12 +32,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.22, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = -0.06;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.22, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = -0.15, adjustSpeed = 0.06;
     //210 to move forward to left
-//325 to move to mid
-//400 to move to right
-//350 to place glyph
-//
+    //325 to move to mid
+    //400 to move to right
+    //350 to place glyph
+    //
     int encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 90;
@@ -50,6 +50,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     public void start() {
         super.start();
         relicTrackables.activate();
+
         encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
         encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
         if (ramAngle > 1.0) {
@@ -260,7 +261,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 setRightPow(adjustSpeed);
                 state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
-                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
@@ -273,28 +274,26 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }*/
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (column == CryptoboxColumn.LEFT){
-                    targetAngle = 7;
-                    encToDispense = 1400;
+                if (column == CryptoboxColumn.LEFT) {
+                    targetAngle = 180 - 165;
+                    encToDispense = 1300;
                     state = State.STATE_GYRO_ANGLES;
-                }
-                else
+                } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
 
-                if (column == CryptoboxColumn.MID){
-                    targetAngle = 14;
-                    encToDispense = 1400;
+                if (column == CryptoboxColumn.MID) {
+                    targetAngle = 180 - 159;
+                    encToDispense = 1350;
                     state = State.STATE_GYRO_ANGLES;
-                }
-                else
+                } else
                     state = State.STATE_CRYPTOBOX_LEFT_SLOT;
 
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (column == CryptoboxColumn.RIGHT){
-                    targetAngle = 20;
+                if (column == CryptoboxColumn.RIGHT) {
+                    targetAngle = 180 - 152;
                     encToDispense = 1400;
                     state = State.STATE_GYRO_ANGLES;
                 }
@@ -317,12 +316,14 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
-                    stop();
+                    setLeftPow(0.0);
+                    setRightPow(0.0);
                     dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(-speed);
-                    setRightPow(-speed);
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    prevTime = System.currentTimeMillis();
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
@@ -331,8 +332,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (checkEncodersReverse(encToBackUp)) {
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(speed * ramLeftMod);
-                    setRightPow(speed * ramRightMod);
+                    setLeftPow(-speed * ramLeftMod);
+                    setRightPow(-speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
                 }
                 break;
@@ -340,8 +341,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (checkEncoder(encToRamGlyph)) {
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(-speed * ramLeftMod);
-                    setRightPow(-speed * ramRightMod);
+                    setLeftPow(speed * ramLeftMod);
+                    setRightPow(speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
 
                 }
@@ -360,9 +361,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         if (dispenseGlyph) {
             glyphDispense.setPower(0.5);
-            if (prevTime == 0)
-                prevTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - prevTime >= 100) {
+            if (System.currentTimeMillis() - prevTime >= 200) {
                 retractDispenser = true;
                 glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
