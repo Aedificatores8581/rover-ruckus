@@ -28,7 +28,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
         rm = hardwareMap.dcMotor.get("rm");
         ods = hardwareMap.opticalDistanceSensor.get("ods");
 
-        touch.setMode(DigitalChannel.Mode.OUTPUT);
+        touch.setMode(DigitalChannel.Mode.INPUT);
         lm.setDirection(Constants.LM_DIR);
         rm.setDirection(Constants.RM_DIR);
     }
