@@ -19,7 +19,6 @@ public class Sensor2BotODSTest extends Sensor2BotTemplate{
 
     public void loop(){
         lightAmount = ods.getRawLightDetected();
-        telemetry.update();
         telemetry.addData("Light", lightAmount);
 
     }
