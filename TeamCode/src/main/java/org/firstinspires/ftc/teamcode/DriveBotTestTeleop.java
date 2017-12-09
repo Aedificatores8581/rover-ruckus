@@ -16,7 +16,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     private SpeedToggle speedMult;
     private byte armPos = 1;
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, leftPinchServoValue, rightPinchServoValue, winchPinchPower;
+    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue;
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
@@ -55,8 +55,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipperServoValue = 0.05;
         relicFingersServoValue = 0.5;
         speedMult = SpeedToggle.SLOW;
-        leftPinchServoValue = 0.5;
-        rightPinchServoValue = 0.5;
     }
 
     protected void toggleSpeed() {
@@ -71,17 +69,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelArmServoValue = 0.71;
         if (jewelArmServoValue < 0.25) // Minimum position
             jewelArmServoValue = 0.25;
-    }
-
-    protected void clampLRPinchServo() {
-        if (leftPinchServoValue > 1) // Maximum position
-            leftPinchServoValue = 1;
-        if (leftPinchServoValue < 0) // Minimum position
-            leftPinchServoValue = 0;
-        if (rightPinchServoValue > 1) // Maximum position
-            rightPinchServoValue = 1;
-        if (rightPinchServoValue < 0) // Minimum position
-            rightPinchServoValue = 0;
     }
 
     protected void clampJewelFlipperServo() {
@@ -119,15 +106,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
-        leftPinch.setPosition(leftPinchServoValue);
-        rightPinch.setPosition(rightPinchServoValue);
     }
 
     @Override
     public void loop() {
         setRightPow(gamepad1.left_stick_y * -speedMult.getMult());
         setLeftPow(gamepad1.right_stick_y * -speedMult.getMult());
-        winchPinch.setPower(winchPinchPower);
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
@@ -143,12 +127,16 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger)) {
+        if (triggered(gamepad1.left_trigger)) {
             succ(1.0);
-            belt(1.0);
-        } else if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger)) {
+            belt(0.5);
+        } else if (triggered(gamepad1.right_trigger)) {
             succ(-1.0);
-            belt(-1.0);
+            belt(-0.5);
+        }
+        else {
+            succ(0.0);
+            belt(0.0);
         }
 
         if (gamepad1.a && !prev1.a)
@@ -156,18 +144,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         if (gamepad1.x && !prev1.x)
             toggleSpeed();
-
-        if (gamepad1.right_bumper) {
-            leftPinchServoValue += 0.05;
-            rightPinchServoValue -= 0.05;
-            clampLRPinchServo();
-        }
-
-        if (gamepad1.left_bumper) {
-            leftPinchServoValue -= 0.05;
-            rightPinchServoValue += 0.05;
-            clampLRPinchServo();
-        }
 
         if (gamepad1.dpad_down) {
             jewelArmServoValue += 0.01;
@@ -337,9 +313,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
-        telemetry.addData("Winch Pinch", winchPinchPower);
-        telemetry.addData("Left Pinch", leftPinchServoValue);
-        telemetry.addData("Right Pinch", rightPinchServoValue);
 
         try {
             prev1.copy(gamepad1);

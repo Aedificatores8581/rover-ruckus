@@ -35,14 +35,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
 
-        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.REVERSE;
 
         public static final DcMotor.Direction BELT1_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction BELT2_DIR = DcMotor.Direction.REVERSE;
-
-        public static final DcMotor.Direction LEFT_GLYPH_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction RIGHT_GLYPH_DIR = DcMotor.Direction.REVERSE;
 
         public static final double LEFT_FORE_SPEED = 1.0;
         public static final double LEFT_REAR_SPEED = 1.0;
@@ -51,13 +48,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor relicArm, glyphDispense, winchPinch;
+    DcMotor relicArm, glyphDispense;
     DcMotor intakeLeft, intakeRight;
 
     CRServo belt1, belt2;
 
     Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
-    Servo leftPinch, rightPinch;
 
     NormalizedColorSensor color;
     NormalizedRGBA colors;
@@ -77,8 +73,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        winchPinch = hardwareMap.dcMotor.get("wp");
-
         glyphDispense = hardwareMap.dcMotor.get("gd");
 
         intakeLeft = hardwareMap.dcMotor.get("iml");
@@ -89,9 +83,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
-
-        leftPinch = hardwareMap.servo.get("lp");
-        rightPinch = hardwareMap.servo.get("rp");
 
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
