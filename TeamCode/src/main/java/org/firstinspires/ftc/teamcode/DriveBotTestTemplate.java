@@ -53,6 +53,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected Orientation angles;
     protected Acceleration gravity;
     public double angleAtStart;
+
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
@@ -232,9 +233,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         int rightRearDist = Math.abs(rightRear.getCurrentPosition());
 
         boolean mtrsHere = (distance >= leftForeDist)
-                        || (distance >= leftRearDist)
-                        || (distance >= rightForeDist)
-                        || (distance >= rightRearDist);
+                || (distance >= leftRearDist)
+                || (distance >= rightForeDist)
+                || (distance >= rightRearDist);
 
         return mtrsHere;
     }
@@ -243,7 +244,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
-    String formatDegrees(double degrees){
+    String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 

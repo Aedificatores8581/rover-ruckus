@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 @Disabled
 @Autonomous(name = "Autonomous RedFar", group = "competition bepis")
 public class DriveBotAutoRedFar extends DriveBotTestTemplate {
@@ -93,18 +94,18 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_CENTER_FINGER:
                 jewelFlipper.setPosition(0.6);
-                if(waiting == 0 )
+                if (waiting == 0)
                     waiting = System.currentTimeMillis();
-                if(System.currentTimeMillis() - waiting >= waitTime) {
+                if (System.currentTimeMillis() - waiting >= waitTime) {
                     waiting = 0;
                     state = State.STATE_LOWER_JEWEL_ARM;
                 }
                 break;
             case STATE_LOWER_JEWEL_ARM:
                 jewelArm.setPosition(0.25);
-                if(waiting == 0 )
+                if (waiting == 0)
                     waiting = System.currentTimeMillis();
-                if(System.currentTimeMillis() - waiting >= waitTime) {
+                if (System.currentTimeMillis() - waiting >= waitTime) {
                     waiting = 0;
                     state = State.STATE_SCAN_JEWEL;
                 }
@@ -118,36 +119,36 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                if(waiting == 0 )
+                if (waiting == 0)
                     waiting = System.currentTimeMillis();
-                if(System.currentTimeMillis() - waiting >= waitTime) {
+                if (System.currentTimeMillis() - waiting >= waitTime) {
                     waiting = 0;
                     state = State.STATE_RESET_JEWEL_HITTER;
                 }
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(0.95);
-                if(waiting == 0 )
+                if (waiting == 0)
                     waiting = System.currentTimeMillis();
-                if(System.currentTimeMillis() - waiting >= waitTime) {
+                if (System.currentTimeMillis() - waiting >= waitTime) {
                     waiting = 0;
                     state = State.STATE_RESET_JEWEL_HITTER;
                 }
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 jewelArm.setPosition(0.71);
-                if(waiting == 0 )
+                if (waiting == 0)
                     waiting = System.currentTimeMillis();
-                if(System.currentTimeMillis() - waiting >= waitTime) {
+                if (System.currentTimeMillis() - waiting >= waitTime) {
                     waiting = 0;
                     leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                    leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                    leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 }
                 break;
@@ -157,7 +158,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 state = State.STATE_CHECK_TURN;
                 break;
             case STATE_CHECK_TURN:
-                if(checkEncoder(encToDismount))
+                if (checkEncoder(encToDismount))
                     state = State.STATE_READ_GYRO;
                 break;
             case STATE_READ_GYRO:
@@ -167,17 +168,17 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_TURN:
                 setLeftPow(-adjustLeftSpeed);
                 setRightPow(adjustRightSpeed);
-                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30) {
-                     state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                     leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                     rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                     rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                     leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                     leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                     rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                     rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                     leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                 }
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30) {
+                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
                 break;
 
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -194,11 +195,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 if (checkEncoder(encToMoveToNextColumn)) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_DISPENSE_GLYPH;
@@ -210,11 +211,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 if (checkEncoder(encToMoveToNextColumn))
                     state = State.STATE_DISPENSE_GLYPH;
                 break;
@@ -224,28 +225,28 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER );
+                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+                setLeftPow(-speed);
+                setRightPow(speed);
+                gyroAngles = new GyroAngles(angles);
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= 30) {
                     setLeftPow(-speed);
-                    setRightPow(speed);
-                    gyroAngles = new GyroAngles(angles);
-                    if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= 30) {
-                        setLeftPow(-speed);
-                        setRightPow(-speed);
+                    setRightPow(-speed);
 
 
                     if (checkEncoder(encToDispense /* placeholder value*/) || checkLeftEncoder(encToDispense /* placeholder value*/)) {
                         //glyphOutput.setPosition(0.33);
-                        if(waiting == 0 )
+                        if (waiting == 0)
                             waiting = System.currentTimeMillis();
-                        if(System.currentTimeMillis() - waiting >= waitTime) {
+                        if (System.currentTimeMillis() - waiting >= waitTime) {
                             waiting = 0;
                         }
-                       //glyphOutput.setPosition(0);
+                        //glyphOutput.setPosition(0);
 
                         state = State.STATE_END;
                     }

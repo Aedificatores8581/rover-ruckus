@@ -55,6 +55,8 @@ public abstract class DriveBotTemplate extends SleepableOpMode {
     // Lift motor 1 is for lifting the glyph onto the platorm.
     // List motor 2 is for dispensing the glyph onto the cryptobox.
     CRServo leftIntake1, leftIntake2, rightIntake1, rightIntake2;
+
+    Servo glyphGrabberRight;
     Servo relicGrabber, relicGrabMover, armTilter, jewelArm, jewelFlipper, rightHinge, leftHinge;
     NormalizedRGBA colors;
 

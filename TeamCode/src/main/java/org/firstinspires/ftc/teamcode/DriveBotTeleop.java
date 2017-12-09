@@ -10,7 +10,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
- */
+ *
+ * Note: ALL regarding actions using the DPAD UP AND DOWN buttons and RIGHT AND LEFT TRIGGER have been
+ * REMAPPED for use of a GLYPH GRABBER
+ * */
 @TeleOp(name = "Tele-Op", group = "actually not a test")
 @Disabled
 public class DriveBotTeleop extends DriveBotTemplate {
@@ -27,6 +30,8 @@ public class DriveBotTeleop extends DriveBotTemplate {
         super.init();
         prev1 = new Gamepad();
         prev2 = new Gamepad();
+
+
         speedMult = 0.7;
 
         armExtended = false;
@@ -113,30 +118,30 @@ public class DriveBotTeleop extends DriveBotTemplate {
             relicGrabber.setPosition(1.0);
     }
 
-/*    protected void extendArm() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                setArmPow(0.5);
-                while (Math.abs(armMotor.getCurrentPosition()) <= 150) ;
-                armExtended = true;
-                setArmPow(0.0);
-            }
-        }).run();
-    }
+    /*    protected void extendArm() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    setArmPow(0.5);
+                    while (Math.abs(armMotor.getCurrentPosition()) <= 150) ;
+                    armExtended = true;
+                    setArmPow(0.0);
+                }
+            }).run();
+        }
 
-    protected void retractArm() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                setArmPow(-0.5);
-                while (Math.abs(armMotor.getCurrentPosition()) >= 0) ;
-                armExtended = false;
-                setArmPow(0.0);
-            }
-        }).run();
-    }
-*/
+        protected void retractArm() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    setArmPow(-0.5);
+                    while (Math.abs(armMotor.getCurrentPosition()) >= 0) ;
+                    armExtended = false;
+                    setArmPow(0.0);
+                }
+            }).run();
+        }
+    */
     protected void lowerJewelArm() {
         jewelArm.setPosition(jewelArm.getPosition() + 0.2);
     }
@@ -159,23 +164,27 @@ public class DriveBotTeleop extends DriveBotTemplate {
         if (gamepad1.y && !prev1.y && !lifting)
             midDelivery();
 
-        if (gamepad1.x && !prev1.x && !lifting)
+        if (gamepad1.x && !prev1.x && !lifting) {
             lowDelivery();
+        }
 
         if (gamepad1.left_bumper && !prev1.left_bumper)
             toggleSpeed();
 
-        if (gamepad1.dpad_up && !prev1.dpad_up)
-            setIntakePow(0.5);
+        if (gamepad1.dpad_up && !prev1.dpad_up) {
 
-        if (gamepad1.dpad_down && !prev1.dpad_down)
-            setIntakePow(-0.5);
+            // setIntakePow(0.5);
+        }
+        if (gamepad1.dpad_down && !prev1.dpad_down) {
+            // setIntakePow(-0.5);
+        }
 
-        if (prev1.dpad_up && !gamepad1.dpad_up)
-            setIntakePow(0);
+        if (prev1.dpad_up && !gamepad1.dpad_up) {
+            // setIntakePow(0);
+        }
 
         if (prev1.dpad_down && !gamepad1.dpad_down)
-            setIntakePow(0);
+            // setIntakePow(0);
 
         if (gamepad1.right_bumper && !prev1.right_bumper)
             toggleIntake();

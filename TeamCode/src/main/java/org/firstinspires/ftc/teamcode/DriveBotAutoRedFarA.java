@@ -211,7 +211,6 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -219,7 +218,6 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(0.95);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -252,15 +250,15 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 state = state.STATE_RECORD_FACING;
                 break;
             case STATE_GYRO_ANGLES:
-                    gyroAngles = new GyroAngles(angles);
-                    state = State.STATE_FIRST_TURN;
+                gyroAngles = new GyroAngles(angles);
+                state = State.STATE_FIRST_TURN;
                 break;
             case STATE_FIRST_TURN:
                 setLeftPow(-adjustSpeed);
                 setRightPow(adjustSpeed);
                 state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
-                if(gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
@@ -273,31 +271,29 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 }*/
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                    if (column == CryptoboxColumn.LEFT){
-                        targetAngle = 173;
-                        encToDispense = 1300;
-                        state = State.STATE_GYRO_ANGLES;
-                    }
-                    else
-                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
+                if (column == CryptoboxColumn.LEFT) {
+                    targetAngle = 165;
+                    encToDispense = 1300;
+                    state = State.STATE_GYRO_ANGLES;
+                } else
+                    state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
 
-                    if (column == CryptoboxColumn.MID){
-                        targetAngle = 160;
-                        encToDispense = 1300;
-                        state = State.STATE_GYRO_ANGLES;
-                    }
-                    else
-                        state = State.STATE_CRYPTOBOX_LEFT_SLOT;
+                if (column == CryptoboxColumn.MID) {
+                    targetAngle = 159;
+                    encToDispense = 1350;
+                    state = State.STATE_GYRO_ANGLES;
+                } else
+                    state = State.STATE_CRYPTOBOX_LEFT_SLOT;
 
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                    if (column == CryptoboxColumn.RIGHT){
-                        targetAngle = 14;
-                        encToDispense = 1300;
-                        state = State.STATE_GYRO_ANGLES;
-                    }
+                if (column == CryptoboxColumn.RIGHT) {
+                    targetAngle = 152;
+                    encToDispense = 1400;
+                    state = State.STATE_GYRO_ANGLES;
+                }
                 break;
             case STATE_RECORD_FACING:
                 gyroAngles = new GyroAngles(angles);
@@ -317,34 +313,35 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoder(encToDispense)) {
-                    stop();
+                    setLeftPow(0.0);
+                    setRightPow(0.0);
                     dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(0, 0);
-                        setLeftPow(-speed);
-                        setRightPow(-speed);
-                        state = State.STATE_BACK_UP_TO_RAM_GLYPH;
+                    setLeftPow(speed);
+                    setRightPow(speed);
+                    state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= 750){
-                if (checkEncodersReverse(encToBackUp)) {
-                    resetEncoders();
-                    reinitMotors(0, 0);
-                    setLeftPow(speed * ramLeftMod);
-                    setRightPow(speed * ramRightMod);
-                    state = State.STATE_RAM_GLYPH_INTO_BOX;
-                }
+                if (System.currentTimeMillis() - prevTime >= 750) {
+                    if (checkEncodersReverse(encToBackUp)) {
+                        resetEncoders();
+                        reinitMotors(0, 0);
+                        setLeftPow(-speed * ramLeftMod);
+                        setRightPow(-speed * ramRightMod);
+                        state = State.STATE_RAM_GLYPH_INTO_BOX;
+                    }
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
                 if (checkEncoder(encToRamGlyph)) {
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(-speed * ramLeftMod);
-                    setRightPow(-speed * ramRightMod);
+                    setLeftPow(speed * ramLeftMod);
+                    setRightPow(speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
@@ -368,7 +365,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             glyphDispense.setPower(0.5);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - prevTime >= 100) {
+            if (System.currentTimeMillis() - prevTime >= 200) {
                 retractDispenser = true;
                 glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
