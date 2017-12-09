@@ -8,12 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Sensor Touch Demo", group = "feelz2thesequel")
 public class Sensor2BotTouchDemo extends Sensor2BotTemplate {
-    boolean runMotors;
-
-    @Override
-    public void start() {
-        runMotors = false;
-    }
 
     @Override
     public void loop() {
@@ -23,6 +17,5 @@ public class Sensor2BotTouchDemo extends Sensor2BotTemplate {
             go();
 
         telemetry.addData("Touched", touch.getState());
-        telemetry.addData("Running", runMotors);
     }
 }
