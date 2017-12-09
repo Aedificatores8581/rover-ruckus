@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 public abstract class DriveBotTestTemplate extends OpMode {
 
-    MediaPlayer wilhelmScream;
+    MediaPlayer wilhelmScream, danceMusic;
 
     public static class Constants {
         public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.FORWARD;
@@ -35,11 +35,13 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
 
-        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
 
         public static final DcMotor.Direction BELT1_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction BELT2_DIR = DcMotor.Direction.REVERSE;
+
+        public static final double RAMP_SPEED = 0.0625;
 
         public static final double LEFT_FORE_SPEED = 1.0;
         public static final double LEFT_REAR_SPEED = 1.0;
@@ -62,11 +64,21 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     protected Orientation angles;
     protected Acceleration gravity;
+
+    private double leftPow, rightPow;
+    private boolean dancing;
+
     public double angleAtStart;
 
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
+
+        leftPow = 0.0;
+        rightPow = 0.0;
+
+        dancing = false;
+
         //region Configuration section
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
@@ -111,6 +123,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
 
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
+        danceMusic = MediaPlayer.create(hardwareMap.appContext, R.raw.dance);
 
         if (isAutonomous()) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -216,12 +229,22 @@ public abstract class DriveBotTestTemplate extends OpMode {
         });
     }
 
+    protected double getLeftPow() {
+        return leftPow;
+    }
+
+    protected double getRightPow() {
+        return rightPow;
+    }
+
     protected void setLeftPow(double pow) {
+        leftPow = pow;
         leftFore.setPower(pow * Constants.LEFT_FORE_SPEED);
         leftRear.setPower(pow * Constants.LEFT_REAR_SPEED);
     }
 
     protected void setRightPow(double pow) {
+        rightPow = pow;
         rightFore.setPower(pow * Constants.RIGHT_FORE_SPEED);
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
     }
@@ -297,6 +320,36 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         setLeftPow(leftSpeed);
         setRightPow(rightSpeed);
+    }
+
+    protected void startDance() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                danceMusic.setLooping(true);
+                danceMusic.start();
+            }
+        });
+        dancing = true;
+    }
+
+    protected void stopDance() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                danceMusic.stop();
+            }
+        });
+        dancing = false;
+    }
+
+    protected boolean isDancing() {
+        return dancing;
+    }
+
+    protected void dance() {
+        setLeftPow(0.5);
+        setRightPow(-0.5);
     }
 
     // This is here for not loading the gyro sensor when in teleop.

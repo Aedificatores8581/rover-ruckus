@@ -108,10 +108,24 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         relicFingers.setPosition(relicFingersServoValue);
     }
 
+    protected void setMotorPowers() {
+        double leftPow, rightPow;
+        if ((rightPow = getRightPow()) < (gamepad1.left_stick_y * -speedMult.getMult()))
+            setRightPow(rightPow + (Constants.RAMP_SPEED * speedMult.getMult()));
+        else
+            setRightPow(rightPow - (Constants.RAMP_SPEED * speedMult.getMult()));
+        if ((leftPow = getLeftPow()) < (gamepad1.right_stick_y * -speedMult.getMult()))
+            setLeftPow(leftPow + (Constants.RAMP_SPEED * speedMult.getMult()));
+        else
+            setLeftPow(leftPow - (Constants.RAMP_SPEED * speedMult.getMult()));
+    }
+
     @Override
     public void loop() {
-        setRightPow(gamepad1.left_stick_y * -speedMult.getMult());
-        setLeftPow(gamepad1.right_stick_y * -speedMult.getMult());
+        if (isDancing())
+            dance();
+        else
+            setMotorPowers();
         refreshServos();
 
         relicArm.setPower(gamepad2.left_stick_y);
@@ -133,8 +147,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         } else if (triggered(gamepad1.right_trigger)) {
             succ(-1.0);
             belt(-0.5);
-        }
-        else {
+        } else {
             succ(0.0);
             belt(0.0);
         }
@@ -170,9 +183,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicHandServo();
         }
 
-        if (gamepad2.b) {
-            relicHandServoValue = 0.188;
-        }
+        if (gamepad2.a && !prev2.a)
+            startDance();
+
+        if (gamepad2.b && !gamepad2.b)
+            stopDance();
+
+        //if (gamepad2.b) {
+        //    relicHandServoValue = 0.188;
+        //}
 
         //increase servo range of relic hand servo
         // program the new servos and motor
