@@ -15,10 +15,16 @@ public class Sensor2BotODSTest extends Sensor2BotTemplate{
 
     public void init(){
         state = State.SETTING_DISTANCE;
+        lightAmount = 0.0;
     }
 
-    public void loop(){
-        lightAmount = ods.getRawLightDetected();
+    @Override public void loop(){
+        telemetry.update();
+        try {
+            lightAmount = ods.getLightDetected();
+        } catch(Exception e){
+            telemetry.addLine(e.toString());
+        }
         telemetry.addData("Light", lightAmount);
 
     }
