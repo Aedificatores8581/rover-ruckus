@@ -52,7 +52,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
     }
 
     public void stop() {
-        lm.setPower(0);
-        rm.setPower(0);
+        lm.setPower(0.0);
+        rm.setPower(0.0);
     }
 }
