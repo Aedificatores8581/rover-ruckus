@@ -142,22 +142,27 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (gamepad1.left_trigger > 0) {
-            winchPinchPower = -0.2;
-        } else if (gamepad1.right_trigger > 0) {
-            winchPinchPower = 1;
-        } else
-            winchPinchPower = 0;
+
+        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger)) {
+            succ(1.0);
+            belt(1.0);
+        } else if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger)) {
+            succ(-1.0);
+            belt(-1.0);
+        }
 
         if (gamepad1.a && !prev1.a)
             scream();
+
         if (gamepad1.x && !prev1.x)
             toggleSpeed();
+
         if (gamepad1.right_bumper) {
             leftPinchServoValue += 0.05;
             rightPinchServoValue -= 0.05;
             clampLRPinchServo();
         }
+
         if (gamepad1.left_bumper) {
             leftPinchServoValue -= 0.05;
             rightPinchServoValue += 0.05;

@@ -7,7 +7,9 @@ import android.os.Looper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -33,6 +35,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
 
+        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.REVERSE;
+
+        public static final DcMotor.Direction BELT1_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction BELT2_DIR = DcMotor.Direction.REVERSE;
+
         public static final DcMotor.Direction LEFT_GLYPH_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction RIGHT_GLYPH_DIR = DcMotor.Direction.REVERSE;
 
@@ -44,10 +52,16 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
     DcMotor relicArm, glyphDispense, winchPinch;
+    DcMotor intakeLeft, intakeRight;
+
+    CRServo belt1, belt2;
+
     Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
     Servo leftPinch, rightPinch;
+
     NormalizedColorSensor color;
     NormalizedRGBA colors;
+
     BNO055IMU imu;
 
     protected Orientation angles;
@@ -66,6 +80,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
         winchPinch = hardwareMap.dcMotor.get("wp");
 
         glyphDispense = hardwareMap.dcMotor.get("gd");
+
+        intakeLeft = hardwareMap.dcMotor.get("iml");
+        intakeRight = hardwareMap.dcMotor.get("imr");
+
+        belt1 = hardwareMap.crservo.get("vm1");
+        belt2 = hardwareMap.crservo.get("vm2");
 
         jewelArm = hardwareMap.servo.get("ja");
         jewelFlipper = hardwareMap.servo.get("jf");
@@ -86,6 +106,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
         rightRear.setDirection(Constants.RIGHT_REAR_DIR);
+
+        intakeLeft.setDirection(Constants.INTAKE_LEFT_DIR);
+        intakeRight.setDirection(Constants.INTAKE_RIGHT_DIR);
+
+        belt1.setDirection(Constants.BELT1_DIR);
+        belt2.setDirection(Constants.BELT2_DIR);
 
         leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -178,6 +204,16 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         wilhelmScream.release();
         wilhelmScream = null;
+    }
+
+    protected void succ(double power) {
+        intakeLeft.setPower(power);
+        intakeRight.setPower(power);
+    }
+
+    protected void belt(double power) {
+        belt1.setPower(power);
+        belt2.setPower(power);
     }
 
     protected void scream() {
