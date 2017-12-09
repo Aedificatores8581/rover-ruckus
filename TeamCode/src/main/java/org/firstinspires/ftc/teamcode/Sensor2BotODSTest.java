@@ -12,16 +12,19 @@ public class Sensor2BotODSTest extends Sensor2BotTemplate {
 
     State state;
 
-    public void init() {
-        state = State.SETTING_DISTANCE;
-    }
-
     public void loop() {
 
-        if (ods == null)
+        if (ods == null) {
             telemetry.addData("ERROR ERROR ERROR", "OPTICAL DISTANCE SENSOR IS NULL THIS IS VERY BAD REQUESTING TO ABORT REPEAT REQUESTING TO ABORT");
-        else
-            telemetry.addData("Light", ods.getLightDetected());
+        }
+        else{
+            try {
+                telemetry.addData("Light", ods.getLightDetected());
+            }catch(Exception e){
+                telemetry.addLine(e.toString());
+            }
+
+        }
 
     }
 }
