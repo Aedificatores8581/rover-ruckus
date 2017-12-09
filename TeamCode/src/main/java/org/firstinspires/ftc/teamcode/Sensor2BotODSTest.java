@@ -6,26 +6,22 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Created by Hunter Seachrist on 12/5/2017.
  */
 @TeleOp(name = "SensorBot: Opical Distance Sensor Test", group = "bepis")
-public class Sensor2BotODSTest extends Sensor2BotTemplate{
+public class Sensor2BotODSTest extends Sensor2BotTemplate {
 
     private enum State {SETTING_DISTANCE, DRIVING, STOPPED}
+
     State state;
-    double lightAmount;
 
-
-    public void init(){
+    public void init() {
         state = State.SETTING_DISTANCE;
-        lightAmount = 0.0;
     }
 
-    @Override public void loop(){
-        telemetry.update();
-        try {
-            lightAmount = ods.getLightDetected();
-        } catch(Exception e){
-            telemetry.addLine(e.toString());
-        }
-        telemetry.addData("Light", lightAmount);
+    public void loop() {
+
+        if (ods == null)
+            telemetry.addData("ERROR ERROR ERROR", "OPTICAL DISTANCE SENSOR IS NULL THIS IS VERY BAD REQUESTING TO ABORT REPEAT REQUESTING TO ABORT");
+        else
+            telemetry.addData("Light", ods.getLightDetected());
 
     }
 }
