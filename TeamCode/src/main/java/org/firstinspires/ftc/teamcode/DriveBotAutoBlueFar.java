@@ -257,8 +257,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_FIRST_TURN;
                 break;
             case STATE_FIRST_TURN:
-                setLeftPow(-adjustSpeed);
-                setRightPow(adjustSpeed);
+                setLeftPow(adjustSpeed);
+                setRightPow(-adjustSpeed);
                 state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
