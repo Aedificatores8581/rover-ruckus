@@ -21,6 +21,7 @@ public class Sensor2BotTeleop extends Sensor2BotTemplate {
         wp1.setPower(gamepad2.right_stick_y * 0.75);
         wp2.setPower(gamepad2.right_stick_y * 0.75);
 
-        vm.setPower(gamepad2.left_stick_y);
+        vm1.setPower(gamepad2.left_stick_y);
+        vm2.setPower(gamepad2.left_stick_y);
     }
 }

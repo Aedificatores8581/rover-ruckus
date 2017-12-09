@@ -17,7 +17,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
     protected DigitalChannel touch;
     protected DcMotor lm, rm, wp1, wp2;
     protected OpticalDistanceSensor ods;
-    protected CRServo vm;
+    protected CRServo vm1, vm2;
 
     public static class Constants {
         public static final double MOTOR_POWER = 0.25;
@@ -25,7 +25,8 @@ public abstract class Sensor2BotTemplate extends OpMode {
         public static final DcMotor.Direction RM_DIR = DcMotorSimple.Direction.REVERSE;
         public static final DcMotor.Direction WP1_DIR = DcMotorSimple.Direction.FORWARD;
         public static final DcMotor.Direction WP2_DIR = DcMotorSimple.Direction.FORWARD;
-        public static final DcMotor.Direction VM_DIR = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotor.Direction VM1_DIR = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotor.Direction VM2_DIR = DcMotorSimple.Direction.REVERSE;
     }
 
     @Override
@@ -35,7 +36,8 @@ public abstract class Sensor2BotTemplate extends OpMode {
         rm = hardwareMap.dcMotor.get("rm");
         wp1 = hardwareMap.dcMotor.get("wp1");
         wp2 = hardwareMap.dcMotor.get("wp2");
-        vm = hardwareMap.crservo.get("vm");
+        vm1 = hardwareMap.crservo.get("vm1");
+        vm2 = hardwareMap.crservo.get("vm2");
         ods = hardwareMap.getAll(OpticalDistanceSensor.class).get(0);
 
         touch.setMode(DigitalChannel.Mode.INPUT);
@@ -43,7 +45,8 @@ public abstract class Sensor2BotTemplate extends OpMode {
         rm.setDirection(Constants.RM_DIR);
         wp1.setDirection(Constants.WP1_DIR);
         wp2.setDirection(Constants.WP2_DIR);
-        vm.setDirection(Constants.VM_DIR);
+        vm1.setDirection(Constants.VM1_DIR);
+        vm2.setDirection(Constants.VM2_DIR);
     }
 
     public void go() {
