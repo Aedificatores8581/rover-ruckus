@@ -13,6 +13,7 @@ public class Sensor2BotODSTest extends Sensor2BotTemplate {
     State state;
 
     public void init() {
+        super.init();
         state = State.SETTING_DISTANCE;
     }
 
