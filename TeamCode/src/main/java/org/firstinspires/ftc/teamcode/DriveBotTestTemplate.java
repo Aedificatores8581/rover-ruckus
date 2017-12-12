@@ -208,6 +208,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         wilhelmScream.release();
         wilhelmScream = null;
+
+        danceMusic.release();
+        danceMusic = null;
     }
 
     protected void succ(double power) {

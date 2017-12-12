@@ -38,7 +38,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     protected boolean isAutonomous() {
-        return true;
+        return false;
     }
 
     @Override
@@ -109,15 +109,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void setMotorPowers() {
-        double leftPow, rightPow;
-        if ((rightPow = getRightPow()) < (gamepad1.left_stick_y * -speedMult.getMult()))
-            setRightPow(rightPow + (Constants.RAMP_SPEED * speedMult.getMult()));
-        else
-            setRightPow(rightPow - (Constants.RAMP_SPEED * speedMult.getMult()));
-        if ((leftPow = getLeftPow()) < (gamepad1.right_stick_y * -speedMult.getMult()))
-            setLeftPow(leftPow + (Constants.RAMP_SPEED * speedMult.getMult()));
-        else
-            setLeftPow(leftPow - (Constants.RAMP_SPEED * speedMult.getMult()));
+        setRightPow(gamepad1.left_stick_y * -speedMult.getMult());
+        setLeftPow(gamepad1.right_stick_y * -speedMult.getMult());
     }
 
     @Override
@@ -186,7 +179,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (gamepad2.a && !prev2.a)
             startDance();
 
-        if (gamepad2.b && !gamepad2.b)
+        if (gamepad2.b && !prev2.b)
             stopDance();
 
         //if (gamepad2.b) {
