@@ -9,9 +9,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  */
 public class PingSensor {
     private DigitalChannel channel;
-    private final ReadWriteLock readConcurrency = new java.util.concurrent.locks.ReentrantReadWriteLock();
     private long lastReading;
-    private boolean readingFresh;
 
     public static final double SPEED_OF_SOUND_MM_PER_NS = 0.000343;
     public static final double SPEED_OF_SOUND_CM_PER_NS = 0.0000343;
@@ -20,18 +18,15 @@ public class PingSensor {
     public PingSensor(DigitalChannel channel) {
         this.channel = channel;
         lastReading = 0;
-        readingFresh = false;
     }
 
     public void startReading() {
-        readingFresh = false;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                long timePulsed;
-
-                readConcurrency.writeLock().lock();
                 lastReading = 0;
+
+                long timePulsed;
 
                 channel.setMode(DigitalChannel.Mode.OUTPUT);
                 channel.setState(true);
@@ -42,22 +37,12 @@ public class PingSensor {
                 while (channel.getState());
 
                 lastReading = System.nanoTime() - timePulsed;
-                readConcurrency.writeLock().unlock();
-
-                readingFresh = true;
             }
         }).start();
     }
 
-    public boolean isReadingFresh() {
-        return readingFresh;
-    }
-
     public long getLastReadingNanoseconds() {
-        readConcurrency.readLock().lock();
-        long value = lastReading;
-        readConcurrency.readLock().unlock();
-        return value;
+        return lastReading;
     }
 
     public double getLastReadingMillimeters() {

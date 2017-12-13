@@ -97,8 +97,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     protected void clampRelicFingersServo() {
         if (relicFingersServoValue > 0.9) // Maximum position
             relicFingersServoValue = 0.9;
-        if (relicFingersServoValue < 0.4) // Minimum position
-            relicFingersServoValue = 0.4;
+        if (relicFingersServoValue < 0) // Minimum position
+            relicFingersServoValue = 0;
     }
 
     protected void refreshServos() {
@@ -264,8 +264,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if(armPos == 3)
             relicHandServoValue = 0.0;
 */
-
-        relicHandServoValue += gamepad2.right_stick_y * 0.005;
         //clampRelicHandServo();
         //down = 0.36
         //0.3 up
