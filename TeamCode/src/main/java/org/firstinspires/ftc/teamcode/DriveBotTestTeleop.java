@@ -95,8 +95,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampRelicFingersServo() {
-        if (relicFingersServoValue > 0.9) // Maximum position
-            relicFingersServoValue = 0.9;
+        if (relicFingersServoValue > 1) // Maximum position
+            relicFingersServoValue = 1;
         if (relicFingersServoValue < 0) // Minimum position
             relicFingersServoValue = 0;
     }
