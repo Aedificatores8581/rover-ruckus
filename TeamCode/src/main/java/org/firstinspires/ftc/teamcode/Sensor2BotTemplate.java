@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -14,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Const;
  * Conjured into existence by The Saminator on 12-05-2017.
  */
 public abstract class Sensor2BotTemplate extends OpMode {
+    protected IrSeekerSensor infraRedSensor;
     protected DigitalChannel touch;
     protected DcMotor lm, rm, wp1, wp2;
     protected OpticalDistanceSensor ods;
@@ -33,17 +36,21 @@ public abstract class Sensor2BotTemplate extends OpMode {
         touch = hardwareMap.digitalChannel.get("touch");
         lm = hardwareMap.dcMotor.get("lm");
         rm = hardwareMap.dcMotor.get("rm");
-        wp1 = hardwareMap.dcMotor.get("wp1");
-        wp2 = hardwareMap.dcMotor.get("wp2");
-        vm = hardwareMap.crservo.get("vm");
+
+//          COMMENTED OUT 12/12/17. REASON: Hunter and Frank were testing multiple sensors while the
+//          following motors were not attached. (same with the setDirection functions below)
+//        wp1 = hardwareMap.dcMotor.get("wp1");
+//        wp2 = hardwareMap.dcMotor.get("wp2");
+//        vm = hardwareMap.crservo.get("vm");
         ods = hardwareMap.getAll(OpticalDistanceSensor.class).get(0);
+        infraRedSensor = hardwareMap.irSeekerSensor.get("irs");
 
         touch.setMode(DigitalChannel.Mode.INPUT);
         lm.setDirection(Constants.LM_DIR);
         rm.setDirection(Constants.RM_DIR);
-        wp1.setDirection(Constants.WP1_DIR);
-        wp2.setDirection(Constants.WP2_DIR);
-        vm.setDirection(Constants.VM_DIR);
+//        wp1.setDirection(Constants.WP1_DIR);
+//        wp2.setDirection(Constants.WP2_DIR);
+//        vm.setDirection(Constants.VM_DIR);
     }
 
     public void go() {
