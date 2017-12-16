@@ -32,13 +32,13 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.22, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = -0.15, adjustSpeed = 0.06;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.22, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     //210 to move forward to left
     //325 to move to mid
     //400 to move to right
     //350 to place glyph
     //
-    int encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 90;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = 0.75;
@@ -68,7 +68,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -104,7 +103,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
     }
@@ -275,8 +273,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (column == CryptoboxColumn.LEFT) {
-                    targetAngle = 180 - 165;
-                    encToDispense = 1300;
+                    //targetAngle = 180 - 165;
+                    //encToDispense = 1300;
                     state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
@@ -284,8 +282,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             case STATE_CRYPTOBOX_CENTER_SLOT:
 
                 if (column == CryptoboxColumn.MID) {
-                    targetAngle = 180 - 159;
-                    encToDispense = 1350;
+                    //targetAngle = 180 - 159;
+                    //encToDispense = 1350;
                     state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_LEFT_SLOT;
@@ -293,8 +291,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (column == CryptoboxColumn.RIGHT) {
-                    targetAngle = 180 - 152;
-                    encToDispense = 1400;
+                    //targetAngle = 180 - 152;
+                    //encToDispense = 1400;
                     state = State.STATE_GYRO_ANGLES;
                 }
                 break;
@@ -359,21 +357,24 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
         }
 
-        if (dispenseGlyph) {
-            glyphDispense.setPower(0.5);
-            if (System.currentTimeMillis() - prevTime >= 200) {
-                retractDispenser = true;
-                glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-            if (retractDispenser) {
-                glyphDispense.setPower(-0.5);
 
-                if (glyphDispense.getCurrentPosition() <= -5) {
-                    glyphDispense.setPower(0.0);
+        if (dispenseGlyph) {
+            glyphDispense.setPosition(dispensePosition);
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= waitTime)
+                retractDispenser = true;
+
+            if (retractDispenser) {
+
+                glyphDispense.setPosition(retractDispensePosition);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     dispenseGlyph = false;
-                }
+
             }
+
         }
 
         telemetry.addData("State", state.name());

@@ -32,10 +32,11 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    ;
+    int timeToDispense, encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 40;
+    double targetAngle = 90;
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -62,7 +63,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            glyphDispense.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -98,7 +98,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphDispense.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
     }
@@ -322,17 +321,22 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         }
 
         if (dispenseGlyph) {
-            glyphDispense.setPower(0.2);
-            if (glyphDispense.getCurrentPosition() >= 175)
+            glyphDispense.setPosition(dispensePosition);
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= waitTime)
                 retractDispenser = true;
 
             if (retractDispenser) {
-                glyphDispense.setPower(-0.4);
-                if (glyphDispense.getCurrentPosition() <= 5) {
-                    glyphDispense.setPower(0.0);
+
+                glyphDispense.setPosition(retractDispensePosition);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     dispenseGlyph = false;
-                }
+
             }
+
         }
 
         telemetry.addData("State", state.name());

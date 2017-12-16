@@ -33,8 +33,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06;
-    int encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.25, jewelArmUpPosition = 0.71, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 30;
     double ramLeftMod, ramRightMod, ramAngle = 0.75;
@@ -51,8 +51,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         if (ramAngle > 1.0) {
             ramRightMod = 1.0;
             ramLeftMod = 1.0 / ramAngle;
-        }
-        else {
+        } else {
             ramRightMod = ramAngle;
             ramLeftMod = 1.0;
         }
@@ -318,18 +317,24 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
         }
 
+
         if (dispenseGlyph) {
-            glyphDispense.setPower(0.2);
-            if (glyphDispense.getCurrentPosition() >= 175)
+            glyphDispense.setPosition(dispensePosition);
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= waitTime)
                 retractDispenser = true;
 
             if (retractDispenser) {
-                glyphDispense.setPower(-0.4);
-                if (glyphDispense.getCurrentPosition() <= 5) {
-                    glyphDispense.setPower(0.0);
+
+                glyphDispense.setPosition(retractDispensePosition);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     dispenseGlyph = false;
-                }
+
             }
+
         }
 
         telemetry.addData("State", state.name());
