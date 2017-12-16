@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import java.util.concurrent.locks.ReadWriteLock;
-
 /**
  * Conjured into existence by The Saminator on 12-09-2017.
  */
@@ -39,6 +37,10 @@ public class PingSensor {
                 lastReading = System.nanoTime() - timePulsed;
             }
         }).start();
+    }
+
+    public boolean isReadingFresh() {
+        return lastReading != 0;
     }
 
     public long getLastReadingNanoseconds() {

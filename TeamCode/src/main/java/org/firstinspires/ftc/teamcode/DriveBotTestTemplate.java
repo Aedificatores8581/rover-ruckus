@@ -351,8 +351,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected void dance() {
-        setLeftPow(0.5);
-        setRightPow(-0.5);
+        setLeftPow(0.125);
+        setRightPow(-0.125);
     }
 
     // This is here for not loading the gyro sensor when in teleop.
