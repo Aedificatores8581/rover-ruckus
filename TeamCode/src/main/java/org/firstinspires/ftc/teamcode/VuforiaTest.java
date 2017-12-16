@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Conjured into existence by The Saminator on 11-12-2017.
  * ..
  */
-@Autonomous(name = "Autonomous Red Near", group = "competition bepis")
+@Autonomous(name = "Vuforia Test", group = "test bepis")
 
 public class VuforiaTest extends OpMode {
     private int cameraMonitorViewId;
