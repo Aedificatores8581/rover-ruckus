@@ -359,7 +359,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 break;
         }
 
-        if (dispenseGlyph) {
+        /*if (dispenseGlyph) {
             glyphDispense.setPosition(dispensePosition);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
@@ -376,7 +376,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
             }
 
-        }
+        }*/
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
