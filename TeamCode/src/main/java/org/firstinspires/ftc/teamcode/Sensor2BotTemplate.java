@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 import org.firstinspires.ftc.robotcore.external.Const;
 
@@ -18,6 +19,8 @@ public abstract class Sensor2BotTemplate extends OpMode {
     protected DcMotor lm, rm, wp1, wp2;
     protected OpticalDistanceSensor ods;
     protected CRServo vm1, vm2;
+    protected UltrasonicSensor ultraSonic;
+    double sonicVal;
 
     public static class Constants {
         public static final double MOTOR_POWER = 0.25;
@@ -39,6 +42,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
         vm1 = hardwareMap.crservo.get("vm1");
         vm2 = hardwareMap.crservo.get("vm2");
         ods = hardwareMap.getAll(OpticalDistanceSensor.class).get(0);
+        ultraSonic = hardwareMap.get(UltrasonicSensor.class, "us");
 
         touch.setMode(DigitalChannel.Mode.INPUT);
         lm.setDirection(Constants.LM_DIR);
