@@ -121,7 +121,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
         danceMusic = MediaPlayer.create(hardwareMap.appContext, R.raw.dance);
 
