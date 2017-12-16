@@ -287,12 +287,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicFingersServo();
         }
 
-        if (gamepad2.x)
-            glyphDispense.setPower(0.75);
-        else if (gamepad2.y)
-            glyphDispense.setPower(-0.5);
-        else
-            glyphDispense.setPower(0);
+//        if (gamepad2.x)
+//            glyphDispense.setPower(0.75);
+//        else if (gamepad2.y)
+//            glyphDispense.setPower(-0.5);
+//        else
+//            glyphDispense.setPower(0);
 
         telemetry.addData("Arm Extended", armExtended);
 
@@ -317,9 +317,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
-
-
-        telemetry.addData("Glyph Dispenser Pos.", glyphDispense.getCurrentPosition());
 
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");

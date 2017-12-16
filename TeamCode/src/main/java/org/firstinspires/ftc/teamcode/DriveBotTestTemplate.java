@@ -49,8 +49,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double RIGHT_REAR_SPEED = 1.0;
     }
 
-    DcMotor leftFore, leftRear, rightFore, rightRear;
-    DcMotor relicArm, glyphDispense;
+    DcMotor leftFore, leftRear, rightFore, rightRear, dispensorLinearSlide;
+    DcMotor relicArm;
+    Servo glyphDispense;
     DcMotor intakeLeft, intakeRight;
 
     CRServo belt1, belt2;
@@ -85,7 +86,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        glyphDispense = hardwareMap.dcMotor.get("gd");
+        glyphDispense = hardwareMap.servo.get("gd");
 
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
