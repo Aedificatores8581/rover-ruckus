@@ -9,10 +9,10 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -38,6 +38,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
 
+        public static final DcMotor.Direction GLYPH_LIFT_DIR = DcMotor.Direction.FORWARD;
+
         public static final DcMotor.Direction BELT1_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction BELT2_DIR = DcMotor.Direction.REVERSE;
 
@@ -51,7 +53,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     DcMotor leftFore, leftRear, rightFore, rightRear, dispensorLinearSlide;
     DcMotor relicArm;
-    //Servo glyphDispense;
+
+    Servo glyphDispense;
+    DcMotor glyphLift;
+    TouchSensor glyphLiftHigh, glyphLiftLow;
+
     DcMotor intakeLeft, intakeRight;
 
     CRServo belt1, belt2;
@@ -86,7 +92,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        //glyphDispense = hardwareMap.servo.get("gd");
+        glyphDispense = hardwareMap.servo.get("gd");
+        glyphLift = hardwareMap.dcMotor.get("gl");
+        glyphLiftHigh = hardwareMap.touchSensor.get("tts");
+        glyphLiftLow = hardwareMap.touchSensor.get("bts");
 
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
@@ -110,6 +119,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
         rightRear.setDirection(Constants.RIGHT_REAR_DIR);
+
+        glyphLift.setDirection(Constants.GLYPH_LIFT_DIR);
 
         intakeLeft.setDirection(Constants.INTAKE_LEFT_DIR);
         intakeRight.setDirection(Constants.INTAKE_RIGHT_DIR);

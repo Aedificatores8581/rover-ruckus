@@ -14,6 +14,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
+    private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
     private byte armPos = 1;
     private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue;
@@ -36,6 +37,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
     }
 
+    public enum GlyphLiftState {
+        ASCENDING,
+        ASCENDED,
+        DUMPING,
+        DUMPED,
+        DESCENDING,
+        DESCENDED
+    }
+
     @Override
     protected boolean isAutonomous() {
         return false;
@@ -47,6 +57,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         prev1 = new Gamepad();
         prev2 = new Gamepad();
         armExtended = false;
+
+        glyphLiftState = GlyphLiftState.ASCENDING;
     }
 
     @Override
@@ -55,6 +67,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipperServoValue = 0.05;
         relicFingersServoValue = 0.5;
         speedMult = SpeedToggle.SLOW;
+        glyphDispense.setPosition(0.0);
     }
 
     protected void toggleSpeed() {
@@ -287,12 +300,40 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicFingersServo();
         }
 
-//        if (gamepad2.x)
-//            glyphDispense.setPower(0.75);
-//        else if (gamepad2.y)
-//            glyphDispense.setPower(-0.5);
-//        else
-//            glyphDispense.setPower(0);
+        if (gamepad2.x && !prev2.x)
+            switch (glyphLiftState) {
+                case ASCENDED:
+                    glyphLiftState = GlyphLiftState.DUMPING;
+                    break;
+                case DESCENDED:
+                    glyphLift.setPower(0.1);
+                    glyphLiftState = GlyphLiftState.ASCENDING;
+                    break;
+                case DUMPED:
+                    glyphLift.setPower(-0.1);
+                    glyphDispense.setPosition(0.0);
+                    glyphLiftState = GlyphLiftState.DESCENDING;
+                    break;
+            }
+
+        switch (glyphLiftState) {
+            case ASCENDING:
+                if (glyphLiftHigh.isPressed()) {
+                    glyphLift.setPower(0);
+                    glyphLiftState = GlyphLiftState.ASCENDED;
+                }
+                break;
+            case DUMPING:
+                glyphDispense.setPosition(0.9);
+                glyphLiftState = GlyphLiftState.DUMPED;
+                break;
+            case DESCENDING:
+                if (glyphLiftLow.isPressed()) {
+                    glyphLift.setPower(0);
+                    glyphLiftState = GlyphLiftState.DESCENDED;
+                }
+                break;
+        }
 
         telemetry.addData("Arm Extended", armExtended);
 
