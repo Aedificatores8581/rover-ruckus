@@ -247,7 +247,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (checkEncoder(encToMoveToLeft)) {
+                if (true/*if one column is sensed*/) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -255,7 +255,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (checkEncoder(encToMoveToCenter)) {
+                if (true/*if a second column is sensed*/) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -263,7 +263,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (checkEncoder(encToMoveToRight)) {
+                if (true/*if a third column is sensed*/) {
                     state = State.STATE_RECORD_FACING;
                 }
                 break;
