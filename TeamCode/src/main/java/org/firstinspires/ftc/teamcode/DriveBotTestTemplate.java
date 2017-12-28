@@ -1,26 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
+        import android.media.MediaPlayer;
+        import android.os.Handler;
+        import android.os.Looper;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+        import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+        import com.qualcomm.robotcore.hardware.CRServo;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+        import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+        import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        import org.firstinspires.ftc.robotcore.external.Func;
+        import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.util.Locale;
+        import java.util.Locale;
 
 /**
  * Conjured into existence by The Saminator on 06-29-2017.
@@ -30,10 +30,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
     MediaPlayer wilhelmScream, danceMusic;
 
     public static class Constants {
-        public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.FORWARD;
 
         public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
@@ -51,18 +51,15 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double RIGHT_REAR_SPEED = 1.0;
     }
 
-    DcMotor leftFore, leftRear, rightFore, rightRear, dispensorLinearSlide;
+    DcMotor leftFore, leftRear, rightFore, rightRear, dispenserLinearSlide;
     DcMotor relicArm;
 
-    Servo glyphDispense;
     DcMotor glyphLift;
     TouchSensor glyphLiftHigh, glyphLiftLow;
 
     //power port 5v
 
     DcMotor intakeLeft, intakeRight;
-
-
 
     CRServo belt1, belt2;
 
@@ -96,7 +93,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        glyphDispense = hardwareMap.servo.get("gd");
         glyphLift = hardwareMap.dcMotor.get("gl");
         glyphLiftHigh = hardwareMap.touchSensor.get("tts");
         glyphLiftLow = hardwareMap.touchSensor.get("bts");
@@ -113,7 +109,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
-        //glyphOutput = hardwareMap.servo.get("gd");
+        glyphOutput = hardwareMap.servo.get("gd");
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
@@ -317,7 +313,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean triggered(double value) {
-        return value >= 0.3;
+        return value >= 0.2;
     }
 
     protected void resetEncoders() {
