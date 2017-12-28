@@ -17,7 +17,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
     private byte armPos = 1;
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue;
+    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphDumpServoValue;
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
@@ -63,11 +63,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void start() {
-        jewelArmServoValue = 0.71;
+        jewelArmServoValue = 0;
         jewelFlipperServoValue = 0.05;
         relicFingersServoValue = 0.5;
         speedMult = SpeedToggle.SLOW;
         glyphDispense.setPosition(0.0);
+        glyphDumpServoValue = 0.0;
     }
 
     protected void toggleSpeed() {
@@ -113,12 +114,18 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (relicFingersServoValue < 0) // Minimum position
             relicFingersServoValue = 0;
     }
-
+    protected void clampDumpServo() {
+        if (glyphDumpServoValue > 1) // Maximum position
+            glyphDumpServoValue = 1;
+        if (glyphDumpServoValue < 0) // Minimum position
+            glyphDumpServoValue = 0;
+    }
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
+        glyphOutput.setPosition(glyphDumpServoValue);
     }
 
     protected void setMotorPowers() {
@@ -173,7 +180,14 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             jewelArmServoValue -= 0.01;
             clampJewelArmServo();
         }
-
+        if (gamepad2.dpad_up) {
+            glyphDumpServoValue += 0.05;
+            clampDumpServo();
+        }
+        if (gamepad2.dpad_up) {
+            glyphDumpServoValue -= 0.05;
+            clampDumpServo();
+        }
         if (gamepad1.dpad_left) {
             jewelFlipperServoValue += 0.01;
             clampJewelArmServo();
@@ -290,48 +304,44 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingersServoValue += 0.02;
             clampRelicFingersServo();
         }
-        if (gamepad2.left_trigger > 0) {
-            relicFingersServoValue -= 0.02;
-            clampRelicFingersServo();
-        }
-
-        if (gamepad2.right_trigger > 0) {
-            relicFingersServoValue += 0.02;
-            clampRelicFingersServo();
-        }
-
+        if (gamepad2.left_trigger > 0/* && !glyphLiftHigh.isPressed()*/)
+            glyphLift.setPower(0.3);
+        else if (gamepad2.right_trigger > 0 /*&& !glyphLiftLow.isPressed()*/)
+            glyphLift.setPower(-0.3);
+        else
+            glyphLift.setPower(0.0);
         if (gamepad2.x && !prev2.x)
             switch (glyphLiftState) {
                 case ASCENDED:
                     glyphLiftState = GlyphLiftState.DUMPING;
                     break;
                 case DESCENDED:
-                    glyphLift.setPower(0.1);
+                    //glyphLift.setPower(0.1);
                     glyphLiftState = GlyphLiftState.ASCENDING;
                     break;
                 case DUMPED:
-                    glyphLift.setPower(-0.1);
-                    glyphDispense.setPosition(0.0);
+                    //glyphLift.setPower(-0.1);
+                    //glyphDispense.setPosition(0.0);
                     glyphLiftState = GlyphLiftState.DESCENDING;
                     break;
             }
 
         switch (glyphLiftState) {
             case ASCENDING:
-                if (glyphLiftHigh.isPressed()) {
+                /*if (glyphLiftHigh.isPressed()) {
                     glyphLift.setPower(0);
                     glyphLiftState = GlyphLiftState.ASCENDED;
-                }
+                }*/
                 break;
             case DUMPING:
-                glyphDispense.setPosition(0.9);
+                //glyphDispense.setPosition(0.9);
                 glyphLiftState = GlyphLiftState.DUMPED;
                 break;
             case DESCENDING:
-                if (glyphLiftLow.isPressed()) {
+                /*if (glyphLiftLow.isPressed()) {
                     glyphLift.setPower(0);
                     glyphLiftState = GlyphLiftState.DESCENDED;
-                }
+                }*/
                 break;
         }
 
@@ -346,6 +356,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Left back encoder", leftRear.getCurrentPosition());
         telemetry.addData("Right front encoder", rightFore.getCurrentPosition());
         telemetry.addData("Right back encoder", rightRear.getCurrentPosition());
+
+
 
         telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
         telemetry.addData("Jewel Arm Set Value", jewelArmServoValue);

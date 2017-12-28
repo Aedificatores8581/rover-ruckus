@@ -58,7 +58,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
     DcMotor glyphLift;
     TouchSensor glyphLiftHigh, glyphLiftLow;
 
+    //power port 5v
+
     DcMotor intakeLeft, intakeRight;
+
+
 
     CRServo belt1, belt2;
 
@@ -225,7 +229,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected void succ(double power) {
-        intakeLeft.setPower(power);
+        intakeLeft.setPower(-power);
         intakeRight.setPower(power);
     }
 
