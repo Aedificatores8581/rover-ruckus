@@ -75,6 +75,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     @Override
     public void init() {
+        rIntake.setPosition(0.3);
+
+        lIntake.setPosition(0.3);
         super.init();
         state = State.STATE_LOWER_JEWEL_ARM;
 
@@ -183,6 +186,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
+        rIntake.setPosition(0.6);
+
+        lIntake.setPosition(0.6);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);

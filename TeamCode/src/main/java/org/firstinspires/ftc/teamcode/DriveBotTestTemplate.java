@@ -66,7 +66,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     CRServo belt1, belt2;
 
-    Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput;
+    Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput, rIntake, lIntake;
 
     NormalizedColorSensor color;
     NormalizedRGBA colors;
@@ -113,7 +113,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
         relicArm = hardwareMap.dcMotor.get("ra");
         relicHand = hardwareMap.servo.get("rh");
         relicFingers = hardwareMap.servo.get("rf");
-        //glyphOutput = hardwareMap.servo.get("gd");
+
+        rIntake = hardwareMap.servo.get("rir");
+
+        lIntake = hardwareMap.servo.get("lir");
+
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 

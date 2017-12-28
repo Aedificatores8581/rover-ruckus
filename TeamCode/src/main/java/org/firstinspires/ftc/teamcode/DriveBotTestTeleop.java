@@ -128,10 +128,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void setMotorPowers() {
-        setRightPow(gamepad1.left_stick_y * -speedMult.getMult());
-        setLeftPow(gamepad1.right_stick_y * -speedMult.getMult());
+        setLeftPow(gamepad1.left_stick_y * -speedMult.getMult());
+        setRightPow(gamepad1.right_stick_y * -speedMult.getMult());
     }
-
     @Override
     public void loop() {
         if (isDancing())
@@ -306,6 +305,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         if (gamepad2.left_trigger > 0/* && !glyphLiftHigh.isPressed()*/)
             glyphLift.setPower(0.5);
         else if (gamepad2.right_trigger > 0 /*&& !glyphLiftLow.isPressed()*/)
+
             glyphLift.setPower(-0.5);
         else
             glyphLift.setPower(0.0);

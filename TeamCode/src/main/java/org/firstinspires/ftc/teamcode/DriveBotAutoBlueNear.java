@@ -89,6 +89,10 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
 
+        rIntake.setPosition(0.3);
+
+        lIntake.setPosition(0.3);
+
         prevTime = 0;
 
         dispenseGlyph = false;
@@ -184,6 +188,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
+        rIntake.setPosition(0.6);
+
+        lIntake.setPosition(0.6);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
