@@ -68,7 +68,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         relicFingersServoValue = 0.5;
         speedMult = SpeedToggle.SLOW;
         glyphDispense.setPosition(0.0);
-        glyphDumpServoValue = 0.0;
     }
 
     protected void toggleSpeed() {
@@ -172,12 +171,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             toggleSpeed();
 
         if (gamepad1.dpad_down) {
-            jewelArmServoValue += 0.01;
+            jewelArmServoValue -= 0.01;
             clampJewelArmServo();
         }
 
         if (gamepad1.dpad_up) {
-            jewelArmServoValue -= 0.01;
+            jewelArmServoValue += 0.01;
             clampJewelArmServo();
         }
         if (gamepad2.dpad_up) {
@@ -356,8 +355,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Left back encoder", leftRear.getCurrentPosition());
         telemetry.addData("Right front encoder", rightFore.getCurrentPosition());
         telemetry.addData("Right back encoder", rightRear.getCurrentPosition());
-
-
 
         telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
         telemetry.addData("Jewel Arm Set Value", jewelArmServoValue);
