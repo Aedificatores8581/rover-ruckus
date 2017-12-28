@@ -304,9 +304,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicFingersServo();
         }
         if (gamepad2.left_trigger > 0/* && !glyphLiftHigh.isPressed()*/)
-            glyphLift.setPower(0.3);
+            glyphLift.setPower(0.5);
         else if (gamepad2.right_trigger > 0 /*&& !glyphLiftLow.isPressed()*/)
-            glyphLift.setPower(-0.3);
+            glyphLift.setPower(-0.5);
         else
             glyphLift.setPower(0.0);
         if (gamepad2.x && !prev2.x)
