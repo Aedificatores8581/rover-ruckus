@@ -17,7 +17,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
     private byte armPos = 1;
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue;
+    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphDispenseServoValue;
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
@@ -63,9 +63,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void start() {
-        jewelArmServoValue = 0.71;
-        jewelFlipperServoValue = 0.05;
+        jewelArmServoValue = 0;
+        jewelFlipperServoValue = 0.42;
         relicFingersServoValue = 0.5;
+        glyphDispenseServoValue = 0.0;
         speedMult = SpeedToggle.SLOW;
         glyphDispense.setPosition(0.0);
     }
@@ -78,10 +79,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampJewelArmServo() {
-        if (jewelArmServoValue > 0.71) // Maximum position
-            jewelArmServoValue = 0.71;
-        if (jewelArmServoValue < 0.25) // Minimum position
-            jewelArmServoValue = 0.25;
+        if (jewelArmServoValue > 1) // Maximum position
+            jewelArmServoValue = 1;
+        if (jewelArmServoValue < 0) // Minimum position
+            jewelArmServoValue = 0;
     }
 
     protected void clampJewelFlipperServo() {
@@ -114,11 +115,19 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingersServoValue = 0;
     }
 
+    protected void clampGlyphDispenseServo() {
+        if (glyphDispenseServoValue > 1) // Maximum position
+            glyphDispenseServoValue = 1;
+        if (glyphDispenseServoValue < 0) // Minimum position
+            glyphDispenseServoValue = 0;
+    }
+
     protected void refreshServos() {
         jewelArm.setPosition(jewelArmServoValue);
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
+        glyphDispense.setPosition(glyphDispenseServoValue);
     }
 
     protected void setMotorPowers() {
@@ -165,12 +174,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             toggleSpeed();
 
         if (gamepad1.dpad_down) {
-            jewelArmServoValue += 0.01;
+            jewelArmServoValue -= 0.01;
             clampJewelArmServo();
         }
 
         if (gamepad1.dpad_up) {
-            jewelArmServoValue -= 0.01;
+            jewelArmServoValue += 0.01;
             clampJewelArmServo();
         }
 
@@ -290,14 +299,24 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicFingersServoValue += 0.02;
             clampRelicFingersServo();
         }
-        if (gamepad2.left_trigger > 0) {
+        if (triggered(gamepad2.left_trigger)) {
             relicFingersServoValue -= 0.02;
             clampRelicFingersServo();
         }
 
-        if (gamepad2.right_trigger > 0) {
+        if (triggered(gamepad2.right_trigger)) {
             relicFingersServoValue += 0.02;
             clampRelicFingersServo();
+        }
+
+        if (gamepad2.dpad_up) {
+            glyphDispenseServoValue = 1.0;
+            clampGlyphDispenseServo();
+        }
+
+        if (gamepad2.dpad_down) {
+            glyphDispenseServoValue = 0.0;
+            clampGlyphDispenseServo();
         }
 
         if (gamepad2.x && !prev2.x)
@@ -358,6 +377,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
+
+        telemetry.addData("Glyph Dispenser Pos.", glyphDispense.getPosition());
+        telemetry.addData("Glyph Dispenser Set Value", glyphDispenseServoValue);
 
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
