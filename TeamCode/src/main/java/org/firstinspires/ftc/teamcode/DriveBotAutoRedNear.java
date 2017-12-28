@@ -33,7 +33,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.71, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.42, jewelArmUpPosition = 0, jewelFlipperUp = 0.6, centerFinger = 0.42, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 30;
@@ -81,7 +81,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
@@ -188,7 +188,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                jewelFlipper.setPosition(jewelFlipperUp);
+                jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();

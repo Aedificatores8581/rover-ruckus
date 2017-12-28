@@ -41,6 +41,11 @@ public class VuforiaTest extends OpMode {
     }
 
     @Override
+    public void start() {
+        relicTrackables.activate();
+    }
+
+    @Override
     public void loop() {
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
 
