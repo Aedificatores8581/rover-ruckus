@@ -17,7 +17,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
     private byte armPos = 1;
-    private double jewelArmServoValue, jewelFlipperServoValue, relicHandServoValue, relicFingersServoValue, glyphDumpServoValue;
+    private double jewelArmServoValue = 0, jewelFlipperServoValue = 0, relicHandServoValue = 0, relicFingersServoValue = 0, glyphDumpServoValue = 0;
     private boolean lifting, valueChange;
     private boolean armExtended;
     long waiting = 0, waitTime = 500;
@@ -63,9 +63,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void start() {
-        jewelArmServoValue = 0;
-        jewelFlipperServoValue = 0.05;
-        relicFingersServoValue = 0.5;
         speedMult = SpeedToggle.SLOW;
     }
 
