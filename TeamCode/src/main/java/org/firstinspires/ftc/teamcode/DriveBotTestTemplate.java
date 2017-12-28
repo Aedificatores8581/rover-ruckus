@@ -30,10 +30,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
     MediaPlayer wilhelmScream, danceMusic;
 
     public static class Constants {
-        public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
+        public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
+        public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.FORWARD;
 
         public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
@@ -51,7 +51,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double RIGHT_REAR_SPEED = 1.0;
     }
 
-    DcMotor leftFore, leftRear, rightFore, rightRear, dispensorLinearSlide;
+    DcMotor leftFore, leftRear, rightFore, rightRear, dispenserLinearSlide;
     DcMotor relicArm;
 
     Servo glyphDispense;
@@ -61,8 +61,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     //power port 5v
 
     DcMotor intakeLeft, intakeRight;
-
-
 
     CRServo belt1, belt2;
 
@@ -96,7 +94,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        glyphDispense = hardwareMap.servo.get("gd");
+        //glyphDispense = hardwareMap.servo.get("gd");
         glyphLift = hardwareMap.dcMotor.get("gl");
         glyphLiftHigh = hardwareMap.touchSensor.get("tts");
         glyphLiftLow = hardwareMap.touchSensor.get("bts");
@@ -118,6 +116,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         lIntake = hardwareMap.servo.get("lir");
 
+        glyphOutput = hardwareMap.servo.get("gd");
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
         //endregion
 
@@ -321,7 +320,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean triggered(double value) {
-        return value >= 0.3;
+        return value >= 0.05;
     }
 
     protected void resetEncoders() {
@@ -345,13 +344,14 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected void startDance() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        /*new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 danceMusic.setLooping(true);
                 danceMusic.start();
             }
         });
+        */
         dancing = true;
     }
 
