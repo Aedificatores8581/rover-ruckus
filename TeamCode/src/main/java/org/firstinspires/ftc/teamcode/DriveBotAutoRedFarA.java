@@ -32,7 +32,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     long waitTime = 500L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     //210 to move forward to left
 //325 to move to mid
 //400 to move to right
@@ -81,6 +81,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
+
         state = State.STATE_LOWER_JEWEL_ARM;
 
         rIntake.setPosition(0.3);
@@ -200,7 +201,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                jewelFlipper.setPosition(jewelFlipperUp);
+                jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
