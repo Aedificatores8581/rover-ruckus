@@ -81,6 +81,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
+
         state = State.STATE_LOWER_JEWEL_ARM;
 
         rIntake.setPosition(0.3);

@@ -76,7 +76,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     @Override
     public void init() {
-
+        this.msStuckDetectInit = 10000;
+        super.init();
         rIntake.setPosition(0.3);
 
         lIntake.setPosition(0.7);

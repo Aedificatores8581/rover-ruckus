@@ -82,6 +82,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
+        rIntake.setPosition(0.3);
+
+        lIntake.setPosition(0.7);
         state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
