@@ -9,6 +9,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -54,9 +55,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
     DcMotor leftFore, leftRear, rightFore, rightRear, dispenserLinearSlide;
     DcMotor relicArm;
 
-    Servo glyphDispense;
     DcMotor glyphLift;
-    TouchSensor glyphLiftHigh, glyphLiftLow;
+    DigitalChannel glyphLiftHigh, glyphLiftLow;
 
     //power port 5v
 
@@ -94,10 +94,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
         rightRear = hardwareMap.dcMotor.get("rrm"); // port 1
 
-        //glyphDispense = hardwareMap.servo.get("gd");
         glyphLift = hardwareMap.dcMotor.get("gl");
-        glyphLiftHigh = hardwareMap.touchSensor.get("tts");
-        glyphLiftLow = hardwareMap.touchSensor.get("bts");
+        glyphLiftHigh = hardwareMap.digitalChannel.get("tts");
+        glyphLiftLow = hardwareMap.digitalChannel.get("bts");
 
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
@@ -128,6 +127,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rightRear.setDirection(Constants.RIGHT_REAR_DIR);
 
         glyphLift.setDirection(Constants.GLYPH_LIFT_DIR);
+        glyphLiftHigh.setMode(DigitalChannel.Mode.INPUT);
+        glyphLiftLow.setMode(DigitalChannel.Mode.INPUT);
 
         intakeLeft.setDirection(Constants.INTAKE_LEFT_DIR);
         intakeRight.setDirection(Constants.INTAKE_RIGHT_DIR);
