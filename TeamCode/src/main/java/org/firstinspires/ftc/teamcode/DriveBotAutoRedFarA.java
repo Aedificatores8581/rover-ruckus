@@ -195,7 +195,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     public void loop() {
         rIntake.setPosition(0.6);
 
-        lIntake.setPosition(0.4);
+        lIntake.setPosition(0.3);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);

@@ -81,14 +81,14 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         
         rIntake.setPosition(0.3);
 
-        lIntake.setPosition(0.3);
+        lIntake.setPosition(0.7);
 
         state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
@@ -192,7 +192,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     public void loop() {
         rIntake.setPosition(0.6);
 
-        lIntake.setPosition(0.4);
+        lIntake.setPosition(0.3);
 
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
@@ -282,8 +282,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
                     //resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
