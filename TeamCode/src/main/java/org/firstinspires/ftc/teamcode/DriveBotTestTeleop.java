@@ -23,8 +23,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     long waiting = 0, waitTime = 500;
 
     public enum SpeedToggle {
-        SLOW(0.25),
-        FAST(4.375);
+        SLOW(0.45),
+        FAST(.8);
 
         private double mult;
 
@@ -386,6 +386,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
 
+        telemetry.addData("Speed", speedMult.getMult());
         try {
             prev1.copy(gamepad1);
             prev2.copy(gamepad2);
