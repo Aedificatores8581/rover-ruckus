@@ -11,11 +11,11 @@ public class Sensor2BotTouchDemo extends Sensor2BotTemplate {
 
     @Override
     public void loop() {
-        if (touch.getState())
-            stop();
-        else
-            go();
+        //if (touch.getState())
+        //    stop();
+        //else
+        //    go();
 
-        telemetry.addData("Touched", touch.getState());
+        //telemetry.addData("Touched", touch.getState());
     }
 }

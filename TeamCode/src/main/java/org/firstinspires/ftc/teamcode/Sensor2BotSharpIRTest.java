@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class Sensor2BotSharpIRTest extends Sensor2BotTemplate {
 
     public void loop() {
-        telemetry.addData("Distance", ir.readDistanceCM());
+        //telemetry.addData("Distance", ir.readDistanceCM());
     }
 
 }

@@ -10,11 +10,11 @@ public class Sensor2BotPingTest extends Sensor2BotTemplate {
     private boolean prevA;
 
     public void loop() {
-        if (gamepad1.a && !prevA)
-            ping.startReading();
+        //if (gamepad1.a && !prevA)
+            //ping.startReading();
 
-        if (ping.isReadingFresh())
-            telemetry.addData("Centimeters from Thingy", ping.getLastReadingCentimeters());
+        //if (ping.isReadingFresh())
+            //telemetry.addData("Centimeters from Thingy", ping.getLastReadingCentimeters());
 
         prevA = gamepad1.a;
     }

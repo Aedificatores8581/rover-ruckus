@@ -17,20 +17,22 @@ public class Sensor2BotTeleop extends Sensor2BotTemplate {
         double relicHandPos = relicHand.getPosition();
         double relicFingersPos = relicFingers.getPosition();
 
-        lm.setPower(gamepad1.left_stick_y * Constants.MOTOR_POWER);
-        rm.setPower(gamepad1.right_stick_y * Constants.MOTOR_POWER);
+        if (magnetSensor.getState())
+            relicArm.setPower(gamepad1.right_stick_y);
 
-        relicArm.setPower(gamepad2.right_stick_y);
+        if (triggered(Math.abs(gamepad1.left_stick_y)))
+            relicHandPos += gamepad1.left_stick_y * Constants.RELIC_HAND_DELTA_MULT;
 
-        if (triggered(Math.abs(gamepad2.left_stick_y)))
-            relicHandPos += gamepad2.left_stick_y * Constants.RELIC_HAND_DELTA_MULT;
-
-        if (triggered(gamepad2.right_trigger))
+        if (triggered(gamepad1.right_trigger))
             relicFingersPos += Constants.RELIC_FINGERS_DELTA;
-        if (triggered(gamepad2.left_trigger))
+        if (triggered(gamepad1.left_trigger))
             relicFingersPos -= Constants.RELIC_FINGERS_DELTA;
 
         relicHand.setPosition(relicHandPos);
         relicFingers.setPosition(relicFingersPos);
+
+        telemetry.addData("Magnet detected", !magnetSensor.getState());
+        telemetry.addData("Hand position", relicHandPos);
+        telemetry.addData("Fingers position", relicFingersPos);
     }
 }
