@@ -76,11 +76,12 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     @Override
     public void init() {
+        super.init();
+        state = State.STATE_LOWER_JEWEL_ARM;
+
         rIntake.setPosition(0.3);
 
         lIntake.setPosition(0.3);
-        super.init();
-        state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
