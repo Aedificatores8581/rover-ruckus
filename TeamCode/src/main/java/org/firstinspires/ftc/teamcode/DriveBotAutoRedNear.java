@@ -31,7 +31,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
-    long waitTime = 2000L;
+    long waitTime = 500L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.42, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
@@ -41,6 +41,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;
+
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {

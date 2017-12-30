@@ -30,7 +30,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
-    long waitTime = 2000L;
+    long waitTime = 500L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.5, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     //210 to move forward to left
