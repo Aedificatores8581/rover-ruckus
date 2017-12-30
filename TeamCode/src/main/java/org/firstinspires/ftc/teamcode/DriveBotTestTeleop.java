@@ -192,10 +192,12 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             glyphDumpServoValue += 0.05;
             clampDumpServo();
         }
-        if (gamepad2.dpad_up) {
+
+        if (gamepad2.dpad_down) {
             glyphDumpServoValue -= 0.05;
             clampDumpServo();
         }
+
         if (gamepad1.dpad_left) {
             jewelFlipperServoValue += 0.01;
             clampJewelArmServo();
