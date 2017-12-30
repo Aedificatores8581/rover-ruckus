@@ -37,7 +37,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 30;
-    double ramLeftMod, ramRightMod, ramAngle = 0.75;
+    double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;
@@ -78,9 +78,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
+        
         rIntake.setPosition(0.3);
 
-        lIntake.setPosition(0.7);
+        lIntake.setPosition(0.3);
+
         state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -191,6 +193,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         rIntake.setPosition(0.6);
 
         lIntake.setPosition(0.4);
+
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
