@@ -41,7 +41,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 90;
-    double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = 0.75;
+    double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;

@@ -37,7 +37,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     int timeToDispense, encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 90;
-    double ramLeftMod, ramRightMod, ramAngle = 0.75;
+    double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;
