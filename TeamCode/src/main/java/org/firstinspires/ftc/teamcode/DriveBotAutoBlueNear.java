@@ -188,9 +188,12 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        rIntake.setPosition(0.6);
+        rIntake.setPosition(0.7);
 
         lIntake.setPosition(0.3);
+
+        glyphOutput.setPosition(0.3);
+
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -211,7 +214,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 break;
             case STATE_HIT_LEFT_JEWEL:
-                jewelFlipper.setPosition(0.95);
+                jewelFlipper.setPosition(1.0);
                 //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();

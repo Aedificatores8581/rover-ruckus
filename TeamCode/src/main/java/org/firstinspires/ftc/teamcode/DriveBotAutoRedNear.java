@@ -31,6 +31,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
+
+
+
+
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
@@ -83,6 +87,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         lIntake.setPosition(0.7);
 
+        glyphOutput.setPosition(0.3);
+
         state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -106,6 +112,19 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
+
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        switch (vuMark) { // Blue is weird.
+            case LEFT:
+                column = CryptoboxColumn.RIGHT;
+                break;
+            case CENTER:
+                column = CryptoboxColumn.MID;
+                break;
+            case RIGHT:
+                column = CryptoboxColumn.LEFT;
+                break;
+        }
     }
 
     @Override
@@ -190,7 +209,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        rIntake.setPosition(0.6);
+        rIntake.setPosition(0.7);
 
         lIntake.setPosition(0.3);
 
@@ -222,7 +241,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
-                jewelFlipper.setPosition(0.95);
+                jewelFlipper.setPosition(1.0);
                 //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -235,7 +254,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 switch (vuMark) { // Blue is weird.
                     case LEFT:
                         column = CryptoboxColumn.RIGHT;
@@ -247,7 +266,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                         column = CryptoboxColumn.LEFT;
                         break;
                 }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
@@ -257,7 +276,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (true/*if one column is sensed*/) {
+                if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -265,7 +284,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (true/*if a second column is sensed*/) {
+                if (checkEncoder(encToMoveToCenter)) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -273,7 +292,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (true/*if a third column is sensed*/) {
+                if (checkEncoder(encToMoveToRight)) {
                     state = State.STATE_RECORD_FACING;
                 }
                 break;
@@ -282,15 +301,15 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
-                setLeftPow(-adjustSpeed);
-                setRightPow(adjustSpeed);
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
-                    //resetEncoders();
+                setLeftPow(adjustSpeed);
+                setRightPow(-adjustSpeed);
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
+                    resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
                 break;
             case STATE_REINIT_MOTORS:
-                //reinitMotors(-speed, -speed);
+                reinitMotors(-speed, -speed);
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
@@ -346,6 +365,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             }
 
         }*/
+        telemetry.addData("Pictogram", column);
+
+        telemetry.addData("angle", new GyroAngles(angles).getZ());
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
@@ -358,8 +380,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
-        if (column != null)
-            telemetry.addData("Column", column.name());
     }
 
     enum State {

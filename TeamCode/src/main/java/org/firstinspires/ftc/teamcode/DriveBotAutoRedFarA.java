@@ -40,7 +40,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 //
     int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 90;
+    double targetAngle = -90;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -193,9 +193,12 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        rIntake.setPosition(0.6);
+        rIntake.setPosition(0.7);
 
         lIntake.setPosition(0.3);
+
+        glyphOutput.setPosition(0.3);
+
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -223,7 +226,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
-                jewelFlipper.setPosition(0.95);
+                jewelFlipper.setPosition(1.0);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -264,7 +267,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 setRightPow(adjustSpeed);
                 state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
@@ -367,8 +370,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 break;
         }
 
-        /*if (dispenseGlyph) {
-            glyphDispense.setPosition(dispensePosition);
+        if (dispenseGlyph) {
+            glyphOutput.setPosition(dispensePosition);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
             if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -376,7 +379,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
             if (retractDispenser) {
 
-                glyphDispense.setPosition(retractDispensePosition);
+                glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -384,7 +387,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
             }
 
-        }*/
+        }
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
@@ -396,6 +399,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         telemetry.addData("Total LR Encoder", leftRear.getCurrentPosition());
         telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
+
+        telemetry.addData("Angle", new GyroAngles(angles).getZ());
 
         if (column != null)
             telemetry.addData("Column", column.name());
