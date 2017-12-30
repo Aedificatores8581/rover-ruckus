@@ -17,7 +17,7 @@ public class Sensor2BotTeleop extends Sensor2BotTemplate {
         double relicHandPos = relicHand.getPosition();
         double relicFingersPos = relicFingers.getPosition();
 
-        if (magnetSensor.getState())
+        if (gamepad1.right_stick_y <= 0 || magnetSensor.getState())
             relicArm.setPower(gamepad1.right_stick_y);
 
         if (triggered(Math.abs(gamepad1.left_stick_y)))

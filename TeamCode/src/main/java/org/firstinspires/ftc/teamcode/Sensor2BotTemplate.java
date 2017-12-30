@@ -37,7 +37,9 @@ public abstract class Sensor2BotTemplate extends OpMode {
         relicHand = hardwareMap.servo.get("rah");
         relicFingers = hardwareMap.servo.get("raf");
         magnetSensor = hardwareMap.digitalChannel.get("ms");
+
         relicArm.setDirection(Constants.RA_DIR);
+        magnetSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
     protected boolean triggered(double value) {
