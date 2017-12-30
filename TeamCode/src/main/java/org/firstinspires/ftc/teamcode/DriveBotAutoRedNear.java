@@ -228,7 +228,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmUpPosition);
                 state = State.STATE_SCAN_KEY;
                 break;
