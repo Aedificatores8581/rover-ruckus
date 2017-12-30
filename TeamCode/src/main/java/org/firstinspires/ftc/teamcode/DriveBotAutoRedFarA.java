@@ -85,7 +85,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
         rIntake.setPosition(0.3);
 
-        lIntake.setPosition(0.3);
+        lIntake.setPosition(0.7);
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -194,7 +194,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     public void loop() {
         rIntake.setPosition(0.6);
 
-        lIntake.setPosition(0.6);
+        lIntake.setPosition(0.4);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
