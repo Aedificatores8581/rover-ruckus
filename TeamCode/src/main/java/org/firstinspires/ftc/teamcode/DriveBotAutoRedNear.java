@@ -31,7 +31,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
-    long waitTime = 500L;
+    long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
@@ -81,14 +81,14 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         
         rIntake.setPosition(0.3);
 
-        lIntake.setPosition(0.3);
+        lIntake.setPosition(0.7);
 
         state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
@@ -192,7 +192,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     public void loop() {
         rIntake.setPosition(0.6);
 
-        lIntake.setPosition(0.4);
+        lIntake.setPosition(0.3);
 
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
@@ -231,7 +231,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmUpPosition);
                 state = State.STATE_SCAN_KEY;
                 break;
@@ -283,8 +282,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
                     //resetEncoders();
                     state = State.STATE_REINIT_MOTORS;

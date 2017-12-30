@@ -30,7 +30,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
-    long waitTime = 500L;
+    long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
     //210 to move forward to left
@@ -195,7 +195,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     public void loop() {
         rIntake.setPosition(0.6);
 
-        lIntake.setPosition(0.4);
+        lIntake.setPosition(0.3);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
