@@ -329,32 +329,32 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                     glyphLiftState = GlyphLiftState.DUMPING;
                     break;
                 case DESCENDED:
-                    //glyphLift.setPower(0.1);
+                    glyphLift.setPower(0.1);
                     glyphLiftState = GlyphLiftState.ASCENDING;
                     break;
                 case DUMPED:
-                    //glyphLift.setPower(-0.1);
-                    //glyphDispense.setPosition(0.0);
+                    glyphLift.setPower(-0.1);
+                    glyphOutput.setPosition(0.0);
                     glyphLiftState = GlyphLiftState.DESCENDING;
                     break;
             }
 
         switch (glyphLiftState) {
             case ASCENDING:
-                /*if (glyphLiftHigh.isPressed()) {
+                if (!glyphLiftHigh.getState()) {
                     glyphLift.setPower(0);
                     glyphLiftState = GlyphLiftState.ASCENDED;
-                }*/
+                }
                 break;
             case DUMPING:
-                //glyphDispense.setPosition(0.9);
+                glyphOutput.setPosition(1);
                 glyphLiftState = GlyphLiftState.DUMPED;
                 break;
             case DESCENDING:
-                /*if (glyphLiftLow.isPressed()) {
+                if (!glyphLiftLow.getState()) {
                     glyphLift.setPower(0);
                     glyphLiftState = GlyphLiftState.DESCENDED;
-                }*/
+                }
                 break;
         }
 
