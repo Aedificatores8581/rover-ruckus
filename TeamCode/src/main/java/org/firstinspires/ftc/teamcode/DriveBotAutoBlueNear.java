@@ -32,7 +32,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.71, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.42, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.42, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
 
     int timeToDispense, encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
