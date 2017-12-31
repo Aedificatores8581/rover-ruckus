@@ -30,9 +30,11 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
+
+
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
     //210 to move forward to left
     //325 to move to mid
     //400 to move to right
@@ -40,7 +42,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     //
     int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 90;
+    double targetAngle = 80;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -108,6 +110,19 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
+
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        switch (vuMark) { // Blue is weird.
+            case LEFT:
+                column = CryptoboxColumn.RIGHT;
+                break;
+            case CENTER:
+                column = CryptoboxColumn.MID;
+                break;
+            case RIGHT:
+                column = CryptoboxColumn.LEFT;
+                break;
+        }
     }
 
     @Override
@@ -239,7 +254,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 switch (vuMark) {
                     case LEFT:
                         column = CryptoboxColumn.RIGHT;
@@ -251,27 +266,30 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                         column = CryptoboxColumn.LEFT;
                         break;
                 }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = state.STATE_RECORD_FACING;
+                if (checkEncoder(encToMoveToLeft)) {
+                        state = state.STATE_GYRO_ANGLES;
+                }
+                //state = state.STATE_RECORD_FACING;
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
                 state = State.STATE_FIRST_TURN;
                 break;
             case STATE_FIRST_TURN:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
                 state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
-                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 /*if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
@@ -284,7 +302,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.LEFT) {
                     //targetAngle = 180 - 165;
                     //encToDispense = 1300;
-                    state = State.STATE_GYRO_ANGLES;
+                    if(checkEncoder(encToMoveToLeft))
+                        state = State.STATE_RECORD_FACING;
                 } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
@@ -293,7 +312,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.MID) {
                     //targetAngle = 180 - 159;
                     //encToDispense = 1350;
-                    state = State.STATE_GYRO_ANGLES;
+                    if(checkEncoder(encToMoveToCenter))
+                        state = State.STATE_RECORD_FACING;
                 } else
                     state = State.STATE_CRYPTOBOX_LEFT_SLOT;
 
@@ -302,7 +322,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.RIGHT) {
                     //targetAngle = 180 - 152;
                     //encToDispense = 1400;
-                    state = State.STATE_GYRO_ANGLES;
+                    if(checkEncoder(encToMoveToLeft))
+                        state = State.STATE_RECORD_FACING;
                 }
                 break;
             case STATE_RECORD_FACING:
@@ -358,6 +379,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (checkEncodersReverse(encToBackUpAgain)) {
                     setLeftPow(0);
                     setRightPow(0);
+                    glyphOutput.setPosition(retractDispensePosition);
                     state = State.STATE_END;
                 }
                 break;
@@ -367,8 +389,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         }
 
 
-        /*if (dispenseGlyph) {
-            glyphDispense.setPosition(dispensePosition);
+        if (dispenseGlyph) {
+            glyphOutput.setPosition(dispensePosition);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
             if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -376,7 +398,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
             if (retractDispenser) {
 
-                glyphDispense.setPosition(retractDispensePosition);
+                //glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -384,7 +406,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
             }
 
-        }*/
+        }
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);

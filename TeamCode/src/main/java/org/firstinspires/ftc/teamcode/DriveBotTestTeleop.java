@@ -78,8 +78,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampJewelArmServo() {
-        if (jewelArmServoValue > 0.71) // Maximum position
-            jewelArmServoValue = 0.71;
+        if (jewelArmServoValue > 0.8) // Maximum position
+            jewelArmServoValue = 0.8;
         if (jewelArmServoValue < 0.25) // Minimum position
             jewelArmServoValue = 0.25;
     }
@@ -195,6 +195,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         if (gamepad2.dpad_down) {
             glyphDumpServoValue -= 0.05;
+            clampDumpServo();
+        }
+        if (gamepad2.dpad_left || gamepad2.dpad_right) {
+            glyphDumpServoValue = 0.3;
             clampDumpServo();
         }
 

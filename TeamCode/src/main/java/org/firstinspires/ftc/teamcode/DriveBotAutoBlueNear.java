@@ -32,11 +32,11 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     int timeToDispense, encToDispense = 550, encToRamGlyph = 570, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 90;
+    double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -104,6 +104,19 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
+
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        switch (vuMark) { // Blue is weird.
+            case LEFT:
+                column = CryptoboxColumn.RIGHT;
+                break;
+            case CENTER:
+                column = CryptoboxColumn.MID;
+                break;
+            case RIGHT:
+                column = CryptoboxColumn.LEFT;
+                break;
+        }
     }
 
     @Override
@@ -322,6 +335,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 if (checkEncodersReverse(encToBackUpAgain)) {
                     setLeftPow(0);
                     setRightPow(0);
+                    glyphOutput.setPosition(retractDispensePosition);
                     state = State.STATE_END;
                 }
                 break;
@@ -330,8 +344,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
         }
 
-        /*if (dispenseGlyph) {
-            glyphDispense.setPosition(dispensePosition);
+        if (dispenseGlyph) {
+            glyphOutput.setPosition(dispensePosition);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
             if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -339,7 +353,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
             if (retractDispenser) {
 
-                glyphDispense.setPosition(retractDispensePosition);
+                //glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -347,7 +361,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
             }
 
-        }*/
+        }
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);

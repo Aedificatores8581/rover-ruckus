@@ -32,7 +32,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
     //210 to move forward to left
 //325 to move to mid
 //400 to move to right
@@ -109,6 +109,18 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        switch (vuMark) { // Blue is weird.
+            case LEFT:
+                column = CryptoboxColumn.RIGHT;
+                break;
+            case CENTER:
+                column = CryptoboxColumn.MID;
+                break;
+            case RIGHT:
+                column = CryptoboxColumn.LEFT;
+                break;
+        }
     }
 
     @Override
@@ -238,7 +250,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 switch (vuMark) {
                     case LEFT:
                         column = CryptoboxColumn.RIGHT;
@@ -250,8 +262,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                         column = CryptoboxColumn.LEFT;
                         break;
                 }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)
-                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
+                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
@@ -269,8 +281,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_CHECK_SLOT:
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
                     resetEncoders();
-                    reinitMotors(-speed, -speed);
-                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                    reinitMotors(speed, speed);
+                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 /*if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
@@ -283,7 +295,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.LEFT) {
                     //targetAngle = 165;
                     //encToDispense = 1300;
-                    state = State.STATE_GYRO_ANGLES;
+                    if(checkEncoder(encToMoveToLeft))
+                        state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
@@ -361,6 +374,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     if (checkEncodersReverse(encToBackUpAgain)) {
                         setLeftPow(0);
                         setRightPow(0);
+                        glyphOutput.setPosition(retractDispensePosition);
                         state = State.STATE_END;
                     }
                 }
@@ -379,7 +393,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
             if (retractDispenser) {
 
-                glyphOutput.setPosition(retractDispensePosition);
+                //glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)

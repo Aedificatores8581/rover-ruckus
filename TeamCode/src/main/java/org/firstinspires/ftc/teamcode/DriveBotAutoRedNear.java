@@ -37,10 +37,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.7, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition, retractDispensePosition;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 100, encToBackUpAgain = 200, encToMoveToLeft = 450, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 30;
+    double targetAngle = -80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -301,8 +301,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
@@ -338,6 +338,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 if (checkEncodersReverse(encToBackUpAgain)) {
                     setLeftPow(0);
                     setRightPow(0);
+                    glyphOutput.setPosition(retractDispensePosition);
                     state = State.STATE_END;
                 }
                 break;
@@ -347,8 +348,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         }
 
 
-        /*if (dispenseGlyph) {
-            glyphDispense.setPosition(dispensePosition);
+        if (dispenseGlyph) {
+            glyphOutput.setPosition(dispensePosition);
             if (prevTime == 0)
                 prevTime = System.currentTimeMillis();
             if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -356,7 +357,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
             if (retractDispenser) {
 
-                glyphDispense.setPosition(retractDispensePosition);
+                //glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -364,10 +365,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
             }
 
-        }*/
+        }
         telemetry.addData("Pictogram", column);
 
-        telemetry.addData("angle", new GyroAngles(angles).getZ());
+        //telemetry.addData("angle", new GyroAngles(angles).getZ());
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
