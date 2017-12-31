@@ -136,8 +136,8 @@ public class DriveBotTestTeleopReverse extends DriveBotTestTemplate {
     }
 
     protected void setMotorPowers() {
-        setLeftPow(gamepad1.left_stick_y * speedMult.getMult());
-        setRightPow(gamepad1.right_stick_y * speedMult.getMult());
+        setLeftPow(gamepad1.right_stick_y * speedMult.getMult());
+        setRightPow(gamepad1.left_stick_y * speedMult.getMult());
     }
 
     @Override

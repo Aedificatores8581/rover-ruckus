@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ17BHDN" parentModuleAddress="2">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <RevRoboticsHDHexMotor name="motor" port="0" />
+            <ContinuousRotationServo name="crs1" port="0" />
+            <Servo name="s1" port="1" />
+            <Servo name="s2" port="2" />
+            <ContinuousRotationServo name="crs2" port="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
