@@ -345,14 +345,13 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected void startDance() {
-        /*new Handler(Looper.getMainLooper()).post(new Runnable() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 danceMusic.setLooping(true);
                 danceMusic.start();
             }
         });
-        */
         dancing = true;
     }
 
