@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
  */
-@TeleOp(name = "DriveBot Test Tele-Op", group = "this is a test")
-public class DriveBotTestTeleop extends DriveBotTestTemplate {
+@TeleOp(name = "DriveBot Test Tele-Op Reverse", group = "this is a test")
+public class DriveBotTestTeleopReverse extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
@@ -78,8 +78,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void clampJewelArmServo() {
-        if (jewelArmServoValue > 0.8) // Maximum position
-            jewelArmServoValue = 0.8;
+        if (jewelArmServoValue > 0.71) // Maximum position
+            jewelArmServoValue = 0.71;
         if (jewelArmServoValue < 0.25) // Minimum position
             jewelArmServoValue = 0.25;
     }
@@ -136,8 +136,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     protected void setMotorPowers() {
-        setLeftPow(gamepad1.left_stick_y * -speedMult.getMult());
-        setRightPow(gamepad1.right_stick_y * -speedMult.getMult());
+        setLeftPow(gamepad1.right_stick_y * speedMult.getMult());
+        setRightPow(gamepad1.left_stick_y * speedMult.getMult());
     }
 
     @Override
@@ -195,10 +195,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         if (gamepad2.dpad_down) {
             glyphDumpServoValue -= 0.05;
-            clampDumpServo();
-        }
-        if (gamepad2.dpad_left || gamepad2.dpad_right) {
-            glyphDumpServoValue = 0.3;
             clampDumpServo();
         }
 

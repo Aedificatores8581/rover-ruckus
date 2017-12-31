@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <MotorController name="mc2" serialNumber="AL00XTMS">
+        <Motor name="bll" port="1" />
+        <Motor name="blr" port="2" />
+    </MotorController>
+    <MotorController name="mc1" serialNumber="AL00XSXJ">
+        <Motor name="lm" port="1" />
+        <Motor name="rm" port="2" />
+    </MotorController>
+    <ServoController name="sc1" serialNumber="AI02RMPX">
+        <Servo name="s1" port="1" />
+        <Servo name="s2" port="2" />
+    </ServoController>
+    <LegacyModuleController name="clm" serialNumber="AL00XUJ1">
+        <MotorController name="mc3" port="0">
+            <Motor name="sm" port="1" />
+        </MotorController>
+        <TouchSensor name="ts2" port="1" />
+        <TouchSensor name="ts1" port="3" />
+        <UltrasonicSensor name="uss1" port="4" />
+        <UltrasonicSensor name="uss2" port="5" />
+    </LegacyModuleController>
+</Robot>

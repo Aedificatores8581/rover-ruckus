@@ -15,12 +15,9 @@ import org.firstinspires.ftc.robotcore.external.Const;
  * Conjured into existence by The Saminator on 12-05-2017.
  */
 public abstract class Sensor2BotTemplate extends OpMode {
-    protected DigitalChannel touch;
-    protected PingSensor ping;
-    protected SharpIRSensor ir;
-    protected DcMotor lm, rm;
     protected Servo relicHand, relicFingers; // rah, raf
     protected DcMotor relicArm;
+    protected DigitalChannel magnetSensor;
 
     public static class Constants {
         public static final double MOTOR_POWER = 0.25;
@@ -36,32 +33,13 @@ public abstract class Sensor2BotTemplate extends OpMode {
 
     @Override
     public void init() {
-        touch = hardwareMap.digitalChannel.get("touch");
-
-        ping = new PingSensor(hardwareMap.digitalChannel.get("ping"));
-        ir = new SharpIRSensor(hardwareMap.analogInput.get("ir"));
-
-        lm = hardwareMap.dcMotor.get("lm");
-        rm = hardwareMap.dcMotor.get("rm");
-
         relicArm = hardwareMap.dcMotor.get("ram");
         relicHand = hardwareMap.servo.get("rah");
         relicFingers = hardwareMap.servo.get("raf");
+        magnetSensor = hardwareMap.digitalChannel.get("ms");
 
-        touch.setMode(DigitalChannel.Mode.INPUT);
-        lm.setDirection(Constants.LM_DIR);
-        rm.setDirection(Constants.RM_DIR);
         relicArm.setDirection(Constants.RA_DIR);
-    }
-
-    public void go() {
-        lm.setPower(Constants.MOTOR_POWER);
-        rm.setPower(Constants.MOTOR_POWER);
-    }
-
-    public void stop() {
-        lm.setPower(0.0);
-        rm.setPower(0.0);
+        magnetSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
     protected boolean triggered(double value) {
