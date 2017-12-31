@@ -38,7 +38,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 //400 to move to right
 //350 to place glyph
 //
-    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 1148, encToMoveToLeft = 385, encToChangeColumn = 0, encToMoveToCenter = 737, encToMoveToRight = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -90;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -50,8 +50,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     public void start() {
         super.start();
         relicTrackables.activate();
-        encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
-        encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
+        //encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
+        //encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
         if (ramAngle > 1.0) {
             ramRightMod = 1.0;
             ramLeftMod = 1.0 / ramAngle;
@@ -268,7 +268,9 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = state.STATE_RECORD_FACING;
+                if (checkEncoder(encToDismount)) {
+                    state = state.STATE_GYRO_ANGLES;
+                }
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
@@ -296,7 +298,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     //targetAngle = 165;
                     //encToDispense = 1300;
                     if(checkEncoder(encToMoveToLeft))
-                        state = State.STATE_GYRO_ANGLES;
+                        state = State.STATE_RECORD_FACING;
                 } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
@@ -305,7 +307,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.MID) {
                     //targetAngle = 159;
                     //encToDispense = 1350;
-                    state = State.STATE_GYRO_ANGLES;
+                    if(checkEncoder(encToMoveToCenter))
+                        state = State.STATE_RECORD_FACING;
                 } else
                     state = State.STATE_CRYPTOBOX_LEFT_SLOT;
 
@@ -314,7 +317,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.RIGHT) {
                     //targetAngle = 152;
                     //encToDispense = 1400;
-                    state = State.STATE_GYRO_ANGLES;
+                    if(checkEncoder(encToMoveToRight))
+                        state = State.STATE_RECORD_FACING;
                 }
                 break;
             case STATE_RECORD_FACING:
@@ -414,7 +418,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
-        telemetry.addData("Angle", new GyroAngles(angles).getZ());
+        //telemetry.addData("Angle", new GyroAngles(angles).getZ());
 
         if (column != null)
             telemetry.addData("Column", column.name());

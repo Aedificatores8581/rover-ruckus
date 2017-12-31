@@ -35,12 +35,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
-    //210 to move forward to left
-    //325 to move to mid
-    //400 to move to right
-    //350 to place glyph
-    //
-    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    //DRIVE OFF = 1148
+    //DRIVE TO FIRST = 385
+    //DRIVE TO MID  = 737
+    //DRIVE TO LAST = 1050
+    //350 to ram
+    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 1148, encToMoveToLeft = 385, encToChangeColumn = 0, encToMoveToCenter = 737, encToMoveToRight = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -272,7 +272,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if (checkEncoder(encToMoveToLeft)) {
+                if (checkEncoder(encToDismount)) {
                         state = state.STATE_GYRO_ANGLES;
                 }
                 //state = state.STATE_RECORD_FACING;
@@ -408,6 +408,14 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         }
 
+
+
+
+        //DRIVE OFF = 1148
+        //DRIVE TO FIRST = 385
+        //DRIVE TO MID  = 737
+        //DRIVE TO LAST = 1050
+        //350 to ram
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
         telemetry.addData("Blue Ratio", blueRatio);

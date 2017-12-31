@@ -252,7 +252,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 switch (vuMark) {
                     case LEFT:
                         column = CryptoboxColumn.RIGHT;
@@ -264,7 +264,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                         column = CryptoboxColumn.LEFT;
                         break;
                 }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
@@ -273,7 +273,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (true/*one column is sensed*/) {
+                if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -281,7 +281,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (true/*a second column is sensed*/) {
+                if (checkEncoder(encToMoveToCenter)) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -289,7 +289,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (true/*a third column is sensed*/) {
+                if (checkEncoder(encToMoveToRight)) {
                     state = State.STATE_RECORD_FACING;
                 }
                 break;
