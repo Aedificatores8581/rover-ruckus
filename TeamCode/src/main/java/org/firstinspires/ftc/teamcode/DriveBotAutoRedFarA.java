@@ -33,14 +33,15 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+
     //210 to move forward to left
-//325 to move to mid
-//400 to move to right
-//350 to place glyph
-//
-    int timeToDispense, encToDispense = 1050, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    //325 to move to mid
+    //400 to move to right
+    //350 to place glyph
+
+    int timeToDispense, encToDispense = 1100, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = -190;
+    double targetAngle = -193;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -67,6 +68,12 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            rIntake.setPosition(0.7);
+
+            lIntake.setPosition(0.3);
+
+            glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -205,12 +212,6 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        rIntake.setPosition(0.7);
-
-        lIntake.setPosition(0.3);
-
-        glyphOutput.setPosition(0.0);
-
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -383,22 +384,20 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         }
 
         if (dispenseGlyph) {
-            glyphOutput.setPosition(dispensePosition);
-            if (prevTime == 0)
-                prevTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - prevTime >= waitTime)
-                retractDispenser = true;
-
             if (retractDispenser) {
-
                 glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     dispenseGlyph = false;
-
             }
+            else
+                glyphOutput.setPosition(dispensePosition);
 
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= waitTime)
+                retractDispenser = true;
         }
 
         telemetry.addData("State", state.name());
