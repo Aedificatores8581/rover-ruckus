@@ -38,9 +38,9 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 //400 to move to right
 //350 to place glyph
 //
-    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int timeToDispense, encToDispense = 1050, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = -90;
+    double targetAngle = -190;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -209,7 +209,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
         lIntake.setPosition(0.3);
 
-        glyphOutput.setPosition(0.3);
+        glyphOutput.setPosition(0.0);
 
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
@@ -268,7 +268,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = state.STATE_RECORD_FACING;
+                state = State.STATE_RECORD_FACING;
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
@@ -301,14 +301,12 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-
                 if (column == CryptoboxColumn.MID) {
                     //targetAngle = 159;
                     //encToDispense = 1350;
                     state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_LEFT_SLOT;
-
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (column == CryptoboxColumn.RIGHT) {
@@ -324,7 +322,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             case STATE_FACE_CRYPTOBOX:
                 setLeftPow(-adjustSpeed);
                 setRightPow(adjustSpeed);
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
+                double angleTravelled = gyroAngles.getZ() - (new GyroAngles(angles).getZ());
+                if (angleTravelled <= targetAngle || (-targetAngle / 2.0) <= angleTravelled) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -374,7 +373,6 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     if (checkEncodersReverse(encToBackUpAgain)) {
                         setLeftPow(0);
                         setRightPow(0);
-                        glyphOutput.setPosition(retractDispensePosition);
                         state = State.STATE_END;
                     }
                 }
@@ -393,7 +391,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
 
             if (retractDispenser) {
 
-                //glyphOutput.setPosition(retractDispensePosition);
+                glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -414,7 +412,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
         telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
-        telemetry.addData("Angle", new GyroAngles(angles).getZ());
+        //telemetry.addData("Angle", new GyroAngles(angles).getZ()); // IMPORTANT: DO NOT UNCOMMENT THIS CAUSES A NULL POINTER EXCEPTION!
 
         if (column != null)
             telemetry.addData("Column", column.name());
