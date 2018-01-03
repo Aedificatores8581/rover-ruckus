@@ -30,8 +30,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
-
-
     long waitTime = 2000L;
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
@@ -40,9 +38,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     //DRIVE TO MID  = 737
     //DRIVE TO LAST = 1050
     //350 to ram
-    int timeToDispense, encToDispense = 350, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 1148, encToMoveToLeft = 385, encToChangeColumn = 0, encToMoveToCenter = 737, encToMoveToRight = 1050;
+    int timeToDispense, encToDispense = 1250, encToRamGlyph = 1200, encToBackUp = 900, encToBackUpAgain = 600, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 80;
+    double targetAngle = 10;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -52,7 +50,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     public void start() {
         super.start();
         relicTrackables.activate();
-
         encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
         encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
         if (ramAngle > 1.0) {
@@ -70,6 +67,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            rIntake.setPosition(0.7);
+
+            lIntake.setPosition(0.3);
+
+            glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -84,10 +87,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
+
+        state = State.STATE_LOWER_JEWEL_ARM;
+
         rIntake.setPosition(0.3);
 
         lIntake.setPosition(0.7);
-        state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -110,7 +115,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
-
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
         switch (vuMark) { // Blue is weird.
             case LEFT:
@@ -207,12 +211,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        rIntake.setPosition(0.7);
-
-        lIntake.setPosition(0.3);
-
-        glyphOutput.setPosition(0.3);
-
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -234,7 +232,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -242,7 +239,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(1.0);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -267,28 +263,25 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                         break;
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
-                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
+                state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if (checkEncoder(encToDismount)) {
-                        state = state.STATE_GYRO_ANGLES;
-                }
-                //state = state.STATE_RECORD_FACING;
+                state = State.STATE_RECORD_FACING;
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
                 state = State.STATE_FIRST_TURN;
                 break;
             case STATE_FIRST_TURN:
-                setLeftPow(-adjustSpeed);
-                setRightPow(adjustSpeed);
+                setLeftPow(adjustSpeed);
+                setRightPow(-adjustSpeed);
                 state = State.STATE_CHECK_SLOT;
             case STATE_CHECK_SLOT:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
                     resetEncoders();
-                    reinitMotors(-speed, -speed);
+                    reinitMotors(speed, speed);
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 /*if (checkEncoder(encToMoveToLeft)) {
@@ -300,30 +293,26 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (column == CryptoboxColumn.LEFT) {
-                    //targetAngle = 180 - 165;
+                    //targetAngle = 165;
                     //encToDispense = 1300;
                     if(checkEncoder(encToMoveToLeft))
-                        state = State.STATE_RECORD_FACING;
+                        state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-
                 if (column == CryptoboxColumn.MID) {
-                    //targetAngle = 180 - 159;
+                    //targetAngle = 159;
                     //encToDispense = 1350;
-                    if(checkEncoder(encToMoveToCenter))
-                        state = State.STATE_RECORD_FACING;
+                    state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_LEFT_SLOT;
-
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
                 if (column == CryptoboxColumn.RIGHT) {
-                    //targetAngle = 180 - 152;
+                    //targetAngle = 152;
                     //encToDispense = 1400;
-                    if(checkEncoder(encToMoveToLeft))
-                        state = State.STATE_RECORD_FACING;
+                    state = State.STATE_GYRO_ANGLES;
                 }
                 break;
             case STATE_RECORD_FACING:
@@ -331,9 +320,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
-                setLeftPow(-adjustSpeed);
-                setRightPow(adjustSpeed);
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= targetAngle) {
+                setLeftPow(adjustSpeed);
+                setRightPow(-adjustSpeed);
+                double angleTravelled = gyroAngles.getZ() - (new GyroAngles(angles).getZ());
+                if (angleTravelled >= targetAngle) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -351,18 +341,20 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     reinitMotors(0, 0);
                     setLeftPow(speed);
                     setRightPow(speed);
-                    prevTime = System.currentTimeMillis();
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
-
-                if (checkEncodersReverse(encToBackUp)) {
-                    resetEncoders();
-                    reinitMotors(0, 0);
-                    setLeftPow(-speed * ramLeftMod);
-                    setRightPow(-speed * ramRightMod);
-                    state = State.STATE_RAM_GLYPH_INTO_BOX;
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= 750) {
+                    if (checkEncodersReverse(encToBackUp)) {
+                        resetEncoders();
+                        reinitMotors(0, 0);
+                        setLeftPow(-speed * ramLeftMod);
+                        setRightPow(-speed * ramRightMod);
+                        state = State.STATE_RAM_GLYPH_INTO_BOX;
+                    }
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
@@ -372,15 +364,17 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     setLeftPow(speed * ramLeftMod);
                     setRightPow(speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
-
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
-                if (checkEncodersReverse(encToBackUpAgain)) {
-                    setLeftPow(0);
-                    setRightPow(0);
-                    glyphOutput.setPosition(retractDispensePosition);
-                    state = State.STATE_END;
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= 750) {
+                    if (checkEncodersReverse(encToBackUpAgain)) {
+                        setLeftPow(0);
+                        setRightPow(0);
+                        state = State.STATE_END;
+                    }
                 }
                 break;
             case STATE_END:
@@ -388,24 +382,21 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
         }
 
-
         if (dispenseGlyph) {
-            glyphOutput.setPosition(dispensePosition);
-            if (prevTime == 0)
-                prevTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - prevTime >= waitTime)
-                retractDispenser = true;
-
             if (retractDispenser) {
-
-                //glyphOutput.setPosition(retractDispensePosition);
+                glyphOutput.setPosition(retractDispensePosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     dispenseGlyph = false;
-
             }
+            else
+                glyphOutput.setPosition(dispensePosition);
 
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= waitTime)
+                retractDispenser = true;
         }
 
 
@@ -426,6 +417,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         telemetry.addData("Total LR Encoder", leftRear.getCurrentPosition());
         telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
+
+        //telemetry.addData("Angle", new GyroAngles(angles).getZ()); // IMPORTANT: DO NOT UNCOMMENT THIS CAUSES A NULL POINTER EXCEPTION!
 
         if (column != null)
             telemetry.addData("Column", column.name());
