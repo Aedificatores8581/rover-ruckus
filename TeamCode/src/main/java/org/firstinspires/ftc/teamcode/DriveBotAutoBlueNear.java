@@ -204,9 +204,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         rIntake.setPosition(0.7);
 
         lIntake.setPosition(0.3);
-
-        glyphOutput.setPosition(0.3);
-
+        relicHand.setPosition(0.5);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -220,6 +218,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+                glyphOutput.setPosition(0.3);
                 prevTime = 0;
                 if (redRatio > blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
@@ -298,9 +297,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 state = State.STATE_FACE_CRYPTOBOX;
                 break;
             case STATE_FACE_CRYPTOBOX:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -targetAngle) {
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
+                if ((new GyroAngles(angles).getZ()) - gyroAngles.getZ() >= targetAngle) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }

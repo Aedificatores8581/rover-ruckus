@@ -44,7 +44,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
-    boolean dispenseGlyph, retractDispenser;
+    boolean dispenseGlyph, retractDispenser, start = true;
 
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
@@ -83,11 +83,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         this.msStuckDetectInit = 10000;
         super.init();
         
-        rIntake.setPosition(0.3);
 
-        lIntake.setPosition(0.7);
-
-        glyphOutput.setPosition(0.3);
 
         state = State.STATE_LOWER_JEWEL_ARM;
 
@@ -210,9 +206,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     @Override
     public void loop() {
         rIntake.setPosition(0.7);
-
         lIntake.setPosition(0.3);
-
+        relicHand.setPosition(0.5);
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -226,6 +221,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+                glyphOutput.setPosition(0.3);
                 prevTime = 0;
                 if (redRatio > blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
