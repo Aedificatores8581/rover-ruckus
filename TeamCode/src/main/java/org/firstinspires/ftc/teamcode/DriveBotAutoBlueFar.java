@@ -38,7 +38,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     //DRIVE TO MID  = 737
     //DRIVE TO LAST = 1050
     //350 to ram
-    int timeToDispense, encToDispense = 1250, encToRamGlyph = 1200, encToBackUp = 900, encToBackUpAgain = 600, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 250, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 10;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -71,6 +71,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.32);
 
             glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
@@ -339,8 +341,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(speed);
-                    setRightPow(speed);
+                    setLeftPow(-speed);
+                    setRightPow(-speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
@@ -351,8 +353,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     if (checkEncodersReverse(encToBackUp)) {
                         resetEncoders();
                         reinitMotors(0, 0);
-                        setLeftPow(-speed * ramLeftMod);
-                        setRightPow(-speed * ramRightMod);
+                        setLeftPow(speed * ramLeftMod);
+                        setRightPow(speed * ramRightMod);
                         state = State.STATE_RAM_GLYPH_INTO_BOX;
                     }
                 }
@@ -361,8 +363,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (checkEncoder(encToRamGlyph)) {
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(speed * ramLeftMod);
-                    setRightPow(speed * ramRightMod);
+                    setLeftPow(-speed * ramLeftMod);
+                    setRightPow(-speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;

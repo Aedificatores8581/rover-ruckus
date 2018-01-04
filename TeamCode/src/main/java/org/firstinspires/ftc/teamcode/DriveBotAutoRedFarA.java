@@ -39,7 +39,7 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
     //400 to move to right
     //350 to place glyph
 
-    int timeToDispense, encToDispense = 1100, encToRamGlyph = 300, encToBackUp = 300, encToBackUpAgain = 300, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 250, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -193;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -72,6 +72,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.32);
 
             glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
@@ -340,8 +342,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(speed);
-                    setRightPow(speed);
+                    setLeftPow(-speed);
+                    setRightPow(-speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
@@ -352,8 +354,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                     if (checkEncodersReverse(encToBackUp)) {
                         resetEncoders();
                         reinitMotors(0, 0);
-                        setLeftPow(-speed * ramLeftMod);
-                        setRightPow(-speed * ramRightMod);
+                        setLeftPow(speed * ramLeftMod);
+                        setRightPow(speed * ramRightMod);
                         state = State.STATE_RAM_GLYPH_INTO_BOX;
                     }
                 }
@@ -362,8 +364,8 @@ public class DriveBotAutoRedFarA extends DriveBotTestTemplate {
                 if (checkEncoder(encToRamGlyph)) {
                     resetEncoders();
                     reinitMotors(0, 0);
-                    setLeftPow(speed * ramLeftMod);
-                    setRightPow(speed * ramRightMod);
+                    setLeftPow(-speed * ramLeftMod);
+                    setRightPow(-speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
