@@ -38,12 +38,22 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     public enum GlyphLiftState {
-        ASCENDING,
-        ASCENDED,
-        DUMPING,
-        DUMPED,
-        DESCENDING,
-        DESCENDED
+        ASCENDING(true),
+        ASCENDED(false),
+        DUMPING(true),
+        DUMPED(false),
+        DESCENDING(true),
+        DESCENDED(false);
+
+        private boolean isMoving;
+
+        GlyphLiftState(boolean moving) {
+            isMoving = moving;
+        }
+
+        public boolean currentlyMoving() {
+            return isMoving;
+        }
     }
 
     @Override
@@ -58,7 +68,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         prev2 = new Gamepad();
         armExtended = false;
 
-        glyphLiftState = GlyphLiftState.ASCENDING;
+        glyphLiftState = GlyphLiftState.DESCENDED;
     }
 
     @Override
@@ -132,7 +142,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         jewelFlipper.setPosition(jewelFlipperServoValue);
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
-        glyphOutput.setPosition(glyphDumpServoValue);
+
+        if (!glyphLiftState.currentlyMoving())
+            glyphOutput.setPosition(glyphDumpServoValue);
     }
 
     protected void setMotorPowers() {

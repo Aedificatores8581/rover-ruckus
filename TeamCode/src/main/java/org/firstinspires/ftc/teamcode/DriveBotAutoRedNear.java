@@ -44,7 +44,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
-    boolean dispenseGlyph, retractDispenser, start = true;
+    boolean dispenseGlyph, retractDispenser;
 
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
@@ -68,6 +68,12 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            rIntake.setPosition(0.3);
+
+            lIntake.setPosition(0.7);
+
+            glyphOutput.setPosition(0.3);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -82,9 +88,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
-        
-
-
         state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -206,8 +209,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     @Override
     public void loop() {
         rIntake.setPosition(0.7);
+
         lIntake.setPosition(0.3);
-        relicHand.setPosition(0.5);
+
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
@@ -221,7 +225,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
-                glyphOutput.setPosition(0.3);
                 prevTime = 0;
                 if (redRatio > blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;

@@ -1,56 +1,102 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Disabled
-@Autonomous(name = "Autonomous RedFar", group = "competition bepis")
+/*
+ * Conjured into existence by The Saminator on 11-12-2017.
+ */
+@Autonomous(name = "Autonomous Red Far", group = "competition bepis")
+
 public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     State state;
 
     private int cameraMonitorViewId;
-
-
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
-    double redColor = 0.55, blueColor = 0.4, redRatio = 0, blueRatio = 0, armPosition = 0, centerFinger = 0.6, speed = 0.15, adjustLeftSpeed = 0.06, adjustRightSpeed = 0.06, angle = 0;
-    int encToDispense = 250, encToDismount = 1130, encToArriveAtCryptobox = 175, encToMoveToNextColumn = 0;
-    long waiting = 0, waitTime = 1500;
 
+    Gamepad prev1;
+
+    long waitTime = 2000L;
+    long prevTime;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+
+    //210 to move forward to left
+    //325 to move to mid
+    //400 to move to right
+    //350 to place glyph
+
+    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 250, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    double glyphHold = 0.03, glyphDrop = 0.33;
+    double targetAngle = -193;
+    double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
-
     GyroAngles gyroAngles;
+    boolean dispenseGlyph, retractDispenser;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
+        super.start();
         relicTrackables.activate();
+        //encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
+        //encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
+        if (ramAngle > 1.0) {
+            ramRightMod = 1.0;
+            ramLeftMod = 1.0 / ramAngle;
+        } else {
+            ramRightMod = ramAngle;
+            ramLeftMod = 1.0;
+        }
 
         try {
             Thread.sleep(1000);
+
+            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            rIntake.setPosition(0.7);
+
+            lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.32);
+
+            glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
     }
 
     @Override
+    protected boolean isAutonomous() {
+        return true;
+    }
+
+    @Override
     public void init() {
+        this.msStuckDetectInit = 10000;
         super.init();
-        state = State.STATE_SCAN_KEY;
-        jewelArm.setPosition(0.71);
+
+        state = State.STATE_LOWER_JEWEL_ARM;
+
+        rIntake.setPosition(0.3);
+
+        lIntake.setPosition(0.7);
+
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VuforiaLicenseKey.LICENSE_KEY; // VuforiaLicenseKey is ignored by git
@@ -61,239 +107,348 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
 
+        prevTime = 0;
+
+        dispenseGlyph = false;
+        retractDispenser = false;
+
+        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        prev1 = new Gamepad();
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        switch (vuMark) { // Blue is weird.
+            case LEFT:
+                column = CryptoboxColumn.RIGHT;
+                break;
+            case CENTER:
+                column = CryptoboxColumn.MID;
+                break;
+            case RIGHT:
+                column = CryptoboxColumn.LEFT;
+                break;
+        }
     }
-    //0.71 = up position
+
+    @Override
+    public void init_loop() {
+        if (gamepad1.dpad_up && !prev1.dpad_up)
+            speed += 0.01;
+
+        if (gamepad1.dpad_down && !prev1.dpad_down)
+            speed -= 0.01;
+
+        if (gamepad1.dpad_right && !prev1.dpad_right)
+            adjustSpeed += 0.005;
+
+        if (gamepad1.dpad_left && !prev1.dpad_left)
+            adjustSpeed -= 0.005;
+
+        if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger))
+            targetAngle += 1;
+
+        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger))
+            targetAngle -= 1;
+
+        if (gamepad1.a && !prev1.a)
+            encToMoveToLeft += 10;
+
+        if (gamepad1.b && !prev1.b)
+            encToMoveToLeft -= 10;
+
+        if (gamepad1.x && !prev1.x)
+            encToChangeColumn += 10;
+
+        if (gamepad1.y && !prev1.y)
+            encToChangeColumn -= 10;
+
+        if (gamepad1.right_bumper && !prev1.right_bumper)
+            encToDispense += 5;
+
+        if (gamepad1.left_bumper && !prev1.left_bumper)
+            encToDispense -= 5;
+
+        if (triggered(gamepad1.left_stick_y) && !triggered(prev1.left_stick_y))
+            encToBackUp += 5;
+
+        if (triggered(-gamepad1.left_stick_y) && !triggered(-prev1.left_stick_y))
+            encToBackUp -= 5;
+
+        if (triggered(gamepad1.left_stick_x) && !triggered(prev1.left_stick_x))
+            encToRamGlyph += 5;
+
+        if (triggered(-gamepad1.left_stick_x) && !triggered(-prev1.left_stick_x))
+            encToRamGlyph -= 5;
+
+        if (triggered(gamepad1.right_stick_y) && !triggered(prev1.right_stick_y))
+            encToBackUpAgain += 5;
+
+        if (triggered(-gamepad1.right_stick_y) && !triggered(-prev1.right_stick_y))
+            encToBackUpAgain -= 5;
+
+        if (triggered(gamepad1.right_stick_x) && !triggered(prev1.right_stick_x))
+            ramAngle += 0.05;
+
+        if (triggered(-gamepad1.right_stick_x) && !triggered(-prev1.right_stick_x))
+            ramAngle -= 0.05;
+
+        telemetry.addData("Driving Speed (DPad up/down)", speed);
+        telemetry.addData("Turning Speed (DPad right/left)", adjustSpeed);
+        telemetry.addData("Target Angle Degrees (Right/left triggers)", targetAngle);
+        telemetry.addData("Distance to Nearest Cryptobox (A/B)", encToMoveToLeft);
+        telemetry.addData("Distance to Next Cryptobox Column (X/Y)", encToChangeColumn);
+        telemetry.addData("Distance to Dispense Glyph (Right/left bumpers)", encToDispense);
+        telemetry.addData("Distance to Back Up First (Left stick up/down)", encToBackUp);
+        telemetry.addData("Distance to Ram Glyph (Left stick right/left)", encToRamGlyph);
+        telemetry.addData("Distance to Back Up Final (Right stick up/down)", encToBackUpAgain);
+        telemetry.addData("Angle to Ram Glyph Second (Right Speed Mult) (Right stick right/left)", ramAngle);
+
+        try {
+            prev1.copy(gamepad1);
+        } catch (RobotCoreException e) {
+            telemetry.addData("Exception", e);
+        }
+    }
 
     @Override
     public void loop() {
-        colors = color.getNormalizedColors();
-        double redRatio = colors.red / (colors.red + colors.blue + colors.green);
-        double blueRatio = colors.blue / (colors.red + colors.blue + colors.green);
+        NormalizedRGBA colors = color.getNormalizedColors();
+        double redRatio = colors.red / (colors.red + colors.green + colors.blue);
+        double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         switch (state) {
-            case STATE_SCAN_KEY:
-                vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                switch (vuMark) {
-                    case LEFT:
-                        //state = ROBOT_ACTIVITY_STATE.moving;
-                        //encoderAmount = 8000;
-                        column = CryptoboxColumn.RIGHT;
-                        break;
-                    case CENTER:
-
-                        column = CryptoboxColumn.MID;
-                        break;
-                    case RIGHT:
-
-                        column = CryptoboxColumn.LEFT;
-                        break;
-                    default:
-                        break;
-                }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)
-                    state = State.STATE_CENTER_FINGER;
-                break;
-            case STATE_CENTER_FINGER:
-                jewelFlipper.setPosition(0.6);
-                if (waiting == 0)
-                    waiting = System.currentTimeMillis();
-                if (System.currentTimeMillis() - waiting >= waitTime) {
-                    waiting = 0;
-                    state = State.STATE_LOWER_JEWEL_ARM;
-                }
-                break;
             case STATE_LOWER_JEWEL_ARM:
-                jewelArm.setPosition(0.25);
-                if (waiting == 0)
-                    waiting = System.currentTimeMillis();
-                if (System.currentTimeMillis() - waiting >= waitTime) {
-                    waiting = 0;
+                jewelFlipper.setPosition(centerFinger);
+                jewelArm.setPosition(jewelArmDownPosition);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_SCAN_JEWEL;
-                }
                 break;
             case STATE_SCAN_JEWEL:
-                if (redRatio >= redColor && redRatio > blueRatio)
+                prevTime = 0;
+                if (redRatio > blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                else if (blueRatio >= blueColor && redRatio < blueRatio)
+                else if (redRatio < blueRatio)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                if (waiting == 0)
-                    waiting = System.currentTimeMillis();
-                if (System.currentTimeMillis() - waiting >= waitTime) {
-                    waiting = 0;
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
-                }
                 break;
             case STATE_HIT_RIGHT_JEWEL:
-                jewelFlipper.setPosition(0.95);
-                if (waiting == 0)
-                    waiting = System.currentTimeMillis();
-                if (System.currentTimeMillis() - waiting >= waitTime) {
-                    waiting = 0;
+                jewelFlipper.setPosition(1.0);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
-                }
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                jewelArm.setPosition(0.71);
-                if (waiting == 0)
-                    waiting = System.currentTimeMillis();
-                if (System.currentTimeMillis() - waiting >= waitTime) {
-                    waiting = 0;
-                    leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                prevTime = 0;
+                jewelArm.setPosition(jewelArmUpPosition);
+                state = State.STATE_SCAN_KEY;
+                break;
+            case STATE_SCAN_KEY:
+                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                switch (vuMark) {
+                    case LEFT:
+                        column = CryptoboxColumn.RIGHT;
+                        break;
+                    case CENTER:
+                        column = CryptoboxColumn.MID;
+                        break;
+                    case RIGHT:
+                        column = CryptoboxColumn.LEFT;
+                        break;
                 }
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
+                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = State.STATE_CHECK_TURN;
+                state = State.STATE_RECORD_FACING;
                 break;
-            case STATE_CHECK_TURN:
-                if (checkEncoder(encToDismount))
-                    state = State.STATE_READ_GYRO;
-                break;
-            case STATE_READ_GYRO:
+            case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
-                state = State.STATE_TURN;
+                state = State.STATE_FIRST_TURN;
                 break;
-            case STATE_TURN:
-                setLeftPow(-adjustLeftSpeed);
-                setRightPow(adjustRightSpeed);
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -30) {
-                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                    leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            case STATE_FIRST_TURN:
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
+                state = State.STATE_CHECK_SLOT;
+            case STATE_CHECK_SLOT:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
-                break;
-
-            case STATE_CRYPTOBOX_RIGHT_SLOT:
-                setLeftPow(speed);
-                setRightPow(speed);
-                if (checkEncoder(encToArriveAtCryptobox)) {
+                /*if (checkEncoder(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
-                        state = State.STATE_DISPENSE_GLYPH;
+                        state = State.STATE_RECORD_FACING;
                     else
                         state = State.STATE_CRYPTOBOX_CENTER_SLOT;
-                }
+                }*/
+                break;
+            case STATE_CRYPTOBOX_RIGHT_SLOT:
+                if (column == CryptoboxColumn.LEFT) {
+                    //targetAngle = 165;
+                    //encToDispense = 1300;
+                    if(checkEncoder(encToMoveToLeft))
+                        state = State.STATE_GYRO_ANGLES;
+                } else
+                    state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                if (checkEncoder(encToMoveToNextColumn)) {
-                    if (column == CryptoboxColumn.MID)
-                        state = State.STATE_DISPENSE_GLYPH;
-                    else
-                        state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
-                }
+                if (column == CryptoboxColumn.MID) {
+                    //targetAngle = 159;
+                    //encToDispense = 1350;
+                    state = State.STATE_GYRO_ANGLES;
+                } else
+                    state = State.STATE_CRYPTOBOX_LEFT_SLOT;
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                if (checkEncoder(encToMoveToNextColumn))
-                    state = State.STATE_DISPENSE_GLYPH;
-                break;
-            case STATE_DISPENSE_GLYPH:
-                setLeftPow(adjustLeftSpeed);
-                setRightPow(adjustRightSpeed);
-                leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                setLeftPow(-speed);
-                setRightPow(speed);
-                gyroAngles = new GyroAngles(angles);
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= 30) {
-                    setLeftPow(-speed);
-                    setRightPow(-speed);
-
-
-                    if (checkEncoder(encToDispense /* placeholder value*/) || checkLeftEncoder(encToDispense /* placeholder value*/)) {
-                        //glyphOutput.setPosition(0.33);
-                        if (waiting == 0)
-                            waiting = System.currentTimeMillis();
-                        if (System.currentTimeMillis() - waiting >= waitTime) {
-                            waiting = 0;
-                        }
-                        //glyphOutput.setPosition(0);
-
-                        state = State.STATE_END;
-                    }
-                    //1130 for getting off of the platform
-                    //after first turn, -175 for right column
+                if (column == CryptoboxColumn.RIGHT) {
+                    //targetAngle = 152;
+                    //encToDispense = 1400;
+                    state = State.STATE_GYRO_ANGLES;
                 }
                 break;
-            // TODO: Implement collection of additional glyphs?
+            case STATE_RECORD_FACING:
+                gyroAngles = new GyroAngles(angles);
+                state = State.STATE_FACE_CRYPTOBOX;
+                break;
+            case STATE_FACE_CRYPTOBOX:
+                setLeftPow(-adjustSpeed);
+                setRightPow(adjustSpeed);
+                double angleTravelled = gyroAngles.getZ() - (new GyroAngles(angles).getZ());
+                if (angleTravelled <= targetAngle || (-targetAngle / 2.0) <= angleTravelled) {
+                    resetEncoders();
+                    state = State.STATE_REINIT_MOTORS;
+                }
+                break;
+            case STATE_REINIT_MOTORS:
+                reinitMotors(speed, speed);
+                state = State.STATE_DISPENSE_GLYPH;
+                break;
+            case STATE_DISPENSE_GLYPH:
+                if (checkEncoder(encToDispense)) {
+                    setLeftPow(0.0);
+                    setRightPow(0.0);
+                    dispenseGlyph = true;
+                    resetEncoders();
+                    reinitMotors(0, 0);
+                    setLeftPow(-speed);
+                    setRightPow(-speed);
+                    state = State.STATE_BACK_UP_TO_RAM_GLYPH;
+                }
+                break;
+            case STATE_BACK_UP_TO_RAM_GLYPH:
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= 750) {
+                    if (checkEncodersReverse(encToBackUp)) {
+                        resetEncoders();
+                        reinitMotors(0, 0);
+                        setLeftPow(speed * ramLeftMod);
+                        setRightPow(speed * ramRightMod);
+                        state = State.STATE_RAM_GLYPH_INTO_BOX;
+                    }
+                }
+                break;
+            case STATE_RAM_GLYPH_INTO_BOX:
+                if (checkEncoder(encToRamGlyph)) {
+                    resetEncoders();
+                    reinitMotors(0, 0);
+                    setLeftPow(-speed * ramLeftMod);
+                    setRightPow(-speed * ramRightMod);
+                    state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
+                }
+                break;
+            case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= 750) {
+                    if (checkEncodersReverse(encToBackUpAgain)) {
+                        setLeftPow(0);
+                        setRightPow(0);
+                        state = State.STATE_END;
+                    }
+                }
+                break;
             case STATE_END:
                 telemetry.addData("Finished", "Very Yes");
                 break;
         }
 
-        telemetry.addData("State", state.name());
+        if (dispenseGlyph) {
+            if (retractDispenser) {
+                glyphOutput.setPosition(retractDispensePosition);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
+                    dispenseGlyph = false;
+            }
+            else
+                glyphOutput.setPosition(dispensePosition);
 
-        telemetry.addData("Jewel Arm Pos.", jewelArm.getPosition());
-        telemetry.addData("Jewel Flip. Pos.", jewelFlipper.getPosition());
-        telemetry.addData("Color Sensor RGB", "[red " + redRatio + ", blue " + blueRatio + "]");
-        telemetry.addData("leftFore position ", leftFore.getCurrentPosition());
-        telemetry.addData("rightFore position ", rightFore.getCurrentPosition());
-        telemetry.addData("Angles: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+            if (prevTime == 0)
+                prevTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - prevTime >= waitTime)
+                retractDispenser = true;
+        }
+
+        telemetry.addData("State", state.name());
+        telemetry.addData("Red Ratio", redRatio);
+        telemetry.addData("Blue Ratio", blueRatio);
+        telemetry.addData("Red Color", colors.red);
+        telemetry.addData("Blue Color", colors.blue);
+
         telemetry.addData("Total LF Encoder", leftFore.getCurrentPosition());
         telemetry.addData("Total LR Encoder", leftRear.getCurrentPosition());
         telemetry.addData("Total RF Encoder", rightFore.getCurrentPosition());
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
+        //telemetry.addData("Angle", new GyroAngles(angles).getZ()); // IMPORTANT: DO NOT UNCOMMENT THIS CAUSES A NULL POINTER EXCEPTION!
+
+        if (column != null)
+            telemetry.addData("Column", column.name());
     }
 
     enum State {
         STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
-        STATE_CENTER_FINGER,
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
         STATE_SCAN_JEWEL, // Ends when right jewel color is read. Right jewel == blue -> STATE_HIT_LEFT_JEWEL. Right jewel == red -> STATE_HIT_RIGHT_JEWEL
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
         STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
-        STATE_CHECK_TURN,
-        STATE_READ_GYRO,
-        STATE_TURN,
-        STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
+        STATE_CHECK_SLOT,
+        STATE_GYRO_ANGLES,
+        STATE_FIRST_TURN,
+        STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
-        STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_DISPENSE_GLYPH.
-        STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always (unless we are collecting more glyphs) -> STATE_END
-        // TODO: Collect more glyph and dispense them to the cryptobox?
-        STATE_END // Ends when the universe dies.
+        STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_RECORD_FACING.
+        STATE_RECORD_FACING, // Ends when current orientation is recorded. Always -> STATE_FACE_CRYPTOBOX
+        STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS
+        STATE_REINIT_MOTORS, // Ends when the motors' mode is RUN_USING_ENCODER. Always -> STATE_DISPENSE_GLYPH
+        STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always -> STATE_WAIT_FOR_GLYPH_DISPENSED
+        STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
+        STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
+        STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
+        STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
+        // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }
 
-
 }
+//move 960 ticks
+//210 to move forward to left
+//325 to move to mid
+//400 to move to right
+//350 to place glyph
+//
+
