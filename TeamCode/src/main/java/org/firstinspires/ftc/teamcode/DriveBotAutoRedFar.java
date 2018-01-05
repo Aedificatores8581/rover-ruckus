@@ -74,8 +74,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             lIntake.setPosition(0.3);
 
             relicHand.setPosition(0.5);
-
-            glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
@@ -228,6 +226,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
+                glyphOutput.setPosition(0.3);
                 if (redRatio > blueRatio)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < blueRatio)
@@ -404,6 +403,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         telemetry.addData("Total RR Encoder", rightRear.getCurrentPosition());
 
         //telemetry.addData("Angle", new GyroAngles(angles).getZ()); // IMPORTANT: DO NOT UNCOMMENT THIS CAUSES A NULL POINTER EXCEPTION!
+
+        telemetry.addData("Jewel Arm Position", jewelArm.getPosition());
+        telemetry.addData("Jewel Flipper Position", jewelFlipper.getPosition());
+        telemetry.addData("Relic Hand Position", relicHand.getPosition());
+        telemetry.addData("Relic Fingers Position", relicFingers.getPosition());
+        telemetry.addData("Glyph Output Position", glyphOutput.getPosition());
+        telemetry.addData("Right Intake Position", rIntake.getPosition());
+        telemetry.addData("Left Intake Position", lIntake.getPosition());
 
         if (column != null)
             telemetry.addData("Column", column.name());
