@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
  */
-@TeleOp(name = "DriveBot Test Tele-Op", group = "this is a test")
-@Disabled
-public class DriveBotTestTeleop extends DriveBotTestTemplate {
+@TeleOp(name = "DriveBot Competition Tele-Op", group = "this is a test")
+public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
@@ -156,9 +153,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        if (isDancing())
-            dance();
-        else
+        //if (isDancing())
+        //    dance();
+        //else
             setMotorPowers();
         refreshServos();
 
@@ -186,8 +183,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             belt(0.0);
         }
 
-        if (gamepad1.a && !prev1.a)
-            scream();
+        //if (gamepad1.a && !prev1.a)
+        //    scream();
 
         if (gamepad1.x && !prev1.x)
             toggleSpeed();
@@ -231,11 +228,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampRelicHandServo();
         }
 
-        if (gamepad2.a && !prev2.a)
-            startDance();
+        //if (gamepad2.a && !prev2.a)
+        //    startDance();
 
-        if (gamepad2.b && !prev2.b)
-            stopDance();
+        //if (gamepad2.b && !prev2.b)
+        //    stopDance();
 
         //if (gamepad2.b) {
         //    relicHandServoValue = 0.188;
@@ -376,7 +373,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 break;
         }
 
-        telemetry.addData("Arm Extended", armExtended);
+        /*telemetry.addData("Arm Extended", armExtended);
 
         telemetry.addData("Left front power", leftFore.getPower());
         telemetry.addData("Left back power", leftRear.getPower());
@@ -409,7 +406,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
 
-        telemetry.addData("Speed", speedMult.getMult());
+        telemetry.addData("Speed", speedMult.getMult());*/
 
         try {
             prev1.copy(gamepad1);
