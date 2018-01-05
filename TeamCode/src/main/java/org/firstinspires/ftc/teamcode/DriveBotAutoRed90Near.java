@@ -245,7 +245,7 @@ public class DriveBotAutoRed90Near extends DriveBotTestTemplate {
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (checkEncoder(encToMoveToLeft)) {
+                if (checkEncoders(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -253,7 +253,7 @@ public class DriveBotAutoRed90Near extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (checkEncoder(encToMoveToCenter)) {
+                if (checkEncoders(encToMoveToCenter)) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -261,7 +261,7 @@ public class DriveBotAutoRed90Near extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (checkEncoder(encToMoveToRight)) {
+                if (checkEncoders(encToMoveToRight)) {
                     state = State.STATE_RECORD_FACING;
                 }
                 break;
@@ -282,7 +282,7 @@ public class DriveBotAutoRed90Near extends DriveBotTestTemplate {
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                if (checkEncoder(encToDispense)) {
+                if (checkEncoders(encToDispense)) {
                     glyphOutput.setPosition(glyphDrop);
                     setLeftPow(speed);
                     setRightPow(speed);
@@ -298,7 +298,7 @@ public class DriveBotAutoRed90Near extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
-                if (checkEncoder(encToRamGlyph)) {
+                if (checkEncoders(encToRamGlyph)) {
                     setLeftPow(speed * ramLeftMod);
                     setRightPow(speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;

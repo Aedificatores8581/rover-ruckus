@@ -293,7 +293,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return mtrsHere;
     }
 
-    protected boolean checkEncoder(int ticks) {
+    protected boolean checkEncoders(int ticks) {
         return checkLeftEncoder(ticks) || checkRightEncoder(ticks);
     }
 

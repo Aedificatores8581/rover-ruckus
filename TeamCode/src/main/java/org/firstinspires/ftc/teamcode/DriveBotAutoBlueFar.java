@@ -38,9 +38,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     //DRIVE TO MID  = 737
     //DRIVE TO LAST = 1050
     //350 to ram
-    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 250, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 10;
+    double targetAngle = 9;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -72,7 +72,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
             lIntake.setPosition(0.3);
 
-            relicHand.setPosition(0.32);
+            relicHand.setPosition(0.5);
 
             glyphOutput.setPosition(0.0);
         } catch (InterruptedException e) {
@@ -286,7 +286,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     reinitMotors(speed, speed);
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
-                /*if (checkEncoder(encToMoveToLeft)) {
+                /*if (checkEncoders(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -297,7 +297,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (column == CryptoboxColumn.LEFT) {
                     //targetAngle = 165;
                     //encToDispense = 1300;
-                    if(checkEncoder(encToMoveToLeft))
+                    if(checkEncoders(encToMoveToLeft))
                         state = State.STATE_GYRO_ANGLES;
                 } else
                     state = State.STATE_CRYPTOBOX_CENTER_SLOT;
@@ -335,14 +335,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                if (checkEncoder(encToDispense)) {
+                if (checkEncoders(encToDispense)) {
                     setLeftPow(0.0);
                     setRightPow(0.0);
                     dispenseGlyph = true;
                     resetEncoders();
-                    reinitMotors(0, 0);
-                    setLeftPow(-speed);
-                    setRightPow(-speed);
+                    reinitMotors(-speed, -speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
@@ -352,31 +350,25 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 if (System.currentTimeMillis() - prevTime >= 750) {
                     if (checkEncodersReverse(encToBackUp)) {
                         resetEncoders();
-                        reinitMotors(0, 0);
-                        setLeftPow(speed * ramLeftMod);
-                        setRightPow(speed * ramRightMod);
+                        reinitMotors(speed * ramLeftMod, speed * ramRightMod);
                         state = State.STATE_RAM_GLYPH_INTO_BOX;
                     }
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
-                if (checkEncoder(encToRamGlyph)) {
+                if (checkEncoders(encToRamGlyph)) {
                     resetEncoders();
-                    reinitMotors(0, 0);
-                    setLeftPow(-speed * ramLeftMod);
-                    setRightPow(-speed * ramRightMod);
+                    reinitMotors(-speed * ramLeftMod, -speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= 750) {
-                    if (checkEncodersReverse(encToBackUpAgain)) {
-                        setLeftPow(0);
-                        setRightPow(0);
-                        state = State.STATE_END;
-                    }
+                if (checkEncoders(encToBackUpAgain)) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                    state = State.STATE_END;
                 }
                 break;
             case STATE_END:

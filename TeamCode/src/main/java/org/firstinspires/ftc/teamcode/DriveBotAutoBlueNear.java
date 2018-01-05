@@ -34,7 +34,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     long prevTime;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 520, encToBackUp = 110, encToBackUpAgain = 220, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
+    int timeToDispense, encToDispense = 500, encToRamGlyph = 520, encToBackUp = 110, encToBackUpAgain = 420, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -67,6 +67,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.5);
 
             glyphOutput.setPosition(0.3);
         } catch (InterruptedException e) {
@@ -273,7 +275,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (checkEncoder(encToMoveToLeft)) {
+                if (checkEncoders(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -281,7 +283,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (checkEncoder(encToMoveToCenter)) {
+                if (checkEncoders(encToMoveToCenter)) {
                     if (column == CryptoboxColumn.MID)
                         state = State.STATE_RECORD_FACING;
                     else
@@ -289,7 +291,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (checkEncoder(encToMoveToRight)) {
+                if (checkEncoders(encToMoveToRight)) {
                     state = State.STATE_RECORD_FACING;
                 }
                 break;
@@ -310,29 +312,29 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                if (checkEncoder(encToDispense)) {
+                if (checkEncoders(encToDispense)) {
                     dispenseGlyph = true;
-                    setLeftPow(speed);
-                    setRightPow(speed);
+                    resetEncoders();
+                    reinitMotors(speed, speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
-                if (checkEncodersReverse(encToBackUp)) {
-                    setLeftPow(-speed * ramLeftMod);
-                    setRightPow(-speed * ramRightMod);
+                if (checkEncoders(encToBackUp)) {
+                    resetEncoders();
+                    reinitMotors(-speed * ramLeftMod, -speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
-                if (checkEncoder(encToRamGlyph)) {
-                    setLeftPow(speed * ramLeftMod);
-                    setRightPow(speed * ramRightMod);
+                if (checkEncoders(encToRamGlyph)) {
+                    resetEncoders();
+                    reinitMotors(speed * ramLeftMod, speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
-                if (checkEncodersReverse(encToBackUpAgain)) {
+                if (checkEncoders(encToBackUpAgain)) {
                     setLeftPow(0);
                     setRightPow(0);
                     glyphOutput.setPosition(retractDispensePosition);
