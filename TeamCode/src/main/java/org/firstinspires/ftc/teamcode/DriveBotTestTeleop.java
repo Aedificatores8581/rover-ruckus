@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
  * Conjured into existence by The Saminator on 10-01-2017.
  */
 @TeleOp(name = "DriveBot Test Tele-Op", group = "this is a test")
-@Disabled
 public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
@@ -215,7 +214,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) {
-            glyphDumpServoValue = 0.5;
+            glyphDumpServoValue = 0.4;
             clampDumpServo();
         }
 
@@ -410,7 +409,11 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Glyph Lift Lower Sensor", !glyphLiftLow.getState());
 
         NormalizedRGBA colors = color.getNormalizedColors();
-        telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
+        double redRatio = colors.red / (colors.red + colors.green + colors.blue);
+        double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+        //telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
+        telemetry.addData("Red Ratio", redRatio);
+        telemetry.addData("Blue Ratio", blueRatio);
 
         telemetry.addData("Speed", speedMult.getMult());
 

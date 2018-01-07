@@ -29,11 +29,13 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
 
+    boolean initServos;
+
     Gamepad prev1;
 
     long waitTime = 2000L;
     long prevTime;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.48, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 400, encToBackUpAgain = 420, encToMoveToLeft = 500, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -80;
@@ -58,20 +60,22 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         try {
             Thread.sleep(1000);
-
-            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            rIntake.setPosition(0.3);
-
-            lIntake.setPosition(0.7);
-
-            relicHand.setPosition(0.5);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
+
+        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rIntake.setPosition(0.3);
+
+        lIntake.setPosition(0.7);
+
+        relicHand.setPosition(0.5);
+
+        initServos = false;
     }
 
     @Override
@@ -203,9 +207,15 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        rIntake.setPosition(0.7);
+        if (!initServos) {
+            initServos = true;
 
-        lIntake.setPosition(0.3);
+            rIntake.setPosition(0.7);
+
+            lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.5);
+        }
 
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
@@ -221,10 +231,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(0.3);
-                if (redRatio > blueRatio)
+                glyphOutput.setPosition(Constants.GLYPH_DISPENSE_LEVEL);
+                if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                else if (redRatio < blueRatio)
+                else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 break;
             case STATE_HIT_LEFT_JEWEL:
