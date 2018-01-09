@@ -31,7 +31,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     Gamepad prev1;
 
     long waitTime = 2000L;
-    long prevTime;
+    long prevTime, prevTime2 = 0;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     int timeToDispense, encToDispense = 500, encToRamGlyph = 520, encToBackUp = 110, encToBackUpAgain = 420, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
@@ -221,15 +221,23 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(0.3);
-                if (redRatio > blueRatio)
+                glyphOutput.setPosition(0.5);
+                if (redRatio > blueRatio && redRatio >= redColor)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                else if (redRatio < blueRatio)
+                else if (redRatio < blueRatio && blueRatio >= blueColor)
                     state = State.STATE_HIT_RIGHT_JEWEL;
+                else{
+                    if(prevTime2 == 0) {
+                        prevTime2 = System.currentTimeMillis();
+                    }
+                    if(System.currentTimeMillis() - prevTime2 >= 3000){
+                        state = State.STATE_RESET_JEWEL_HITTER;
+                    }
+                }
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(1.0);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
+
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
@@ -239,7 +247,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
+
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
@@ -267,10 +275,21 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
                     state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                    prevTime = 0;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                setLeftPow(-speed);
-                setRightPow(-speed);
+                if(vuMark == RelicRecoveryVuMark.UNKNOWN){
+                    if (prevTime == 0)
+                        prevTime = System.currentTimeMillis();
+                    if (System.currentTimeMillis() - prevTime >= waitTime)
+                        setLeftPow(-speed);
+                        setRightPow(-speed);
+                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                }
+                else {
+                    setLeftPow(-speed);
+                    setRightPow(-speed);
+                }
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:

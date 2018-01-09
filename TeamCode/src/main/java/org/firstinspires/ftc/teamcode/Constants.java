@@ -12,6 +12,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Constants {
     public static final double RIGHT_POWER_FACTOR_2016 = 1.0;
 
+    public static final double RJVALUE = 0.0;
+    public static final double BJVALUE = 0;
+
+
     public static final double SERVO_MIN_2016 = 0.2;
     public static final double SERVO_INIT_2016 = 0.5;
     public static final double SERVO_MAX_2016 = 0.65;
