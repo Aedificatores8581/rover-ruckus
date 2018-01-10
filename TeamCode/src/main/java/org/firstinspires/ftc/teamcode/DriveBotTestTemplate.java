@@ -30,7 +30,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     MediaPlayer wilhelmScream, danceMusic;
 
-    public static class Constants {
+    private static class Constants {
         public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;

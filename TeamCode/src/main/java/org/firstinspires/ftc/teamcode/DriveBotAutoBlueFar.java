@@ -28,6 +28,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
 
+    boolean initServos;
+
     Gamepad prev1;
 
     long waitTime = 2000L;
@@ -40,7 +42,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     //350 to ram
     int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 9;
+    double targetAngle = 8;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -62,20 +64,22 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         try {
             Thread.sleep(1000);
-
-            leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            rIntake.setPosition(0.7);
-
-            lIntake.setPosition(0.3);
-
-            relicHand.setPosition(0.5);
         } catch (InterruptedException e) {
             telemetry.addData("Exception", e);
         }
+
+        leftFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rIntake.setPosition(0.3);
+
+        lIntake.setPosition(0.7);
+
+        relicHand.setPosition(0.5);
+
+        initServos = false;
     }
 
     @Override
@@ -214,6 +218,17 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+
+        if (!initServos) {
+            initServos = true;
+
+            rIntake.setPosition(0.7);
+
+            lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.5);
+        }
+
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
                 jewelFlipper.setPosition(centerFinger);
@@ -225,10 +240,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(0.5);
-                if (redRatio > blueRatio)
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
+                if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (redRatio < blueRatio)
+                else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 break;
             case STATE_HIT_LEFT_JEWEL:
@@ -425,6 +440,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             telemetry.addData("Column", column.name());
     }
 
+    // These states MUST have comments describing what they do, when they end, and what the next state is.
     enum State {
         STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
@@ -433,9 +449,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
         STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
-        STATE_CHECK_SLOT,
-        STATE_GYRO_ANGLES,
-        STATE_FIRST_TURN,
+        STATE_CHECK_SLOT, // Ends when gyro sensor is at angle. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
+        STATE_GYRO_ANGLES, // Ends when gyroAngles variable is set to the current angles. Always -> STATE_FIRST_TURN
+        STATE_FIRST_TURN, // Ends when motor powers are set. Always -> STATE_CHECK_SLOT
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_RECORD_FACING.
