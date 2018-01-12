@@ -52,7 +52,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double RIGHT_REAR_SPEED = 1.0;
     }
 
-    DcMotor leftFore, leftRear, rightFore, rightRear, dispenserLinearSlide;
+    DcMotor leftFore, leftRear, rightFore, rightRear;
+    DcMotor dispenserLinearSlide;
     DcMotor relicArm;
 
     DcMotor glyphLift;
@@ -74,7 +75,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected Orientation angles;
     protected Acceleration gravity;
 
-    private double leftPow, rightPow;
     private boolean dancing;
 
     public double angleAtStart;
@@ -82,9 +82,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
-
-        leftPow = 0.0;
-        rightPow = 0.0;
 
         dancing = false;
 
@@ -186,24 +183,24 @@ public abstract class DriveBotTestTemplate extends OpMode {
                 .addData("heading", new Func<String>() {
                     @Override
                     public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
+                        return GyroAngles.formatAngle(angles.angleUnit, angles.firstAngle);
                     }
                 })
                 .addData("roll", new Func<String>() {
                     @Override
                     public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
+                        return GyroAngles.formatAngle(angles.angleUnit, angles.secondAngle);
                     }
                 })
                 .addData("pitch", new Func<String>() {
                     @Override
                     public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
+                        return GyroAngles.formatAngle(angles.angleUnit, angles.thirdAngle);
                     }
                 });
 
         telemetry.addLine()
-                .addData("grvty", new Func<String>() {
+                .addData("gravity", new Func<String>() {
                     @Override
                     public String value() {
                         return gravity.toString();
@@ -251,22 +248,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
         });
     }
 
-    protected double getLeftPow() {
-        return leftPow;
-    }
-
-    protected double getRightPow() {
-        return rightPow;
-    }
-
     protected void setLeftPow(double pow) {
-        leftPow = pow;
         leftFore.setPower(pow * Constants.LEFT_FORE_SPEED);
         leftRear.setPower(pow * Constants.LEFT_REAR_SPEED);
     }
 
     protected void setRightPow(double pow) {
-        rightPow = pow;
         rightFore.setPower(pow * Constants.RIGHT_FORE_SPEED);
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
     }
@@ -310,14 +297,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
                 || (distance >= rightRearDist);
 
         return mtrsHere;
-    }
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees) {
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
     protected boolean triggered(double value) {

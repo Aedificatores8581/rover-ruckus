@@ -19,8 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * ..
  */
 @Autonomous(name = "Vuforia Test", group = "test bepis")
-
-@Disabled
 public class VuforiaTest extends OpMode {
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
