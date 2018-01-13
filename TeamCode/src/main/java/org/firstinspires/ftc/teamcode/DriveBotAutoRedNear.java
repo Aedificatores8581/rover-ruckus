@@ -34,7 +34,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     Gamepad prev1;
 
     long waitTime = 2000L;
-    long prevTime;
+    long prevTime, prevTime2 = 0, totalTime = 0;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, jewelFlipperUp = 0.6, centerFinger = 0.48, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
     int timeToDispense, encToDispense = 480, encToRamGlyph = 500, encToBackUp = 400, encToBackUpAgain = 420, encToMoveToLeft = 500, encToChangeColumn = 320, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
@@ -236,6 +236,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
+                else if (System.currentTimeMillis() - totalTime >= 5000)
+                    state = State.STATE_RESET_JEWEL_HITTER;
+
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
