@@ -15,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
-@Autonomous(name = "Autonomous Red Near", group = "competition bepis")
+@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
 
-public class DriveBotAutoRedNear extends DriveBotTestTemplate {
+public class DriveBotAutoBlueNear85Points extends DriveBotTestTemplate {
 
     State state;
 
@@ -251,16 +251,18 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
 
                 if (redRatio >= Constants.RED_THRESHOLD) {
-                    state = State.STATE_HIT_LEFT_JEWEL;
+                    state = State.STATE_HIT_RIGHT_JEWEL;
                     jewelColor = JewelColor.RED;
                 } else if (blueRatio >= Constants.BLUE_THRESHOLD) {
-                    state = State.STATE_HIT_RIGHT_JEWEL;
+                    state = State.STATE_HIT_LEFT_JEWEL;
                     jewelColor = JewelColor.BLUE;
-                } else if (System.currentTimeMillis() - totalTime >= 5000)
+                } else if (System.currentTimeMillis() - totalTime >= 5000) {
                     state = State.STATE_RESET_JEWEL_HITTER;
+                }
+
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
@@ -293,8 +295,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                setLeftPow(speed);
-                setRightPow(speed);
+                setLeftPow(-speed);
+                setRightPow(-speed);
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -459,8 +461,3 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     }
 
 }
-
-
-//left - 1195 to 1265
-//center - 1575 to 1620
-//right - 1967a
