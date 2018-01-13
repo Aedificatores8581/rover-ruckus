@@ -43,6 +43,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser, checkKey, keyChecked;
+    JewelDirection direction;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -76,6 +77,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicHand.setPosition(0.5);
 
         initServos = false;
+
+        direction = null;
     }
 
     @Override
@@ -255,6 +258,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(1.0);
+                direction = JewelDirection.LEFT;
 
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -265,6 +269,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(0.05);
+                direction = JewelDirection.RIGHT;
 
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -276,6 +281,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_RESET_JEWEL_HITTER:
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
+                jewelArm.setPosition(jewelArmUpPosition);
                 column = CryptoboxColumn.MID;
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
@@ -410,6 +416,12 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         telemetry.addData("Glyph Output Position", glyphOutput.getPosition());
         telemetry.addData("Right Intake Position", rIntake.getPosition());
         telemetry.addData("Left Intake Position", lIntake.getPosition());
+
+        telemetry.addData("Checking Cryptobox Key", checkKey);
+        telemetry.addData("Cryptobox Key Checked", keyChecked);
+
+        if (direction != null)
+            telemetry.addData("Jewel Direction", direction.name());
 
         if (column != null)
             telemetry.addData("Column", column.name());
