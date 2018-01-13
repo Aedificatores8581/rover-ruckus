@@ -251,7 +251,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
 
                 if (redRatio >= Constants.RED_THRESHOLD) {
                     state = State.STATE_HIT_RIGHT_JEWEL;
@@ -259,10 +259,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 } else if (blueRatio >= Constants.BLUE_THRESHOLD) {
                     state = State.STATE_HIT_LEFT_JEWEL;
                     jewelColor = JewelColor.BLUE;
-                } else if (System.currentTimeMillis() - totalTime >= 5000) {
+                } else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
-                }
-
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
@@ -461,3 +459,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     }
 
 }
+
+
+//left - 1195 to 1265
+//center - 1575 to 1620
+//right - 1967a
