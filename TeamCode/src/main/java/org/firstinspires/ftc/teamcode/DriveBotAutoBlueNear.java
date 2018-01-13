@@ -44,6 +44,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser, checkKey, keyChecked;
     JewelDirection direction;
+    JewelColor jewelColor;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -79,6 +80,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         initServos = false;
 
         direction = null;
+
+        jewelColor = null;
     }
 
     @Override
@@ -243,10 +246,14 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
-                if (redRatio > Constants.RED_THRESHOLD)
+                if (redRatio > Constants.RED_THRESHOLD) {
+                    jewelColor = JewelColor.RED;
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (blueRatio >= Constants.BLUE_THRESHOLD)
+                }
+                else if (blueRatio >= Constants.BLUE_THRESHOLD) {
+                    jewelColor = JewelColor.BLUE;
                     state = State.STATE_HIT_LEFT_JEWEL;
+                }
                 else {
                     if (prevTime2 == 0) {
                         prevTime2 = System.currentTimeMillis();
@@ -422,6 +429,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         if (direction != null)
             telemetry.addData("Jewel Direction", direction.name());
+
+        if (jewelColor != null)
+            telemetry.addData("Jewel Color", jewelColor.name());
 
         if (column != null)
             telemetry.addData("Column", column.name());
