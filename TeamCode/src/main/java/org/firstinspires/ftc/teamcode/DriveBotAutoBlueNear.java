@@ -34,15 +34,16 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.44, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 150, encToBackUpAgain = 420, encToMoveToLeft = 470, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
+    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 420, encToMoveToLeft = 600, encToChangeColumn = 350, encToMoveToCenter, encToMoveToRight;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
-    boolean dispenseGlyph, retractDispenser;
+    boolean dispenseGlyph, retractDispenser, checkKey, keyChecked;
+    JewelDirection direction;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -76,6 +77,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicHand.setPosition(0.5);
 
         initServos = false;
+
+        direction = null;
     }
 
     @Override
@@ -107,6 +110,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         dispenseGlyph = false;
         retractDispenser = false;
+        checkKey = false;
+        keyChecked = false;
 
         leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -227,6 +232,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
+                checkKey = true;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
                 if (prevTime == 0)
@@ -242,20 +248,19 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                else{
-                    if(prevTime2 == 0) {
+                else {
+                    if (prevTime2 == 0) {
                         prevTime2 = System.currentTimeMillis();
                     }
-                    if(System.currentTimeMillis() - prevTime2 >= 3000){
+                    if (System.currentTimeMillis() - prevTime2 >= 3000) {
                         state = State.STATE_RESET_JEWEL_HITTER;
                     }
                 }
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(1.0);
+                direction = JewelDirection.LEFT;
 
-                jewelFlipper.setPosition(0.05);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
@@ -265,9 +270,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
                 break;
             case STATE_HIT_RIGHT_JEWEL:
-                jewelFlipper.setPosition(1.0);
-                //this could be jewelFlipper.setPosition(0); depending on the side of the arm the servo is mounted
                 jewelFlipper.setPosition(0.05);
+                direction = JewelDirection.RIGHT;
 
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -279,38 +283,13 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_RESET_JEWEL_HITTER:
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
-                state = State.STATE_SCAN_KEY;
-                break;
-            case STATE_SCAN_KEY:
-                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                switch (vuMark) {
-                    case LEFT:
-                        column = CryptoboxColumn.RIGHT;
-                        break;
-                    case CENTER:
-                        column = CryptoboxColumn.MID;
-                        break;
-                    case RIGHT:
-                        column = CryptoboxColumn.LEFT;
-                        break;
-                }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
-                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
-                    prevTime = 0;
+                jewelArm.setPosition(jewelArmUpPosition);
+                column = CryptoboxColumn.MID;
+                state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                if(vuMark == RelicRecoveryVuMark.UNKNOWN){
-                    if (prevTime == 0)
-                        prevTime = System.currentTimeMillis();
-                    if (System.currentTimeMillis() - prevTime >= waitTime)
-                        setLeftPow(-speed);
-                        setRightPow(-speed);
-                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                }
-                else {
-                    setLeftPow(-speed);
-                    setRightPow(-speed);
-                }
+                setLeftPow(-speed);
+                setRightPow(-speed);
                 state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -404,6 +383,23 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         }
 
+        if (checkKey) {
+            vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            switch (vuMark) {
+                case LEFT:
+                    column = CryptoboxColumn.RIGHT;
+                    break;
+                case CENTER:
+                    column = CryptoboxColumn.MID;
+                    break;
+                case RIGHT:
+                    column = CryptoboxColumn.LEFT;
+                    break;
+            }
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                keyChecked = true;
+        }
+
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
         telemetry.addData("Blue Ratio", blueRatio);
@@ -423,12 +419,17 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         telemetry.addData("Right Intake Position", rIntake.getPosition());
         telemetry.addData("Left Intake Position", lIntake.getPosition());
 
+        telemetry.addData("Checking Cryptobox Key", checkKey);
+        telemetry.addData("Cryptobox Key Checked", keyChecked);
+
+        if (direction != null)
+            telemetry.addData("Jewel Direction", direction.name());
+
         if (column != null)
             telemetry.addData("Column", column.name());
     }
 
     enum State {
-        STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
         STATE_SCAN_JEWEL, // Ends when right jewel color is read. Right jewel == blue -> STATE_HIT_LEFT_JEWEL. Right jewel == red -> STATE_HIT_RIGHT_JEWEL
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
