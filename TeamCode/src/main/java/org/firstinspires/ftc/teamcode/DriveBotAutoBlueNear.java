@@ -251,14 +251,12 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 if (redRatio >= Constants.RED_THRESHOLD) {
                     state = State.STATE_HIT_RIGHT_JEWEL;
                     jewelColor = JewelColor.RED;
-                }
-                else if (blueRatio >= Constants.BLUE_THRESHOLD) {
+                } else if (blueRatio >= Constants.BLUE_THRESHOLD) {
                     state = State.STATE_HIT_LEFT_JEWEL;
                     jewelColor = JewelColor.BLUE;
+                } else if (System.currentTimeMillis() - totalTime >= 5000) {
+                    state = State.STATE_RESET_JEWEL_HITTER;
                 }
-                else if (System.currentTimeMillis() - totalTime >= 5000) {
-                        state = State.STATE_RESET_JEWEL_HITTER;
-                    }
 
                 break;
             case STATE_HIT_LEFT_JEWEL:
