@@ -19,6 +19,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
+    public enum CryptoboxColumn {
+        RIGHT("L"),
+        MID("C"),
+        LEFT("R");
+
+        private String name;
+
+        CryptoboxColumn(String n) {
+            name = n;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
     State state;
 
     private int cameraMonitorViewId;
@@ -251,7 +267,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
 
                 if (redRatio >= Constants.RED_THRESHOLD) {
                     state = State.STATE_HIT_RIGHT_JEWEL;
