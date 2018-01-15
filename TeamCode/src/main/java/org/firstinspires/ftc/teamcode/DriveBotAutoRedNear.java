@@ -19,6 +19,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
+    public enum CryptoboxColumn {
+        RIGHT("R"),
+        MID("C"),
+        LEFT("L");
+
+        private String name;
+
+        CryptoboxColumn(String n) {
+            name = n;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
     State state;
 
     private int cameraMonitorViewId;
@@ -36,7 +52,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long prevTime, prevTime2 = 0, totalTime = 0;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.44, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1500, encToMoveToRight = 1865;
+    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1530, encToMoveToRight = 1905;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -392,13 +408,13 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
                 case LEFT:
-                    column = CryptoboxColumn.RIGHT;
+                    column = CryptoboxColumn.LEFT;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
                     break;
                 case RIGHT:
-                    column = CryptoboxColumn.LEFT;
+                    column = CryptoboxColumn.RIGHT;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)

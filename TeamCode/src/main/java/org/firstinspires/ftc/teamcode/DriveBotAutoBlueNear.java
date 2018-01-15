@@ -19,6 +19,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
+    public enum CryptoboxColumn {
+        RIGHT("L"),
+        MID("C"),
+        LEFT("R");
+
+        private String name;
+
+        CryptoboxColumn(String n) {
+            name = n;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
     State state;
 
     private int cameraMonitorViewId;

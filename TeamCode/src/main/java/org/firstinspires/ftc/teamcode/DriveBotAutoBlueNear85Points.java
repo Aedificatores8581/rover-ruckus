@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
-@Autonomous(name = "Autonomous Blue Near", group = "competition bepis")
+@Autonomous(name = "Autonomous Blue Near Win Win Win So Much Winning", group = "competition bepis")
 
 public class DriveBotAutoBlueNear85Points extends DriveBotTestTemplate {
 
