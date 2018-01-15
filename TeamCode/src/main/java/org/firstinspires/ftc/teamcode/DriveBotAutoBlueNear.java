@@ -251,7 +251,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
 
                 if (redRatio >= Constants.RED_THRESHOLD) {
                     state = State.STATE_HIT_RIGHT_JEWEL;
