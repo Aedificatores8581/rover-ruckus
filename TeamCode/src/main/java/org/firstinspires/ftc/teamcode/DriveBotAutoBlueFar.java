@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
-@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
+@Autonomous(name = "Autonomous Red Far", group = "competition bepis")
 
 public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
@@ -34,26 +34,34 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.66, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
-    //DRIVE OFF = 1148
-    //DRIVE TO FIRST = 385
-    //DRIVE TO MID  = 737
-    //DRIVE TO LAST = 1050
-    //350 to ram
-    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360, encToDismount = 960, encToMoveToLeft = 210, encToChangeColumn = 0, encToMoveToCenter = 210 + 325, encToMoveToRight = 210 + 325 + 400;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.48, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+
+    //210 to move forward to left
+    //325 to move to mid
+    //400 to move to right
+    //350 to place glyph
+
+    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 8;
+    double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
+
+    int encToAlignLeft = 275, encToAlignCenter = 150, encToAlignRight = 45;
+
+    double degrees90 = 85;
+    double degreesSmall = 30, degreesRestOfSmall = 120;
+
     CryptoboxColumn column;
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;
+    boolean checkKey, keyChecked;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
         super.start();
         relicTrackables.activate();
-        encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
-        encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
+        //encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
+        //encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
         if (ramAngle > 1.0) {
             ramRightMod = 1.0;
             ramLeftMod = 1.0 / ramAngle;
@@ -61,6 +69,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             ramRightMod = ramAngle;
             ramLeftMod = 1.0;
         }
+
+        checkKey = false;
+        keyChecked = false;
 
         try {
             Thread.sleep(1000);
@@ -153,18 +164,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger))
             targetAngle -= 1;
 
-        if (gamepad1.a && !prev1.a)
-            encToMoveToLeft += 10;
-
-        if (gamepad1.b && !prev1.b)
-            encToMoveToLeft -= 10;
-
-        if (gamepad1.x && !prev1.x)
-            encToChangeColumn += 10;
-
-        if (gamepad1.y && !prev1.y)
-            encToChangeColumn -= 10;
-
         if (gamepad1.right_bumper && !prev1.right_bumper)
             encToDispense += 5;
 
@@ -198,8 +197,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         telemetry.addData("Driving Speed (DPad up/down)", speed);
         telemetry.addData("Turning Speed (DPad right/left)", adjustSpeed);
         telemetry.addData("Target Angle Degrees (Right/left triggers)", targetAngle);
-        telemetry.addData("Distance to Nearest Cryptobox (A/B)", encToMoveToLeft);
-        telemetry.addData("Distance to Next Cryptobox Column (X/Y)", encToChangeColumn);
         telemetry.addData("Distance to Dispense Glyph (Right/left bumpers)", encToDispense);
         telemetry.addData("Distance to Back Up First (Left stick up/down)", encToBackUp);
         telemetry.addData("Distance to Ram Glyph (Left stick right/left)", encToRamGlyph);
@@ -231,6 +228,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
+                checkKey = true;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
                 if (prevTime == 0)
@@ -242,11 +240,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 prevTime = 0;
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
                 if (redRatio > Constants.RED_THRESHOLD)
-                    state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
+                else if (blueRatio >= Constants.BLUE_THRESHOLD)
+                    state = State.STATE_HIT_RIGHT_JEWEL;
                 else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
+
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
@@ -268,92 +267,139 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                /*vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                switch (vuMark) {
-                    case LEFT:
-                        column = CryptoboxColumn.RIGHT;
-                        break;
-                    case CENTER:
-                        column = CryptoboxColumn.MID;
-                        break;
-                    case RIGHT:
-                        column = CryptoboxColumn.LEFT;
-                        break;
-                }
-                if (vuMark != RelicRecoveryVuMark.UNKNOWN)*/
-                state = State.STATE_DRIVE_TO_CRYPTOBOX;
-                break;
-            case STATE_DRIVE_TO_CRYPTOBOX:
-                setLeftPow(speed);
-                setRightPow(speed);
-                state = State.STATE_RECORD_FACING;
+                if (!keyChecked)
+                    column = CryptoboxColumn.MID;
+                state = State.STATE_GYRO_ANGLES;
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
-                state = State.STATE_FIRST_TURN;
+                switch (column) {
+                    case LEFT:
+                        setLeftPow(-adjustSpeed);
+                        setRightPow(adjustSpeed);
+                        state = State.STATE_L_APPROACH_CRYPTOBOX;
+                    case MID:
+                        setLeftPow(speed);
+                        setRightPow(speed);
+                        state = State.STATE_C_APPROACH_CRYPTOBOX;
+                    case RIGHT:
+                        setLeftPow(speed);
+                        setRightPow(speed);
+                        state = State.STATE_R_TURN_90;
+                }
                 break;
-            case STATE_FIRST_TURN:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
-                state = State.STATE_CHECK_SLOT;
-            case STATE_CHECK_SLOT:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= targetAngle) {
+            //<editor-fold desc="Right column">
+            case STATE_R_TURN_90:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                    gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
-                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
-                }
-                /*if (checkEncoders(encToMoveToLeft)) {
-                    if (column == CryptoboxColumn.RIGHT)
-                        state = State.STATE_RECORD_FACING;
-                    else
-                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
-                }*/
-                break;
-            case STATE_CRYPTOBOX_RIGHT_SLOT:
-                if (column == CryptoboxColumn.LEFT) {
-                    //targetAngle = 165;
-                    //encToDispense = 1300;
-                    if(checkEncoders(encToMoveToLeft))
-                        state = State.STATE_GYRO_ANGLES;
-                } else
-                    state = State.STATE_CRYPTOBOX_CENTER_SLOT;
-                break;
-            case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (column == CryptoboxColumn.MID) {
-                    //targetAngle = 159;
-                    //encToDispense = 1350;
-                    state = State.STATE_GYRO_ANGLES;
-                } else
-                    state = State.STATE_CRYPTOBOX_LEFT_SLOT;
-                break;
-            case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (column == CryptoboxColumn.RIGHT) {
-                    //targetAngle = 152;
-                    //encToDispense = 1400;
-                    state = State.STATE_GYRO_ANGLES;
+                    state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
-            case STATE_RECORD_FACING:
-                gyroAngles = new GyroAngles(angles);
-                state = State.STATE_FACE_CRYPTOBOX;
+            case STATE_R_ALIGN_TO_CRYPTOBOX:
+                if (checkEncoders(encToAlignLeft)) {
+                    setLeftPow(-adjustSpeed);
+                    setRightPow(adjustSpeed);
+                    state = State.STATE_R_TURN_90_FORWARD;
+                }
                 break;
-            case STATE_FACE_CRYPTOBOX:
-                setLeftPow(adjustSpeed);
-                setRightPow(-adjustSpeed);
-                double angleTravelled = gyroAngles.getZ() - (new GyroAngles(angles).getZ());
-                if (angleTravelled >= targetAngle) {
+            case STATE_R_TURN_90_FORWARD:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                    gyroAngles = new GyroAngles(angles);
+                    resetEncoders();
+                    reinitMotors(-speed, -speed);
+                    state = State.STATE_R_APPROACH_CRYPTOBOX;
+                }
+                break;
+            case STATE_R_APPROACH_CRYPTOBOX:
+                if (checkEncoders(encToDispense)) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
                 break;
+            //</editor-fold>
+            //<editor-fold desc="Center column">
+            case STATE_C_APPROACH_CRYPTOBOX:
+                if (checkEncoders(encToDispense / 2)) {
+                    setLeftPow(-adjustSpeed);
+                    setRightPow(adjustSpeed);
+                    state = State.STATE_C_TURN_90;
+                }
+                break;
+            case STATE_C_TURN_90:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                    gyroAngles = new GyroAngles(angles);
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+                    state = State.STATE_C_ALIGN_TO_CRYPTOBOX;
+                }
+                break;
+            case STATE_C_ALIGN_TO_CRYPTOBOX:
+                if (checkEncoders(encToAlignCenter)) {
+                    setLeftPow(-adjustSpeed);
+                    setRightPow(adjustSpeed);
+                    state = State.STATE_C_TURN_90_BACK;
+                }
+                break;
+            case STATE_C_TURN_90_BACK:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                    gyroAngles = new GyroAngles(angles);
+                    resetEncoders();
+                    reinitMotors(-speed, -speed);
+                    state = State.STATE_C_APPROACH_CRYPTOBOX;
+                }
+                break;
+            case STATE_C_MEET_CRYPTOBOX:
+                if (checkEncoders(encToDispense / 2)) {
+                    resetEncoders();
+                    state = State.STATE_REINIT_MOTORS;
+                }
+                break;
+            //</editor-fold>
+            //<editor-fold desc="Left column">
+            case STATE_L_APPROACH_CRYPTOBOX:
+                if (checkEncoders(encToDispense / 2)) {
+                    setLeftPow(-adjustSpeed);
+                    setRightPow(adjustSpeed);
+                    state = State.STATE_L_TURN_A_BIT;
+                }
+                break;
+            case STATE_L_TURN_A_BIT:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degreesSmall) {
+                    gyroAngles = new GyroAngles(angles);
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+                    state = State.STATE_R_ALIGN_TO_CRYPTOBOX;
+                }
+                break;
+            case STATE_L_ALIGN_TO_CRYPTOBOX:
+                if (checkEncoders(encToAlignRight)) {
+                    setLeftPow(-adjustSpeed);
+                    setRightPow(adjustSpeed);
+                    state = State.STATE_L_TURN_BACK;
+                }
+                break;
+            case STATE_L_TURN_BACK:
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degreesRestOfSmall) {
+                    resetEncoders();
+                    reinitMotors(-speed, -speed);
+                    state = State.STATE_R_APPROACH_CRYPTOBOX;
+                }
+                break;
+            case STATE_L_MEET_CRYPTOBOX:
+                if (checkEncoders(encToDispense / 2)) {
+                    resetEncoders();
+                    state = State.STATE_REINIT_MOTORS;
+                }
+                break;
+            //</editor-fold>
             case STATE_REINIT_MOTORS:
                 reinitMotors(speed, speed);
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoders(encToDispense)) {
-                    setLeftPow(0.0);
-                    setRightPow(0.0);
                     dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -392,6 +438,23 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
         }
 
+        if (checkKey) {
+            vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            switch (vuMark) {
+                case LEFT:
+                    column = CryptoboxColumn.LEFT;
+                    break;
+                case CENTER:
+                    column = CryptoboxColumn.MID;
+                    break;
+                case RIGHT:
+                    column = CryptoboxColumn.RIGHT;
+                    break;
+            }
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                keyChecked = true;
+        }
+
         if (dispenseGlyph) {
             if (retractDispenser) {
                 glyphOutput.setPosition(retractDispensePosition);
@@ -399,8 +462,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     dispenseGlyph = false;
-            }
-            else
+            } else
                 glyphOutput.setPosition(dispensePosition);
 
             if (prevTime == 0)
@@ -409,14 +471,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 retractDispenser = true;
         }
 
-
-
-
-        //DRIVE OFF = 1148
-        //DRIVE TO FIRST = 385
-        //DRIVE TO MID  = 737
-        //DRIVE TO LAST = 1050
-        //350 to ram
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
         telemetry.addData("Blue Ratio", blueRatio);
@@ -444,21 +498,42 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     // These states MUST have comments describing what they do, when they end, and what the next state is.
     enum State {
-        STATE_SCAN_KEY, // Ends when we get a successful scan. Always -> STATE_LOWER_JEWEL_ARM
         STATE_LOWER_JEWEL_ARM, // Ends when jewel arm is at certain position. Always -> STATE_SCAN_JEWEL
         STATE_SCAN_JEWEL, // Ends when right jewel color is read. Right jewel == blue -> STATE_HIT_LEFT_JEWEL. Right jewel == red -> STATE_HIT_RIGHT_JEWEL
         STATE_HIT_LEFT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
         STATE_HIT_RIGHT_JEWEL, // Ends when servo is at position. Always -> STATE_RESET_JEWEL_HITTER
-        STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_DRIVE_TO_CRYPTOBOX
-        STATE_DRIVE_TO_CRYPTOBOX, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
-        STATE_CHECK_SLOT, // Ends when gyro sensor is at angle. Always -> STATE_CRYPTOBOX_RIGHT_SLOT
-        STATE_GYRO_ANGLES, // Ends when gyroAngles variable is set to the current angles. Always -> STATE_FIRST_TURN
+        STATE_RESET_JEWEL_HITTER, // Ends when servo is at position. Always -> STATE_SCAN_KEY
+        STATE_SCAN_KEY, // Ends when, if the Vuforia was not successful yet, the column is assumed to be center. Always -> STATE_GYRO_ANGLES
+        STATE_GYRO_ANGLES, // Ends when gyroAngles variable is set to the current angles. Key { left -> STATE_L_TURN_90; center -> STATE_C_APPROACH_CRYPTOBOX; right -> STATE_R_APPROACH_CRYPTOBOX }
+
+        /* Old stuff
         STATE_FIRST_TURN, // Ends when motor powers are set. Always -> STATE_CHECK_SLOT
         STATE_CRYPTOBOX_RIGHT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == left -> STATE_DISPENSE_GLYPH. Key == center or right -> STATE_CRYPTOBOX_CENTER_SLOT
         STATE_CRYPTOBOX_CENTER_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Key == center -> STATE_DISPENSE_GLYPH. Key == right -> STATE_CRYPTOBOX_LEFT_SLOT
         STATE_CRYPTOBOX_LEFT_SLOT, // Ends when short-range distance sensor reads cryptobox divider. Always -> STATE_RECORD_FACING.
         STATE_RECORD_FACING, // Ends when current orientation is recorded. Always -> STATE_FACE_CRYPTOBOX
-        STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS
+        STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS*/
+
+        // Right column
+        STATE_R_TURN_90, // Ends when the robot has turned 90 degrees. Always -> STATE_L_ALIGN_TO_CRYPTOBOX
+        STATE_R_ALIGN_TO_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_L_TURN_90_BACK,
+        STATE_R_TURN_90_FORWARD, // Ends when the robot has turned 90 degrees back. Always -> STATE_L_APPROACH_CRYPTOBOX
+        STATE_R_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
+
+        // Center column
+        STATE_C_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_C_TURN_90
+        STATE_C_TURN_90, // Ends when the robot has turned 90 degrees. Always -> STATE_C_ALIGN_TO_CRYPTOBOX
+        STATE_C_ALIGN_TO_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_C_TURN_90_BACK,
+        STATE_C_TURN_90_BACK, // Ends when the robot has turned 90 degrees back. Always -> STATE_C_ALIGN_TO_CRYPTOBOX
+        STATE_C_MEET_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
+
+        // Left column
+        STATE_L_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_R_TURN_A_BIT
+        STATE_L_TURN_A_BIT, // Ends when the robot has turned 45 degrees. Always -> STATE_R_ALIGN_TO_CRYPTOBOX
+        STATE_L_ALIGN_TO_CRYPTOBOX, // Ends when the robot has moved a certain small distance. Always -> STATE_R_TURN_BACK
+        STATE_L_TURN_BACK, // Ends when the robot has turned 45 degrees. Always -> STATE_R_MEET_CRYPTOBOX
+        STATE_L_MEET_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
+
         STATE_REINIT_MOTORS, // Ends when the motors' mode is RUN_USING_ENCODER. Always -> STATE_DISPENSE_GLYPH
         STATE_DISPENSE_GLYPH, // Ends when glyph is dispensed. Always -> STATE_WAIT_FOR_GLYPH_DISPENSED
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
@@ -469,10 +544,3 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     }
 
 }
-//move 960 ticks
-//210 to move forward to left
-//325 to move to mid
-//400 to move to right
-//350 to place glyph
-//
-

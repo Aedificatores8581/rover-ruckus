@@ -131,17 +131,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
         prev1 = new Gamepad();
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        switch (vuMark) { // Blue is weird.
-            case LEFT:
-                column = CryptoboxColumn.RIGHT;
-                break;
-            case CENTER:
-                column = CryptoboxColumn.MID;
-                break;
-            case RIGHT:
-                column = CryptoboxColumn.LEFT;
-                break;
-        }
+
     }
 
     @Override
@@ -278,14 +268,17 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                         setLeftPow(-adjustSpeed);
                         setRightPow(adjustSpeed);
                         state = State.STATE_L_TURN_90;
+                        break;
                     case MID:
                         setLeftPow(speed);
                         setRightPow(speed);
                         state = State.STATE_C_APPROACH_CRYPTOBOX;
+                        break;
                     case RIGHT:
                         setLeftPow(speed);
                         setRightPow(speed);
                         state = State.STATE_R_APPROACH_CRYPTOBOX;
+                        break;
                 }
                 break;
             //<editor-fold desc="Left column">
