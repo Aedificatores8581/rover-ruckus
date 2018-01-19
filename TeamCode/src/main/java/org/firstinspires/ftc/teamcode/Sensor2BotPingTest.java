@@ -11,14 +11,26 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class Sensor2BotPingTest extends Sensor2BotTemplate {
     private boolean prevA;
 
+    public void start(){
+        telemetry.addLine("Calling startReading()");
+        ping.startReading();
+        telemetry.addLine("startReading() Called");
+    }
+
+    int count;
     public void loop() {
-        //if (gamepad1.a && !prevA)
-            //ping.startReading();
+        telemetry.addLine("Checking isReadingFresh()");
+        if (ping.isReadingFresh()) {
+            telemetry.addData("Nanoseconds from Thingy", ping.getLastReadingNanoseconds());
+        }
 
-        //if (ping.isReadingFresh())
-            //telemetry.addData("Centimeters from Thingy", ping.getLastReadingCentimeters());
+        telemetry.addLine(ping.toString());
+        telemetry.addData("Time Pulsed", ping.getTimePulsed());
+        telemetry.addData("Reading Status in Thread", ping.getRunState());
+        telemetry.addData("Count",count);
+        telemetry.addData("Ping Sensor State", ping.getChannelState());
 
-        prevA = gamepad1.a;
+        count++;
     }
 
 }

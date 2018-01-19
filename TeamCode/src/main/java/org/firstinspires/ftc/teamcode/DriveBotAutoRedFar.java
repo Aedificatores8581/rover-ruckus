@@ -267,14 +267,17 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                         setLeftPow(-adjustSpeed);
                         setRightPow(adjustSpeed);
                         state = State.STATE_L_TURN_90;
+                        break;
                     case MID:
                         setLeftPow(speed);
                         setRightPow(speed);
                         state = State.STATE_C_APPROACH_CRYPTOBOX;
+                        break;
                     case RIGHT:
                         setLeftPow(speed);
                         setRightPow(speed);
                         state = State.STATE_R_APPROACH_CRYPTOBOX;
+                        break;
                 }
                 break;
             //<editor-fold desc="Left column">
