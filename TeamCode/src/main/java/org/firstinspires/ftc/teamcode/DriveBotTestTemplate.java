@@ -162,59 +162,24 @@ public abstract class DriveBotTestTemplate extends OpMode {
             public void run() {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
                 gravity = imu.getGravity();
-            }
-        });
 
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return imu.getCalibrationStatus().toString();
-                    }
-                });
+                telemetry.addLine()
+                        .addData("status", imu.getSystemStatus().toShortString())
+                        .addData("calib", imu.getCalibrationStatus().toString());
 
-        telemetry.addLine()
-                .addData("heading", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return GyroAngles.formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return GyroAngles.formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return GyroAngles.formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
+                telemetry.addLine()
+                        .addData("heading", GyroAngles.formatAngle(angles.angleUnit, angles.firstAngle))
+                        .addData("roll", GyroAngles.formatAngle(angles.angleUnit, angles.secondAngle))
+                        .addData("pitch", GyroAngles.formatAngle(angles.angleUnit, angles.thirdAngle));
 
-        telemetry.addLine()
-                .addData("gravity", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return String.format(Locale.getDefault(), "%.3f",
+                telemetry.addLine()
+                        .addData("gravity", gravity.toString())
+                        .addData("mag", String.format(Locale.getDefault(), "%.3f",
                                 Math.sqrt(gravity.xAccel * gravity.xAccel
                                         + gravity.yAccel * gravity.yAccel
-                                        + gravity.zAccel * gravity.zAccel));
-                    }
-                });
+                                        + gravity.zAccel * gravity.zAccel)));
+            }
+        });
     }
 
     @Override

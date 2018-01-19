@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /*
  * Conjured into existence by The Saminator on 11-12-2017.
  */
-@Autonomous(name = "Autonomous Red Far", group = "competition bepis")
+@Autonomous(name = "Autonomous Blue Far", group = "competition bepis")
 
 public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 

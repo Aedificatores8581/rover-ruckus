@@ -46,7 +46,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 275, encToAlignCenter = 150, encToAlignRight = 45;
+    int encToAlignLeft = 550, encToAlignCenter = 150, encToAlignRight = 45;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -282,10 +282,10 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             //<editor-fold desc="Left column">
             case STATE_L_TURN_90:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
+                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
-                    reinitMotors(speed, speed);
+                    reinitMotors(-speed, -speed);
                     state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
@@ -297,10 +297,10 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90_BACK:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
+                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
-                    reinitMotors(-speed, -speed);
+                    reinitMotors(speed, speed);
                     state = State.STATE_L_APPROACH_CRYPTOBOX;
                 }
                 break;
@@ -320,23 +320,22 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_C_TURN_90:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
-                    gyroAngles = new GyroAngles(angles);
+                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
                     resetEncoders();
-                    reinitMotors(speed, speed);
+                    reinitMotors(-speed, -speed);
                     state = State.STATE_C_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_C_ALIGN_TO_CRYPTOBOX:
                 if (checkEncoders(encToAlignCenter)) {
+                    gyroAngles = new GyroAngles(angles);
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
                     state = State.STATE_C_TURN_90_BACK;
                 }
                 break;
             case STATE_C_TURN_90_BACK:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
-                    gyroAngles = new GyroAngles(angles);
+                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_C_APPROACH_CRYPTOBOX;
@@ -344,6 +343,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_C_MEET_CRYPTOBOX:
                 if (checkEncoders(encToDispense / 2)) {
+                    gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -358,8 +358,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_R_TURN_A_BIT:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degreesSmall) {
-                    gyroAngles = new GyroAngles(angles);
+                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degreesSmall) {
                     resetEncoders();
                     reinitMotors(speed, speed);
                     state = State.STATE_R_ALIGN_TO_CRYPTOBOX;
@@ -367,13 +366,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_R_ALIGN_TO_CRYPTOBOX:
                 if (checkEncoders(encToAlignRight)) {
+                    gyroAngles = new GyroAngles(angles);
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
                     state = State.STATE_R_TURN_BACK;
                 }
                 break;
             case STATE_R_TURN_BACK:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degreesRestOfSmall) {
+                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degreesRestOfSmall) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_R_MEET_CRYPTOBOX;
@@ -381,6 +381,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_R_MEET_CRYPTOBOX:
                 if (checkEncoders(encToDispense / 2)) {
+                    gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -462,6 +463,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             if (System.currentTimeMillis() - prevTime >= waitTime)
                 retractDispenser = true;
         }
+
+        if (gyroAngles != null)
+            telemetry.addData("Last GyroAngles", gyroAngles.getX() + "," + gyroAngles.getY() + "," + gyroAngles.getZ());
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
