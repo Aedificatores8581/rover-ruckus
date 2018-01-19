@@ -131,17 +131,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
         prev1 = new Gamepad();
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        switch (vuMark) { // Blue is weird.
-            case LEFT:
-                column = CryptoboxColumn.RIGHT;
-                break;
-            case CENTER:
-                column = CryptoboxColumn.MID;
-                break;
-            case RIGHT:
-                column = CryptoboxColumn.LEFT;
-                break;
-        }
     }
 
     @Override
@@ -290,7 +279,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             //<editor-fold desc="Left column">
             case STATE_L_TURN_90:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
@@ -305,7 +294,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90_BACK:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -328,7 +317,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_C_TURN_90:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
@@ -343,7 +332,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_C_TURN_90_BACK:
-                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degrees90) {
+                if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) <= -degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -384,7 +373,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 if (gyroAngles.getZ() - (new GyroAngles(angles).getZ()) >= degreesRestOfSmall) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
-                    state = State.STATE_R_APPROACH_CRYPTOBOX;
+                    state = State.STATE_R_MEET_CRYPTOBOX;
                 }
                 break;
             case STATE_R_MEET_CRYPTOBOX:
