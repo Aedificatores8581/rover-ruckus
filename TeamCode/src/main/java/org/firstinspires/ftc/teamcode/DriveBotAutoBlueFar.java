@@ -41,7 +41,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     //400 to move to right
     //350 to place glyph
 
-    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360;
+    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360, encToDismount = 450;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -321,7 +321,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             //</editor-fold>
             //<editor-fold desc="Center column">
             case STATE_C_APPROACH_CRYPTOBOX:
-                if (checkEncoders(encToDispense / 2)) {
+                if (checkEncoders(encToDismount)) {
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
                     state = State.STATE_C_TURN_90;
@@ -359,7 +359,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             //</editor-fold>
             //<editor-fold desc="Left column">
             case STATE_L_APPROACH_CRYPTOBOX:
-                if (checkEncoders(encToDispense / 2)) {
+                if (checkEncoders(encToDismount)) {
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
                     state = State.STATE_L_TURN_A_BIT;
