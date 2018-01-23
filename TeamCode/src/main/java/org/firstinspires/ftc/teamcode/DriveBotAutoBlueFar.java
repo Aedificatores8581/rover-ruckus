@@ -131,7 +131,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         prev1 = new Gamepad();
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        switch (vuMark) { // Blue is weird.
+        switch (vuMark) { //Reversing the columns is intentional.
             case LEFT:
                 column = CryptoboxColumn.RIGHT;
                 break;
