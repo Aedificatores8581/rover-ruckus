@@ -41,12 +41,20 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     //400 to move to right
     //350 to place glyph
 
-    int timeToDispense, encToDispense = 1375, encToRamGlyph = 1000, encToBackUp = 400, encToBackUpAgain = 360, encToDismount = 450;
+
+    /*
+    990 to 1138 for dismount
+    130 to right
+    483 to 550 to center
+    267 to move to front
+     */
+
+    int timeToDispense, encToDispense = 267, encToRamGlyph = 267, encToBackUp = 300, encToBackUpAgain = 360, encToDismount = 1000;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 550, encToAlignCenter = 150, encToAlignRight = 45;
+    int encToAlignLeft = 550, encToAlignCenter = 483, encToAlignRight = 45;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -227,7 +235,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (blueRatio >= Constants.BLUE_THRESHOLD)
