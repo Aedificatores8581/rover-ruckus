@@ -131,7 +131,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         prev1 = new Gamepad();
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        switch (vuMark) { // Blue is weird.
+        switch (vuMark) { //Reversing the columns is intentional.
             case LEFT:
                 column = CryptoboxColumn.RIGHT;
                 break;
@@ -238,7 +238,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.3);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (blueRatio >= Constants.BLUE_THRESHOLD)
