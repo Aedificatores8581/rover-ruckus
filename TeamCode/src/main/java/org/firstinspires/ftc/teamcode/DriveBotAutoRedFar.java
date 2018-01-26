@@ -49,12 +49,12 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
-    int timeToDispense, encToDispense = 267, encToRamGlyph = 267, encToBackUp = 300, encToBackUpAgain = 360, encToDismount = 1000;
+    int timeToDispense, encToDispense = 247, encToRamGlyph = 267, encToBackUp = 300, encToBackUpAgain = 360, encToDismount = 950;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 550, encToAlignCenter = 483, encToAlignRight = 45;
+    int encToAlignLeft = 887, encToAlignCenter = 483, encToAlignRight = 45;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -185,6 +185,12 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         if (triggered(-gamepad1.right_stick_y) && !triggered(-prev1.right_stick_y))
             encToBackUpAgain -= 5;
 
+        if (gamepad1.right_stick_button && !prev1.right_stick_button)
+            encToDismount += 5;
+
+        if (gamepad1.left_stick_button && !prev1.left_stick_button)
+            encToDismount -= 5;
+
         if (triggered(gamepad1.right_stick_x) && !triggered(prev1.right_stick_x))
             ramAngle += 0.05;
 
@@ -199,6 +205,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         telemetry.addData("Distance to Ram Glyph (Left stick right/left)", encToRamGlyph);
         telemetry.addData("Distance to Back Up Final (Right stick up/down)", encToBackUpAgain);
         telemetry.addData("Angle to Ram Glyph Second (Right Speed Mult) (Right stick right/left)", ramAngle);
+        telemetry.addData("Distance to Dismount Balance (Left/right stick buttons)", ramAngle);
 
         try {
             prev1.copy(gamepad1);
@@ -212,6 +219,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+        double currentHeading;
 
         if (!initServos) {
             initServos = true;
@@ -272,25 +280,32 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 gyroAngles = new GyroAngles(angles);
                 switch (column) {
                     case LEFT:
-                        setLeftPow(-adjustSpeed);
-                        setRightPow(adjustSpeed);
-                        state = State.STATE_L_TURN_90;
+                        setLeftPow(-speed);
+                        setRightPow(-speed);
+                        state = State.STATE_L_APPROACH_CRYPTOBOX;
                         break;
                     case MID:
-                        setLeftPow(speed);
-                        setRightPow(speed);
+                        setLeftPow(-speed);
+                        setRightPow(-speed);
                         state = State.STATE_C_APPROACH_CRYPTOBOX;
                         break;
                     case RIGHT:
-                        setLeftPow(speed);
-                        setRightPow(speed);
+                        setLeftPow(-speed);
+                        setRightPow(-speed);
                         state = State.STATE_R_APPROACH_CRYPTOBOX;
                         break;
                 }
                 break;
             //<editor-fold desc="Left column">
+            case STATE_L_APPROACH_CRYPTOBOX:
+                if (checkEncoders(encToDismount)) {
+                    setLeftPow(-adjustSpeed);
+                    setRightPow(adjustSpeed);
+                    state = State.STATE_L_TURN_90;
+                }
             case STATE_L_TURN_90:
-                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
+                currentHeading = new GyroAngles(angles).getZ();
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -305,14 +320,15 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90_BACK:
-                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
-                    gyroAngles = new GyroAngles(angles);
+                currentHeading = new GyroAngles(angles).getZ();
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
+                    gyroAnglesprovinces.all { it.owner == defender } = new GyroAngles(angles);
                     resetEncoders();
-                    reinitMotors(speed, speed);
-                    state = State.STATE_L_APPROACH_CRYPTOBOX;
+                    reinitMotors(-speed, -speed);
+                    state = State.STATE_L_MEET_CRYPTOBOX;
                 }
                 break;
-            case STATE_L_APPROACH_CRYPTOBOX:
+            case STATE_L_MEET_CRYPTOBOX:
                 if (checkEncoders(encToDispense)) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
@@ -519,10 +535,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         STATE_FACE_CRYPTOBOX, // Ends when gyro is at angle. Always -> STATE_REINIT_MOTORS*/
 
         // Left column
+        STATE_L_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_L_TURN_90
         STATE_L_TURN_90, // Ends when the robot has turned 90 degrees. Always -> STATE_L_ALIGN_TO_CRYPTOBOX
         STATE_L_ALIGN_TO_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_L_TURN_90_BACK,
         STATE_L_TURN_90_BACK, // Ends when the robot has turned 90 degrees back. Always -> STATE_L_ALIGN_TO_CRYPTOBOX
-        STATE_L_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
+        STATE_L_MEET_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
 
         // Center column
         STATE_C_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_C_TURN_90
