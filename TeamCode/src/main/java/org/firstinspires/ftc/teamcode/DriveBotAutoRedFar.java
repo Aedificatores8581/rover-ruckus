@@ -322,7 +322,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_L_TURN_90_BACK:
                 currentHeading = new GyroAngles(angles).getZ();
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
-                    gyroAnglesprovinces.all { it.owner == defender } = new GyroAngles(angles);
+                    gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_L_MEET_CRYPTOBOX;
