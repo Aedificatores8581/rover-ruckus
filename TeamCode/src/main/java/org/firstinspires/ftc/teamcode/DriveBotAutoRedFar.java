@@ -46,6 +46,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     990 to 1138 for dismount
     130 to right
     483 to 550 to center
+    887 to left
     267 to move to front
      */
 
@@ -54,7 +55,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 550, encToAlignCenter = 483, encToAlignRight = 45;
+    int encToAlignLeft = 600, encToAlignCenter = 483, encToAlignRight = 45;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -290,7 +291,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             //<editor-fold desc="Left column">
             case STATE_L_TURN_90:
-                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
+                if (gyroAngles.getZ() - new GyroAngles(angles).getZ() >= degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -305,7 +306,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90_BACK:
-                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degrees90) {
+                if (gyroAngles.getZ() - new GyroAngles(angles).getZ(
+
+                ) >= degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);

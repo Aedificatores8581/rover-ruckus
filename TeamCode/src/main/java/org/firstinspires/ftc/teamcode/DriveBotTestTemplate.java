@@ -219,6 +219,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         leftRear.setPower(pow * Constants.LEFT_REAR_SPEED);
     }
 
+
+
     protected void setRightPow(double pow) {
         rightFore.setPower(pow * Constants.RIGHT_FORE_SPEED);
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
