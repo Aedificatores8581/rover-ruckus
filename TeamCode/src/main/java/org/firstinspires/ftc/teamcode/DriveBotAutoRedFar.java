@@ -49,12 +49,12 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
-    int timeToDispense, encToDispense = 150, encToRamGlyph = 120, encToBackUp = 175, encToBackUpAgain = 360, encToDismount = 1050;
+    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 40, encToRamGlyph = 120, encToBackUp = 175, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 887, encToAlignCenter = 483, encToAlignRight = 45;
+    int encToAlignLeft = 887, encToAlignCenter = 460, encToAlignRight = 45;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -334,7 +334,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_MEET_CRYPTOBOX:
-                if (checkEncoders(encToDispense)) {
+                if (checkEncoders(encToMeetCryptobox)) {
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -371,13 +371,13 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_C_TURN_90_BACK:
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || (gyroAngles.getZ() - currentHeading >= 180)) {
                     resetEncoders();
-                    reinitMotors(-speed, -speed);
+                    reinitMotors(speed, speed);
                     state = State.STATE_C_APPROACH_CRYPTOBOX;
                     dispenseGlyph = true;
                 }
                 break;
             case STATE_C_MEET_CRYPTOBOX:
-                if (checkEncoders(encToDispense)) {
+                if (checkEncoders(encToMeetCryptobox)) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
@@ -415,7 +415,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_R_MEET_CRYPTOBOX:
-                if (checkEncoders(encToDispense / 2)) {
+                if (checkEncoders(encToMeetCryptobox)) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
