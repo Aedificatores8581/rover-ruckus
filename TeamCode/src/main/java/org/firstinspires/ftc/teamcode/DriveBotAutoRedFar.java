@@ -308,6 +308,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     setRightPow(adjustSpeed);
                     state = State.STATE_L_TURN_90;
                 }
+                break;
             case STATE_L_TURN_90:
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
                     gyroAngles = new GyroAngles(angles);
