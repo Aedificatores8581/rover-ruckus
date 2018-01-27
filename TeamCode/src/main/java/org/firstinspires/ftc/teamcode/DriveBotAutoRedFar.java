@@ -49,12 +49,12 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
-    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 16, encToRamGlyph = 120, encToBackUp = 175, encToBackUpAgain = 360, encToDismount = 1050;
+    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 75, encToRamGlyph = 250, encToBackUp = 125, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 887, encToAlignCenter = 460, encToAlignRight = 45;
+    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = 45;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -372,7 +372,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || (gyroAngles.getZ() - currentHeading >= 180)) {
                     resetEncoders();
                     reinitMotors(speed, speed);
-                    state = State.STATE_C_APPROACH_CRYPTOBOX;
+                    state = State.STATE_C_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
                 }
                 break;
