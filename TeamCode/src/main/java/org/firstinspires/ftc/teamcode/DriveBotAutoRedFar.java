@@ -49,7 +49,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
-    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 40, encToRamGlyph = 120, encToBackUp = 175, encToBackUpAgain = 360, encToDismount = 1050;
+    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 16, encToRamGlyph = 120, encToBackUp = 175, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -437,7 +437,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= 750) {
-                    if (checkEncodersReverse(encToBackUp)) {
+                    if (checkEncoders(encToBackUp)) {
                         resetEncoders();
                         reinitMotors(speed * ramLeftMod, speed * ramRightMod);
                         state = State.STATE_RAM_GLYPH_INTO_BOX;
