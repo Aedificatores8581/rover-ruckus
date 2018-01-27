@@ -49,7 +49,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
-    int timeToDispense, encToDispense = 247, encToRamGlyph = 267, encToBackUp = 300, encToBackUpAgain = 360, encToDismount = 950;
+    int timeToDispense, encToDispense = 247, encToRamGlyph = 267, encToBackUp = 300, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -219,7 +219,12 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
-        double currentHeading;
+        double currentHeading = 0.0;
+        boolean hasAngles = false;
+        if (angles != null) {
+            currentHeading = new GyroAngles(angles).getZ();
+            hasAngles = true;
+        }
 
         if (!initServos) {
             initServos = true;
@@ -304,7 +309,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_L_TURN_90;
                 }
             case STATE_L_TURN_90:
-                currentHeading = new GyroAngles(angles).getZ();
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
@@ -320,8 +324,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90_BACK:
-                currentHeading = new GyroAngles(angles).getZ();
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || (gyroAngles.getZ() - currentHeading >= 180)) { // Checking for big angle delta because of wraparound.
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -511,6 +514,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         telemetry.addData("Glyph Output Position", glyphOutput.getPosition());
         telemetry.addData("Right Intake Position", rIntake.getPosition());
         telemetry.addData("Left Intake Position", lIntake.getPosition());
+
+        if (hasAngles && gyroAngles != null)
+            telemetry.addData("Remaining Angle", gyroAngles.getZ() - currentHeading);
 
         if (column != null)
             telemetry.addData("Column", column.name());
