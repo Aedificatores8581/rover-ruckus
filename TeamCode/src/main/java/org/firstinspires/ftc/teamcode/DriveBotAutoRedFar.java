@@ -259,25 +259,20 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(1.0);
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                prevTime = 0;
                 jewelArm.setPosition(jewelArmUpPosition);
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                if (!keyChecked)
+                if (!keyChecked && System.currentTimeMillis() - prevTime >= 10000)
                     column = CryptoboxColumn.MID;
                 state = State.STATE_GYRO_ANGLES;
                 break;
