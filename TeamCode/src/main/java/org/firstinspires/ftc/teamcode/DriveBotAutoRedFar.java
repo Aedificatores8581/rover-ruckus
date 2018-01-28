@@ -54,7 +54,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = 45;
+    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = 25;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -389,14 +389,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 if (checkEncoders(encToDismount)) {
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
-                    state = State.STATE_R_TURN_A_BIT;
+                    state = State.STATE_C_TURN_90;
                 }
                 break;
             case STATE_R_TURN_A_BIT:
-                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degreesSmall) {
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) {
                     resetEncoders();
-                    reinitMotors(speed, speed);
-                    state = State.STATE_R_ALIGN_TO_CRYPTOBOX;
+                    reinitMotors(-speed, -speed);
+                    state = State.STATE_C_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_R_ALIGN_TO_CRYPTOBOX:
@@ -404,14 +404,15 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     gyroAngles = new GyroAngles(angles);
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
-                    state = State.STATE_R_TURN_BACK;
+                    state = State.STATE_C_TURN_90_BACK;
                 }
                 break;
             case STATE_R_TURN_BACK:
-                if (Math.abs(Math.abs(gyroAngles.getZ()) - Math.abs(new GyroAngles(angles).getZ())) >= degreesRestOfSmall) {
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || (gyroAngles.getZ() - currentHeading >= 180)) {
                     resetEncoders();
-                    reinitMotors(-speed, -speed);
-                    state = State.STATE_R_MEET_CRYPTOBOX;
+                    reinitMotors(speed, speed);
+                    state = State.STATE_C_MEET_CRYPTOBOX;
+                    dispenseGlyph = true;
                 }
                 break;
             case STATE_R_MEET_CRYPTOBOX:
