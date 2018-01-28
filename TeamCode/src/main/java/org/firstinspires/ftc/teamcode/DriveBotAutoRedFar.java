@@ -54,7 +54,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = 25;
+    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = /*25*/ 0;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -239,7 +239,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
                 checkKey = true;
-                jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -248,6 +247,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
+                jewelFlipper.setPosition(centerFinger);
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
@@ -389,14 +389,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 if (checkEncoders(encToDismount)) {
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
-                    state = State.STATE_C_TURN_90;
+                    state = State.STATE_R_TURN_A_BIT;
                 }
                 break;
             case STATE_R_TURN_A_BIT:
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
-                    state = State.STATE_C_ALIGN_TO_CRYPTOBOX;
+                    state = State.STATE_R_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_R_ALIGN_TO_CRYPTOBOX:
@@ -404,14 +404,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     gyroAngles = new GyroAngles(angles);
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
-                    state = State.STATE_C_TURN_90_BACK;
+                    state = State.STATE_R_TURN_BACK;
                 }
                 break;
             case STATE_R_TURN_BACK:
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || (gyroAngles.getZ() - currentHeading >= 180)) {
                     resetEncoders();
                     reinitMotors(speed, speed);
-                    state = State.STATE_C_MEET_CRYPTOBOX;
+                    state = State.STATE_R_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
                 }
                 break;
