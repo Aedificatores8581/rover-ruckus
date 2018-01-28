@@ -238,6 +238,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
+                totalTime = System.currentTimeMillis();
                 checkKey = true;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
