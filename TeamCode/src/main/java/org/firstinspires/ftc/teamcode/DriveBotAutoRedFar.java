@@ -54,7 +54,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = /*25*/ 0;
+    int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 100;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
