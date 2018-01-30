@@ -34,7 +34,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.48, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.35, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //210 to move forward to left
     //325 to move to mid
@@ -54,7 +54,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 100;
+    int encToAlignLeft = 876, encToAlignCenter = 450, encToAlignRight = 100;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -136,6 +136,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        jewelFlipper.setPosition(centerFinger);
 
         prev1 = new Gamepad();
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -248,12 +250,11 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
                 if (redRatio > Constants.RED_THRESHOLD)
-                    state = State.STATE_HIT_LEFT_JEWEL;
-                else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
+                else if (blueRatio >= Constants.BLUE_THRESHOLD)
+                    state = State.STATE_HIT_LEFT_JEWEL;
                 else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
 
@@ -308,7 +309,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90:
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
+                if (gyroAngles.getZ() - currentHeading >= degrees90) {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
@@ -317,18 +318,22 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_L_ALIGN_TO_CRYPTOBOX:
                 if (checkEncoders(encToAlignLeft)) {
+                    prevTime2 = 0; // Reset the timer for the glyph dispense wait.
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
                     state = State.STATE_L_TURN_90_BACK;
                 }
                 break;
             case STATE_L_TURN_90_BACK:
-                if (gyroAngles.getZ() - currentHeading >= degrees90) {
-                    gyroAngles = new GyroAngles(angles);
+                if (prevTime2 == 0)
+                    prevTime2 = System.currentTimeMillis();
+                if (gyroAngles.getZ() - currentHeading <= -degrees90) {
                     resetEncoders();
-                    reinitMotors(speed, speed);
-                    state = State.STATE_L_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
+                    if (System.currentTimeMillis() - prevTime2 >= 1000) {
+                        reinitMotors(speed, speed);
+                        state = State.STATE_L_MEET_CRYPTOBOX;
+                    }
                 }
                 break;
             case STATE_L_MEET_CRYPTOBOX:
@@ -352,7 +357,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_C_TURN_90:
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) {
+                if (gyroAngles.getZ() - currentHeading >= degrees90) {
                     resetEncoders();
                     reinitMotors(speed, speed);
                     state = State.STATE_C_ALIGN_TO_CRYPTOBOX;
@@ -360,6 +365,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_C_ALIGN_TO_CRYPTOBOX:
                 if (checkEncoders(encToAlignCenter)) {
+                    prevTime2 = 0; // Reset the timer for the glyph dispense wait.
                     gyroAngles = new GyroAngles(angles);
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
@@ -367,11 +373,15 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_C_TURN_90_BACK:
-                if (gyroAngles.getZ() - currentHeading >= degrees90) {
+                if (prevTime2 == 0)
+                    prevTime2 = System.currentTimeMillis();
+                if (gyroAngles.getZ() - currentHeading <= -degrees90) {
                     resetEncoders();
-                    reinitMotors(speed, speed);
-                    state = State.STATE_C_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
+                    if (System.currentTimeMillis() - prevTime2 >= 1000) {
+                        reinitMotors(speed, speed);
+                        state = State.STATE_C_MEET_CRYPTOBOX;
+                    }
                 }
                 break;
             case STATE_C_MEET_CRYPTOBOX:
@@ -391,7 +401,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_R_TURN_A_BIT:
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) {
+                if (gyroAngles.getZ() - currentHeading >= degrees90) {
                     resetEncoders();
                     reinitMotors(speed, speed);
                     state = State.STATE_R_ALIGN_TO_CRYPTOBOX;
@@ -399,6 +409,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_R_ALIGN_TO_CRYPTOBOX:
                 if (checkEncoders(encToAlignRight)) {
+                    prevTime2 = 0; // Reset the timer for the glyph dispense wait.
                     gyroAngles = new GyroAngles(angles);
                     setLeftPow(-adjustSpeed);
                     setRightPow(adjustSpeed);
@@ -406,11 +417,15 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_R_TURN_BACK:
-                if (gyroAngles.getZ() - currentHeading >= degrees90) {
+                if (prevTime2 == 0)
+                    prevTime2 = System.currentTimeMillis();
+                if (gyroAngles.getZ() - currentHeading <= -degrees90) {
                     resetEncoders();
-                    reinitMotors(speed, speed);
-                    state = State.STATE_R_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
+                    if (System.currentTimeMillis() - prevTime2 >= 1000) {
+                        reinitMotors(speed, speed);
+                        state = State.STATE_R_MEET_CRYPTOBOX;
+                    }
                 }
                 break;
             case STATE_R_MEET_CRYPTOBOX:
@@ -433,14 +448,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= 750) {
-                    if (checkEncoders(encToBackUp)) {
-                        resetEncoders();
-                        reinitMotors(speed * ramLeftMod, speed * ramRightMod);
-                        state = State.STATE_RAM_GLYPH_INTO_BOX;
-                    }
+                if (checkEncoders(encToBackUp)) {
+                    resetEncoders();
+                    reinitMotors(speed * ramLeftMod, speed * ramRightMod);
+                    state = State.STATE_RAM_GLYPH_INTO_BOX;
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
@@ -451,8 +462,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
                 if (checkEncoders(encToBackUpAgain)) {
                     setLeftPow(0);
                     setRightPow(0);
@@ -468,13 +477,13 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
             switch (vuMark) {
                 case LEFT:
-                    column = CryptoboxColumn.LEFT;
+                    column = CryptoboxColumn.RIGHT;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
                     break;
                 case RIGHT:
-                    column = CryptoboxColumn.RIGHT;
+                    column = CryptoboxColumn.LEFT;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
