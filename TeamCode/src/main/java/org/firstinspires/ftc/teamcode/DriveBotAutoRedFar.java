@@ -273,9 +273,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                if (!keyChecked && System.currentTimeMillis() - prevTime >= 10000)
-                    column = CryptoboxColumn.MID;
-                state = State.STATE_GYRO_ANGLES;
+                if (System.currentTimeMillis() - prevTime >= 10000) {
+                    if (!keyChecked)
+                        column = CryptoboxColumn.MID;
+                    state = State.STATE_GYRO_ANGLES;
+                }
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
