@@ -54,7 +54,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 887, encToAlignCenter = 450, encToAlignRight = /*25*/ 0;
+    int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 100;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -273,9 +273,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:
-                if (!keyChecked && System.currentTimeMillis() - prevTime >= 10000)
-                    column = CryptoboxColumn.MID;
-                state = State.STATE_GYRO_ANGLES;
+                if (System.currentTimeMillis() - prevTime >= 10000) {
+                    if (!keyChecked)
+                        column = CryptoboxColumn.MID;
+                    state = State.STATE_GYRO_ANGLES;
+                }
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
