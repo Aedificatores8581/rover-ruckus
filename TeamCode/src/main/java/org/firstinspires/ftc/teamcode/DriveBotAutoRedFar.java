@@ -240,6 +240,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_LOWER_JEWEL_ARM:
                 totalTime = System.currentTimeMillis();
                 checkKey = true;
+                jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -247,16 +248,15 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.45);
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (blueRatio >= Constants.BLUE_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
-
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);

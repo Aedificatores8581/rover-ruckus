@@ -248,8 +248,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
-                prevTime = 0;
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.45);
+                prevTime = 0;
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 else if (blueRatio >= Constants.BLUE_THRESHOLD)
