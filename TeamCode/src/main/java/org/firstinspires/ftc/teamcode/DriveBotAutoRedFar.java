@@ -406,15 +406,19 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_R_TURN_BACK:
+                if (prevTime2 == 0)
+                    prevTime2 = System.currentTimeMillis();
                 if ((gyroAngles.getZ() - currentHeading <= -degrees90) || (gyroAngles.getZ() - currentHeading >= 180)) {
                     resetEncoders();
-                    reinitMotors(speed, speed);
-                    state = State.STATE_R_MEET_CRYPTOBOX;
-                    dispenseGlyph = true;
+                    if (System.currentTimeMillis() - prevTime2 >= 1000) {
+                        reinitMotors(speed, speed);
+                        state = State.STATE_R_MEET_CRYPTOBOX;
+                    }
                 }
                 break;
             case STATE_R_MEET_CRYPTOBOX:
                 if (checkEncoders(encToMeetCryptobox)) {
+                    dispenseGlyph = true;
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
