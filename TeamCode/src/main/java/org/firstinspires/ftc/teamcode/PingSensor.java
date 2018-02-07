@@ -33,6 +33,7 @@ public class PingSensor{
     public static final double SPEED_OF_SOUND_CM_PER_NS = 0.0000343;
     public static final double SPEED_OF_SOUND_IN_PER_NS = 0.0000135039;
 
+    public volatile boolean isRunningThread; // For exiting the loop in the method startReading
     public PingSensor(DigitalChannel channel) {
         this.channel = channel;
         lastReading = 0;
@@ -49,22 +50,24 @@ public class PingSensor{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                runState = RunState.SET_MODE_OUTPUT;
-                channel.setMode(DigitalChannel.Mode.OUTPUT);
-                channel.setState(true);
-                channel.setState(false);
+                while(isRunningThread) {
+                    runState = RunState.SET_MODE_OUTPUT;
+                    channel.setMode(DigitalChannel.Mode.OUTPUT);
+                    channel.setState(true);
+                    channel.setState(false);
 
-                runState = RunState.SET_MODE_INPUT;
-                channel.setMode(DigitalChannel.Mode.INPUT);
-                timePulsed = System.nanoTime();
+                    runState = RunState.SET_MODE_INPUT;
+                    channel.setMode(DigitalChannel.Mode.INPUT);
+                    timePulsed = System.nanoTime();
 
-                runState = RunState.BEFORE_WHILE;
-                while (channel.getState());
+                    runState = RunState.BEFORE_WHILE;
+                    while (channel.getState()) ;
 
-                runState = RunState.AFTER_WHILE;
+                    runState = RunState.AFTER_WHILE;
 
-                lastReading = System.nanoTime() - timePulsed;
-                runState = RunState.LAST_READING_SET;
+                    lastReading = System.nanoTime() - timePulsed;
+                    runState = RunState.LAST_READING_SET;
+                }
             }
         }).start();
     }

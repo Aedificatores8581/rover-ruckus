@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Const;
  * Conjured into existence by The Saminator on 12-05-2017.
  */
 public abstract class Sensor2BotTemplate extends OpMode {
-    protected DigitalChannel touch;
+    //protected DigitalChannel touch;
     protected PingSensor ping;
     protected SharpIRSensor ir;
     protected DcMotor lm, rm;
@@ -28,7 +28,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
 
     @Override
     public void init() {
-        touch = hardwareMap.digitalChannel.get("touch");
+        //touch = hardwareMap.digitalChannel.get("touch");
 
         ping = new PingSensor(hardwareMap.digitalChannel.get("ping"));
         ir = new SharpIRSensor(hardwareMap.analogInput.get("ir"));
@@ -36,7 +36,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
         lm = hardwareMap.dcMotor.get("lm");
         rm = hardwareMap.dcMotor.get("rm");
 
-        touch.setMode(DigitalChannel.Mode.INPUT);
+        //touch.setMode(DigitalChannel.Mode.INPUT);
         lm.setDirection(Constants.LM_DIR);
         rm.setDirection(Constants.RM_DIR);
     }
@@ -49,5 +49,6 @@ public abstract class Sensor2BotTemplate extends OpMode {
     public void stop() {
         lm.setPower(0.0);
         rm.setPower(0.0);
+        ping.isRunningThread = false;
     }
 }
