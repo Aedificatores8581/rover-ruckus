@@ -49,12 +49,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
-    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 75, encToRamGlyph = 250, encToBackUp = 125, encToBackUpAgain = 360, encToDismount = 1050;
+    int timeToDispense, encToMeetCryptobox = 110, encToDispense = 75, encToRamGlyph = 250, encToBackUp = 150, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 90;
+    int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 100;
 
     double degrees90 = 85;
 
