@@ -18,7 +18,7 @@ public abstract class Sensor2BotTemplate extends OpMode {
     protected PingSensor ping;
     protected SharpIRSensor ir;
     protected DcMotor lm, rm;
-    protected OpticalDistanceSensor ods;
+    //protected OpticalDistanceSensor ods;
 
     public static class Constants {
         public static final double MOTOR_POWER = 0.25;
