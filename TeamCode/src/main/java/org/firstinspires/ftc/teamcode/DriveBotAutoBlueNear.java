@@ -296,7 +296,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmUpPosition);
-                column = CryptoboxColumn.MID;
+                //column = CryptoboxColumn.MID;
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
