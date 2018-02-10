@@ -399,6 +399,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Relic Hand Pos.", relicHand.getPosition());
         telemetry.addData("Relic Hand Set Value", relicHandServoValue);
 
+        telemetry.addData("Front mag sensor state: ", magFront.getState());
+        telemetry.addData("Back mag sensor state: ", magBack.getState());
+
         telemetry.addData("Relic Fingers Pos.", relicFingers.getPosition());
         telemetry.addData("Relic Fingers Set Value", relicFingersServoValue);
 

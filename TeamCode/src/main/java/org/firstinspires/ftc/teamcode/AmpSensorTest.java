@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 public class AmpSensorTest extends OpMode {
     AnalogInput ampSensor;
     Servo testServo;
+
     double servoPosition;
 
     protected DigitalChannel magFront, magBack;
@@ -24,12 +25,14 @@ public class AmpSensorTest extends OpMode {
         testServo = hardwareMap.servo.get("servo");
         magFront = hardwareMap.digitalChannel.get("mf");
         magBack = hardwareMap.digitalChannel.get("mb");
+        magFront.setMode(DigitalChannel.Mode.INPUT);
+        magBack.setMode(DigitalChannel.Mode.INPUT);
     }
-
 
     public void loop(){
         testServo.setPosition(servoPosition);
-        telemetry.addLine("Amp Sensor Voltage: " + ampSensor.getVoltage());
+        telemetry.addData("Amp Sensor Voltage: " , ampSensor.getVoltage());
+        telemetry.addData("Amp Sensor max Voltage: " , ampSensor.getMaxVoltage());
         if (gamepad1.left_bumper) {
             servoPosition += 0.02;
         }
@@ -37,9 +40,7 @@ public class AmpSensorTest extends OpMode {
             servoPosition -= 0.02;
         }
         telemetry.addData("back.getState:  ", magBack.getState());
-        telemetry.addData("back.getMode:   ", magBack.getMode());
         telemetry.addData("front.getState:  ", magFront.getState());
-        telemetry.addData("front.getMode:   ", magFront.getMode());
 
 
     }
