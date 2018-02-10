@@ -15,6 +15,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
+
+    private static final double MAX_AMP_GLYPH_OUTPUT = 2.8; // The amp sensor returns the amount of current in volts
+
     private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
     private byte armPos = 1;
@@ -146,8 +149,9 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
 
-        if (!glyphLiftState.currentlyMoving())
+        if (!glyphLiftState.currentlyMoving() && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphOutput.setPosition(glyphDumpServoValue);
+        }
     }
 
     protected void setMotorPowers() {
@@ -203,17 +207,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampJewelArmServo();
         }
 
-        if (gamepad2.dpad_up || gamepad2.y) {
+        if ((gamepad2.dpad_up || gamepad2.y) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue += 0.05;
             clampDumpServo();
         }
 
-        if (gamepad2.dpad_down || gamepad2.a) {
+        if ((gamepad2.dpad_down || gamepad2.a) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue -= 0.05;
             clampDumpServo();
         }
 
-        if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) {
+        if ((gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue = 0.4;
             clampDumpServo();
         }
@@ -379,6 +383,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }*/
 
         telemetry.addData("Arm Extended", armExtended);
+        telemetry.addData("Amp Sensor (returning volts)", ampSensor.getVoltage());
+        if(ampSensor.getVoltage() > MAX_AMP_GLYPH_OUTPUT){
+            telemetry.addLine("WARNING! GLYPH DUMPER AMPERAGE IS TOO HIGH!");
+        }
 
         telemetry.addData("Left front power", leftFore.getPower());
         telemetry.addData("Left back power", leftRear.getPower());
