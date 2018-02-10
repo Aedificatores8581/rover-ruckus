@@ -29,7 +29,6 @@ public class AmpSensorTest extends OpMode {
 
     public void loop(){
         testServo.setPosition(servoPosition);
-
         telemetry.addLine("Amp Sensor Voltage: " + ampSensor.getVoltage());
         if (gamepad1.left_bumper) {
             servoPosition += 0.02;
