@@ -9,12 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 @Autonomous(name = "MB1200 Test", group = "these are not the opmodes you are looking for move along now")
 public class MB1200Test extends OpMode {
     private MB1200 sensor;
-    private boolean prevA = false;
 
     @Override
     public void init() {
-        sensor = new MB1200(hardwareMap.digitalChannel.get("ds"));
-        prevA = false;
+        sensor = new MB1200(hardwareMap.digitalChannel.get("mb"));
     }
 
     @Override
@@ -25,10 +23,9 @@ public class MB1200Test extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.a && !prevA)
+        if (sensor.hasReading())
             telemetry.addData("Sensor reading", sensor.getReading());
-
-        prevA = gamepad1.a;
+        telemetry.addData("Sensor state", sensor.getState());
     }
 
     @Override

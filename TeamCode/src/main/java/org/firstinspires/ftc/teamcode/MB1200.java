@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
  * Conjured into existence by The Saminator on 02-01-2018.
  */
 public class MB1200 {
-    public interface ReadingConsumer {
-        void takeReading(double reading);
+    public enum ReadState {
+        WAITING_ON_PULSE,
+        PROCESSING_PULSE
     }
 
     /**
@@ -16,7 +17,9 @@ public class MB1200 {
     private DigitalChannel innerSensor;
     private Thread readThread;
 
+    private volatile boolean hasReading;
     private volatile double reading;
+    private volatile ReadState state;
 
     public MB1200(DigitalChannel is) {
         innerSensor = is;
@@ -24,9 +27,12 @@ public class MB1200 {
     }
 
     public void start() {
+        hasReading = false;
         readThread = new Thread() {
             @Override
             public void run() {
+                state = ReadState.PROCESSING_PULSE;
+
                 boolean prevState = false;
                 long lastReading = System.nanoTime();
                 long prevReading = 0;
@@ -34,11 +40,17 @@ public class MB1200 {
                 while (!Thread.interrupted()) {
                     long readingNanos = lastReading - prevReading;
 
+                    state = ReadState.WAITING_ON_PULSE;
                     while (innerSensor.getState() == prevState) ;
+                    state = ReadState.PROCESSING_PULSE;
+
                     reading = readingNanos / 58000.0;
+                    hasReading = true;
 
                     prevReading = lastReading;
                     lastReading = System.nanoTime();
+
+                    prevState = innerSensor.getState();
                 }
             }
         };
@@ -47,6 +59,14 @@ public class MB1200 {
 
     public double getReading() {
         return reading;
+    }
+
+    public boolean hasReading() {
+        return this.hasReading;
+    }
+
+    public ReadState getState() {
+        return state;
     }
 
     public void stop() {
