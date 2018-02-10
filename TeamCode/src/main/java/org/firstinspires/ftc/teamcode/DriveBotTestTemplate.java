@@ -7,6 +7,7 @@ import android.os.Looper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -71,6 +72,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     NormalizedRGBA colors;
 
     BNO055IMU imu;
+    AnalogInput ampSensor;
 
     protected Orientation angles;
     protected Acceleration gravity;
@@ -100,6 +102,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
 
+
         belt1 = hardwareMap.crservo.get("vm1");
         belt2 = hardwareMap.crservo.get("vm2");
 
@@ -120,6 +123,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         magFront = hardwareMap.digitalChannel.get("mf");
         magBack = hardwareMap.digitalChannel.get("mb");
+        ampSensor = hardwareMap.analogInput.get("amp");
+
         //endregion
 
         //angleAtStart = new GyroAngles(angles).getZ();
@@ -128,6 +133,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         magFront.setMode(DigitalChannel.Mode.INPUT);
         magBack.setMode(DigitalChannel.Mode.INPUT);
+
 
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
