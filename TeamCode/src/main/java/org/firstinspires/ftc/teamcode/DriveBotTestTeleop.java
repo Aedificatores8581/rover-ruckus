@@ -123,6 +123,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
          */
     }
 
+
+
     protected void clampRelicFingersServo() {
         if (relicFingersServoValue > 1) // Maximum position
             relicFingersServoValue = 1;
@@ -167,7 +169,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             setMotorPowers();
         refreshServos();
 
-        relicArm.setPower(gamepad2.left_stick_y);
+        if((gamepad2.left_stick_y > 0 && magFront.getState()) || (gamepad2.left_stick_y < 0 && magBack.getState()) || gamepad2.left_stick_y == 0)
+            relicArm.setPower(gamepad2.left_stick_y);
 
         if (gamepad1.left_stick_button) {
             leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -181,10 +184,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if (triggered(gamepad1.right_trigger)) {
-            succ(1.0);
+            succ(0.85);
             belt(0.5);
         } else if (triggered(gamepad1.left_trigger)) {
-            succ(-1.0);
+            succ(-0.85);
             belt(-0.5);
         } else {
             succ(0.0);
