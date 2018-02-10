@@ -9,9 +9,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "SensorBot: Sharp IR Test", group = "bepis")
 
 public class Sensor2BotSharpIRTest extends Sensor2BotTemplate {
+    public void init_loop(){
 
-    public void loop() {
-        telemetry.addData("Distance", ir.readDistanceCM());
+    }
+    boolean thrown;
+    public void start(){
+        telemetry.addLine("Started");
+        telemetry.update();
     }
 
+    public void loop() {
+        telemetry.addLine("Distance from wall (cm): " + ir.readDistanceCM());
+        telemetry.addLine("Voltage" + ir.getSharpIRVoltage());
+    }
 }
