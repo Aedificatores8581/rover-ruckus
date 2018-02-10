@@ -25,6 +25,7 @@ public class MB1200Test extends OpMode {
     public void loop() {
         if (sensor.hasReading())
             telemetry.addData("Sensor reading", sensor.getReading());
+        telemetry.addData("Sensor state", sensor.getState());
     }
 
     @Override
