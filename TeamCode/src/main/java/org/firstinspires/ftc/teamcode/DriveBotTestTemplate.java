@@ -79,6 +79,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     public double angleAtStart;
 
+    protected DigitalChannel magFront;
+    protected DigitalChannel magBack;
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
@@ -114,9 +116,19 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         glyphOutput = hardwareMap.servo.get("gd");
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
+
+
+        magFront = hardwareMap.digitalChannel.get("mf");
+        magBack = hardwareMap.digitalChannel.get("mb");
         //endregion
 
         //angleAtStart = new GyroAngles(angles).getZ();
+
+
+
+        magFront.setMode(DigitalChannel.Mode.INPUT);
+        magBack.setMode(DigitalChannel.Mode.INPUT);
+
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
