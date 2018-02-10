@@ -16,6 +16,11 @@ public class Sensor2BotTeleop extends Sensor2BotTemplate {
 //   }
 
     @Override public void loop() {
+
+        telemetry.addData("back.getState:  ", magBack.getState());
+        telemetry.addData("back.getMode:   ", magBack.getMode());
+        telemetry.addData("front.getState:  ", magFront.getState());
+        telemetry.addData("front.getMode:   ", magFront.getMode());
 /*        double relicHandPos = relicHand.getPosition();
 //        double relicFingersPos = relicFingers.getPosition();
 //

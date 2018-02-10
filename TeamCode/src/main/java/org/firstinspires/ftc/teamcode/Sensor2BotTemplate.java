@@ -18,7 +18,9 @@ public abstract class Sensor2BotTemplate extends OpMode {
     protected PingSensor ping;
     protected SharpIRSensor ir;
     protected DcMotor lm, rm;
+    protected DigitalChannel magFront, magBack;
     //protected OpticalDistanceSensor ods;
+
 
     public static class Constants {
         public static final double MOTOR_POWER = 0.25;
@@ -32,13 +34,16 @@ public abstract class Sensor2BotTemplate extends OpMode {
 
         ping = new PingSensor(hardwareMap.digitalChannel.get("ping"));
         ir = new SharpIRSensor(hardwareMap.analogInput.get("ir"));
-
+        magFront = hardwareMap.digitalChannel.get("mf");
+        magBack = hardwareMap.digitalChannel.get("mb");
         lm = hardwareMap.dcMotor.get("lm");
         rm = hardwareMap.dcMotor.get("rm");
 
         //touch.setMode(DigitalChannel.Mode.INPUT);
         lm.setDirection(Constants.LM_DIR);
         rm.setDirection(Constants.RM_DIR);
+        magFront.setMode(DigitalChannel.Mode.INPUT);
+        magBack.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void go() {
