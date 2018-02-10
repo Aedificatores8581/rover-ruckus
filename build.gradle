@@ -8,8 +8,10 @@ buildscript {
         jcenter()
     }
     dependencies {
+
         classpath 'com.android.tools.build:gradle:2.3.3'
         // STOP CHANGING THIS TO 3.2.WHATEVER. THIS SHOULD ALWAYS STAY AT 2.3.3.
+
     }
 }
 
