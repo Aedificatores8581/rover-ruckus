@@ -18,8 +18,12 @@ public class SharpIRSensor {
 
     public double readDistanceCM() throws Error {
         double voltage = sharpIR.getVoltage();
-        if (voltage <= 0.0)
+        if (voltage < 0.0)
             throw new Error("Voltage is negative! SHUT. DOWN. EVERYTHING.");
         return convertDistanceCM(sharpIR.getVoltage());
+    }
+
+    public double getSharpIRVoltage(){
+        return sharpIR.getVoltage();
     }
 }
