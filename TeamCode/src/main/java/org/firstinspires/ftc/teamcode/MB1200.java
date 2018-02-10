@@ -10,30 +10,46 @@ public class MB1200 {
         void takeReading(double reading);
     }
 
+    /**
+     * Pin #2 is the data pin.
+     */
     private DigitalChannel innerSensor;
+    private Thread readThread;
+
+    private volatile double reading;
 
     public MB1200(DigitalChannel is) {
         innerSensor = is;
+        innerSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
-    public void read(final ReadingConsumer consumer) {
-        new Thread() {
+    public void start() {
+        readThread = new Thread() {
             @Override
             public void run() {
-                innerSensor.setMode(DigitalChannel.Mode.OUTPUT);
-                innerSensor.setState(true);
+                boolean prevState = false;
+                long lastReading = System.nanoTime();
+                long prevReading = 0;
 
-                long start = System.nanoTime();
-                innerSensor.setMode(DigitalChannel.Mode.INPUT);
-                while (!innerSensor.getState()) ;
+                while (!Thread.interrupted()) {
+                    long readingNanos = lastReading - prevReading;
 
-                long readingNanos = System.nanoTime() - start;
-                double readingCentis = readingNanos / 58000.0;
-                consumer.takeReading(readingCentis);
+                    while (innerSensor.getState() == prevState) ;
+                    reading = readingNanos / 58000.0;
 
-                innerSensor.setMode(DigitalChannel.Mode.OUTPUT);
-                innerSensor.setState(false);
+                    prevReading = lastReading;
+                    lastReading = System.nanoTime();
+                }
             }
-        }.start();
+        };
+        readThread.start();
+    }
+
+    public double getReading() {
+        return reading;
+    }
+
+    public void stop() {
+        readThread.interrupt();
     }
 }

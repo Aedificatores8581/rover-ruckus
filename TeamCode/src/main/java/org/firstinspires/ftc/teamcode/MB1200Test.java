@@ -18,15 +18,22 @@ public class MB1200Test extends OpMode {
     }
 
     @Override
+    public void start() {
+        super.start();
+        sensor.start();
+    }
+
+    @Override
     public void loop() {
         if (gamepad1.a && !prevA)
-            sensor.read(new MB1200.ReadingConsumer() {
-                @Override
-                public void takeReading(double reading) {
-                    telemetry.addData("Distance Reading", reading);
-                }
-            });
+            telemetry.addData("Sensor reading", sensor.getReading());
 
         prevA = gamepad1.a;
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        sensor.stop();
     }
 }
