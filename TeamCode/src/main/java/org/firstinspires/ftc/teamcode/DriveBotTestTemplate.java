@@ -130,6 +130,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         magBack.setMode(DigitalChannel.Mode.INPUT);
 
 
+
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);
         rightFore.setDirection(Constants.RIGHT_FORE_DIR);
