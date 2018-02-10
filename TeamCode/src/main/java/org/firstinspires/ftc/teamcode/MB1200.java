@@ -33,7 +33,7 @@ public class MB1200 {
             public void run() {
                 state = ReadState.PROCESSING_PULSE;
 
-                boolean prevState = false;
+                boolean prevState = true;
                 long lastReading = System.nanoTime();
                 long prevReading = 0;
 
