@@ -129,12 +129,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         //angleAtStart = new GyroAngles(angles).getZ();
 
-
-
         magFront.setMode(DigitalChannel.Mode.INPUT);
         magBack.setMode(DigitalChannel.Mode.INPUT);
-
-
 
         leftFore.setDirection(Constants.LEFT_FORE_DIR);
         leftRear.setDirection(Constants.LEFT_REAR_DIR);

@@ -42,6 +42,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
     public enum GlyphLiftState {
+        LEVELING(true),
+        LEVELED(false),
         ASCENDING(true),
         ASCENDED(false),
         DUMPING(true),
@@ -124,7 +126,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     }
 
 
-
     protected void clampRelicFingersServo() {
         if (relicFingersServoValue > 1) // Maximum position
             relicFingersServoValue = 1;
@@ -169,7 +170,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             setMotorPowers();
         refreshServos();
 
-        if((gamepad2.left_stick_y > 0 && magFront.getState()) || (gamepad2.left_stick_y < 0 && magBack.getState()) || gamepad2.left_stick_y == 0)
+        if ((gamepad2.left_stick_y > 0 && magFront.getState()) || (gamepad2.left_stick_y < 0 && magBack.getState()) || gamepad2.left_stick_y == 0)
             relicArm.setPower(gamepad2.left_stick_y);
 
         if (gamepad1.left_stick_button) {
@@ -239,12 +240,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             relicHandServoValue += gamepad2.right_stick_y * 0.012;
             clampRelicHandServo();
         }
-
-        if (gamepad2.a && !prev2.a)
-            startDance();
-
-        if (gamepad2.b && !prev2.b)
-            stopDance();
 
         //if (gamepad2.b) {
         //    relicHandServoValue = 0.188;
@@ -350,14 +345,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         else
             glyphLift.setPower(0.0);
 
-        /*if (gamepad2.x && !prev2.x)
+        if (gamepad2.b && !prev2.b)
             switch (glyphLiftState) {
+                case LEVELED:
+                    glyphLift.setPower(0.1);
+                    glyphLiftState = GlyphLiftState.ASCENDING;
+                    break;
                 case ASCENDED:
                     glyphLiftState = GlyphLiftState.DUMPING;
                     break;
                 case DESCENDED:
-                    glyphLift.setPower(0.1);
-                    glyphLiftState = GlyphLiftState.ASCENDING;
+                    glyphLiftState = GlyphLiftState.LEVELING;
                     break;
                 case DUMPED:
                     glyphLift.setPower(-0.1);
@@ -367,6 +365,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             }
 
         switch (glyphLiftState) {
+            case LEVELING:
+                glyphOutput.setPosition(0.45);
+                glyphLiftState = GlyphLiftState.LEVELED;
+                break;
             case ASCENDING:
                 if (!glyphLiftHigh.getState()) {
                     glyphLift.setPower(0);
@@ -383,13 +385,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                     glyphLiftState = GlyphLiftState.DESCENDED;
                 }
                 break;
-        }*/
+        }
 
         telemetry.addData("Arm Extended", armExtended);
         telemetry.addData("Amp Sensor (returning volts)", ampSensor.getVoltage());
-        if(ampSensor.getVoltage() > MAX_AMP_GLYPH_OUTPUT){
+        if (ampSensor.getVoltage() > MAX_AMP_GLYPH_OUTPUT) {
             telemetry.addLine("WARNING! GLYPH DUMPER AMPERAGE IS TOO HIGH!");
         }
+
+        telemetry.addData("Glyph lift state", glyphLiftState);
 
         telemetry.addData("Left front power", leftFore.getPower());
         telemetry.addData("Left back power", leftRear.getPower());
