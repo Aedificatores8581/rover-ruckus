@@ -160,7 +160,10 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         //else
             setMotorPowers();
         refreshServos();
+        /*
+        //ADD LATER - if both Left and Right stick buttons are pressed on gamepad2 and the relic arm is moving, the limit switches are activated
 
+         */
         relicArm.setPower(gamepad2.left_stick_y);
 
         if (gamepad1.left_stick_button) {
