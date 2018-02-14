@@ -37,6 +37,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     State state;
 
+    private boolean retracted = false;
+
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
@@ -51,7 +53,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
     double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.56, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1500, encToMoveToRight = 1865;
+    int timeToDispense, encToDispense = 320, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1500, encToMoveToRight = 1865;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -86,7 +88,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         rIntake.setPosition(0.3);
         lIntake.setPosition(0.7);
-        relicHand.setPosition(0.5);
 
         initServos = false;
 
@@ -241,11 +242,16 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+        /*if(System.currentTimeMillis() - totalTime >= 250 && !magFront.getState())
+            relicArm.setPower(1.0);
+        else*/ if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
         if (!initServos) {
             initServos = true;
             rIntake.setPosition(0.7);
             lIntake.setPosition(0.3);
-            relicHand.setPosition(0.5);
         }
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
@@ -284,7 +290,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(1.0);
                 direction = JewelDirection.RIGHT;
-
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
@@ -293,6 +298,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_RESET_JEWEL_HITTER:
+                relicHand.setPosition(0.5);
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmUpPosition);

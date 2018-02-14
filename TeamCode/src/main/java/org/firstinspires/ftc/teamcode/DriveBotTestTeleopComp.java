@@ -128,8 +128,8 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     protected void clampDumpServo() {
         if (glyphDumpServoValue > 1) // Maximum position
             glyphDumpServoValue = 1;
-        if (glyphDumpServoValue < 0) // Minimum position
-            glyphDumpServoValue = 0;
+        if (glyphDumpServoValue < 0.402) // Minimum position
+            glyphDumpServoValue = 0.402;
     }
 
     protected void refreshServos() {
