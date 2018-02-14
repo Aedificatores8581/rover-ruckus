@@ -102,7 +102,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
 
-
         belt1 = hardwareMap.crservo.get("vm1");
         belt2 = hardwareMap.crservo.get("vm2");
 

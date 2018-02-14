@@ -54,7 +54,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
-    int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 100;
+    int encToAlignLeft = 888, encToAlignCenter = 480, encToAlignRight = 100;
 
     double degrees90 = 85;
     double degreesSmall = 30, degreesRestOfSmall = 120;
@@ -108,7 +108,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     @Override
     public void init() {
-        this.msStuckDetectInit = 10000;
+        this.msStuckDetectInit = 60000;
         super.init();
 
         state = State.STATE_LOWER_JEWEL_ARM;
@@ -248,7 +248,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.45);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
                 if (redRatio > Constants.RED_THRESHOLD)
@@ -308,7 +308,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_L_TURN_90:
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) { // Checking for negative current angle because of wraparound.
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading < -5) { // Checking for negative current angle because of wraparound.
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -352,7 +352,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_C_TURN_90:
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) {
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading < -5) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_C_ALIGN_TO_CRYPTOBOX;
@@ -391,7 +391,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_R_TURN_A_BIT:
-                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading <= 0) {
+                if ((gyroAngles.getZ() - currentHeading <= -degrees90) || currentHeading < -5) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_R_ALIGN_TO_CRYPTOBOX;
