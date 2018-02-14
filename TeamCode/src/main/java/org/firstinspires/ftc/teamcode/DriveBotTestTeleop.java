@@ -136,8 +136,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     protected void clampDumpServo() {
         if (glyphDumpServoValue > 1) // Maximum position
             glyphDumpServoValue = 1;
-        if (glyphDumpServoValue < 0.4) // Minimum position
-            glyphDumpServoValue = 0.4;
+        if (glyphDumpServoValue < 0.415) // Minimum position
+            glyphDumpServoValue = 0.415;
     }
 
     protected void refreshServos() {
@@ -366,7 +366,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         switch (glyphLiftState) {
             case LEVELING:
-                glyphOutput.setPosition(0.45);
+                glyphOutput.setPosition(0.5);
                 glyphLiftState = GlyphLiftState.LEVELED;
                 break;
             case ASCENDING:
