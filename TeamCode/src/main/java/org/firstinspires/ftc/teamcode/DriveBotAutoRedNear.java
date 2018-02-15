@@ -89,8 +89,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         lIntake.setPosition(0.7);
 
-        relicHand.setPosition(0.5);
-
         initServos = false;
 
         direction = null;
@@ -244,6 +242,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
 
         if (!initServos) {
             initServos = true;
@@ -251,8 +253,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
-
-            relicHand.setPosition(0.5);
         }
 
         switch (state) {
@@ -297,16 +297,21 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
+                    prevTime = 0;
                     jewelArm.setPosition(jewelArmUpPosition);
                     state = State.STATE_RESET_JEWEL_HITTER;
                 }
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                prevTime = 0;
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                relicHand.setPosition(0.5);
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmUpPosition);
-                //column = CryptoboxColumn.MID;
-                state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                if (System.currentTimeMillis() - prevTime >= 3000) {
+                    column = CryptoboxColumn.MID;
+                    state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                }
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);

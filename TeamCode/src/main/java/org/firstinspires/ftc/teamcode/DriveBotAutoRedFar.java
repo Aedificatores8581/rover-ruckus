@@ -99,6 +99,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         relicHand.setPosition(0.5);
 
         initServos = false;
+        totalTime = System.currentTimeMillis();
     }
 
     @Override
@@ -226,19 +227,21 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             hasAngles = true;
         }
 
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
+
         if (!initServos) {
             initServos = true;
 
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
-
-            relicHand.setPosition(0.5);
         }
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                totalTime = System.currentTimeMillis();
                 checkKey = true;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
@@ -269,6 +272,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
+                relicHand.setPosition(0.5);
                 jewelArm.setPosition(jewelArmUpPosition);
                 state = State.STATE_SCAN_KEY;
                 break;
