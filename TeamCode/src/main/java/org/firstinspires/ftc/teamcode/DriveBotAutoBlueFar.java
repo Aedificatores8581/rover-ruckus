@@ -249,10 +249,11 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
+                jewelFlipper.setPosition(centerFinger);
                 prevTime = 0;
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (blueRatio >= Constants.BLUE_THRESHOLD)
+                else if (redRatio < Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
