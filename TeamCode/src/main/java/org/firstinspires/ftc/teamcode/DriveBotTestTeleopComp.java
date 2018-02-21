@@ -128,8 +128,8 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     protected void clampDumpServo() {
         if (glyphDumpServoValue > 1) // Maximum position
             glyphDumpServoValue = 1;
-        if (glyphDumpServoValue < 0.402) // Minimum position
-            glyphDumpServoValue = 0.402;
+        if (glyphDumpServoValue < 0) // Minimum position
+            glyphDumpServoValue = 0;
     }
 
     protected void refreshServos() {
@@ -215,7 +215,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         }
 
         if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) {
-            glyphDumpServoValue = 0.5;
+            glyphDumpServoValue = 0.42;
             clampDumpServo();
         }
 

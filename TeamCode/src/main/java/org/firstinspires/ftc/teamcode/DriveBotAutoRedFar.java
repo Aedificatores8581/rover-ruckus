@@ -251,7 +251,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
                 if (redRatio > Constants.RED_THRESHOLD)

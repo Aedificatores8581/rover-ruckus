@@ -140,8 +140,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     protected void clampDumpServo() {
         if (glyphDumpServoValue > 1) // Maximum position
             glyphDumpServoValue = 1;
-        if (glyphDumpServoValue < 0.415) // Minimum position
-            glyphDumpServoValue = 0.415;
+        if (glyphDumpServoValue < 0.0) // Minimum position
+            glyphDumpServoValue = 0.0;
     }
 
     protected void refreshServos() {
@@ -227,7 +227,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if ((gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
-            glyphDumpServoValue = 0.5;
+            glyphDumpServoValue = 0.42;
             dumpServoManual = true;
             clampDumpServo();
         }
@@ -377,7 +377,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         switch (glyphLiftState) {
             case LEVELING:
-                glyphOutput.setPosition(0.5);
+                glyphOutput.setPosition(0.42);
                 glyphLiftState = GlyphLiftState.LEVELED;
                 break;
             case ASCENDING:
