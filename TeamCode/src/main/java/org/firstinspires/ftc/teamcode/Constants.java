@@ -62,4 +62,7 @@ public class Constants {
     public static final double GLYPH_DISPENSE_LEVEL = 0.4;
     public static final double RED_THRESHOLD = 0.43;
     public static final double BLUE_THRESHOLD = 0.3;
+
+
+    public static final double JEWEL_ARM_DOWN_POSITION = 0.74;
 }

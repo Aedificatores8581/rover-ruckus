@@ -335,6 +335,53 @@ public abstract class DriveBotTestTemplate extends OpMode {
         setRightPow(-0.125);
     }
 
+    protected double csDistance(NormalizedRGBA ds){
+        return (ds.red + ds.blue + ds.green);
+    }
+
+    protected boolean detectColor(NormalizedRGBA cs, String col, double val){
+        cs = color.getNormalizedColors();
+        double ratio = 0;
+
+        while(ratio < val) {
+            if(col == "r")
+                ratio = cs.red / (cs.red + cs.green + cs.blue);
+            if(col == "g")
+                ratio = cs.blue / (cs.red + cs.green + cs.blue);
+            if(col == "b")
+                ratio = cs.green / (cs.red + cs.green + cs.blue);
+            if(col == "d")
+                ratio = csDistance(cs);
+        }
+        return true;
+    }
+    protected  void driveSlow(double Spower, double Epower, int enc){
+        resetEncoders();
+        //ENCODER RESET
+        reinitMotors(Spower, Spower);
+        while(!checkEncoders(enc)) {
+            setLeftPow(Spower);
+            setRightPow(Spower);
+        }
+        while(!checkEncoders(enc)) {
+            setLeftPow(Epower);
+            setRightPow(Epower);
+        }
+    }
+
+    protected  void turnSlow(double Slp, double Elp, int enc){
+        //ENCODER RESET
+        while(!checkEncoders(enc * 2 / 3)) {
+            setLeftPow(Slp);
+            setRightPow(-Slp);
+        }
+        while(!checkEncoders(enc)) {
+            setLeftPow(Elp);
+            setRightPow(-Elp);
+        }
+    }
+
+
     // This is here for not loading the gyro sensor when in teleop.
     protected boolean isAutonomous() {
         return true;
