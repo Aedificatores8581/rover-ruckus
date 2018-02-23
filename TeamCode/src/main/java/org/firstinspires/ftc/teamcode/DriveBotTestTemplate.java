@@ -344,7 +344,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected double detectColor(NormalizedRGBA cs, ColorType col) {
-        cs = color.getNormalizedColors();
         switch (col) {
             case RED:
                 return cs.red / csDistance(cs);
