@@ -48,9 +48,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
-    long waitTime = 800L;
+    long waitTime = 1600L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.56, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.48, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1530, encToMoveToRight = 1885;
     double glyphHold = 0.03, glyphDrop = 0.33;
@@ -88,8 +88,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         rIntake.setPosition(0.3);
 
         lIntake.setPosition(0.7);
-
-        relicHand.setPosition(0.5);
 
         initServos = false;
 
@@ -244,6 +242,10 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         NormalizedRGBA colors = color.getNormalizedColors();
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
 
         if (!initServos) {
             initServos = true;
@@ -251,8 +253,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
-
-            relicHand.setPosition(0.5);
         }
 
         switch (state) {
@@ -266,46 +266,29 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.45);
-
-                if (redRatio >= Constants.RED_THRESHOLD) {
+                jewelFlipper.setPosition(centerFinger);
+                if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                    jewelColor = JewelColor.RED;
-                } else if (blueRatio >= Constants.BLUE_THRESHOLD) {
+                else if (redRatio < Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                    jewelColor = JewelColor.BLUE;
-                } else if (System.currentTimeMillis() - totalTime >= 5000)
+                else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
-                direction = JewelDirection.LEFT;
-
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime) {
-                    jewelArm.setPosition(jewelArmUpPosition);
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
-                }
-
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(1.0);
-                direction = JewelDirection.RIGHT;
-
-                if (prevTime == 0)
-                    prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime) {
-                    jewelArm.setPosition(jewelArmUpPosition);
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
-                }
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
+                relicHand.setPosition(0.5);
                 jewelArm.setPosition(jewelArmUpPosition);
-                //column = CryptoboxColumn.MID;
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:

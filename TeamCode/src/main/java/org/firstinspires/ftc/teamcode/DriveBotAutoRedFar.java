@@ -99,6 +99,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         relicHand.setPosition(0.5);
 
         initServos = false;
+        totalTime = System.currentTimeMillis();
     }
 
     @Override
@@ -226,19 +227,21 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             hasAngles = true;
         }
 
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
+
         if (!initServos) {
             initServos = true;
 
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
-
-            relicHand.setPosition(0.5);
         }
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                totalTime = System.currentTimeMillis();
                 checkKey = true;
                 jewelFlipper.setPosition(centerFinger);
                 jewelArm.setPosition(jewelArmDownPosition);
@@ -248,12 +251,12 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.5);
+                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
                 jewelFlipper.setPosition(centerFinger);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
-                else if (blueRatio >= Constants.BLUE_THRESHOLD)
+                else if (redRatio < Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
                 else if (System.currentTimeMillis() - totalTime >= 5000)
                     state = State.STATE_RESET_JEWEL_HITTER;
@@ -269,6 +272,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
+                relicHand.setPosition(0.5);
                 jewelArm.setPosition(jewelArmUpPosition);
                 state = State.STATE_SCAN_KEY;
                 break;

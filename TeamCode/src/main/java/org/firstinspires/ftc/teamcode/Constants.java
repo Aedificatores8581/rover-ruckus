@@ -60,7 +60,7 @@ public class Constants {
     public static final double RADS_TO_DEGS = 57.32484;
 
     public static final double GLYPH_DISPENSE_LEVEL = 0.4;
-    public static final double RED_THRESHOLD = 0.43;
+    public static final double RED_THRESHOLD = 0.4;
     public static final double BLUE_THRESHOLD = 0.3;
 
 
