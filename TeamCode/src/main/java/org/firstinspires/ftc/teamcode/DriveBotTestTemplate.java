@@ -83,6 +83,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     protected DigitalChannel magFront;
     protected DigitalChannel magBack;
+
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
@@ -233,7 +234,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
 
-
     protected void setRightPow(double pow) {
         rightFore.setPower(pow * Constants.RIGHT_FORE_SPEED);
         rightRear.setPower(pow * Constants.RIGHT_REAR_SPEED);
@@ -335,52 +335,75 @@ public abstract class DriveBotTestTemplate extends OpMode {
         setRightPow(-0.125);
     }
 
-    protected double csDistance(NormalizedRGBA ds){
+    protected double csDistance(NormalizedRGBA ds) {
         return (ds.red + ds.blue + ds.green);
     }
 
-    protected boolean detectColor(NormalizedRGBA cs, String col, double val){
+    protected boolean detectColor(NormalizedRGBA cs, String col, double val) {
         cs = color.getNormalizedColors();
         double ratio = 0;
 
-        while(ratio < val) {
-            if(col == "r")
+        while (ratio < val) {
+            if (col == "r")
                 ratio = cs.red / (cs.red + cs.green + cs.blue);
-            if(col == "g")
+            if (col == "g")
                 ratio = cs.blue / (cs.red + cs.green + cs.blue);
-            if(col == "b")
+            if (col == "b")
                 ratio = cs.green / (cs.red + cs.green + cs.blue);
-            if(col == "d")
+            if (col == "d")
                 ratio = csDistance(cs);
         }
         return true;
     }
-    protected  void driveSlow(double Spower, double Epower, int enc){
+
+    private boolean drivingSlow;
+    private double driveSlowAccPower;
+    private int driveSlowEncoder;
+
+    protected void driveSlow(double sPower, double aPower, int enc) {
+        drivingSlow = true;
+        driveSlowAccPower = aPower;
+        driveSlowEncoder = enc;
+
+        //ENCODER RESET
         resetEncoders();
-        //ENCODER RESET
-        reinitMotors(Spower, Spower);
-        while(!checkEncoders(enc)) {
-            setLeftPow(Spower);
-            setRightPow(Spower);
-        }
-        while(!checkEncoders(enc)) {
-            setLeftPow(Epower);
-            setRightPow(Epower);
+        reinitMotors(sPower, sPower);
+    }
+
+    protected void driveSlowCheck() {
+        if (drivingSlow) {
+            if (checkEncoders(driveSlowEncoder * 2 / 3)) {
+                setLeftPow(driveSlowAccPower);
+                setRightPow(driveSlowAccPower);
+            } else if (checkEncoders(driveSlowEncoder))
+                drivingSlow = false;
         }
     }
 
-    protected  void turnSlow(double Slp, double Elp, int enc){
+    private boolean turningSlow;
+    private double turnSlowAccPower;
+    private int turnSlowEncoder;
+
+    // CW is positive, CCW is negative.
+    protected void turnSlow(double sPower, double aPower, int enc) {
+        turningSlow = true;
+        turnSlowAccPower = aPower;
+        turnSlowEncoder = enc;
+
         //ENCODER RESET
-        while(!checkEncoders(enc * 2 / 3)) {
-            setLeftPow(Slp);
-            setRightPow(-Slp);
-        }
-        while(!checkEncoders(enc)) {
-            setLeftPow(Elp);
-            setRightPow(-Elp);
-        }
+        resetEncoders();
+        reinitMotors(sPower, -sPower);
     }
 
+    protected void turnSlowCheck() {
+        if (turningSlow) {
+            if (checkEncoders(turnSlowEncoder * 2 / 3)) {
+                setLeftPow(turnSlowAccPower);
+                setRightPow(-turnSlowAccPower);
+            } else if (checkEncoders(turnSlowEncoder))
+                turningSlow = false;
+        }
+    }
 
     // This is here for not loading the gyro sensor when in teleop.
     protected boolean isAutonomous() {

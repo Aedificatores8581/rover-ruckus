@@ -78,6 +78,12 @@ public class SensorBotBalance extends SensorBotTemplate {
         telemetry.addData("(NAV) Status", imu.getSystemStatus().toShortString());
         telemetry.addData("(NAV) Calib.", imu.getCalibrationStatus());
 
+        telemetry.addData("Theta angle ( acos (z / sqrt(x^2 + y^2 + z^2)) )", imu.getCalibrationStatus());
+        telemetry.addData("Phi angle ( atan (y / x) )", imu.getCalibrationStatus());
+        telemetry.addData("X gravity", gravity.xAccel);
+        telemetry.addData("Y gravity", gravity.yAccel);
+        telemetry.addData("Z gravity", gravity.zAccel);
+
         if (angles.theta <= 160 && angles.theta >= 0) {
             telemetry.addData("Status", "Balancing...");
             if (angles.phi >= 20) {
