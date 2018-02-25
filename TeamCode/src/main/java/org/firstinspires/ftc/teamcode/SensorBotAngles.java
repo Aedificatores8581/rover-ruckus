@@ -18,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
  * @author Pootis Man
  */
 @Autonomous(name = "SensorBot: Angles", group = "feelz")
-@Disabled
 public class SensorBotAngles extends SensorBotTemplate {
 
     Acceleration gravity;
