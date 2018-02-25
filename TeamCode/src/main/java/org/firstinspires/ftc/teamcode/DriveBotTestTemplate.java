@@ -354,21 +354,25 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return (ds.red + ds.blue + ds.green);
     }
 
-    protected boolean detectColor(NormalizedRGBA cs, String col, double val) {
-        cs = color.getNormalizedColors();
-        double ratio = 0;
+    protected enum ColorType {
+        RED, GREEN, BLUE, TOTAL;
+    }
 
-        while (ratio < val) {
-            if (col == "r")
-                ratio = cs.red / (cs.red + cs.green + cs.blue);
-            if (col == "g")
-                ratio = cs.blue / (cs.red + cs.green + cs.blue);
-            if (col == "b")
-                ratio = cs.green / (cs.red + cs.green + cs.blue);
-            if (col == "d")
-                ratio = csDistance(cs);
+    protected double detectColor(NormalizedRGBA cs, ColorType col) {
+        switch (col) {
+            case RED:
+                return cs.red / csDistance(cs);
+            case GREEN:
+                return cs.blue / csDistance(cs);
+            case BLUE:
+                return cs.green / csDistance(cs);
+            case TOTAL:
+                return csDistance(cs);
+            default:
+                // Return one googol. This not a typo but an actual name for a one followed by 100 zeroes.
+                // Don't call it a grave. It's the future you chose.
+                return 1E100;
         }
-        return true;
     }
 
     private boolean drivingSlow;

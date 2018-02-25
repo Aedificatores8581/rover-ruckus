@@ -71,7 +71,8 @@ public class SensorBotBalance extends SensorBotTemplate {
     //
     // The system calls this member repeatedly while the OpMode is running.
     //--------
-    @Override public void loop () {
+    @Override
+    public void loop() {
         gravity = imu.getGravity();
         Spherical3D angles = cartesianToSpherical(new Cartesian3D(gravity.xAccel, gravity.yAccel, gravity.zAccel));
 
@@ -89,32 +90,26 @@ public class SensorBotBalance extends SensorBotTemplate {
             if (angles.phi >= 20) {
                 left.setPower(0.6);
                 right.setPower(0.0);
-            }
-            else if (angles.phi <= -20) {
+            } else if (angles.phi <= -20) {
                 left.setPower(0.0);
                 right.setPower(0.6);
-            }
-            else {
+            } else {
                 left.setPower(0.3);
                 right.setPower(0.3);
             }
-        }
-        else if (angles.theta >= -160) {
+        } else if (angles.theta >= -160) {
             telemetry.addData("Status", "Balancing...");
             if (angles.phi >= 20) {
                 left.setPower(-0.6);
                 right.setPower(0.0);
-            }
-            else if (angles.phi <= -20) {
+            } else if (angles.phi <= -20) {
                 left.setPower(0.0);
                 right.setPower(-0.6);
-            }
-            else {
+            } else {
                 left.setPower(-0.3);
                 right.setPower(-0.3);
             }
-        }
-        else
+        } else
             telemetry.addData("Status", "Balanced! :D");
     }
 
@@ -127,14 +122,6 @@ public class SensorBotBalance extends SensorBotTemplate {
         double theta = Math.acos(cartesian.z / r) * Constants.RADS_TO_DEGS;
         double phi = Math.atan2(cartesian.y, cartesian.x) * Constants.RADS_TO_DEGS;
         return new Spherical3D(r, theta, phi);
-    }
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
 } // PootisBotManual
