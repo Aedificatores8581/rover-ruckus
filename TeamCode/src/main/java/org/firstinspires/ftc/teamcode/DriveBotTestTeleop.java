@@ -29,8 +29,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private boolean dumpServoManual;
 
     public enum SpeedToggle {
-        SLOW(0.6),
-        FAST(0.8);
+        SLOW(0.5),
+        FAST(0.7);
 
         private double mult;
 
