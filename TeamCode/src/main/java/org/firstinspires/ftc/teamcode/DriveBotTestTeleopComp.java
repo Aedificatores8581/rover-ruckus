@@ -19,6 +19,8 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     private double jewelArmServoValue = 0, jewelFlipperServoValue = 0, relicHandServoValue = 0, relicFingersServoValue = 0, glyphDumpServoValue = 0;
     private boolean lifting, valueChange;
     private boolean armExtended;
+    private boolean enableAutoGlyph = false;
+    private boolean dumpServoManual;
     long waiting = 0, waitTime = 500;
 
     public enum SpeedToggle {
@@ -37,6 +39,8 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     }
 
     public enum GlyphLiftState {
+        LEVELING(true),
+        LEVELED(false),
         ASCENDING(true),
         ASCENDED(false),
         DUMPING(true),
@@ -79,6 +83,9 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         jewelFlipper.setPosition(0.5);
         relicHand.setPosition(0.4);
         glyphOutput.setPosition(0.0);
+
+        dumpServoManual = true;
+        enableAutoGlyph = false;
     }
 
     protected void toggleSpeed() {
@@ -144,7 +151,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         relicHand.setPosition(relicHandServoValue);
         relicFingers.setPosition(relicFingersServoValue);
 
-        if (!glyphLiftState.currentlyMoving())
+        if (dumpServoManual)
             glyphOutput.setPosition(glyphDumpServoValue);
     }
 
@@ -158,7 +165,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         //if (isDancing())
         //    dance();
         //else
-            setMotorPowers();
+        setMotorPowers();
         refreshServos();
         /*
         //ADD LATER - if both Left and Right stick buttons are pressed on gamepad2 and the relic arm is moving, the limit switches are activated
@@ -206,16 +213,19 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
 
         if (gamepad2.dpad_up || gamepad2.y) {
             glyphDumpServoValue += 0.05;
+            dumpServoManual = true;
             clampDumpServo();
         }
 
         if (gamepad2.dpad_down || gamepad2.a) {
             glyphDumpServoValue -= 0.05;
+            dumpServoManual = true;
             clampDumpServo();
         }
 
         if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) {
             glyphDumpServoValue = 0.42;
+            dumpServoManual = true;
             clampDumpServo();
         }
 
@@ -343,6 +353,56 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
             glyphLift.setPower(-0.75);
         else
             glyphLift.setPower(0.0);
+
+        if ((gamepad2.x && !prev2.x) || (gamepad2.y && !prev2.y))
+            enableAutoGlyph = !enableAutoGlyph;
+
+        if (enableAutoGlyph)
+            if ((gamepad2.a && !prev2.a) || (gamepad2.b && !prev2.b)) {
+                switch (glyphLiftState) {
+                    case LEVELED:
+                        glyphLift.setPower(0.5);
+                        glyphLiftState = GlyphLiftState.ASCENDING;
+                        break;
+                    case ASCENDED:
+                        glyphLiftState = GlyphLiftState.DUMPING;
+                        break;
+                    case DESCENDED:
+                        glyphLiftState = GlyphLiftState.LEVELING;
+                        break;
+                    case DUMPED:
+                        glyphLift.setPower(-0.5);
+                        glyphOutput.setPosition(0.5);
+                        glyphLiftState = GlyphLiftState.DESCENDING;
+                        break;
+                }
+
+                dumpServoManual = false;
+            }
+
+        switch (glyphLiftState) {
+            case LEVELING:
+                glyphOutput.setPosition(0.42);
+                glyphLiftState = GlyphLiftState.LEVELED;
+                break;
+            case ASCENDING:
+                if (!glyphLiftHigh.getState()) {
+                    glyphLift.setPower(0);
+                    glyphLiftState = GlyphLiftState.ASCENDED;
+                }
+                break;
+            case DUMPING:
+                glyphOutput.setPosition(1);
+                glyphLiftState = GlyphLiftState.DUMPED;
+                break;
+            case DESCENDING:
+                if (!glyphLiftLow.getState()) {
+                    glyphLift.setPower(0);
+                    glyphOutput.setPosition(0.0);
+                    glyphLiftState = GlyphLiftState.DESCENDED;
+                }
+                break;
+        }
 
         /*if (gamepad2.x && !prev2.x)
             switch (glyphLiftState) {

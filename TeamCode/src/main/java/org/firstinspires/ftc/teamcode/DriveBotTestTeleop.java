@@ -215,18 +215,18 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampJewelArmServo();
         }
 
-        if ((gamepad2.dpad_up || gamepad2.y) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+        if ((gamepad2.dpad_up) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue += 0.05;
             clampDumpServo();
         }
 
-        if ((gamepad2.dpad_down || gamepad2.a) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+        if ((gamepad2.dpad_down) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue -= 0.05;
             dumpServoManual = true;
             clampDumpServo();
         }
 
-        if ((gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+        if ((gamepad2.dpad_left || gamepad2.dpad_right) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue = 0.42;
             dumpServoManual = true;
             clampDumpServo();
@@ -353,7 +353,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 glyphLift.setPower(0.0);
         }
 
-        if ((gamepad2.b && !prev2.b) || (gamepad2.left_stick_button && !prev2.left_stick_button) || (gamepad2.right_stick_button && !prev2.right_stick_button)) {
+        if (gamepad2.b && !prev2.b) {
             switch (glyphLiftState) {
                 case LEVELED:
                     glyphLift.setPower(0.5);

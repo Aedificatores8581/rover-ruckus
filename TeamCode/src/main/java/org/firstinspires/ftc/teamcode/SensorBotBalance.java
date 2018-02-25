@@ -38,7 +38,7 @@ public class SensorBotBalance extends SensorBotTemplate {
     public SensorBotBalance() {
         //
         // Initialize base classes.
-        //rna
+        //
         // All via self-construction.
 
         //
