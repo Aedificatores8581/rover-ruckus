@@ -15,7 +15,6 @@ public class Constants {
     public static final double RJVALUE = 0.0;
     public static final double BJVALUE = 0;
 
-
     public static final double SERVO_MIN_2016 = 0.2;
     public static final double SERVO_INIT_2016 = 0.5;
     public static final double SERVO_MAX_2016 = 0.65;
@@ -63,6 +62,4 @@ public class Constants {
     public static final double RED_THRESHOLD = 0.4;
     public static final double BLUE_THRESHOLD = 0.3;
 
-
-    public static final double JEWEL_ARM_DOWN_POSITION = 0.74;
 }

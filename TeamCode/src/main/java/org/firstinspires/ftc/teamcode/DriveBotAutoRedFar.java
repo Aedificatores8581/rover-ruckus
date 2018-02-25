@@ -34,7 +34,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.48, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //210 to move forward to left
     //325 to move to mid
@@ -51,7 +51,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     int timeToDispense, encToMeetCryptobox = 110, encToDispense = 75, encToRamGlyph = 250, encToBackUp = 125, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = -194;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
 
     int encToAlignLeft = 888, encToAlignCenter = 480, encToAlignRight = 100;
@@ -156,11 +155,10 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         if (gamepad1.dpad_left && !prev1.dpad_left)
             adjustSpeed -= 0.005;
 
-        if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger))
-            targetAngle += 1;
+//        if (triggered(gamepad1.right_trigger) && !triggered(prev1.right_trigger))
 
-        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger))
-            targetAngle -= 1;
+//        if (triggered(gamepad1.left_trigger) && !triggered(prev1.left_trigger))
+
 
         if (gamepad1.right_bumper && !prev1.right_bumper)
             encToDispense += 5;
@@ -200,7 +198,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
         telemetry.addData("Driving Speed (DPad up/down)", speed);
         telemetry.addData("Turning Speed (DPad right/left)", adjustSpeed);
-        telemetry.addData("Target Angle Degrees (Right/left triggers)", targetAngle);
         telemetry.addData("Distance to Dispense Glyph (Right/left bumpers)", encToDispense);
         telemetry.addData("Distance to Back Up First (Left stick up/down)", encToBackUp);
         telemetry.addData("Distance to Ram Glyph (Left stick right/left)", encToRamGlyph);
@@ -243,22 +240,22 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
                 checkKey = true;
-                jewelFlipper.setPosition(centerFinger);
-                jewelArm.setPosition(jewelArmDownPosition);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - prevTime >= waitTime)
+                if (timeReached(prevTime, waitTime))
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (System.currentTimeMillis() - totalTime >= 5000)
+                else if (timeReached(totalTime, 5000))
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_LEFT_JEWEL:
@@ -273,7 +270,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.5);
-                jewelArm.setPosition(jewelArmUpPosition);
+                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 state = State.STATE_SCAN_KEY;
                 break;
             case STATE_SCAN_KEY:

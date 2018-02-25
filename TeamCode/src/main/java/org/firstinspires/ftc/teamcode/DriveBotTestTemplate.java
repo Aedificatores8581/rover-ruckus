@@ -31,7 +31,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     MediaPlayer wilhelmScream, danceMusic;
 
-    private static class Constants {
+    protected static class Constants {
         public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
         public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
@@ -44,6 +44,21 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final DcMotor.Direction BELT1_DIR = DcMotor.Direction.FORWARD;
         public static final DcMotor.Direction BELT2_DIR = DcMotor.Direction.REVERSE;
+
+        public static final double RED_THRESHOLD = 0.4;
+        public static final double BLUE_THRESHOLD = 0.3;
+
+        public static final double JEWEL_ARM_UP_POSITION = 0.025;
+
+        public static final double JEWEL_ARM_DOWN_POSITION = 0.74;
+
+        public static final double CENTER_FINGER = 0.48;
+
+        public static final double DISPENSE_POSITION = 1.0;
+
+        public static final double RETRACT_DISPENSE_POSITION = 1.0;
+
+        public static final double LEVEL_DISPENSER = 0.42;
 
         public static final double RAMP_SPEED = 0.0625;
 
@@ -405,6 +420,17 @@ public abstract class DriveBotTestTemplate extends OpMode {
         }
     }
 
+    protected static boolean timeReached(long time, long wait){
+        return System.currentTimeMillis() - time >= wait;
+    }
+
+    protected void hitLeftJewel(){
+        jewelFlipper.setPosition(1.0);
+    }
+
+    protected void hitRightJewel(){
+        jewelFlipper.setPosition(0.0);
+    }
     // This is here for not loading the gyro sensor when in teleop.
     protected boolean isAutonomous() {
         return true;

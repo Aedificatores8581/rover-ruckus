@@ -49,8 +49,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     Gamepad prev1;
 
     long waitTime = 1600L;
-    long prevTime, prevTime2 = 0, totalTime = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.48, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    long prevTime, totalTime = 0;
+    double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1530, encToMoveToRight = 1885;
     double glyphHold = 0.03, glyphDrop = 0.33;
@@ -258,8 +258,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
                 checkKey = true;
-                jewelFlipper.setPosition(centerFinger);
-                jewelArm.setPosition(jewelArmDownPosition);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -268,7 +268,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_SCAN_JEWEL:
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < Constants.RED_THRESHOLD)
@@ -288,7 +288,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.5);
-                jewelArm.setPosition(jewelArmUpPosition);
+                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:

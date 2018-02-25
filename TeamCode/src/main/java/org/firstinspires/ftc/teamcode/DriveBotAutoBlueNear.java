@@ -52,7 +52,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double redColor = 0, blueColor = 0, jewelArmDownPosition = 0.74, jewelArmUpPosition = 0.25, centerFinger = 0.56, speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
     int timeToDispense, encToDispense = 320, encToRamGlyph = 480, encToBackUp = 390, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1500, encToMoveToRight = 1865;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
@@ -256,8 +256,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
                 checkKey = true;
-                jewelFlipper.setPosition(centerFinger);
-                jewelArm.setPosition(jewelArmDownPosition);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
@@ -265,7 +265,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 prevTime = 0;
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.45);
+                glyphOutput.setPosition(Constants.LEVEL_DISPENSER);
 
                 if (redRatio >= Constants.RED_THRESHOLD) {
                     state = State.STATE_HIT_RIGHT_JEWEL;
@@ -283,7 +283,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
-                    jewelArm.setPosition(jewelArmUpPosition);
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                     state = State.STATE_RESET_JEWEL_HITTER;
                 }
                 break;
@@ -293,15 +293,15 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
-                    jewelArm.setPosition(jewelArmUpPosition);
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                     state = State.STATE_RESET_JEWEL_HITTER;
                 }
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.5);
                 prevTime = 0;
-                jewelFlipper.setPosition(centerFinger);
-                jewelArm.setPosition(jewelArmUpPosition);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 //column = CryptoboxColumn.MID;
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
