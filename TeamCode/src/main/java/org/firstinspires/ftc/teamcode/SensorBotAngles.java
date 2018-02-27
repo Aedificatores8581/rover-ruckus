@@ -11,17 +11,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import java.util.Locale;
 
 /**
  * I made this from scratch.
  *
  * @author Pootis Man
  */
-@Autonomous(name = "SensorBot: Balance", group = "feelz")
-public class SensorBotBalance extends SensorBotTemplate {
+@Autonomous(name = "SensorBot: Angles", group = "feelz")
+public class SensorBotAngles extends SensorBotTemplate {
 
     Acceleration gravity;
 
@@ -34,10 +31,10 @@ public class SensorBotBalance extends SensorBotTemplate {
     //
     // The system calls this member when the class is instantiated.
     //--------
-    public SensorBotBalance() {
+    public SensorBotAngles() {
         //
         // Initialize base classes.
-        //
+        //rna
         // All via self-construction.
 
         //
@@ -83,33 +80,6 @@ public class SensorBotBalance extends SensorBotTemplate {
         telemetry.addData("X gravity", gravity.xAccel);
         telemetry.addData("Y gravity", gravity.yAccel);
         telemetry.addData("Z gravity", gravity.zAccel);
-
-        if (angles.theta <= 160 && angles.theta >= 0) {
-            telemetry.addData("Status", "Balancing...");
-            if (angles.phi >= 20) {
-                left.setPower(0.6);
-                right.setPower(0.0);
-            } else if (angles.phi <= -20) {
-                left.setPower(0.0);
-                right.setPower(0.6);
-            } else {
-                left.setPower(0.3);
-                right.setPower(0.3);
-            }
-        } else if (angles.theta >= -160) {
-            telemetry.addData("Status", "Balancing...");
-            if (angles.phi >= 20) {
-                left.setPower(-0.6);
-                right.setPower(0.0);
-            } else if (angles.phi <= -20) {
-                left.setPower(0.0);
-                right.setPower(-0.6);
-            } else {
-                left.setPower(-0.3);
-                right.setPower(-0.3);
-            }
-        } else
-            telemetry.addData("Status", "Balanced! :D");
     }
 
     public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {

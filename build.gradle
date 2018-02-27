@@ -9,8 +9,16 @@ buildscript {
     }
     dependencies {
 
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        // STOP CHANGING THIS TO 3.2.WHATEVER. THIS SHOULD ALWAYS STAY AT 2.3.3.
+        classpath 'com.android.tools.build:gradle:2.3.3'
+        // STOP CHANGING THIS ANYTHING OTHER THAN 2.3.3. THIS SHOULD ALWAYS STAY AT 2.3.3.
+        /**
+         *  _____   _____   _____   _____       _____   _   _   _____   _   _   _____   _   _   _   _____       _   _____   _
+         * |  ___| |_   _| |  _  | |  _  |     |  ___| | | | | |  _  | | \ | | |  ___| | | | \ | | |  ___|     | | |_   _| | |
+         * | |___    | |   | | | | | |_| |     | |     | |_| | | |_| | |  \| | | |  _  | | |  \| | | |  _      | |   | |   | |
+         * |___  |   | |   | | | | |  ___|     | |     |  _  | |  _  | |     | | | | | | | |     | | | | |     | |   | |   |_|
+         *  ___| |   | |   | |_| | | |         | |___  | | | | | | | | | |\  | | |_| | | | | |\  | | |_| |     | |   | |    _
+         * |_____|   |_|   |_____| |_|         |_____| |_| |_| |_| |_| |_| \_| |_____| |_| |_| \_| |_____|     |_|   |_|   |_|
+         */
 
     }
 }
