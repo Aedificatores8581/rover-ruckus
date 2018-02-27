@@ -87,26 +87,26 @@ public class SensorBotBalance extends SensorBotTemplate {
         if (angles.theta <= 160 && angles.theta >= 0) {
             telemetry.addData("Status", "Balancing...");
             if (angles.phi >= 20) {
-                left.setPower(0.6);
-                right.setPower(0.0);
+                left.setPower(0.06);
+                right.setPower(0);
             } else if (angles.phi <= -20) {
-                left.setPower(0.0);
-                right.setPower(0.6);
+                left.setPower(0);
+                right.setPower(0.06);
             } else {
-                left.setPower(0.3);
-                right.setPower(0.3);
+                left.setPower(0.03);
+                right.setPower(0.03);
             }
         } else if (angles.theta >= -160) {
             telemetry.addData("Status", "Balancing...");
             if (angles.phi >= 20) {
-                left.setPower(-0.6);
-                right.setPower(0.0);
+                left.setPower(-0.06);
+                right.setPower(0);
             } else if (angles.phi <= -20) {
-                left.setPower(0.0);
-                right.setPower(-0.6);
+                left.setPower(0);
+                right.setPower(-0.06);
             } else {
-                left.setPower(-0.3);
-                right.setPower(-0.3);
+                left.setPower(-0.03);
+                right.setPower(-0.03);
             }
         } else
             telemetry.addData("Status", "Balanced! :D");
