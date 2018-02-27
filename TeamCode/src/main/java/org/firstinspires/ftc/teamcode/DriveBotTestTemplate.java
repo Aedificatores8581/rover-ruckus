@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -83,7 +84,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     Servo jewelArm, jewelFlipper, relicHand, relicFingers, glyphOutput, rIntake, lIntake;
 
-    NormalizedColorSensor color;
+    NormalizedColorSensor color, colorL;
     NormalizedRGBA colors;
 
     BNO055IMU imu;
@@ -99,6 +100,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected DigitalChannel magFront;
     protected DigitalChannel magBack;
 
+    protected DistanceSensor dSensorR, dSensorL;
+
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
@@ -106,6 +109,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         dancing = false;
 
         //region Configuration section
+        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
+        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
@@ -133,8 +138,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         lIntake = hardwareMap.servo.get("lir");
 
         glyphOutput = hardwareMap.servo.get("gd");
-        color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
+        color = hardwareMap.get(NormalizedColorSensor.class, "jcolorR");
 
+        colorL = hardwareMap.get(NormalizedColorSensor.class, "jcolorL");
 
         magFront = hardwareMap.digitalChannel.get("mf");
         magBack = hardwareMap.digitalChannel.get("mb");

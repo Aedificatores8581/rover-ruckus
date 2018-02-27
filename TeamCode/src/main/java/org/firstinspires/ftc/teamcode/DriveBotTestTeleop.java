@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.Locale;
+
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
  */
@@ -440,13 +444,36 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Glyph Lift Lower Sensor", !glyphLiftLow.getState());
 
         NormalizedRGBA colors = color.getNormalizedColors();
+
+        NormalizedRGBA colorsL = colorL.getNormalizedColors();
+
+        double redRatioL = colorsL.red / (colorsL.red + colorsL.green + colorsL.blue);
+        double blueRatioL = colorsL.blue / (colorsL.red + colorsL.green + colorsL.blue);
+
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         //telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
-        telemetry.addData("Red Ratio", redRatio);
-        telemetry.addData("Blue Ratio", blueRatio);
+        telemetry.addData("Red RatioR", redRatio);
+        telemetry.addData("Blue RatioR", blueRatio);
+
+        telemetry.addData("Red RatioL", redRatioL);
+        telemetry.addData("Blue RatioL", blueRatioL);
 
         telemetry.addData("Speed", speedMult.getMult());
+
+        telemetry.addData("Distance1 of R  ",
+                String.format(Locale.US, "%.02f", dSensorR.getDistance(DistanceUnit.CM)));
+
+        telemetry.addData("distance2 of R  ", 100 * (colors.red + colors.green + colors.blue + colors.alpha));
+
+        telemetry.addData("distance3 of R  ", 100 * (colors.red + colors.green + colors.blue));
+
+        telemetry.addData("Distance1 of L  ",
+                String.format(Locale.US, "%.02f", dSensorL.getDistance(DistanceUnit.CM)));
+
+        telemetry.addData("distance2 of L  ", 100 * (colorsL.red + colorsL.green + colorsL.blue + colorsL.alpha));
+
+        telemetry.addData("distance3 of L  ", 100 * (colorsL.red + colorsL.green + colorsL.blue));
 
         try {
             prev1.copy(gamepad1);
