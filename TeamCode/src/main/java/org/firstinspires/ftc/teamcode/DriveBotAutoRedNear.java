@@ -53,6 +53,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     long prevTime, totalTime = 0;
     double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
+    //355  675 1050
     int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1530, encToMoveToRight = 1885;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;

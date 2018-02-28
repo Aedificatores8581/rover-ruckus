@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -56,7 +55,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double CENTER_FINGER = 0.48;
 
-        public static final double JEWEL_ARM_DETECT_POSITION = 0.4;
+        public static final double JEWEL_ARM_DETECT_POSITION = 0.56;
 
         public static final double DISPENSE_POSITION = 1.0;
 
@@ -443,7 +442,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     protected boolean runWithArmDistance(DistanceSensor dSensor){
 
-        if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)) != "NaN"){
+        if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)).equals("NaN")){
             return true;
         }
         return false;
