@@ -116,8 +116,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         dancing = false;
 
         //region Configuration section
-/*        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
-        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");*/
+        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
+        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
@@ -442,9 +442,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean runWithArmDistance(DistanceSensor dSensor){
-        possibleProx = true;
-        jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
-        if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
+
+        if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)) != "NaN"){
             return true;
         }
         return false;

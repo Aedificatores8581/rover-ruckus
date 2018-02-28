@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -441,6 +442,16 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         if (column != null)
             telemetry.addData("Cryptobox Column", column.toString());
+
+
+
+        telemetry.addData("dR  ", runWithArmDistance(dSensorR));
+
+        telemetry.addData("dL  ", runWithArmDistance(dSensorL));
+
+        telemetry.addData("dL  ", dSensorL.getDistance(DistanceUnit.CM));
+
+        telemetry.addData("dR  ", dSensorR.getDistance(DistanceUnit.CM));
     }
 
     enum State {
