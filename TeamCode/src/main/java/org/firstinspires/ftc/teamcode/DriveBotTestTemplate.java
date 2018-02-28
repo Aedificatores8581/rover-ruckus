@@ -9,8 +9,10 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -70,7 +72,22 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double LEFT_REAR_SPEED = 1.0;
         public static final double RIGHT_FORE_SPEED = 1.0;
         public static final double RIGHT_REAR_SPEED = 1.0;
+
+        public static final double EMPTY_INTAKE_VALUE = (double) Double.NaN;
     }
+
+    public enum IntakeState {
+        RETRIEVING, SPITTING, NULL
+    }
+
+    public enum GlyphInOutIntakeState {
+        JUST_GOT_INSIDE, INSIDE, JUST_GOT_OUTSIDE, OUTSIDE
+    }
+
+    IntakeState intakeState;
+    GlyphInOutIntakeState glyphInOutIntakeState;
+    int glyphCount;
+
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
     DcMotor dispenserLinearSlide;
@@ -78,10 +95,14 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     DcMotor glyphLift;
     DigitalChannel glyphLiftHigh, glyphLiftLow;
+    DistanceSensor intakeSensorRange;
+    NormalizedColorSensor intakeSensorColor;
+    protected double prevIntakeSensorRangeVal;
 
     //power port 5v
 
     DcMotor intakeLeft, intakeRight;
+
 
     CRServo belt1, belt2;
 
@@ -113,6 +134,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
     public void init() {
         this.msStuckDetectInit = 60000;
 
+        intakeState = IntakeState.NULL;
+        glyphInOutIntakeState = GlyphInOutIntakeState.OUTSIDE;
+        glyphCount = 0;
+
         dancing = false;
 
         //region Configuration section
@@ -126,6 +151,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         glyphLift = hardwareMap.dcMotor.get("gl");
         glyphLiftHigh = hardwareMap.digitalChannel.get("tts");
         glyphLiftLow = hardwareMap.digitalChannel.get("bts");
+
+        intakeSensorRange = hardwareMap.get(DistanceSensor.class, "range");
+        intakeSensorColor = hardwareMap.get(NormalizedColorSensor.class, "range");
 
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
@@ -237,9 +265,44 @@ public abstract class DriveBotTestTemplate extends OpMode {
         danceMusic = null;
     }
 
+    GlyphInOutIntakeState checkGlyphIntakeStatus(){
+        GlyphInOutIntakeState returnState;
+
+        if (prevIntakeSensorRangeVal == intakeSensorRange.getDistance(DistanceUnit.CM)){
+            if(intakeSensorRange.getDistance(DistanceUnit.CM) != Double.NaN){
+                returnState = GlyphInOutIntakeState.INSIDE;
+
+            }else {
+                returnState = GlyphInOutIntakeState.OUTSIDE;
+            }
+        }else{
+            if(intakeSensorRange.getDistance(DistanceUnit.CM) != Double.NaN){
+                returnState = GlyphInOutIntakeState.JUST_GOT_INSIDE;
+
+            }else {
+                returnState = GlyphInOutIntakeState.JUST_GOT_OUTSIDE;
+            }
+        }
+        return returnState;
+    }
+
     protected void succ(double power) {
         intakeLeft.setPower(-power);
         intakeRight.setPower(power);
+
+        glyphInOutIntakeState = checkGlyphIntakeStatus();
+
+        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_INSIDE){
+            glyphCount++;
+        }
+
+        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_OUTSIDE){
+            if (intakeState == IntakeState.RETRIEVING){
+                glyphCount++;
+            } else if(intakeState == IntakeState.SPITTING){
+                glyphCount--;
+            }
+        }
     }
 
     protected void belt(double power) {
