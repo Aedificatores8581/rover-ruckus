@@ -460,20 +460,24 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Blue RatioL", blueRatioL);
 
         telemetry.addData("Speed", speedMult.getMult());
-
+/*
         telemetry.addData("Distance1 of R  ",
                 String.format(Locale.US, "%.02f", dSensorR.getDistance(DistanceUnit.CM)));
-
+*/
         telemetry.addData("distance2 of R  ", 100 * (colors.red + colors.green + colors.blue + colors.alpha));
 
         telemetry.addData("distance3 of R  ", 100 * (colors.red + colors.green + colors.blue));
-
+/*
         telemetry.addData("Distance1 of L  ",
                 String.format(Locale.US, "%.02f", dSensorL.getDistance(DistanceUnit.CM)));
-
+*/
         telemetry.addData("distance2 of L  ", 100 * (colorsL.red + colorsL.green + colorsL.blue + colorsL.alpha));
 
         telemetry.addData("distance3 of L  ", 100 * (colorsL.red + colorsL.green + colorsL.blue));
+
+        telemetry.addData("dR  ", runWithArmDistance(dSensorR));
+
+        telemetry.addData("dL  ", runWithArmDistance(dSensorL));
 
         try {
             prev1.copy(gamepad1);

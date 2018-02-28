@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Locale;
@@ -55,6 +56,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double CENTER_FINGER = 0.48;
 
+        public static final double JEWEL_ARM_DETECT_POSITION = 0.4;
+
         public static final double DISPENSE_POSITION = 1.0;
 
         public static final double RETRACT_DISPENSE_POSITION = 1.0;
@@ -87,6 +90,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
     NormalizedColorSensor color, colorL;
     NormalizedRGBA colors;
 
+    DistanceSensor dR;
+    DistanceSensor dL;
+
     BNO055IMU imu;
     AnalogInput ampSensor;
 
@@ -100,8 +106,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected DigitalChannel magFront;
     protected DigitalChannel magBack;
 
-    protected DistanceSensor dSensorR, dSensorL;
+    public boolean prox, possibleProx;
 
+    protected DistanceSensor dSensorR, dSensorL;
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
@@ -109,8 +116,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         dancing = false;
 
         //region Configuration section
-        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
-        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");
+/*        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
+        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");*/
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
@@ -433,6 +440,16 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected static boolean timeReached(long time, long wait){
         return System.currentTimeMillis() - time >= wait;
     }
+
+    protected boolean runWithArmDistance(DistanceSensor dSensor){
+        possibleProx = true;
+        jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+        if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
+            return true;
+        }
+        return false;
+    }
+
 
     protected void hitLeftJewel(){
         jewelFlipper.setPosition(1.0);

@@ -288,15 +288,22 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.5);
-                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+
+
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
+
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                if(runWithArmDistance(dR) || runWithArmDistance(dL)) {
+                    resetEncoders();
+                    reinitMotors(0.1, 0.1);
+                    //state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
+
                 if (checkEncoders(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;

@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInputController;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -16,9 +22,17 @@ import org.firstinspires.ftc.robotcore.external.Const;
 public abstract class Sensor2BotTemplate extends OpMode {
     //protected DigitalChannel touch;
     protected PingSensor ping;
+    protected AnalogInput pingAn;
+
+    protected AnalogInputController pingOn;
+
     protected SharpIRSensor ir;
     protected DcMotor lm, rm;
     protected DigitalChannel magFront, magBack;
+    protected NormalizedColorSensor color;
+    protected NormalizedRGBA colors;
+    protected DistanceSensor dSensor;
+
     //protected OpticalDistanceSensor ods;
 
 
@@ -32,7 +46,16 @@ public abstract class Sensor2BotTemplate extends OpMode {
     public void init() {
         //touch = hardwareMap.digitalChannel.get("touch");
 
-        ping = new PingSensor(hardwareMap.digitalChannel.get("ping"));
+        pingAn = hardwareMap.get(AnalogInput.class, "ping");
+
+        //pingAn = new AnalogInput()
+
+        color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
+
+        dSensor = hardwareMap.get(DistanceSensor.class, "ds");
+
+        //ping = new PingSensor(hardwareMap.digitalChannel.get("ping"));
+        //pingAn = hardwareMap.analogInput.get("ping");
         ir = new SharpIRSensor(hardwareMap.analogInput.get("ir"));
         magFront = hardwareMap.digitalChannel.get("mf");
         magBack = hardwareMap.digitalChannel.get("mb");
