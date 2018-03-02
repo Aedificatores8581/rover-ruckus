@@ -457,6 +457,15 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
 
         telemetry.addData("Speed", speedMult.getMult());
 
+
+        telemetry.addData("dR  ", runWithArmDistance(dSensorR));
+
+        telemetry.addData("dL  ", runWithArmDistance(dSensorL));
+
+        telemetry.addData("dL  ", dSensorL.getDistance(DistanceUnit.CM));
+
+        telemetry.addData("dR  ", dSensorR.getDistance(DistanceUnit.CM));
+
         try {
             prev1.copy(gamepad1);
             prev2.copy(gamepad2);

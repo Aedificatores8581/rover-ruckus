@@ -48,6 +48,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     boolean initServos;
 
+    boolean wallDetected = false;
+
     Gamepad prev1;
 
     long waitTime = 1600L;
@@ -55,7 +57,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     double speed = 0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //355  675 1050
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = /*1130*/355, encToMoveToCenter = /*1530*/675, encToMoveToRight = /*1885*/1050;
+    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = /*1130*/355, encToMoveToCenter = /*1530*/675, encToMoveToRight = /*1885*/1000;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -276,16 +278,20 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (System.currentTimeMillis() - totalTime >= 5000)
+                else if (System.currentTimeMillis() - totalTime >= 6000)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(1.0);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
@@ -293,15 +299,23 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 relicHand.setPosition(0.5);
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                setLeftPow(speed);
+                setRightPow(speed);
                 state = state.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                setLeftPow(speed);
-                setRightPow(speed);
-                if(runWithArmDistance(dSensorR) || runWithArmDistance(dSensorL)) {
-                    resetEncoders();
-                    reinitMotors(0.1, 0.1);
-                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                if(!(runWithArmDistance(dSensorL)) || wallDetected == true) {
+                    wallDetected = true;
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                    setLeftPow(0);
+                    setRightPow(0);
+                    if (prevTime == 0)
+                        prevTime = System.currentTimeMillis();
+                    if (System.currentTimeMillis() - prevTime >= waitTime) {
+                        resetEncoders();
+                        reinitMotors(0.1, 0.1);
+                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    }
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -412,6 +426,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
                 keyChecked = true;
         }
+
+
+        telemetry.addData("DETECTED WALL", wallDetected);
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
