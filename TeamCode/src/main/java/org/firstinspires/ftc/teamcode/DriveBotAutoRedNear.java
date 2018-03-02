@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -51,7 +52,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     long waitTime = 1600L;
     long prevTime, totalTime = 0;
-    double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double speed = 0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //355  675 1050
     int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = /*1130*/355, encToMoveToCenter = /*1530*/675, encToMoveToRight = /*1885*/1050;
@@ -290,14 +291,14 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.5);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
-
-
+                state = state.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 setLeftPow(speed);
                 setRightPow(speed);
-                if(runWithArmDistance(dR) || runWithArmDistance(dL)) {
+                if(runWithArmDistance(dSensorR) || runWithArmDistance(dSensorL)) {
                     resetEncoders();
                     reinitMotors(0.1, 0.1);
                     state = state.STATE_CRYPTOBOX_RIGHT_SLOT;

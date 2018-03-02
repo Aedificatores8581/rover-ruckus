@@ -89,8 +89,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     NormalizedColorSensor color, colorL;
     NormalizedRGBA colors;
 
-    DistanceSensor dR;
-    DistanceSensor dL;
 
     BNO055IMU imu;
     AnalogInput ampSensor;
@@ -142,6 +140,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rIntake = hardwareMap.servo.get("rir");
 
         lIntake = hardwareMap.servo.get("lir");
+
+
 
         glyphOutput = hardwareMap.servo.get("gd");
         color = hardwareMap.get(NormalizedColorSensor.class, "jcolorR");
