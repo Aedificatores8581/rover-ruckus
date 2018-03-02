@@ -141,8 +141,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         dancing = false;
 
         //region Configuration section
-/*        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
-        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");*/
+        dSensorR = hardwareMap.get(DistanceSensor.class, "dsR");
+        dSensorL = hardwareMap.get(DistanceSensor.class, "dsL");
         leftFore = hardwareMap.dcMotor.get("lfm"); // port 2
         leftRear = hardwareMap.dcMotor.get("lrm"); // port 3
         rightFore = hardwareMap.dcMotor.get("rfm"); // port 0
@@ -268,15 +268,16 @@ public abstract class DriveBotTestTemplate extends OpMode {
     GlyphInOutIntakeState checkGlyphIntakeStatus(){
         GlyphInOutIntakeState returnState;
 
-        if (prevIntakeSensorRangeVal == intakeSensorRange.getDistance(DistanceUnit.CM)){
-            if(intakeSensorRange.getDistance(DistanceUnit.CM) != Double.NaN){
+        if (prevIntakeSensorRangeVal == intakeSensorRange.getDistance(DistanceUnit.CM)
+                || (Double.isNaN(prevIntakeSensorRangeVal) && Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
+            if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
                 returnState = GlyphInOutIntakeState.INSIDE;
 
             }else {
                 returnState = GlyphInOutIntakeState.OUTSIDE;
             }
         }else{
-            if(intakeSensorRange.getDistance(DistanceUnit.CM) != Double.NaN){
+            if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
                 returnState = GlyphInOutIntakeState.JUST_GOT_INSIDE;
 
             }else {
@@ -286,23 +287,36 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return returnState;
     }
 
+    // Returns the change in the number of glyphs in the intake system.
+    int checkGlyphCount(IntakeState paramIntakeState){
+        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_OUTSIDE){
+            if (intakeState == IntakeState.RETRIEVING){
+                return 1;
+            } else if(intakeState == IntakeState.SPITTING){
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    // Returns the current intake state based on the power being provided to the intake motors
+    IntakeState checkIntakeState(double paramPower, IntakeState paramIntakeState){
+        if (paramPower > 0){
+            return IntakeState.RETRIEVING;
+        }else if (paramPower < 0){
+            return IntakeState.SPITTING;
+        }else{
+            return paramIntakeState;
+        }
+    }
+
     protected void succ(double power) {
         intakeLeft.setPower(-power);
         intakeRight.setPower(power);
 
         glyphInOutIntakeState = checkGlyphIntakeStatus();
-
-        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_INSIDE){
-            glyphCount++;
-        }
-
-        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_OUTSIDE){
-            if (intakeState == IntakeState.RETRIEVING){
-                glyphCount++;
-            } else if(intakeState == IntakeState.SPITTING){
-                glyphCount--;
-            }
-        }
+        intakeState = checkIntakeState(power, intakeState);
+        glyphCount += checkGlyphCount(intakeState);
     }
 
     protected void belt(double power) {
@@ -505,8 +519,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean runWithArmDistance(DistanceSensor dSensor){
-        possibleProx = true;
-        jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
         if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
             return true;
         }
