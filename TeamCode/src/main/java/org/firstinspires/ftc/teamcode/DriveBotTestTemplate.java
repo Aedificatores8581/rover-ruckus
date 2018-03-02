@@ -3,13 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -33,13 +36,13 @@ public abstract class DriveBotTestTemplate extends OpMode {
     MediaPlayer wilhelmScream, danceMusic;
 
     protected static class Constants {
-        public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
+        protected static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
+        protected static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.FORWARD;
 
-        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
 
         public static final DcMotor.Direction GLYPH_LIFT_DIR = DcMotor.Direction.FORWARD;
 
@@ -69,7 +72,22 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double LEFT_REAR_SPEED = 1.0;
         public static final double RIGHT_FORE_SPEED = 1.0;
         public static final double RIGHT_REAR_SPEED = 1.0;
+
+        public static final double EMPTY_INTAKE_VALUE = (double) Double.NaN;
     }
+
+    public enum IntakeState {
+        RETRIEVING, SPITTING, NULL
+    }
+
+    public enum GlyphInOutIntakeState {
+        JUST_GOT_INSIDE, INSIDE, JUST_GOT_OUTSIDE, OUTSIDE
+    }
+
+    IntakeState intakeState;
+    GlyphInOutIntakeState glyphInOutIntakeState;
+    int glyphCount;
+
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
     DcMotor dispenserLinearSlide;
@@ -77,10 +95,14 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     DcMotor glyphLift;
     DigitalChannel glyphLiftHigh, glyphLiftLow;
+    DistanceSensor intakeSensorRange;
+    NormalizedColorSensor intakeSensorColor;
+    protected double prevIntakeSensorRangeVal;
 
     //power port 5v
 
     DcMotor intakeLeft, intakeRight;
+
 
     CRServo belt1, belt2;
 
@@ -110,6 +132,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
     public void init() {
         this.msStuckDetectInit = 60000;
 
+        intakeState = IntakeState.NULL;
+        glyphInOutIntakeState = GlyphInOutIntakeState.OUTSIDE;
+        glyphCount = 0;
+
         dancing = false;
 
         //region Configuration section
@@ -123,6 +149,9 @@ public abstract class DriveBotTestTemplate extends OpMode {
         glyphLift = hardwareMap.dcMotor.get("gl");
         glyphLiftHigh = hardwareMap.digitalChannel.get("tts");
         glyphLiftLow = hardwareMap.digitalChannel.get("bts");
+
+        intakeSensorRange = hardwareMap.get(DistanceSensor.class, "range");
+        intakeSensorColor = hardwareMap.get(NormalizedColorSensor.class, "range");
 
         intakeLeft = hardwareMap.dcMotor.get("iml");
         intakeRight = hardwareMap.dcMotor.get("imr");
@@ -236,9 +265,58 @@ public abstract class DriveBotTestTemplate extends OpMode {
         danceMusic = null;
     }
 
+    GlyphInOutIntakeState checkGlyphIntakeStatus(){
+        GlyphInOutIntakeState returnState;
+
+        if (prevIntakeSensorRangeVal == intakeSensorRange.getDistance(DistanceUnit.CM)
+                || (Double.isNaN(prevIntakeSensorRangeVal) && Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
+            if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
+                returnState = GlyphInOutIntakeState.INSIDE;
+
+            }else {
+                returnState = GlyphInOutIntakeState.OUTSIDE;
+            }
+        }else{
+            if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
+                returnState = GlyphInOutIntakeState.JUST_GOT_INSIDE;
+
+            }else {
+                returnState = GlyphInOutIntakeState.JUST_GOT_OUTSIDE;
+            }
+        }
+        return returnState;
+    }
+
+    // Returns the change in the number of glyphs in the intake system.
+    int checkGlyphCount(IntakeState paramIntakeState){
+        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_OUTSIDE){
+            if (intakeState == IntakeState.RETRIEVING){
+                return 1;
+            } else if(intakeState == IntakeState.SPITTING){
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    // Returns the current intake state based on the power being provided to the intake motors
+    IntakeState checkIntakeState(double paramPower, IntakeState paramIntakeState){
+        if (paramPower > 0){
+            return IntakeState.RETRIEVING;
+        }else if (paramPower < 0){
+            return IntakeState.SPITTING;
+        }else{
+            return paramIntakeState;
+        }
+    }
+
     protected void succ(double power) {
         intakeLeft.setPower(-power);
         intakeRight.setPower(power);
+
+        glyphInOutIntakeState = checkGlyphIntakeStatus();
+        intakeState = checkIntakeState(power, intakeState);
+        glyphCount += checkGlyphCount(intakeState);
     }
 
     protected void belt(double power) {
@@ -443,8 +521,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected boolean runWithArmDistance(DistanceSensor dSensor){
 
         if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)).equals("NaN")){
-            return true;
+            if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
+                return true;
+            }
         }
+
         return false;
     }
 

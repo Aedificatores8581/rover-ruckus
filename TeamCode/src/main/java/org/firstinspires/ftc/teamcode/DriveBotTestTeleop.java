@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import java.util.Locale;
-
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
  */
@@ -33,8 +31,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private boolean dumpServoManual;
 
     public enum SpeedToggle {
-        SLOW(0.5),
-        FAST(0.7);
+        SLOW(0.6),
+        FAST(0.8);
 
         private double mult;
 
@@ -219,18 +217,18 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
             clampJewelArmServo();
         }
 
-        if ((gamepad2.dpad_up) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+        if ((gamepad2.dpad_up || gamepad2.y) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue += 0.05;
             clampDumpServo();
         }
 
-        if ((gamepad2.dpad_down) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+        if ((gamepad2.dpad_down || gamepad2.a) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue -= 0.05;
             dumpServoManual = true;
             clampDumpServo();
         }
 
-        if ((gamepad2.dpad_left || gamepad2.dpad_right) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+        if ((gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
             glyphDumpServoValue = 0.42;
             dumpServoManual = true;
             clampDumpServo();
@@ -357,7 +355,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 glyphLift.setPower(0.0);
         }
 
-        if (gamepad2.b && !prev2.b) {
+        if ((gamepad2.b && !prev2.b) || (gamepad2.left_stick_button && !prev2.left_stick_button) || (gamepad2.right_stick_button && !prev2.right_stick_button)) {
             switch (glyphLiftState) {
                 case LEVELED:
                     glyphLift.setPower(0.5);
@@ -403,6 +401,13 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 break;
         }
 
+
+        telemetry.addData("Glyph Count", glyphCount);
+        telemetry.addData("Glyph Intake State", glyphInOutIntakeState);
+        telemetry.addData("Intake Running State", intakeState);
+        telemetry.addData("Glyph Intake Range Sensor", intakeSensorRange.getDistance(DistanceUnit.CM));
+
+
         telemetry.addData("Arm Extended", armExtended);
         telemetry.addData("Amp Sensor (returning volts)", ampSensor.getVoltage());
         if (ampSensor.getVoltage() > MAX_AMP_GLYPH_OUTPUT) {
@@ -444,40 +449,13 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("Glyph Lift Lower Sensor", !glyphLiftLow.getState());
 
         NormalizedRGBA colors = color.getNormalizedColors();
-
-        NormalizedRGBA colorsL = colorL.getNormalizedColors();
-
-        double redRatioL = colorsL.red / (colorsL.red + colorsL.green + colorsL.blue);
-        double blueRatioL = colorsL.blue / (colorsL.red + colorsL.green + colorsL.blue);
-
         double redRatio = colors.red / (colors.red + colors.green + colors.blue);
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         //telemetry.addData("Color Sensor RGB", "[" + colors.red + "," + colors.green + "," + colors.blue + "]");
-        telemetry.addData("Red RatioR", redRatio);
-        telemetry.addData("Blue RatioR", blueRatio);
-
-        telemetry.addData("Red RatioL", redRatioL);
-        telemetry.addData("Blue RatioL", blueRatioL);
+        telemetry.addData("Red Ratio", redRatio);
+        telemetry.addData("Blue Ratio", blueRatio);
 
         telemetry.addData("Speed", speedMult.getMult());
-/*
-        telemetry.addData("Distance1 of R  ",
-                String.format(Locale.US, "%.02f", dSensorR.getDistance(DistanceUnit.CM)));
-*/
-        telemetry.addData("distance2 of R  ", 100 * (colors.red + colors.green + colors.blue + colors.alpha));
-
-        telemetry.addData("distance3 of R  ", 100 * (colors.red + colors.green + colors.blue));
-/*
-        telemetry.addData("Distance1 of L  ",
-                String.format(Locale.US, "%.02f", dSensorL.getDistance(DistanceUnit.CM)));
-*/
-        telemetry.addData("distance2 of L  ", 100 * (colorsL.red + colorsL.green + colorsL.blue + colorsL.alpha));
-
-        telemetry.addData("distance3 of L  ", 100 * (colorsL.red + colorsL.green + colorsL.blue));
-
-        telemetry.addData("dR  ", runWithArmDistance(dSensorR));
-
-        telemetry.addData("dL  ", runWithArmDistance(dSensorL));
 
         try {
             prev1.copy(gamepad1);
@@ -485,5 +463,6 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         } catch (RobotCoreException e) {
             telemetry.addData("Exception", e);
         }
+        prevIntakeSensorRangeVal = intakeSensorRange.getDistance(DistanceUnit.CM);
     }
 }
