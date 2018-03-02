@@ -81,11 +81,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     public enum GlyphInOutIntakeState {
-        JUST_GOT_INSIDE, INSIDE, JUST_GOT_OUTSIDE, OUTSIDE
+        INSIDE, OUTSIDE
     }
 
     IntakeState intakeState;
     GlyphInOutIntakeState glyphInOutIntakeState;
+    GlyphInOutIntakeState prevGlyphInOutIntakeState;
     int glyphCount;
 
 
@@ -268,33 +269,25 @@ public abstract class DriveBotTestTemplate extends OpMode {
     GlyphInOutIntakeState checkGlyphIntakeStatus(){
         GlyphInOutIntakeState returnState;
 
-        if (prevIntakeSensorRangeVal == intakeSensorRange.getDistance(DistanceUnit.CM)
-                || (Double.isNaN(prevIntakeSensorRangeVal) && Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
-            if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
-                returnState = GlyphInOutIntakeState.INSIDE;
+        if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
+            returnState = GlyphInOutIntakeState.INSIDE;
 
-            }else {
-                returnState = GlyphInOutIntakeState.OUTSIDE;
-            }
-        }else{
-            if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
-                returnState = GlyphInOutIntakeState.JUST_GOT_INSIDE;
-
-            }else {
-                returnState = GlyphInOutIntakeState.JUST_GOT_OUTSIDE;
-            }
+        }else {
+            returnState = GlyphInOutIntakeState.OUTSIDE;
         }
         return returnState;
     }
 
     // Returns the change in the number of glyphs in the intake system.
-    int checkGlyphCount(IntakeState paramIntakeState){
-        if(glyphInOutIntakeState == GlyphInOutIntakeState.JUST_GOT_OUTSIDE){
-            if (intakeState == IntakeState.RETRIEVING){
+    int checkGlyphCount(IntakeState paramIntakeState, GlyphInOutIntakeState paramGlyphInOutIntakeState, GlyphInOutIntakeState paramPrevGlyphInOutIntakeState){
+
+        if(!paramGlyphInOutIntakeState.equals(paramPrevGlyphInOutIntakeState)){ //
+            if((paramGlyphInOutIntakeState == GlyphInOutIntakeState.INSIDE) && paramIntakeState == IntakeState.RETRIEVING){
                 return 1;
-            } else if(intakeState == IntakeState.SPITTING){
+            } else if((paramGlyphInOutIntakeState == GlyphInOutIntakeState.OUTSIDE) && (paramIntakeState == IntakeState.SPITTING)) {
                 return -1;
             }
+
         }
         return 0;
     }
@@ -316,7 +309,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         glyphInOutIntakeState = checkGlyphIntakeStatus();
         intakeState = checkIntakeState(power, intakeState);
-        glyphCount += checkGlyphCount(intakeState);
+        glyphCount += checkGlyphCount(intakeState, glyphInOutIntakeState, prevGlyphInOutIntakeState);
     }
 
     protected void belt(double power) {

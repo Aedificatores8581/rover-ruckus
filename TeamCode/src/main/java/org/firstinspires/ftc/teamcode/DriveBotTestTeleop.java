@@ -472,6 +472,8 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         } catch (RobotCoreException e) {
             telemetry.addData("Exception", e);
         }
+
         prevIntakeSensorRangeVal = intakeSensorRange.getDistance(DistanceUnit.CM);
+        prevGlyphInOutIntakeState = glyphInOutIntakeState;
     }
 }
