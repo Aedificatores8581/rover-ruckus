@@ -54,7 +54,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //355  675 1050
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1530, encToMoveToRight = 1885;
+    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = /*1130*/355, encToMoveToCenter = /*1530*/675, encToMoveToRight = /*1885*/1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -295,13 +295,12 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-
                 setLeftPow(speed);
                 setRightPow(speed);
                 if(runWithArmDistance(dR) || runWithArmDistance(dL)) {
                     resetEncoders();
                     reinitMotors(0.1, 0.1);
-                    //state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -472,6 +471,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
         STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
         STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
+        STATE_DRIVE_TO_PILE,
+        STATE_INTAKE,
+        STATE_DRIVE_BACK,
         STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
         // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }
