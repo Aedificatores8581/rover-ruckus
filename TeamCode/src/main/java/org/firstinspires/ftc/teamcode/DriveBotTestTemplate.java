@@ -36,13 +36,13 @@ public abstract class DriveBotTestTemplate extends OpMode {
     MediaPlayer wilhelmScream, danceMusic;
 
     protected static class Constants {
-        public static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
-        public static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction LEFT_FORE_DIR = DcMotor.Direction.REVERSE;
+        protected static final DcMotor.Direction LEFT_REAR_DIR = DcMotor.Direction.REVERSE;
+        protected static final DcMotor.Direction RIGHT_FORE_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction RIGHT_REAR_DIR = DcMotor.Direction.FORWARD;
 
-        public static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
-        public static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction INTAKE_LEFT_DIR = DcMotor.Direction.FORWARD;
+        protected static final DcMotor.Direction INTAKE_RIGHT_DIR = DcMotor.Direction.FORWARD;
 
         public static final DcMotor.Direction GLYPH_LIFT_DIR = DcMotor.Direction.FORWARD;
 
@@ -521,9 +521,11 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected boolean runWithArmDistance(DistanceSensor dSensor){
 
         if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)).equals("NaN")){
-        if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
-            return true;
+            if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
+                return true;
+            }
         }
+
         return false;
     }
 
