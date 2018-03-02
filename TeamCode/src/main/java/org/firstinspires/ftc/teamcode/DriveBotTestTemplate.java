@@ -58,7 +58,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double CENTER_FINGER = 0.48;
 
-        public static final double JEWEL_ARM_DETECT_POSITION = 0.4;
+        public static final double JEWEL_ARM_DETECT_POSITION = 0.56;
 
         public static final double DISPENSE_POSITION = 1.0;
 
@@ -519,6 +519,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean runWithArmDistance(DistanceSensor dSensor){
+
+        if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)).equals("NaN")){
         if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
             return true;
         }
