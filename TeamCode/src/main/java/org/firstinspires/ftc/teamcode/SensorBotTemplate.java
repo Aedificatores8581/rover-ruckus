@@ -23,22 +23,22 @@ public abstract class SensorBotTemplate extends OpMode {
     DcMotor left, right;
 
     GyroSensor gyro;
-    ColorSensor cs;
+    //ColorSensor cs;
     BNO055IMU imu;
 
     protected void setLeftPow(double pow) {
-        left.setPower(pow * Constants.LEFT_SPEED);
+        left.setPower(pow);
     }
 
     protected void setRightPow(double pow) {
-        right.setPower(pow * Constants.RIGHT_SPEED);
+        right.setPower(pow);
     }
 
     public void init() {
         left = hardwareMap.dcMotor.get("lm");
         right = hardwareMap.dcMotor.get("rm");
 
-        cs = hardwareMap.colorSensor.get("cs");
+        //cs = hardwareMap.colorSensor.get("cs");
         //gyro = hardwareMap.gyroSensor.get()
 
         left.setDirection(DcMotorSimple.Direction.REVERSE);

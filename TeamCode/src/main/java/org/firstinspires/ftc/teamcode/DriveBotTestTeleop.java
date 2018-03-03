@@ -218,6 +218,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         }
 
         if ((gamepad2.dpad_up || gamepad2.y) && (ampSensor.getVoltage() < MAX_AMP_GLYPH_OUTPUT)) {
+            glyphCount = 0;
             glyphDumpServoValue += 0.05;
             clampDumpServo();
         }
