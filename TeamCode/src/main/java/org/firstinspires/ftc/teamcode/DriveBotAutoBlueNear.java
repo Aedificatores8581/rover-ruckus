@@ -46,14 +46,14 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
 
-    boolean initServos;
+    boolean initServos, wallDetected = false;
 
     Gamepad prev1;
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
-    int timeToDispense, encToDispense = 320, encToRamGlyph = 480, encToBackUp = 390, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1500, encToMoveToRight = 1865;
+    double speed = -0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    int timeToDispense, encToDispense = 320, encToRamGlyph = 370, encToBackUp = 390, encToBackUpAgain = 300, encToMoveToLeft = 290/*1130*/, encToMoveToCenter = 655/*1500*/, encToMoveToRight = /*1865*/ 965;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -66,7 +66,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
         super.start();
-        relicTrackables.activate();
         if (ramAngle > 1.0) {
             ramRightMod = 1.0;
             ramLeftMod = 1.0 / ramAngle;
@@ -117,7 +116,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
-
+        relicTrackables.activate();
         rIntake.setPosition(0.3);
 
         lIntake.setPosition(0.7);
@@ -137,6 +136,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         prev1 = new Gamepad();
 
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        column = CryptoboxColumn.MID;
         switch (vuMark) { // Reversing the columns is intentional.
             case LEFT:
                 column = CryptoboxColumn.RIGHT;
@@ -301,14 +301,19 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 relicHand.setPosition(0.5);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
-                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                //column = CryptoboxColumn.MID;
+                jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                setLeftPow(speed);
+                setRightPow(speed);
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                setLeftPow(-speed);
-                setRightPow(-speed);
-                state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                if(!(runWithArmDistance(dSensorR)) || wallDetected == true) {
+                    wallDetected = true;
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                        resetEncoders();
+                        reinitMotors(-0.1, -0.1);
+                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
                 if (checkEncoders(encToMoveToLeft)) {
@@ -344,28 +349,28 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_REINIT_MOTORS:
-                reinitMotors(-speed, -speed);
+                reinitMotors(speed, speed);
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
                 if (checkEncoders(encToDispense)) {
                     dispenseGlyph = true;
                     resetEncoders();
-                    reinitMotors(speed, speed);
+                    reinitMotors(-speed, -speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
                 if (checkEncoders(encToBackUp)) {
                     resetEncoders();
-                    reinitMotors(-speed * ramLeftMod, -speed * ramRightMod);
+                    reinitMotors(speed * ramLeftMod, speed * ramRightMod);
                     state = State.STATE_RAM_GLYPH_INTO_BOX;
                 }
                 break;
             case STATE_RAM_GLYPH_INTO_BOX:
                 if (checkEncoders(encToRamGlyph)) {
                     resetEncoders();
-                    reinitMotors(speed * ramLeftMod, speed * ramRightMod);
+                    reinitMotors(-speed * ramLeftMod, -speed * ramRightMod);
                     state = State.STATE_BACK_AWAY_FROM_RAMMED_GLYPH;
                 }
                 break;
@@ -417,6 +422,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
                 keyChecked = true;
         }
+
+
+        telemetry.addData("DETECTED WALL", wallDetected);
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
