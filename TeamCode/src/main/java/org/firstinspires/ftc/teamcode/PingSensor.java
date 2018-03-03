@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Conjured into existence by The Saminator on 12-09-2017.
  */
 public class PingSensor{
+//    private DigitalChannel channel;
     private DigitalChannel channel;
+
     private volatile long lastReading;
     private volatile long timePulsed;
 

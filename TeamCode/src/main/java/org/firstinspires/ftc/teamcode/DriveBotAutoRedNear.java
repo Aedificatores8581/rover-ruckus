@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Const;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -46,13 +48,16 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     boolean initServos;
 
+    boolean wallDetected = false;
+
     Gamepad prev1;
 
     long waitTime = 1600L;
     long prevTime, totalTime = 0;
-    double speed = 0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double speed = 0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = 1130, encToMoveToCenter = 1530, encToMoveToRight = 1885;
+    //355  675 1050
+    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = /*1130*/355, encToMoveToCenter = /*1530*/675, encToMoveToRight = /*1885*/1000;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -273,30 +278,48 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
-                else if (System.currentTimeMillis() - totalTime >= 5000)
+                else if (System.currentTimeMillis() - totalTime >= 6000)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_LEFT_JEWEL:
                 jewelFlipper.setPosition(0.05);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 jewelFlipper.setPosition(1.0);
+                if (prevTime == 0)
+                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.5);
-                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                state = State.STATE_DRIVE_TO_CRYPTOBOX;
-                break;
-            case STATE_DRIVE_TO_CRYPTOBOX:
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
                 setLeftPow(speed);
                 setRightPow(speed);
-                state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                state = state.STATE_DRIVE_TO_CRYPTOBOX;
+                break;
+            case STATE_DRIVE_TO_CRYPTOBOX:
+                if(!(runWithArmDistance(dSensorL)) || wallDetected == true) {
+                    wallDetected = true;
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                    setLeftPow(0);
+                    setRightPow(0);
+                    if (prevTime == 0)
+                        prevTime = System.currentTimeMillis();
+                    if (System.currentTimeMillis() - prevTime >= waitTime) {
+                        resetEncoders();
+                        reinitMotors(0.1, 0.1);
+                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    }
+                }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
+
                 if (checkEncoders(encToMoveToLeft)) {
                     if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
@@ -404,6 +427,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 keyChecked = true;
         }
 
+
+        telemetry.addData("DETECTED WALL", wallDetected);
+
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
         telemetry.addData("Blue Ratio", blueRatio);
@@ -434,6 +460,16 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         if (column != null)
             telemetry.addData("Cryptobox Column", column.toString());
+
+
+
+        telemetry.addData("dR  ", runWithArmDistance(dSensorR));
+
+        telemetry.addData("dL  ", runWithArmDistance(dSensorL));
+
+        telemetry.addData("dL  ", dSensorL.getDistance(DistanceUnit.CM));
+
+        telemetry.addData("dR  ", dSensorR.getDistance(DistanceUnit.CM));
     }
 
     enum State {
@@ -453,6 +489,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
         STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
         STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
+        STATE_DRIVE_TO_PILE,
+        STATE_INTAKE,
+        STATE_DRIVE_BACK,
         STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
         // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }
