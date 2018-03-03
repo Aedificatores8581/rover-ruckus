@@ -23,7 +23,39 @@ import java.util.Locale;
 @Autonomous(name = "SensorBot: Balance", group = "feelz")
 public class SensorBotBalance extends SensorBotTemplate {
 
+    static class Angles {
+        public static final double PHI_BASELINE = -130;
+        public static final double PHI_TOLERANCE = 10;
+        public static final double THETA_BASELINE = 0;
+        public static final double THETA_TOLERANCE = 7.5;
+
+        public static boolean withinPhiLimits(double phi) {
+            return Utilities.withinTolerance(phi, Angles.PHI_BASELINE, Angles.PHI_TOLERANCE);
+        }
+
+        public static boolean withinThetaLimits(double theta) {
+            return Utilities.withinTolerance(theta, Angles.THETA_BASELINE, Angles.THETA_TOLERANCE);
+        }
+    }
+
     Acceleration gravity;
+    BalancingState balancingState;
+    Spherical3D angles;
+
+    enum BalancingState {
+        BALANCING_PHI,
+        BALANCING_THETA,
+        BALANCING_SUCCESS
+    }
+
+    private void testAngles() {
+        if (!Angles.withinThetaLimits(angles.theta))
+            balancingState = BalancingState.BALANCING_THETA;
+        else if (!Angles.withinPhiLimits(angles.phi))
+            balancingState = BalancingState.BALANCING_PHI;
+        else
+            balancingState = BalancingState.BALANCING_SUCCESS;
+    }
 
     //--------------------------------------------------------------------------
     //
@@ -44,11 +76,12 @@ public class SensorBotBalance extends SensorBotTemplate {
         // Initialize class members.
         //
         // All via self-construction.
-
     }
 
     @Override
     public void init() {
+        msStuckDetectInit = 300000;
+
         super.init();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -59,6 +92,8 @@ public class SensorBotBalance extends SensorBotTemplate {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.getAll(BNO055IMU.class).get(0);
         imu.initialize(parameters);
+
+        balancingState = BalancingState.BALANCING_SUCCESS;
     }
 
     //--------------------------------------------------------------------------
@@ -73,43 +108,44 @@ public class SensorBotBalance extends SensorBotTemplate {
     @Override
     public void loop() {
         gravity = imu.getGravity();
-        Spherical3D angles = cartesianToSpherical(new Cartesian3D(gravity.xAccel, gravity.yAccel, gravity.zAccel));
+        angles = cartesianToSpherical(new Cartesian3D(gravity.xAccel, gravity.yAccel, gravity.zAccel));
 
         telemetry.addData("(NAV) Status", imu.getSystemStatus().toShortString());
         telemetry.addData("(NAV) Calib.", imu.getCalibrationStatus());
 
-        telemetry.addData("Theta angle ( acos (z / sqrt(x^2 + y^2 + z^2)) )", imu.getCalibrationStatus());
-        telemetry.addData("Phi angle ( atan (y / x) )", imu.getCalibrationStatus());
+        telemetry.addData("Theta angle ( acos (z / sqrt(x^2 + y^2 + z^2)) )", angles.theta);
+        telemetry.addData("Phi angle ( atan (y / x) )", angles.phi);
         telemetry.addData("X gravity", gravity.xAccel);
         telemetry.addData("Y gravity", gravity.yAccel);
         telemetry.addData("Z gravity", gravity.zAccel);
 
-        if (angles.theta <= 160 && angles.theta >= 0) {
-            telemetry.addData("Status", "Balancing...");
-            if (angles.phi >= 20) {
-                left.setPower(0.06);
-                right.setPower(0);
-            } else if (angles.phi <= -20) {
-                left.setPower(0);
-                right.setPower(0.06);
-            } else {
-                left.setPower(0.03);
-                right.setPower(0.03);
-            }
-        } else if (angles.theta >= -160) {
-            telemetry.addData("Status", "Balancing...");
-            if (angles.phi >= 20) {
-                left.setPower(-0.06);
-                right.setPower(0);
-            } else if (angles.phi <= -20) {
-                left.setPower(0);
-                right.setPower(-0.06);
-            } else {
-                left.setPower(-0.03);
-                right.setPower(-0.03);
-            }
-        } else
-            telemetry.addData("Status", "Balanced! :D");
+        switch (balancingState) {
+            case BALANCING_THETA:
+                if (angles.theta < Angles.THETA_BASELINE) {
+                    setLeftPow(-0.125);
+                    setRightPow(0.125);
+                } else {
+                    setLeftPow(0.125);
+                    setRightPow(-0.125);
+                }
+                break;
+            case BALANCING_PHI:
+                if (angles.phi < Angles.PHI_BASELINE) {
+                    setLeftPow(-0.125);
+                    setRightPow(-0.125);
+                } else {
+                    setLeftPow(0.125);
+                    setRightPow(0.125);
+                }
+                break;
+            case BALANCING_SUCCESS:
+                setLeftPow(0.0);
+                setRightPow(0.0);
+                break;
+        }
+        testAngles();
+
+        telemetry.addData("Balancing State", balancingState.name());
     }
 
     public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
