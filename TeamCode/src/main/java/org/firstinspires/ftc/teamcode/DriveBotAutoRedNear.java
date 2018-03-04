@@ -57,7 +57,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     double speed = 0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //355  675 1050
-    int timeToDispense, encToDispense = 500, encToRamGlyph = 480, encToBackUp = 650, encToBackUpAgain = 295, encToMoveToLeft = /*1130*/355, encToMoveToCenter = /*1530*/675, encToMoveToRight = /*1885*/1000;
+    int timeToDispense, encToDispense = 485, encToRamGlyph = 400, encToBackUp = 350, encToBackUpAgain = 300, encToMoveToLeft = /*1130*/325, encToMoveToCenter = /*1530*/690, encToMoveToRight = /*1885*/1000;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -67,10 +67,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     JewelDirection direction;
     JewelColor jewelColor;
 
+
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
         super.start();
-        relicTrackables.activate();
+
         if (ramAngle > 1.0) {
             ramRightMod = 1.0;
             ramLeftMod = 1.0 / ramAngle;
@@ -100,6 +101,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         jewelColor = null;
         totalTime = System.currentTimeMillis();
+
+
     }
 
     @Override
@@ -111,7 +114,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     public void init() {
         this.msStuckDetectInit = 10000;
         super.init();
-        state = State.STATE_LOWER_JEWEL_ARM;
 
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -122,6 +124,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
+        relicTrackables.activate();
+        state = State.STATE_LOWER_JEWEL_ARM;
+
 
         rIntake.setPosition(0.3);
 
@@ -140,18 +145,19 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         prev1 = new Gamepad();
-
+        column = CryptoboxColumn.MID;
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
         switch (vuMark) { // Blue is weird.
             case LEFT:
                 column = CryptoboxColumn.RIGHT;
                 break;
-            case CENTER:
-                column = CryptoboxColumn.MID;
-                break;
             case RIGHT:
                 column = CryptoboxColumn.LEFT;
                 break;
+            case CENTER:
+                column = CryptoboxColumn.MID;
+                break;
+
         }
     }
 
@@ -416,11 +422,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 case LEFT:
                     column = CryptoboxColumn.LEFT;
                     break;
-                case CENTER:
-                    column = CryptoboxColumn.MID;
-                    break;
                 case RIGHT:
                     column = CryptoboxColumn.RIGHT;
+                    break;
+                case CENTER:
+                    column = CryptoboxColumn.MID;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
