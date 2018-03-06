@@ -19,7 +19,7 @@ public class Sensor2BotSharpIRTest extends Sensor2BotTemplate {
     }
 
     public void loop() {
-        telemetry.addLine("Distance from wall (cm): " + ir.readDistanceCM());
-        telemetry.addLine("Voltage" + ir.getSharpIRVoltage());
+        //telemetry.addLine("Distance from wall (cm): " + ir.readDistanceCM());
+        //telemetry.addLine("Voltage" + ir.getSharpIRVoltage());
     }
 }

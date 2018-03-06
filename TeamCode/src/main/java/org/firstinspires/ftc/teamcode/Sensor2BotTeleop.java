@@ -28,22 +28,22 @@ public class Sensor2BotTeleop extends Sensor2BotTemplate {
         telemetry.addData("Ping raw return values 2:   ", pingAn.getAnalogInputVoltage(2));
         telemetry.addData("Ping raw return values 3:   ", pingAn.getAnalogInputVoltage(3));
 */
-        NormalizedRGBA colors = color.getNormalizedColors();
+        //NormalizedRGBA colors = color.getNormalizedColors();
 
-        telemetry.addData("Distance (cm)",
-                String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)));
+        //telemetry.addData("Distance (cm)",
+        //        String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)));
 
-        telemetry.addData("color distance withA ", colors.red + colors.green + colors.blue + colors.alpha);
+        //telemetry.addData("color distance withA ", colors.red + colors.green + colors.blue + colors.alpha);
 
-        telemetry.addData("color distance       ", colors.red + colors.green + colors.blue);
+        //telemetry.addData("color distance       ", colors.red + colors.green + colors.blue);
 
-        telemetry.addData("color distance    r  ", colors.red);
+        //telemetry.addData("color distance    r  ", colors.red);
 
-        telemetry.addData("color distance    g  ", colors.green);
+        //telemetry.addData("color distance    g  ", colors.green);
 
-        telemetry.addData("color distance    b  ", colors.blue);
+        //telemetry.addData("color distance    b  ", colors.blue);
 
-        telemetry.addData("color distance    a  ", colors.alpha);
+        //telemetry.addData("color distance    a  ", colors.alpha);
 
 
         /*telemetry.addData("back.getState:  ", magBack.getState());
