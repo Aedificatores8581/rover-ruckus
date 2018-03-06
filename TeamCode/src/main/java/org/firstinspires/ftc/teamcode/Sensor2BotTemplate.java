@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.Const;
  */
 public abstract class Sensor2BotTemplate extends OpMode {
     //protected DigitalChannel touch;
-    protected PingSensor ping;
+    //protected PingSensor ping;
     protected AnalogInput pingAn;
 
     protected AnalogInputController pingOn;

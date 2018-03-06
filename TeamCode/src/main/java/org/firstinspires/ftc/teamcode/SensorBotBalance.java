@@ -5,15 +5,15 @@ package org.firstinspires.ftc.teamcode;
 // PootisBotManual
 //
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import java.util.Locale;
+        import java.util.Locale;
 
 /**
  * I made this from scratch.
@@ -23,7 +23,24 @@ import java.util.Locale;
 @Autonomous(name = "SensorBot: Balance", group = "feelz")
 public class SensorBotBalance extends SensorBotTemplate {
 
+    static class Angles {
+        public static final double Y_TOLERANCE = 0.375; // Actually the tolerance for sin(theta).
+        public static final double PHI_BASELINE = 0;
+        public static final double PHI_TOLERANCE = 3.75;
+        public static final double THETA_BASELINE = 0;
+        public static final double THETA_TOLERANCE = 3.75;
+
+        public static boolean withinPhiLimits(double phi) {
+            return Utilities.withinTolerance(phi, Angles.PHI_BASELINE, Angles.PHI_TOLERANCE);
+        }
+
+        public static boolean withinThetaLimits(double theta) {
+            return Utilities.withinTolerance(theta, Angles.THETA_BASELINE, Angles.THETA_TOLERANCE);
+        }
+    }
+
     Acceleration gravity;
+    Spherical3D angles;
 
     //--------------------------------------------------------------------------
     //
@@ -44,11 +61,12 @@ public class SensorBotBalance extends SensorBotTemplate {
         // Initialize class members.
         //
         // All via self-construction.
-
     }
 
     @Override
     public void init() {
+        msStuckDetectInit = 300000;
+
         super.init();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -73,43 +91,41 @@ public class SensorBotBalance extends SensorBotTemplate {
     @Override
     public void loop() {
         gravity = imu.getGravity();
-        Spherical3D angles = cartesianToSpherical(new Cartesian3D(gravity.xAccel, gravity.yAccel, gravity.zAccel));
+        angles = cartesianToSpherical(new Cartesian3D(gravity.xAccel, gravity.yAccel, gravity.zAccel));
 
         telemetry.addData("(NAV) Status", imu.getSystemStatus().toShortString());
         telemetry.addData("(NAV) Calib.", imu.getCalibrationStatus());
 
-        telemetry.addData("Theta angle ( acos (z / sqrt(x^2 + y^2 + z^2)) )", imu.getCalibrationStatus());
-        telemetry.addData("Phi angle ( atan (y / x) )", imu.getCalibrationStatus());
+        telemetry.addData("Theta angle ( acos (z / sqrt(x^2 + y^2 + z^2)) )", angles.theta);
+        telemetry.addData("Phi angle ( atan (y / x) )", angles.phi);
         telemetry.addData("X gravity", gravity.xAccel);
         telemetry.addData("Y gravity", gravity.yAccel);
         telemetry.addData("Z gravity", gravity.zAccel);
 
-        if (angles.theta <= 160 && angles.theta >= 0) {
-            telemetry.addData("Status", "Balancing...");
-            if (angles.phi >= 20) {
-                left.setPower(0.06);
-                right.setPower(0);
-            } else if (angles.phi <= -20) {
-                left.setPower(0);
-                right.setPower(0.06);
-            } else {
-                left.setPower(0.03);
-                right.setPower(0.03);
+        if (angles.theta > Angles.THETA_TOLERANCE) {
+            double leftPow = 0.5;
+            double rightPow = 0.5;
+            // Account for fore/back tilt
+            double foreBack = Math.sin(Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE)) * Math.cos(Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            foreBack += Math.abs(foreBack) / foreBack;
+            leftPow *= foreBack;
+            rightPow *= foreBack;
+            // Account for left/right tilt
+            double sinPhi = Math.sin(Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            if (Math.abs(sinPhi) >= Angles.Y_TOLERANCE) {
+                if (sinPhi > 0)
+                    leftPow *= -1;
+                else
+                    rightPow *= -1;
             }
-        } else if (angles.theta >= -160) {
-            telemetry.addData("Status", "Balancing...");
-            if (angles.phi >= 20) {
-                left.setPower(-0.06);
-                right.setPower(0);
-            } else if (angles.phi <= -20) {
-                left.setPower(0);
-                right.setPower(-0.06);
-            } else {
-                left.setPower(-0.03);
-                right.setPower(-0.03);
-            }
-        } else
-            telemetry.addData("Status", "Balanced! :D");
+            // Set powers
+            setLeftPow(leftPow);
+            setRightPow(rightPow);
+        }
+        else {
+            setLeftPow(0.0);
+            setRightPow(0.0);
+        }
     }
 
     public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
