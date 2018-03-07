@@ -524,7 +524,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
 
-    protected void hitLeftJewel() {
+    protected void hitLeftJewel(){
         jewelFlipper.setPosition(1.0);
     }
 

@@ -16,6 +16,7 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
     private double power;
     private int encodersSpentChanging;
     private final double INITIAL_SPEED_FACTOR = 0.2; // As a factor of maxPower;
+    private byte negation;
     double acceleration;
 
 
@@ -39,9 +40,10 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
         rm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        totalEncoders = 1000;
+        totalEncoders = -1000;
         percentTimeChangingSpeedPerState = 0.2;
         maxPower = 0.3;
+        negation =  (totalEncoders < 0) ? (byte) -1 : 1;
         smootheDriveState = SmootheDriveState.SPEED_UP;
 
     }
@@ -89,25 +91,29 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
 
         switch(smootheDriveState){
             case SPEED_UP:
-                power = (((1 - INITIAL_SPEED_FACTOR) * maxPower) / (totalEncoders * percentTimeChangingSpeedPerState))
-                        * lm.getCurrentPosition() + (INITIAL_SPEED_FACTOR * maxPower);
+                power = negation * ((((1 - INITIAL_SPEED_FACTOR) * maxPower) / (totalEncoders * percentTimeChangingSpeedPerState))
+                        * (lm.getCurrentPosition()) + (INITIAL_SPEED_FACTOR * maxPower));
 
-                if(lm.getCurrentPosition() >= encodersSpentChanging){
+                if(Math.abs(lm.getCurrentPosition()) >= Math.abs(encodersSpentChanging)){
                     smootheDriveState = SmootheDriveState.MAX_SPEED;
                 }
                 break;
             case MAX_SPEED:
-                power = maxPower;
+                power = negation * maxPower;
 
-                if(lm.getCurrentPosition() >= (totalEncoders-encodersSpentChanging)){
+                if(Math.abs(lm.getCurrentPosition()) >= Math.abs(totalEncoders-encodersSpentChanging)){
                     smootheDriveState = SmootheDriveState.SLOW_DOWN;
                 }
                 break;
             case SLOW_DOWN:
-                power = -(maxPower/(totalEncoders * percentTimeChangingSpeedPerState))
-                        * (lm.getCurrentPosition() - (totalEncoders - (encodersSpentChanging))) + maxPower;
+                power = negation * (-(maxPower/(totalEncoders * percentTimeChangingSpeedPerState))
+                        * (lm.getCurrentPosition() - (totalEncoders - encodersSpentChanging)) + maxPower);
 
-                if(lm.getCurrentPosition() >= totalEncoders){
+                if(Math.abs(lm.getCurrentPosition()) >= Math.abs(totalEncoders)){
+                    smootheDriveState = SmootheDriveState.STOP;
+                }
+
+                if (Math.abs(power) < 0.03){
                     smootheDriveState = SmootheDriveState.STOP;
                 }
                 break;
