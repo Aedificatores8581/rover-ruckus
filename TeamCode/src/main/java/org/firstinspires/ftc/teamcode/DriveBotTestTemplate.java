@@ -129,6 +129,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     public boolean prox, possibleProx;
 
     protected DistanceSensor dSensorR, dSensorL;
+
     @Override
     public void init() {
         this.msStuckDetectInit = 60000;
@@ -170,7 +171,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         rIntake = hardwareMap.servo.get("rir");
 
         lIntake = hardwareMap.servo.get("lir");
-
 
 
         glyphOutput = hardwareMap.servo.get("gd");
@@ -266,25 +266,25 @@ public abstract class DriveBotTestTemplate extends OpMode {
         danceMusic = null;
     }
 
-    GlyphInOutIntakeState checkGlyphIntakeStatus(){
+    GlyphInOutIntakeState checkGlyphIntakeStatus() {
         GlyphInOutIntakeState returnState;
 
-        if(!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))){
+        if (!(Double.isNaN(intakeSensorRange.getDistance(DistanceUnit.CM)))) {
             returnState = GlyphInOutIntakeState.INSIDE;
 
-        }else {
+        } else {
             returnState = GlyphInOutIntakeState.OUTSIDE;
         }
         return returnState;
     }
 
     // Returns the change in the number of glyphs in the intake system.
-    int checkGlyphCount(IntakeState paramIntakeState, GlyphInOutIntakeState paramGlyphInOutIntakeState, GlyphInOutIntakeState paramPrevGlyphInOutIntakeState){
+    int checkGlyphCount(IntakeState paramIntakeState, GlyphInOutIntakeState paramGlyphInOutIntakeState, GlyphInOutIntakeState paramPrevGlyphInOutIntakeState) {
 
-        if(!paramGlyphInOutIntakeState.equals(paramPrevGlyphInOutIntakeState)){ //
-            if((paramGlyphInOutIntakeState == GlyphInOutIntakeState.INSIDE) && paramIntakeState == IntakeState.RETRIEVING){
+        if (!paramGlyphInOutIntakeState.equals(paramPrevGlyphInOutIntakeState)) { //
+            if ((paramGlyphInOutIntakeState == GlyphInOutIntakeState.INSIDE) && paramIntakeState == IntakeState.RETRIEVING) {
                 return 1;
-            } else if((paramGlyphInOutIntakeState == GlyphInOutIntakeState.OUTSIDE) && (paramIntakeState == IntakeState.SPITTING)) {
+            } else if ((paramGlyphInOutIntakeState == GlyphInOutIntakeState.OUTSIDE) && (paramIntakeState == IntakeState.SPITTING)) {
                 return -1;
             }
 
@@ -293,12 +293,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     // Returns the current intake state based on the power being provided to the intake motors
-    IntakeState checkIntakeState(double paramPower, IntakeState paramIntakeState){
-        if (paramPower > 0){
+    IntakeState checkIntakeState(double paramPower, IntakeState paramIntakeState) {
+        if (paramPower > 0) {
             return IntakeState.RETRIEVING;
-        }else if (paramPower < 0){
+        } else if (paramPower < 0) {
             return IntakeState.SPITTING;
-        }else{
+        } else {
             return paramIntakeState;
         }
     }
@@ -316,7 +316,6 @@ public abstract class DriveBotTestTemplate extends OpMode {
         belt1.setPower(power);
         belt2.setPower(power);
     }
-
 
 
     protected void scream() {
@@ -509,14 +508,14 @@ public abstract class DriveBotTestTemplate extends OpMode {
         }
     }
 
-    protected static boolean timeReached(long time, long wait){
+    protected static boolean timeReached(long time, long wait) {
         return System.currentTimeMillis() - time >= wait;
     }
 
-    protected boolean runWithArmDistance(DistanceSensor dSensor){
+    protected boolean runWithArmDistance(DistanceSensor dSensor) {
 
-        if(String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)).equals("NaN")){
-            if(dSensor.getDistance(DistanceUnit.CM) != (double)Double.NaN){
+        if (String.format(Locale.US, "%.02f", dSensor.getDistance(DistanceUnit.CM)).equals("NaN")) {
+            if (dSensor.getDistance(DistanceUnit.CM) != (double) Double.NaN) {
                 return true;
             }
         }
@@ -525,13 +524,14 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
 
-    protected void hitLeftJewel(){
+    protected void hitLeftJewel() {
         jewelFlipper.setPosition(1.0);
     }
 
-    protected void hitRightJewel(){
+    protected void hitRightJewel() {
         jewelFlipper.setPosition(0.0);
     }
+
     // This is here for not loading the gyro sensor when in teleop.
     protected boolean isAutonomous() {
         return true;
