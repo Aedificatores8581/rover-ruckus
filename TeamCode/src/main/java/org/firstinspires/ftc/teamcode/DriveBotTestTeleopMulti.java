@@ -410,42 +410,48 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
     @Override
     public void loop() {
-        setMotorPowers();
-        refreshServos();
-
-        while (inputActions.size() > 0) {
-            inputActions.poll().run();
-        }
-
-        switch (glyphLiftState) {
-            case LEVELING:
-                glyphOutput.setPosition(0.42);
-                glyphLiftState = GlyphLiftState.LEVELED;
-                break;
-            case ASCENDING:
-                if (!glyphLiftHigh.getState()) {
-                    glyphLift.setPower(0);
-                    glyphLiftState = GlyphLiftState.ASCENDED;
-                }
-                break;
-            case DUMPING:
-                glyphOutput.setPosition(1);
-                glyphLiftState = GlyphLiftState.DUMPED;
-                break;
-            case DESCENDING:
-                if (!glyphLiftLow.getState()) {
-                    glyphLift.setPower(0);
-                    glyphOutput.setPosition(0.0);
-                    glyphLiftState = GlyphLiftState.DESCENDED;
-                }
-                break;
-        }
-
         try {
-            prev1.copy(gamepad1);
-            prev2.copy(gamepad2);
-        } catch (RobotCoreException e) {
-            telemetry.addData("Exception", e);
+            setMotorPowers();
+            refreshServos();
+
+            while (inputActions.size() > 0) {
+                inputActions.poll().run();
+            }
+
+            switch (glyphLiftState) {
+                case LEVELING:
+                    glyphOutput.setPosition(0.42);
+                    glyphLiftState = GlyphLiftState.LEVELED;
+                    break;
+                case ASCENDING:
+                    if (!glyphLiftHigh.getState()) {
+                        glyphLift.setPower(0);
+                        glyphLiftState = GlyphLiftState.ASCENDED;
+                    }
+                    break;
+                case DUMPING:
+                    glyphOutput.setPosition(1);
+                    glyphLiftState = GlyphLiftState.DUMPED;
+                    break;
+                case DESCENDING:
+                    if (!glyphLiftLow.getState()) {
+                        glyphLift.setPower(0);
+                        glyphOutput.setPosition(0.0);
+                        glyphLiftState = GlyphLiftState.DESCENDED;
+                    }
+                    break;
+            }
+
+            try {
+                prev1.copy(gamepad1);
+                prev2.copy(gamepad2);
+            } catch (RobotCoreException e) {
+                telemetry.addData("Exception", e);
+            }
+        }
+        catch (Throwable e) {
+            gamepadThread.interrupt();
+            throw e;
         }
     }
 }
