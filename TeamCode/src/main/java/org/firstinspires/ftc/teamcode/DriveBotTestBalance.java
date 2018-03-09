@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -13,19 +11,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 public class DriveBotTestBalance extends DriveBotTestTemplate {
 
     static class Angles {
-        public static final double Y_TOLERANCE = 0.375; // Actually the tolerance for sin(theta).
-        public static final double PHI_BASELINE = 0;
+        //public static final double Y_TOLERANCE = 0.375; // Actually the tolerance for sin(theta).
+        public static final double PHI_BASELINE = 90;
         public static final double PHI_TOLERANCE = 3.75;
-        public static final double THETA_BASELINE = 0;
+        public static final double THETA_BASELINE = 90;
         public static final double THETA_TOLERANCE = 3.75;
-
-        public static boolean withinPhiLimits(double phi) {
-            return Utilities.withinTolerance(phi, Angles.PHI_BASELINE, Angles.PHI_TOLERANCE);
-        }
-
-        public static boolean withinThetaLimits(double theta) {
-            return Utilities.withinTolerance(theta, Angles.THETA_BASELINE, Angles.THETA_TOLERANCE);
-        }
     }
 
     Acceleration gravity;
@@ -55,10 +45,12 @@ public class DriveBotTestBalance extends DriveBotTestTemplate {
         telemetry.addData("Z gravity", gravity.zAccel);
 
         if (angles.theta > Angles.THETA_TOLERANCE) {
-            double leftPow = 0.125;
-            double rightPow = 0.125;
+            double leftPow = -0.125;
+            double rightPow = -0.125;
             // Account for fore/back tilt
-            double foreBack = Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE)); // * Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            double sign = Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            sign /= Math.abs(sign);
+            double foreBack = sign * Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE)); // * Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
             foreBack += Math.abs(foreBack) / foreBack;
             leftPow *= foreBack;
             rightPow *= foreBack;

@@ -5,15 +5,15 @@ package org.firstinspires.ftc.teamcode;
 // PootisBotManual
 //
 
-        import com.qualcomm.hardware.bosch.BNO055IMU;
-        import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-        import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-        import java.util.Locale;
+import java.util.Locale;
 
 /**
  * I made this from scratch.
@@ -29,14 +29,6 @@ public class SensorBotBalance extends SensorBotTemplate {
         public static final double PHI_TOLERANCE = 3.75;
         public static final double THETA_BASELINE = 0;
         public static final double THETA_TOLERANCE = 3.75;
-
-        public static boolean withinPhiLimits(double phi) {
-            return Utilities.withinTolerance(phi, Angles.PHI_BASELINE, Angles.PHI_TOLERANCE);
-        }
-
-        public static boolean withinThetaLimits(double theta) {
-            return Utilities.withinTolerance(theta, Angles.THETA_BASELINE, Angles.THETA_TOLERANCE);
-        }
     }
 
     Acceleration gravity;
@@ -121,8 +113,7 @@ public class SensorBotBalance extends SensorBotTemplate {
             // Set powers
             setLeftPow(leftPow);
             setRightPow(rightPow);
-        }
-        else {
+        } else {
             setLeftPow(0.0);
             setRightPow(0.0);
         }
