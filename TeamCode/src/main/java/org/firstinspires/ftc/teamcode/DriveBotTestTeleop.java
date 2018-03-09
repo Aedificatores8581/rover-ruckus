@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
@@ -17,6 +20,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
+    private Acceleration g;
 
     private static final double MAX_AMP_GLYPH_OUTPUT = 2.8; // The amp sensor returns the amount of current in amps. Voltage is volts, current is amps; they are not the same thing.
 
@@ -31,7 +35,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private boolean dumpServoManual;
 
     public enum SpeedToggle {
-        SLOW(0.6),
+        SLOW(0.7),//ORIGINAL SPEED = 0.6
         FAST(0.8);
 
         private double mult;
@@ -77,6 +81,20 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         prev1 = new Gamepad();
         prev2 = new Gamepad();
         armExtended = false;
+
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
 
         glyphLiftState = GlyphLiftState.DESCENDED;
     }
@@ -466,6 +484,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("dL  ", dSensorL.getDistance(DistanceUnit.CM));
 
         telemetry.addData("dR  ", dSensorR.getDistance(DistanceUnit.CM));
+
+        telemetry.addData("acceleration    ", imu.getAcceleration());
+
+        telemetry.addData("linear acceleration    ", imu.getLinearAcceleration());
+
+
+        telemetry.addData("velocity    ", imu.getVelocity());
+
+        telemetry.addData("position    ", imu.getPosition());
+
+        telemetry.addData("calib    ", imu.isAccelerometerCalibrated());
 
         try {
             prev1.copy(gamepad1);

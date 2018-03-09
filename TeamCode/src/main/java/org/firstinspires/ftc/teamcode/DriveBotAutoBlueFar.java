@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -32,6 +33,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     Gamepad prev1;
 
+    double distanceToWall = 0.35, distanceToCenterOfWall = 0.8;
+
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
     double jewelArmDownPosition = 0.74, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.3;
@@ -49,6 +52,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     267 to move to front
      */
 
+    int encToDriveToWall = 180, encToDriveToNext = 105;
+
     int timeToDispense, encToMeetCryptobox = 110, encToDispense = 75, encToRamGlyph = 250, encToBackUp = 150, encToBackUpAgain = 360, encToDismount = 1050;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double ramLeftMod = 1.0, ramRightMod = 1.0, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -61,6 +66,11 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     GyroAngles gyroAngles;
     boolean dispenseGlyph, retractDispenser;
     boolean checkKey, keyChecked;
+
+    boolean wallDetected = false;
+
+    int count1 = -1;
+    int count = 0;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
@@ -278,21 +288,22 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_GYRO_ANGLES:
                 gyroAngles = new GyroAngles(angles);
+                state = State.STATE_L_APPROACH_CRYPTOBOX;
                 switch (column) {
                     case LEFT:
                         setLeftPow(speed);
                         setRightPow(speed);
-                        state = State.STATE_L_APPROACH_CRYPTOBOX;
+                        count = 1;
                         break;
                     case MID:
                         setLeftPow(speed);
                         setRightPow(speed);
-                        state = State.STATE_C_APPROACH_CRYPTOBOX;
+                        count = 2;
                         break;
                     case RIGHT:
                         setLeftPow(speed);
                         setRightPow(speed);
-                        state = State.STATE_R_APPROACH_CRYPTOBOX;
+                        count = 3;
                         break;
                 }
                 break;
@@ -309,15 +320,53 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
+                    state = State.STATE_APPROACH_WALL;
+                }
+                break;
+            case STATE_APPROACH_WALL:
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(0.5);
+                if(dSensorL.getDistance(DistanceUnit.CM) >= distanceToWall) {
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                     state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_L_ALIGN_TO_CRYPTOBOX:
-                if (checkEncoders(encToAlignLeft)) {
-                    prevTime2 = 0; // Reset the timer for the glyph dispense wait.
-                    setLeftPow(-adjustSpeed);
-                    setRightPow(adjustSpeed);
-                    state = State.STATE_L_TURN_90_BACK;
+
+                resetEncoders();
+
+                reinitMotors(speed, speed);
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN)) {
+                    jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
+                    count1++;
+                }
+                if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
+                    wallDetected = false;
+                if(dSensorL.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
+                    wallDetected = true;
+
+                    if(count1 == count) {
+                        jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                        resetEncoders();
+                        setLeftPow(0);
+                        state = State.STATE_L_TURN_90_BACK;
+                    }
+                    else {
+                        reinitMotors(speed, speed);
+                        state = State.STATE_APPROACH_WALL;
+                    }
+
+                }
+
+                break;
+            case STATE_DETECT_WALL:
+                if(checkEncoders(encToDriveToWall)) {
+                    jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                    if(prevTime == 0)
+                        prevTime = System.currentTimeMillis();
+                    timeReached(prevTime, 200);
+                    jewelArm.setPosition(0.5);
+                    state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_L_TURN_90_BACK:
@@ -486,6 +535,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 keyChecked = true;
         }
 
+
+
+
         if (dispenseGlyph) {
             if (retractDispenser) {
                 glyphOutput.setPosition(retractDispensePosition);
@@ -501,6 +553,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             if (System.currentTimeMillis() - prevTime >= waitTime)
                 retractDispenser = true;
         }
+
+
 
         if (gyroAngles != null)
             telemetry.addData("Last GyroAngles", gyroAngles.getX() + "," + gyroAngles.getY() + "," + gyroAngles.getZ());
@@ -526,6 +580,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         telemetry.addData("Right Intake Position", rIntake.getPosition());
         telemetry.addData("Left Intake Position", lIntake.getPosition());
 
+        telemetry.addData("Column walls sensed", count1 + 1);
         if (hasAngles && gyroAngles != null)
             telemetry.addData("Remaining Angle", gyroAngles.getZ() - currentHeading);
 
@@ -559,13 +614,22 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         STATE_L_MEET_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
 
         // Center column
+
+        //IMPOERTANT: AS OF NOW, CENTER STATES ARE NO LONGER IN USE.
         STATE_C_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_C_TURN_90
         STATE_C_TURN_90, // Ends when the robot has turned 90 degrees. Always -> STATE_C_ALIGN_TO_CRYPTOBOX
         STATE_C_ALIGN_TO_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_C_TURN_90_BACK,
         STATE_C_TURN_90_BACK, // Ends when the robot has turned 90 degrees back. Always -> STATE_C_ALIGN_TO_CRYPTOBOX
         STATE_C_MEET_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_REINIT_MOTORS
 
+
+
+        STATE_APPROACH_WALL, //Ends when the robot is positioned in a way in which the jewel arm is inbetween the right edge and the center of the cryptobox, always -> STATE_DETECT_WALL
+        STATE_DETECT_WALL,
+        STATE_RESET,
         // Right column
+
+        //IMPOERTANT: AS OF NOW, RIGHT STATES ARE NO LONGER IN USE.
         STATE_R_APPROACH_CRYPTOBOX, // Ends when the robot has moved a certain distance. Always -> STATE_R_TURN_A_BIT
         STATE_R_TURN_A_BIT, // Ends when the robot has turned 45 degrees. Always -> STATE_R_ALIGN_TO_CRYPTOBOX
         STATE_R_ALIGN_TO_CRYPTOBOX, // Ends when the robot has moved a certain small distance. Always -> STATE_R_TURN_BACK
@@ -577,7 +641,15 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
         STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
         STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
+
+        STATE_DRIVE_INTO_PILE,
+        STATE_COLLECT_GLYPH,
+        STATE_DRIVE_BACK,
+
         STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
+
+
+
         // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }
 
