@@ -12,9 +12,9 @@ public class DriveBotTestBalance extends DriveBotTestTemplate {
 
     static class Angles {
         //public static final double Y_TOLERANCE = 0.375; // Actually the tolerance for sin(theta).
-        public static final double PHI_BASELINE = 90;
+        public static final double PHI_BASELINE = 0;
         public static final double PHI_TOLERANCE = 3.75;
-        public static final double THETA_BASELINE = 90;
+        public static final double THETA_BASELINE = 0;
         public static final double THETA_TOLERANCE = 3.75;
     }
 

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -308,7 +309,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
         glyphLiftState = GlyphLiftState.DESCENDED;
 
-        inputActions = new ConcurrentLinkedQueue<>();
+        inputActions = new LinkedList<>();
 
         gamepadThread = new InputHandlerThread();
     }
