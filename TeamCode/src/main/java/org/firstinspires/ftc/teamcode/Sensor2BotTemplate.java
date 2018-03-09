@@ -21,17 +21,17 @@ import org.firstinspires.ftc.robotcore.external.Const;
  */
 public abstract class Sensor2BotTemplate extends OpMode {
     //protected DigitalChannel touch;
-    protected PingSensor ping;
+    //protected PingSensor ping;
     protected AnalogInput pingAn;
 
     protected AnalogInputController pingOn;
 
-    protected SharpIRSensor ir;
+    //protected SharpIRSensor ir;
     protected DcMotor lm, rm;
-    protected DigitalChannel magFront, magBack;
-    protected NormalizedColorSensor color;
-    protected NormalizedRGBA colors;
-    protected DistanceSensor dSensor;
+    //protected DigitalChannel magFront, magBack;
+    //protected NormalizedColorSensor color;
+    //protected NormalizedRGBA colors;
+    //protected DistanceSensor dSensor;
 
     //protected OpticalDistanceSensor ods;
 
@@ -46,27 +46,27 @@ public abstract class Sensor2BotTemplate extends OpMode {
     public void init() {
         //touch = hardwareMap.digitalChannel.get("touch");
 
-        pingAn = hardwareMap.get(AnalogInput.class, "ping");
+        //pingAn = hardwareMap.get(AnalogInput.class, "ping");
 
         //pingAn = new AnalogInput()
 
-        color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
+        //color = hardwareMap.get(NormalizedColorSensor.class, "jcolor");
 
-        dSensor = hardwareMap.get(DistanceSensor.class, "ds");
+        //dSensor = hardwareMap.get(DistanceSensor.class, "ds");
 
         //ping = new PingSensor(hardwareMap.digitalChannel.get("ping"));
         //pingAn = hardwareMap.analogInput.get("ping");
-        ir = new SharpIRSensor(hardwareMap.analogInput.get("ir"));
-        magFront = hardwareMap.digitalChannel.get("mf");
-        magBack = hardwareMap.digitalChannel.get("mb");
+        //ir = new SharpIRSensor(hardwareMap.analogInput.get("ir"));
+        //magFront = hardwareMap.digitalChannel.get("mf");
+        //magBack = hardwareMap.digitalChannel.get("mb");
         lm = hardwareMap.dcMotor.get("lm");
         rm = hardwareMap.dcMotor.get("rm");
 
         //touch.setMode(DigitalChannel.Mode.INPUT);
         lm.setDirection(Constants.LM_DIR);
         rm.setDirection(Constants.RM_DIR);
-        magFront.setMode(DigitalChannel.Mode.INPUT);
-        magBack.setMode(DigitalChannel.Mode.INPUT);
+        //magFront.setMode(DigitalChannel.Mode.INPUT);
+        //magBack.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void go() {
@@ -74,9 +74,16 @@ public abstract class Sensor2BotTemplate extends OpMode {
         rm.setPower(Constants.MOTOR_POWER);
     }
 
+    public void setLeftPow(double pow){
+        lm.setPower(pow);
+    }
+    public void setRightPow(double pow){
+        rm.setPower(pow);
+    }
+
     public void stop() {
         lm.setPower(0.0);
         rm.setPower(0.0);
-        ping.isRunningThread = false;
+        //ping.isRunningThread = false;
     }
 }

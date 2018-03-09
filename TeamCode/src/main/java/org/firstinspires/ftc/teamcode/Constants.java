@@ -23,7 +23,8 @@ public class Constants {
     public static final double GRAB_RANGE = 0.25; // Always positive and between 0 and 1.
     public static final double COLOR_ARM_SPEED = 1; // Always positive and between 0 and 1.
 
-    public static final double RADS_TO_DEGS = 57.32484;
+    public static final double RADS_TO_DEGS = 180.0 / Math.PI;
+    public static final double DEGS_TO_RADS = 1 / RADS_TO_DEGS;
 
     public static final double GLYPH_DISPENSE_LEVEL = 0.4;
     public static final double RED_THRESHOLD = 0.4;

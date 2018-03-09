@@ -24,38 +24,15 @@ import java.util.Locale;
 public class SensorBotBalance extends SensorBotTemplate {
 
     static class Angles {
-        public static final double PHI_BASELINE = -130;
-        public static final double PHI_TOLERANCE = 10;
+        public static final double Y_TOLERANCE = 0.375; // Actually the tolerance for sin(theta).
+        public static final double PHI_BASELINE = 0;
+        public static final double PHI_TOLERANCE = 3.75;
         public static final double THETA_BASELINE = 0;
-        public static final double THETA_TOLERANCE = 7.5;
-
-        public static boolean withinPhiLimits(double phi) {
-            return Utilities.withinTolerance(phi, Angles.PHI_BASELINE, Angles.PHI_TOLERANCE);
-        }
-
-        public static boolean withinThetaLimits(double theta) {
-            return Utilities.withinTolerance(theta, Angles.THETA_BASELINE, Angles.THETA_TOLERANCE);
-        }
+        public static final double THETA_TOLERANCE = 3.75;
     }
 
     Acceleration gravity;
-    BalancingState balancingState;
     Spherical3D angles;
-
-    enum BalancingState {
-        BALANCING_PHI,
-        BALANCING_THETA,
-        BALANCING_SUCCESS
-    }
-
-    private void testAngles() {
-        if (!Angles.withinThetaLimits(angles.theta))
-            balancingState = BalancingState.BALANCING_THETA;
-        else if (!Angles.withinPhiLimits(angles.phi))
-            balancingState = BalancingState.BALANCING_PHI;
-        else
-            balancingState = BalancingState.BALANCING_SUCCESS;
-    }
 
     //--------------------------------------------------------------------------
     //
@@ -92,8 +69,6 @@ public class SensorBotBalance extends SensorBotTemplate {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.getAll(BNO055IMU.class).get(0);
         imu.initialize(parameters);
-
-        balancingState = BalancingState.BALANCING_SUCCESS;
     }
 
     //--------------------------------------------------------------------------
@@ -119,33 +94,29 @@ public class SensorBotBalance extends SensorBotTemplate {
         telemetry.addData("Y gravity", gravity.yAccel);
         telemetry.addData("Z gravity", gravity.zAccel);
 
-        switch (balancingState) {
-            case BALANCING_THETA:
-                if (angles.theta < Angles.THETA_BASELINE) {
-                    setLeftPow(-0.125);
-                    setRightPow(0.125);
-                } else {
-                    setLeftPow(0.125);
-                    setRightPow(-0.125);
-                }
-                break;
-            case BALANCING_PHI:
-                if (angles.phi < Angles.PHI_BASELINE) {
-                    setLeftPow(-0.125);
-                    setRightPow(-0.125);
-                } else {
-                    setLeftPow(0.125);
-                    setRightPow(0.125);
-                }
-                break;
-            case BALANCING_SUCCESS:
-                setLeftPow(0.0);
-                setRightPow(0.0);
-                break;
+        if (angles.theta > Angles.THETA_TOLERANCE) {
+            double leftPow = 0.5;
+            double rightPow = 0.5;
+            // Account for fore/back tilt
+            double foreBack = Math.sin(Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE)) * Math.cos(Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            foreBack += Math.abs(foreBack) / foreBack;
+            leftPow *= foreBack;
+            rightPow *= foreBack;
+            // Account for left/right tilt
+            double sinPhi = Math.sin(Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            if (Math.abs(sinPhi) >= Angles.Y_TOLERANCE) {
+                if (sinPhi > 0)
+                    leftPow *= -1;
+                else
+                    rightPow *= -1;
+            }
+            // Set powers
+            setLeftPow(leftPow);
+            setRightPow(rightPow);
+        } else {
+            setLeftPow(0.0);
+            setRightPow(0.0);
         }
-        testAngles();
-
-        telemetry.addData("Balancing State", balancingState.name());
     }
 
     public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
