@@ -336,7 +336,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_APPROACH_WALL:
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(0.5);
-                if(dSensorR.getDistance(DistanceUnit.CM) >= 0.35) {
+                if(dSensorL.getDistance(DistanceUnit.CM) >= 0.35) {
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                     state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
@@ -360,9 +360,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
                     count1++;
                 }
-                if(dSensorR.getDistance(DistanceUnit.CM) == Double.NaN)
+                if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
-                if(dSensorR.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
+                if(dSensorL.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
                     wallDetected = true;
 
                     if(count1 == count) {

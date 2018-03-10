@@ -318,7 +318,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_DRIVE_TO_CRYPTOBOX:
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(0.5);
-                if(dSensorL.getDistance(DistanceUnit.CM) >= 35) {
+                if(dSensorR.getDistance(DistanceUnit.CM) <= 35) {
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
@@ -332,15 +332,16 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
                     count1++;
                 }
-                if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
+                if(dSensorR.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
-                if(dSensorL.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
+                if(dSensorR.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
                     wallDetected = true;
 
                     if(count1 == count) {
                         jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                         resetEncoders();
                         setLeftPow(0);
+                        setRightPow(0);
                         state = State.STATE_RECORD_FACING;
                     }
                     else {
@@ -456,12 +457,15 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             switch (vuMark) {
                 case LEFT:
                     column = CryptoboxColumn.RIGHT;
+                    count = 1;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
+                    count = 2;
                     break;
                 case RIGHT:
                     column = CryptoboxColumn.LEFT;
+                    count = 3;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
@@ -470,6 +474,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
 
         telemetry.addData("DETECTED WALL", wallDetected);
+
+        telemetry.addData("count", count);
+        telemetry.addData("count1", count1);
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
@@ -487,7 +494,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         telemetry.addData("Relic Hand Position", relicHand.getPosition());
         telemetry.addData("Relic Fingers Position", relicFingers.getPosition());
         telemetry.addData("Glyph Output Position", glyphOutput.getPosition());
-        telemetry.addData("Right Intake Position", rIntake.getPosition());
         telemetry.addData("Left Intake Position", lIntake.getPosition());
 
         telemetry.addData("Checking Cryptobox Key", checkKey);
@@ -495,9 +501,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         if (direction != null)
             telemetry.addData("Jewel Direction", direction.name());
-
-        if (jewelColor != null)
-            telemetry.addData("Jewel Color", jewelColor.name());
 
         if (column != null)
             telemetry.addData("Cryptobox Column", column.toString());
