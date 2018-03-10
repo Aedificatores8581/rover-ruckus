@@ -36,7 +36,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             return name;
         }
     }
-
     State state;
 
     private boolean sensing = false;

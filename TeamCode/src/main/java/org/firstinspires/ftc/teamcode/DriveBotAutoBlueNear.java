@@ -326,7 +326,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             case STATE_CRYPTOBOX_RIGHT_SLOT:
 
                 resetEncoders();
-
                 reinitMotors(speed, speed);
                 if(checkEncoders(Constants.ENC_TO_PASS_COLUMN)) {
                     jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);

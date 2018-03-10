@@ -539,7 +539,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
 
 
-
         if (dispenseGlyph) {
             if (retractDispenser) {
                 glyphOutput.setPosition(retractDispensePosition);
