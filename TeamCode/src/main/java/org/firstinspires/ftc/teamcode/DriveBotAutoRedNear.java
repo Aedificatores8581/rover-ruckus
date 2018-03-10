@@ -149,6 +149,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
         switch (vuMark) { // Blue is weird.
             case LEFT:
+
                 column = CryptoboxColumn.RIGHT;
                 break;
             case RIGHT:
@@ -268,6 +269,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
+                belt(0.5);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
@@ -277,6 +279,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+
+                belt(0);
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
@@ -396,6 +400,11 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 telemetry.addData("Finished", "Very Yes");
                 break;
         }
+
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
 
         if (dispenseGlyph) {
             glyphOutput.setPosition(dispensePosition);
