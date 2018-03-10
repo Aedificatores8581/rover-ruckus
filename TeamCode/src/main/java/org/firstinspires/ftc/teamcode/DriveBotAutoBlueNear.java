@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -40,8 +39,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
     private boolean retracted = false;
 
-    private int count;
-    private int count1;
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
@@ -56,7 +53,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
     double speed = -0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
-    int timeToDispense, encToDispense = 320, encToRamGlyph = 370, encToBackUp = 390, encToBackUpAgain = 300, encToMoveToLeft = 230/*1130*/, encToMoveToCenter = 655/*1500*/, encToMoveToRight = /*1865*/ 995;
+    int timeToDispense, encToDispense = 320, encToRamGlyph = 370, encToBackUp = 390, encToBackUpAgain = 300, encToMoveToLeft = 290/*1130*/, encToMoveToCenter = 655/*1500*/, encToMoveToRight = /*1865*/ 965;
     double glyphHold = 0.03, glyphDrop = 0.33;
     double targetAngle = 80;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
@@ -143,15 +140,12 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         switch (vuMark) { // Reversing the columns is intentional.
             case LEFT:
                 column = CryptoboxColumn.RIGHT;
-                count = 1;
                 break;
             case CENTER:
                 column = CryptoboxColumn.MID;
-                count = 2;
                 break;
             case RIGHT:
                 column = CryptoboxColumn.LEFT;
-                count = 3;
                 break;
         }
     }
@@ -250,8 +244,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         /*if(System.currentTimeMillis() - totalTime >= 250 && !magFront.getState())
             relicArm.setPower(1.0);
-        else*/
-        if(System.currentTimeMillis() - totalTime < 500)
+        else*/ if(System.currentTimeMillis() - totalTime < 500)
             relicArm.setPower(-1.0);
         else
             relicArm.setPower(0);
@@ -262,8 +255,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         }
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                setLeftPow(0.005);
-                setRightPow(0.005);
+                belt(0.5);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
@@ -273,6 +265,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+                belt(0);
                 prevTime = 0;
                 glyphOutput.setPosition(Constants.LEVEL_DISPENSER);
 
@@ -307,7 +300,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                relicHand.setPosition(0.5);
+                relicHand.setPosition(0.284);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
@@ -316,42 +309,21 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 state = State.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                jewelFlipper.setPosition(Constants.CENTER_FINGER);
-                jewelArm.setPosition(0.5);
-                if(dSensorR.getDistance(DistanceUnit.CM) <= 35) {
+                if(!(runWithArmDistance(dSensorR)) || wallDetected == true) {
+                    wallDetected = true;
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    resetEncoders();
+                    reinitMotors(-0.1, -0.1);
+                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
-
-                resetEncoders();
-                reinitMotors(speed, speed);
-                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN)) {
-                    jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
-                    count1++;
-                }
-                else
-                    wallDetected = true;
-                if(dSensorR.getDistance(DistanceUnit.CM) == Double.NaN)
-                    wallDetected = false;
-                if(dSensorR.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
-                    wallDetected = true;
-
-                    if(count1 == count) {
-                        jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                        resetEncoders();
-                        setLeftPow(0);
-                        setRightPow(0);
+                if (checkEncoders(encToMoveToLeft)) {
+                    if (column == CryptoboxColumn.RIGHT)
                         state = State.STATE_RECORD_FACING;
-                    }
-                    else {
-                        reinitMotors(-speed, -speed);
-                        state = State.STATE_DRIVE_TO_CRYPTOBOX;
-                    }
-
+                    else
+                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                 }
-
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
                 if (checkEncoders(encToMoveToCenter)) {
@@ -405,30 +377,13 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_BACK_AWAY_FROM_RAMMED_GLYPH:
-
                 if (checkEncoders(encToBackUpAgain)) {
-
+                    setLeftPow(0);
+                    setRightPow(0);
                     glyphOutput.setPosition(retractDispensePosition);
-
-                }
-                if (checkEncoders(2000)) {
-                    setLeftPow(0.12);
-                    setRightPow(0.12);
-
-                }
-                if (glyphCount == 2) {
-
-                    resetEncoders();
-                    reinitMotors(-0.25, -0.25);
-                    state = State.STATE_DRIVE_TO_PILE;
-
+                    state = State.STATE_END;
                 }
                 break;
-            case STATE_DRIVE_TO_PILE:
-                belt(0);
-                succ(0);
-                if(checkEncoders(1700))
-                    state = State.STATE_END;
             case STATE_END:
                 telemetry.addData("Finished", "Very Yes");
                 break;
@@ -458,26 +413,24 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
             switch (vuMark) {
                 case LEFT:
                     column = CryptoboxColumn.RIGHT;
-                    count = 1;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
-                    count = 2;
                     break;
                 case RIGHT:
                     column = CryptoboxColumn.LEFT;
-                    count = 3;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
                 keyChecked = true;
         }
 
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
 
         telemetry.addData("DETECTED WALL", wallDetected);
-
-        telemetry.addData("count", count);
-        telemetry.addData("count1", count1);
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
@@ -495,6 +448,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         telemetry.addData("Relic Hand Position", relicHand.getPosition());
         telemetry.addData("Relic Fingers Position", relicFingers.getPosition());
         telemetry.addData("Glyph Output Position", glyphOutput.getPosition());
+        telemetry.addData("Right Intake Position", rIntake.getPosition());
         telemetry.addData("Left Intake Position", lIntake.getPosition());
 
         telemetry.addData("Checking Cryptobox Key", checkKey);
@@ -502,6 +456,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
 
         if (direction != null)
             telemetry.addData("Jewel Direction", direction.name());
+
+        if (jewelColor != null)
+            telemetry.addData("Jewel Color", jewelColor.name());
 
         if (column != null)
             telemetry.addData("Cryptobox Column", column.toString());
@@ -524,7 +481,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
         STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
         STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
-        STATE_DRIVE_TO_PILE,
         STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
         // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }

@@ -290,6 +290,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
+                setLeftPow(.005 * mult);
+                setRightPow(0.005 * mult);
                 setLeftPow(0);
                 setRightPow(0);
                 jewelFlipper.setPosition(1.0);

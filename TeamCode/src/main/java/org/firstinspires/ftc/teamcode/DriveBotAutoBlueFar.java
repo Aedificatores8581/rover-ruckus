@@ -33,10 +33,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     Gamepad prev1;
 
     double distanceToWall = 0.35, distanceToCenterOfWall = 0.8;
-
+    double mult = 0;
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double jewelArmDownPosition = 0.74, speed = -0.15, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.3;
+    double jewelArmDownPosition = 0.74, speed = -0.09, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.3;
 
     //210 to move forward to left
     //325 to move to mid
@@ -59,7 +59,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     int encToAlignLeft = 888, encToAlignCenter = 450, encToAlignRight = 165;
 
-    double degrees90 = 85;
+    double degrees90 = 80;
 
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -68,7 +68,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
     boolean wallDetected = false;
 
-    int count1 = -1;
+    int count1 = 0;
     int count = 0;
 
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
@@ -247,14 +247,26 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
+
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (timeReached(prevTime, waitTime))
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(0.01);
+                    setLeftPow(0.01);
+                    mult = 1;
+                }
+                else if(dSensorL.getDistance(DistanceUnit.CM) < dSensorR.getDistance(DistanceUnit.CM) && dSensorR.getDistance(DistanceUnit.CM) - dSensorL.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(-0.01);
+                    setLeftPow(-0.01);
+                    mult = -1;
+                }
                 prevTime = 0;
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_RIGHT_JEWEL;
@@ -265,17 +277,21 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
                 break;
             case STATE_HIT_LEFT_JEWEL:
+                setLeftPow(.005 * mult);
+                setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(0.05);
                 if (timeReached(prevTime, waitTime))
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
+                setLeftPow(.005 * mult);
+                setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(1.0);
                 if (timeReached(prevTime, waitTime))
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
-
+                relicHand.setPosition(0.284);
                 jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 state = State.STATE_SCAN_KEY;
                 break;
@@ -326,8 +342,12 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             case STATE_APPROACH_WALL:
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(0.5);
-                if(dSensorR.getDistance(DistanceUnit.CM) <= distanceToWall) {
+                if(dSensorR.getDistance(DistanceUnit.CM) <= 6 && sensing) {
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+
+                    sensing = false;
                     state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
@@ -341,13 +361,15 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 if(dSensorR.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
+                else
+                    wallDetected = true;
                 if(dSensorL.getDistance(DistanceUnit.CM) >= dSensorR.getDistance(DistanceUnit.CM) && wallDetected == true && sensing) {
                     wallDetected = true;
 
                     if(count1 == count) {
                         jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                         resetEncoders();
-                        reinitMotors(adjustSpeed, -adjustSpeed);
+                        reinitMotors(-adjustSpeed, adjustSpeed);
                         state = State.STATE_L_TURN_90_BACK;
                     }
                     else {
@@ -555,6 +577,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 retractDispenser = true;
         }
 
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
 
 
         if (gyroAngles != null)
