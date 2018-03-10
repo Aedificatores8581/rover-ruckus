@@ -22,6 +22,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     State state;
 
+    boolean sensing = false;
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
@@ -280,7 +281,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                relicHand.setPosition(0.5);
+                relicHand.setPosition(0.284);
                 jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 state = State.STATE_SCAN_KEY;
                 break;
@@ -331,13 +332,18 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     reinitMotors(-speed, -speed);
                     //jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
                     state = State.STATE_APPROACH_WALL;
+                    sensing = true;
                 }
                 break;
             case STATE_APPROACH_WALL:
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(0.5);
-                if(dSensorL.getDistance(DistanceUnit.CM) >= 0.35) {
+                if(dSensorL.getDistance(DistanceUnit.CM) <= 6 && sensing) {
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                    resetEncoders();
+                    reinitMotors(-speed, -speed);
+
+                    sensing = false;
                     state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
@@ -348,31 +354,32 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                         prevTime = System.currentTimeMillis();
                     timeReached(prevTime, 200);
                     jewelArm.setPosition(0.5);
+                    resetEncoders();
+                    reinitMotors(-speed, -speed);
                     state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_L_ALIGN_TO_CRYPTOBOX:
 
-                resetEncoders();
-
-                reinitMotors(speed, speed);
-                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN)) {
-                    jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN + 20)&& !sensing) {
+                    jewelArm.setPosition(0.5);
                     count1++;
+                    sensing = true;
                 }
                 if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
-                if(dSensorL.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
+                else
                     wallDetected = true;
-
+                if(dSensorL.getDistance(DistanceUnit.CM) <= Constants.DISTANCE_TO_CENTER && wallDetected == true && sensing) {
                     if(count1 == count) {
                         jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                         resetEncoders();
                         setLeftPow(0);
-                        state = State.STATE_L_TURN_90_BACK;
+                        setRightPow(0);
+                        state = State.STATE_RESET;
                     }
                     else {
-                        reinitMotors(speed, speed);
+                        reinitMotors(-speed, -speed);
                         state = State.STATE_APPROACH_WALL;
                     }
 
@@ -396,6 +403,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_L_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
                 }
+
                 break;
             case STATE_L_MEET_CRYPTOBOX:
                 if (checkEncoders(encToMeetCryptobox)) {

@@ -77,7 +77,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double EMPTY_INTAKE_VALUE = (double) Double.NaN;
 
-        public static final double DISTANCE_TO_CENTER = 0.8;
+        public static final double DISTANCE_TO_CENTER = 8;
         public static final int ENC_TO_PASS_COLUMN = 100;
 
     }

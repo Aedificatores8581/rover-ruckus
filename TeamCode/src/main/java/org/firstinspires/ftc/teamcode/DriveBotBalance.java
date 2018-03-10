@@ -33,7 +33,7 @@ public class DriveBotBalance extends DriveBotTestTemplate {
     }
 
     Acceleration gravity;
-    SensorBotBalance.BalancingState balancingState;
+    //SensorBotBalance.BalancingState balancingState;
     Spherical3D angles;
 
 
@@ -41,7 +41,7 @@ public class DriveBotBalance extends DriveBotTestTemplate {
         BALANCING_PHI,
         BALANCING_THETA,
         BALANCING_SUCCESS
-    }
+    }/*
 
     private void testAngles() {
         if (!SensorBotBalance.Angles.withinThetaLimits(angles.theta))
@@ -60,7 +60,7 @@ public class DriveBotBalance extends DriveBotTestTemplate {
     // Constructs the class.
     //
     // The system calls this member when the class is instantiated.
-    //--------
+    //--------*/
     public DriveBotBalance() {
         //
         // Initialize base classes.
@@ -88,7 +88,7 @@ public class DriveBotBalance extends DriveBotTestTemplate {
         imu = hardwareMap.getAll(BNO055IMU.class).get(0);
         imu.initialize(parameters);
 
-        balancingState = SensorBotBalance.BalancingState.BALANCING_SUCCESS;
+        //balancingState = SensorBotBalance.BalancingState.BALANCING_SUCCESS;
     }
 
     //--------------------------------------------------------------------------
@@ -113,7 +113,7 @@ public class DriveBotBalance extends DriveBotTestTemplate {
         telemetry.addData("X gravity", gravity.xAccel);
         telemetry.addData("Y gravity", gravity.yAccel);
         telemetry.addData("Z gravity", gravity.zAccel);
-
+/*
         switch (balancingState) {
             case BALANCING_THETA:
                 if (angles.theta < SensorBotBalance.Angles.THETA_BASELINE) {
@@ -140,7 +140,7 @@ public class DriveBotBalance extends DriveBotTestTemplate {
         }
         testAngles();
 
-        telemetry.addData("Balancing State", balancingState.name());
+        telemetry.addData("Balancing State", balancingState.name());*/
     }
 
     public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {

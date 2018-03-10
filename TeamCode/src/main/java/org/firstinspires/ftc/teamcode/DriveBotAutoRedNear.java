@@ -39,6 +39,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     State state;
 
+    private boolean sensing = false;
     private int count = 0;
     private int count1 = 0;
     private int cameraMonitorViewId;
@@ -313,55 +314,102 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
                 setLeftPow(speed);
                 setRightPow(speed);
+                sensing = true;
                 state = state.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
-                jewelArm.setPosition(0.5);
-                if(dSensorL.getDistance(DistanceUnit.CM) <= 35) {
-                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                if(dSensorL.getDistance(DistanceUnit.CM) <= 6 && sensing) {
+                resetEncoders();
+                reinitMotors(speed, speed);
+                jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                sensing = false;
                     state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
 
-                resetEncoders();
-
-                reinitMotors(speed, speed);
-                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN)) {
-                    jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN + 20)&& !sensing) {
+                    jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
                     count1++;
+                    sensing = true;
                 }
                 if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
-                if(dSensorL.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
+                else
                     wallDetected = true;
-
-                    if(count1 == count) {
+                if(dSensorL.getDistance(DistanceUnit.CM) <= Constants.DISTANCE_TO_CENTER && wallDetected == true && sensing) {
+                    if(column == CryptoboxColumn.RIGHT) {
                         jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                         resetEncoders();
                         setLeftPow(0);
+                        setRightPow(0);
                         state = State.STATE_RECORD_FACING;
                     }
                     else {
-                        reinitMotors(speed, speed);
-                        state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                        reinitMotors(-speed, -speed);
+                        sensing = true;
+                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
                     }
 
                 }
 
+
+
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
-                if (checkEncoders(encToMoveToCenter)) {
-                    if (column == CryptoboxColumn.MID)
-                        state = State.STATE_RECORD_FACING;
-                    else
-                        state = State.STATE_CRYPTOBOX_LEFT_SLOT;
+                if(dSensorL.getDistance(DistanceUnit.CM) <= 6 && sensing) {
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                    sensing = false;
                 }
-                break;
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN + 20)&& !sensing) {
+                    jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                    count1++;
+                    sensing = true;
+                }
+                if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
+                    wallDetected = false;
+                else
+                    wallDetected = true;
+                if(dSensorL.getDistance(DistanceUnit.CM) <= Constants.DISTANCE_TO_CENTER && wallDetected == true && sensing) {
+                    if (column == CryptoboxColumn.MID) {
+                        jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                        resetEncoders();
+                        setLeftPow(0);
+                        setRightPow(0);
+                        state = State.STATE_RECORD_FACING;
+                    } else {
+                        reinitMotors(-speed, -speed);
+                        state = State.STATE_CRYPTOBOX_LEFT_SLOT;
+                    }
+                }
+                    break;
             case STATE_CRYPTOBOX_LEFT_SLOT:
-                if (checkEncoders(encToMoveToRight)) {
-                    state = State.STATE_RECORD_FACING;
+                if(dSensorL.getDistance(DistanceUnit.CM) <= 6 && sensing) {
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+                    jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                    sensing = false;
+                }
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN + 20)&& !sensing) {
+                    jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                    count1++;
+                    sensing = true;
+                }
+                if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
+                    wallDetected = false;
+                else
+                    wallDetected = true;
+                if(dSensorL.getDistance(DistanceUnit.CM) <= Constants.DISTANCE_TO_CENTER && wallDetected == true && sensing) {
+                        jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                        resetEncoders();
+                        setLeftPow(0);
+                        setRightPow(0);
+                        state = State.STATE_RECORD_FACING;
+
                 }
                 break;
             case STATE_RECORD_FACING:

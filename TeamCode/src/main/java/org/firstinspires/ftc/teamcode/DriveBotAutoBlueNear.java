@@ -332,6 +332,8 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
                     count1++;
                 }
+                else
+                    wallDetected = true;
                 if(dSensorR.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
                 if(dSensorR.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
@@ -345,7 +347,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                         state = State.STATE_RECORD_FACING;
                     }
                     else {
-                        reinitMotors(speed, speed);
+                        reinitMotors(-speed, -speed);
                         state = State.STATE_DRIVE_TO_CRYPTOBOX;
                     }
 
