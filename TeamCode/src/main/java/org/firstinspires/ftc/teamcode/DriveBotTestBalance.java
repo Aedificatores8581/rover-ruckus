@@ -48,7 +48,7 @@ public class DriveBotTestBalance extends DriveBotTestTemplate {
             double leftPow = -0.125;
             double rightPow = -0.125;
             // Account for fore/back tilt
-            double sign = Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            double sign = Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
             sign /= Math.abs(sign);
             double foreBack = sign * Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE)); // * Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
             foreBack += Math.abs(foreBack) / foreBack;
