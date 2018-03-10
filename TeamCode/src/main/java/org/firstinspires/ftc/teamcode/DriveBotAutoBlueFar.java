@@ -29,8 +29,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
 
-    boolean initServos;
-
+    boolean initServos, sensing = false;
     Gamepad prev1;
 
     double distanceToWall = 0.35, distanceToCenterOfWall = 0.8;
@@ -321,7 +320,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
-                    state = State.STATE_APPROACH_WALL;
+                    state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
                 }
                 break;
             case STATE_APPROACH_WALL:
@@ -334,22 +333,21 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_L_ALIGN_TO_CRYPTOBOX:
 
-                resetEncoders();
-
-                reinitMotors(speed, speed);
-                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN)) {
-                    jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN - 20)&& !sensing) {
+                    jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                    jewelArm.setPosition(0.5);
                     count1++;
+                    sensing = true;
                 }
                 if(dSensorR.getDistance(DistanceUnit.CM) == Double.NaN)
                     wallDetected = false;
-                if(dSensorR.getDistance(DistanceUnit.CM) >= Constants.DISTANCE_TO_CENTER || wallDetected == false) {
+                if(dSensorL.getDistance(DistanceUnit.CM) >= dSensorR.getDistance(DistanceUnit.CM) && wallDetected == true && sensing) {
                     wallDetected = true;
 
                     if(count1 == count) {
                         jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                         resetEncoders();
-                        setLeftPow(0);
+                        reinitMotors(adjustSpeed, -adjustSpeed);
                         state = State.STATE_L_TURN_90_BACK;
                     }
                     else {
@@ -524,12 +522,15 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             switch (vuMark) {
                 case LEFT:
                     column = CryptoboxColumn.RIGHT;
+                    count = 1;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
+                    count = 2;
                     break;
                 case RIGHT:
                     column = CryptoboxColumn.LEFT;
+                    count = 3;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)

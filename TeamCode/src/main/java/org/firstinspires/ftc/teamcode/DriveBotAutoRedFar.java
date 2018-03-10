@@ -34,13 +34,14 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     boolean wallDetected = false;
 
+    double mult = 0;
     int count1 = 0;
     int count = 0;
     Gamepad prev1;
 
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
-    double speed = -0.06, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
+    double speed = -0.09, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
 
     //210 to move forward to left
     //325 to move to mid
@@ -61,7 +62,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
     int encToAlignLeft = 888, encToAlignCenter = 480, encToAlignRight = 100;
 
-    double degrees90 = 85;
+    double degrees90 = 80;
     double degreesSmall = 30, degreesRestOfSmall = 120;
 
     CryptoboxColumn column;
@@ -247,8 +248,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                setLeftPow(-0.005);
-                setRightPow(-0.005);
+                setLeftPow(0.005);
+                setRightPow(0.005);
                 belt(0.5);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
@@ -263,6 +264,17 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(0.01);
+                    setLeftPow(0.01);
+                    mult = 1;
+                }
+                else if(dSensorL.getDistance(DistanceUnit.CM) < dSensorR.getDistance(DistanceUnit.CM) && dSensorR.getDistance(DistanceUnit.CM) - dSensorL.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(-0.01);
+                    setLeftPow(-0.01);
+                    mult = -1;
+                }
+
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < Constants.RED_THRESHOLD)
@@ -271,11 +283,15 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_LEFT_JEWEL:
+                setLeftPow(.005 * mult);
+                setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(0.05);
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
+                setLeftPow(0);
+                setRightPow(0);
                 jewelFlipper.setPosition(1.0);
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
@@ -298,11 +314,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
                 switch (column) {
                     case LEFT:
+                        count = 3;
                         setLeftPow(-speed);
                         setRightPow(-speed);
-                        count = 1;
                         //state = State.STATE_L_APPROACH_CRYPTOBOX;
-                        //break;
+                        break;
                     case MID:
                         count = 2;
                         setLeftPow(-speed);
@@ -310,7 +326,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                         //state = State.STATE_C_APPROACH_CRYPTOBOX;
                         break;
                     case RIGHT:
-                        count = 3;
+                        count = 1;
                         setLeftPow(-speed);
                         setRightPow(-speed);
                         //state = State.STATE_R_APPROACH_CRYPTOBOX;
@@ -331,8 +347,10 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     //jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
-                    state = State.STATE_APPROACH_WALL;
-                    sensing = true;
+
+                    sensing = false;
+                    state = State.STATE_L_ALIGN_TO_CRYPTOBOX;
+
                 }
                 break;
             case STATE_APPROACH_WALL:
@@ -361,7 +379,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_L_ALIGN_TO_CRYPTOBOX:
 
-                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN + 20)&& !sensing) {
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN - 20)&& !sensing) {
+                    jewelFlipper.setPosition(Constants.CENTER_FINGER);
                     jewelArm.setPosition(0.5);
                     count1++;
                     sensing = true;
@@ -370,12 +389,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     wallDetected = false;
                 else
                     wallDetected = true;
-                if(dSensorL.getDistance(DistanceUnit.CM) <= Constants.DISTANCE_TO_CENTER && wallDetected == true && sensing) {
+                if(dSensorL.getDistance(DistanceUnit.CM) <= dSensorR.getDistance(DistanceUnit.CM) && wallDetected == true && sensing) {
                     if(count1 == count) {
                         jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                         resetEncoders();
-                        setLeftPow(0);
-                        setRightPow(0);
+                        reinitMotors(-adjustSpeed, adjustSpeed);
                         state = State.STATE_RESET;
                     }
                     else {
@@ -400,13 +418,16 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
-                    state = State.STATE_L_MEET_CRYPTOBOX;
                     dispenseGlyph = true;
+                    state = State.STATE_L_MEET_CRYPTOBOX;
+
                 }
+
 
                 break;
             case STATE_L_MEET_CRYPTOBOX:
                 if (checkEncoders(encToMeetCryptobox)) {
+
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -570,12 +591,15 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             switch (vuMark) {
                 case LEFT:
                     column = CryptoboxColumn.LEFT;
+                    count = 3;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
+                    count = 2;
                     break;
                 case RIGHT:
                     column = CryptoboxColumn.RIGHT;
+                    count = 1;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
