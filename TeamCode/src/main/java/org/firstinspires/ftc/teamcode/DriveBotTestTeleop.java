@@ -30,6 +30,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private double jewelArmServoValue = 0, jewelFlipperServoValue = 0, relicHandServoValue = 0, relicFingersServoValue = 0, glyphDumpServoValue = 0;
     private boolean lifting, valueChange;
     private boolean armExtended;
+    private boolean isBalancing;
     long waiting = 0, waitTime = 500;
 
     private boolean dumpServoManual;
@@ -190,7 +191,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void loop() {
         if (isDancing())
             dance();
-        else
+        else if (!isBalancing)
             setMotorPowers();
         refreshServos();
 
@@ -374,7 +375,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 glyphLift.setPower(0.0);
         }
 
-        if ((gamepad2.b && !prev2.b) || (gamepad2.left_stick_button && !prev2.left_stick_button) || (gamepad2.right_stick_button && !prev2.right_stick_button)) {
+        if ((gamepad2.b && !prev2.b) || (gamepad2.right_stick_button && !prev2.right_stick_button)) {
             switch (glyphLiftState) {
                 case LEVELED:
                     glyphLift.setPower(0.5);
@@ -419,13 +420,37 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
                 break;
         }
+        Spherical3D gravAngles = cartesianToSpherical(new Cartesian3D(gravity.zAccel, gravity.xAccel, gravity.yAccel));
 
+        if (isBalancing && !isDancing()) {
+            if (gravAngles.theta > 3.375) {
+                double leftPow = -0.25;
+                double rightPow = -0.25;
+
+                // Account for fore/back tilt
+                double sign = Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (gravAngles.phi));
+                sign /= Math.abs(sign);
+                double foreBack = sign * Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (gravAngles.theta) / 2.0);
+
+                leftPow *= foreBack;
+                rightPow *= foreBack;
+                setLeftPow(leftPow);
+                setRightPow(rightPow);
+            }
+            else {
+                setLeftPow(0);
+                setRightPow(0);
+                isBalancing = false;
+            }
+        }
+
+        if (gamepad2.left_stick_button && !prev2.left_stick_button)
+            isBalancing = !isBalancing;
 
         telemetry.addData("Glyph Count", glyphCount);
         telemetry.addData("Glyph Intake State", glyphInOutIntakeState);
         telemetry.addData("Intake Running State", intakeState);
         telemetry.addData("Glyph Intake Range Sensor", intakeSensorRange.getDistance(DistanceUnit.CM));
-
 
         telemetry.addData("Arm Extended", armExtended);
         telemetry.addData("Amp Sensor (returning volts)", ampSensor.getVoltage());

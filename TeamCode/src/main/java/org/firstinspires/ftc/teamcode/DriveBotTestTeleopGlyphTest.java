@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 /**
  * Conjured into existence by The Saminator on 10-01-2017.
  */
+
+@Disabled
 @TeleOp(name = "DriveBot Glyph Test Teleop", group = "this is a test")
 public class DriveBotTestTeleopGlyphTest extends DriveBotTestTemplate {
     private Gamepad prev1;

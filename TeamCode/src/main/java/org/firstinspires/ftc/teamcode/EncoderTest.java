@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +20,8 @@ import java.util.Locale;
  * Conjured into existence by The Saminator on 11-12-2017.
  * ..
  */
+
+@Disabled
 @Autonomous(name = "Encoder Test", group = "test bepis")
 public class EncoderTest extends OpMode {
 

@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 
 /**
  * Conjured into existence by The Saminator on 03-06-2018.
  */
+
+@Disabled
 @Autonomous(name = "DriveBot Balance", group = "this is a test")
 public class DriveBotTestBalance extends DriveBotTestTemplate {
 
@@ -45,13 +48,12 @@ public class DriveBotTestBalance extends DriveBotTestTemplate {
         telemetry.addData("Z gravity", gravity.zAccel);
 
         if (angles.theta > Angles.THETA_TOLERANCE) {
-            double leftPow = -0.125;
-            double rightPow = -0.125;
+            double leftPow = -0.25;
+            double rightPow = -0.25;
             // Account for fore/back tilt
-            double sign = Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
+            double sign = Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
             sign /= Math.abs(sign);
-            double foreBack = sign * Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE)); // * Math.cos(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.phi - Angles.PHI_BASELINE));
-            foreBack += Math.abs(foreBack) / foreBack;
+            double foreBack = sign * Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (angles.theta - Angles.THETA_BASELINE) / 2.0);
             leftPow *= foreBack;
             rightPow *= foreBack;
             /*// Account for left/right tilt
@@ -70,16 +72,5 @@ public class DriveBotTestBalance extends DriveBotTestTemplate {
             setLeftPow(0.0);
             setRightPow(0.0);
         }
-    }
-
-    public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
-        double
-                x2 = cartesian.x * cartesian.x,
-                y2 = cartesian.y * cartesian.y,
-                z2 = cartesian.z * cartesian.z;
-        double r = Math.sqrt(x2 + y2 + z2);
-        double theta = Math.acos(cartesian.z / r) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
-        double phi = Math.atan2(cartesian.y, cartesian.x) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
-        return new Spherical3D(r, theta, phi);
     }
 }

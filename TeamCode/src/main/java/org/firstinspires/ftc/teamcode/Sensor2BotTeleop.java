@@ -14,7 +14,7 @@ import java.util.Locale;
  */
 
 @TeleOp(name = "Sensor TeleOp", group = "feelz2thesequel")
-
+@Disabled
 public class Sensor2BotTeleop extends Sensor2BotTemplate {
 //    @Override
 //    public void start() {

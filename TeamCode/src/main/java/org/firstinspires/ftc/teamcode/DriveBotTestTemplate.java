@@ -80,6 +80,8 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final double DISTANCE_TO_CENTER = 8;
         public static final int ENC_TO_PASS_COLUMN = 100;
 
+
+        private final static double INITIAL_SPEED_FACTOR = 0.2; // As a factor of maxPower in Smooth Drive;
     }
 
     public enum IntakeState {
@@ -94,6 +96,13 @@ public abstract class DriveBotTestTemplate extends OpMode {
     GlyphInOutIntakeState glyphInOutIntakeState;
     GlyphInOutIntakeState prevGlyphInOutIntakeState;
     int glyphCount;
+
+    private enum SmoothDriveState {
+        SPEED_UP,
+        MAX_SPEED,
+        SLOW_DOWN,
+        STOP
+    }
 
 
     DcMotor leftFore, leftRear, rightFore, rightRear;
@@ -530,6 +539,29 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return false;
     }
 
+    protected double getPowerSmootheDrive(int currentEncoders, int totalEncoders, double percentTimeChangingSpeedPerState, double maxPower){
+        double power = 0.0;
+        byte negation; // We couldn't afford 3 extra bytes of storage, so we are using byte :-)
+        int encodersSpentChanging;
+
+        negation = (totalEncoders < 0) ? (byte) -1 : 1;
+        encodersSpentChanging = (int)(percentTimeChangingSpeedPerState * totalEncoders);
+
+        if (Math.abs(currentEncoders) < Math.abs(encodersSpentChanging)){
+            power = negation * ((((1 - Constants.INITIAL_SPEED_FACTOR) * maxPower) / (totalEncoders * percentTimeChangingSpeedPerState))
+                    * (currentEncoders) + (Constants.INITIAL_SPEED_FACTOR * maxPower));
+        }else if ((Math.abs(currentEncoders) >= Math.abs(encodersSpentChanging))
+                && (Math.abs(currentEncoders) < Math.abs(totalEncoders - encodersSpentChanging))){
+            power = negation * maxPower;
+        } else if (Math.abs(currentEncoders) >= Math.abs(totalEncoders-encodersSpentChanging)){
+            power = negation * (-(maxPower/(totalEncoders * percentTimeChangingSpeedPerState))
+                    * (currentEncoders - (totalEncoders - encodersSpentChanging)) + maxPower);
+        }else{
+            power = 0;
+        }
+
+        return power;
+    }
 
     protected void hitLeftJewel(){
         jewelFlipper.setPosition(1.0);
@@ -544,7 +576,16 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return true;
     }
 
-
+    public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
+        double
+                x2 = cartesian.x * cartesian.x,
+                y2 = cartesian.y * cartesian.y,
+                z2 = cartesian.z * cartesian.z;
+        double r = Math.sqrt(x2 + y2 + z2);
+        double theta = Math.acos(cartesian.z / r) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
+        double phi = Math.atan2(cartesian.y, cartesian.x) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
+        return new Spherical3D(r, theta, phi);
+    }
 
     protected boolean smoothTurn(double currentAngle, double targetAngle){
         double error = currentAngle - targetAngle;
