@@ -21,6 +21,7 @@ import java.util.Locale;
  * @author Pootis Man
  */
 @Autonomous(name = "SensorBot: Balance", group = "feelz")
+@Disabled
 public class SensorBotBalance extends SensorBotTemplate {
 
     static class Angles {

@@ -15,6 +15,7 @@ import java.util.Locale;
  * Created by fgpor on 3/3/2018.
  */
 
+@Disabled
 @Autonomous(name = "Balance", group = "no")
 public class DriveBotBalance extends DriveBotTestTemplate {
     static class Angles {

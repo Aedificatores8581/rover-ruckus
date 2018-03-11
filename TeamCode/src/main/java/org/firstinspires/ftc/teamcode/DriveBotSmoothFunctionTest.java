@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by Hunter Seachrist on 3/6/2018.
  */
 
+@Disabled
 @Autonomous(name = "Smooth Drive Function Test", group = "Bepis")
 public class DriveBotSmoothFunctionTest extends DriveBotTestTemplate{
     private enum SmoothieState { // I like Fruit smoothies

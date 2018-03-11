@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
  * Created by Hunter Seachrist on 2/9/2018.
  */
 
+@Disabled
 @TeleOp(name = "SensorBot: Amp Sensor", group = "Sensor Test")
 public class AmpSensorTest extends OpMode {
     AnalogInput ampSensor;

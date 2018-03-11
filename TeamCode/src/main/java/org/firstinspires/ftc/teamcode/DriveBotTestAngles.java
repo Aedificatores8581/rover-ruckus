@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 
 /**
  * Conjured into existence by The Saminator on 03-06-2018.
  */
+
+@Disabled
 @Autonomous(name = "DriveBot Angles", group = "this is a test")
 public class DriveBotTestAngles extends DriveBotTestTemplate {
 

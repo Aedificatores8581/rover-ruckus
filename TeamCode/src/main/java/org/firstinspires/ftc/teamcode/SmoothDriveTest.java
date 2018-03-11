@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import java.lang.ArithmeticException;
 
@@ -9,6 +10,7 @@ import java.lang.ArithmeticException;
  */
 
 @Autonomous(name = "Smoothe Drive Test", group = "bepis")
+@Disabled
 public class SmoothDriveTest extends Sensor2BotTemplate{
     private int totalEncoders;
     private double percentTimeChangingSpeedPerState;
