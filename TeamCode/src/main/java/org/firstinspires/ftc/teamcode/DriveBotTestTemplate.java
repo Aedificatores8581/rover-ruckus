@@ -544,7 +544,16 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return true;
     }
 
-
+    public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
+        double
+                x2 = cartesian.x * cartesian.x,
+                y2 = cartesian.y * cartesian.y,
+                z2 = cartesian.z * cartesian.z;
+        double r = Math.sqrt(x2 + y2 + z2);
+        double theta = Math.acos(cartesian.z / r) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
+        double phi = Math.atan2(cartesian.y, cartesian.x) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
+        return new Spherical3D(r, theta, phi);
+    }
 
     protected boolean smoothTurn(double currentAngle, double targetAngle){
         double error = currentAngle - targetAngle;
