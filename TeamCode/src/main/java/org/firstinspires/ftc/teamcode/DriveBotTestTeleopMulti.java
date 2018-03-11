@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -16,6 +17,9 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     public class InputHandlerThread extends Thread {
         @Override
         public void run() {
+            boolean mustResetIntake = true;
+            boolean mustResetLifter = true;
+
             while (!Thread.interrupted()) {
 
                 // Reset encoders
@@ -35,7 +39,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                     });
 
                 // Move glyph intake and belt
-                if (triggered(gamepad1.right_trigger))
+                if (triggered(gamepad1.right_trigger)) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
@@ -43,7 +47,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                             belt(0.5);
                         }
                     });
-                else if (triggered(gamepad1.left_trigger))
+                    mustResetIntake = true;
+                } else if (triggered(gamepad1.left_trigger)) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
@@ -51,7 +56,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                             belt(-0.5);
                         }
                     });
-                else
+                    mustResetIntake = true;
+                } else if (mustResetIntake) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
@@ -59,6 +65,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                             belt(0.0);
                         }
                     });
+                    mustResetIntake = false;
+                }
 
                 // Gear shift
                 if (gamepad1.x && !prev1.x)
@@ -143,12 +151,24 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                     });
 
                 // Move relic hand
-                if (Math.abs(gamepad2.right_stick_y) >= 0.25)
+                if (triggered(gamepad2.right_stick_y))
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
-                            relicHandServoValue += gamepad2.right_stick_y * 0.012;
-                            clampRelicHandServo();
+                            if (triggered(gamepad2.right_stick_y)) {
+                                relicHandServoValue += 0.006;
+                                clampRelicHandServo();
+                            }
+                        }
+                    });
+                if (triggered(-gamepad2.right_stick_y))
+                    inputActions.add(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (triggered(-gamepad2.right_stick_y)) {
+                                relicHandServoValue -= 0.006;
+                                clampRelicHandServo();
+                            }
                         }
                     });
 
@@ -173,27 +193,31 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                     });
 
                 // Move glyph lift
-                if (triggered(gamepad2.left_trigger) && glyphLiftHigh.getState())
+                if (triggered(gamepad2.left_trigger) && glyphLiftHigh.getState()) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
                             glyphLift.setPower(0.75);
                         }
                     });
-                else if (triggered(gamepad2.right_trigger) && glyphLiftLow.getState())
+                    mustResetLifter = true;
+                } else if (triggered(gamepad2.right_trigger) && glyphLiftLow.getState()) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
                             glyphLift.setPower(-0.75);
                         }
                     });
-                else
+                    mustResetLifter = true;
+                } else if (mustResetLifter) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
                             glyphLift.setPower(0.0);
                         }
                     });
+                    mustResetLifter = false;
+                }
 
                 // Toggle auto-glyphing
 
@@ -412,11 +436,14 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     public void loop() {
         try {
             setMotorPowers();
-            refreshServos();
 
-            while (inputActions.size() > 0) {
-                inputActions.poll().run();
+            while (!inputActions.isEmpty()) {
+                Runnable action = inputActions.poll();
+                if (action != null)
+                    action.run();
             }
+
+            refreshServos();
 
             switch (glyphLiftState) {
                 case LEVELING:
@@ -442,16 +469,18 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                     break;
             }
 
+            telemetry.addData("Glyph lift state", glyphLiftState);
+
             try {
                 prev1.copy(gamepad1);
                 prev2.copy(gamepad2);
             } catch (RobotCoreException e) {
                 telemetry.addData("Exception", e);
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             gamepadThread.interrupt();
-            throw e;
+            telemetry.addData("Exception", e);
+            //throw e;
         }
     }
 }

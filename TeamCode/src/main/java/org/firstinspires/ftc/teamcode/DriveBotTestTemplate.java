@@ -4,6 +4,8 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.qualcomm.robotcore.util.Range;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -75,6 +77,10 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double EMPTY_INTAKE_VALUE = (double) Double.NaN;
 
+        public static final double DISTANCE_TO_CENTER = 8;
+        public static final int ENC_TO_PASS_COLUMN = 100;
+
+
         private final static double INITIAL_SPEED_FACTOR = 0.2; // As a factor of maxPower in Smooth Drive;
     }
 
@@ -141,6 +147,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
     @Override
     public void init() {
+
         this.msStuckDetectInit = 60000;
 
         intakeState = IntakeState.NULL;
@@ -568,4 +575,72 @@ public abstract class DriveBotTestTemplate extends OpMode {
     protected boolean isAutonomous() {
         return true;
     }
+
+    public Spherical3D cartesianToSpherical(Cartesian3D cartesian) {
+        double
+                x2 = cartesian.x * cartesian.x,
+                y2 = cartesian.y * cartesian.y,
+                z2 = cartesian.z * cartesian.z;
+        double r = Math.sqrt(x2 + y2 + z2);
+        double theta = Math.acos(cartesian.z / r) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
+        double phi = Math.atan2(cartesian.y, cartesian.x) * org.firstinspires.ftc.teamcode.Constants.RADS_TO_DEGS;
+        return new Spherical3D(r, theta, phi);
+    }
+
+    protected boolean smoothTurn(double currentAngle, double targetAngle){
+        double error = currentAngle - targetAngle;
+
+        if(error > 180)
+            error = error - 360;
+        if(error < -180)
+            error = -error + 360;
+        double turnRang = error / 100;
+        turnRang = Range.clip(turnRang, -0.2, 0.2);
+        /*if(turnRang > 0) {
+            turnRang = Range.clip(turnRang,0.03,0.2);
+        }
+        else if(turnRang < 0) {
+            turnRang = Range.clip(turnRang,-0.2,-0.03);
+        }*/
+        setLeftPow(turnRang);
+        setRightPow(-turnRang);
+        if(Math.abs(error) < 1) {
+            setLeftPow(0);
+            setRightPow(0);
+            return true;
+        } else {
+            return false;
+        }
+    }/*
+    public boolean adjust(float currentAngle,float targetAngle, double targetSpeed) {
+        float diff;
+        gyroHeading = currentAngle;
+        if (targetAngle == 0) {
+            if(gyroHeading > 180) {
+                diff = gyroHeading - 360;
+            } else {
+                diff = gyroHeading - 0;
+            }
+        } else {
+            diff = gyroHeading - targetAngle;
+        }
+
+        leftDrivePower = targetSpeed+diff/20;      // we were at 20 before we started playing
+        rightDrivePower = targetSpeed-diff/20;
+        if(leftDrivePower > 1.0){
+            leftDrivePower = 1.0;
+        }
+        if(leftDrivePower < -1.0) {
+            leftDrivePower = -1.0;
+        }
+        if(rightDrivePower > 1.0) {
+            rightDrivePower = 1.0;
+        }
+        if(rightDrivePower < -1.0) {
+            rightDrivePower = -1.0;
+        }
+        setPower(leftDrivePower, rightDrivePower);
+        return true;
+    }
+*/
 }

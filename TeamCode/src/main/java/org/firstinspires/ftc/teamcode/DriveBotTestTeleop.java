@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
@@ -17,6 +20,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private Gamepad prev1;
     private Gamepad prev2;
 
+    private Acceleration g;
 
     private static final double MAX_AMP_GLYPH_OUTPUT = 2.8; // The amp sensor returns the amount of current in amps. Voltage is volts, current is amps; they are not the same thing.
 
@@ -26,12 +30,13 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     private double jewelArmServoValue = 0, jewelFlipperServoValue = 0, relicHandServoValue = 0, relicFingersServoValue = 0, glyphDumpServoValue = 0;
     private boolean lifting, valueChange;
     private boolean armExtended;
+    private boolean isBalancing;
     long waiting = 0, waitTime = 500;
 
     private boolean dumpServoManual;
 
     public enum SpeedToggle {
-        SLOW(0.6),
+        SLOW(0.7),//ORIGINAL SPEED = 0.6
         FAST(0.8);
 
         private double mult;
@@ -77,6 +82,20 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         prev1 = new Gamepad();
         prev2 = new Gamepad();
         armExtended = false;
+
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
 
         glyphLiftState = GlyphLiftState.DESCENDED;
     }
@@ -172,7 +191,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
     public void loop() {
         if (isDancing())
             dance();
-        else
+        else if (!isBalancing)
             setMotorPowers();
         refreshServos();
 
@@ -356,7 +375,7 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 glyphLift.setPower(0.0);
         }
 
-        if ((gamepad2.b && !prev2.b) || (gamepad2.left_stick_button && !prev2.left_stick_button) || (gamepad2.right_stick_button && !prev2.right_stick_button)) {
+        if ((gamepad2.b && !prev2.b) || (gamepad2.right_stick_button && !prev2.right_stick_button)) {
             switch (glyphLiftState) {
                 case LEVELED:
                     glyphLift.setPower(0.5);
@@ -401,13 +420,37 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
                 break;
         }
+        Spherical3D gravAngles = cartesianToSpherical(new Cartesian3D(gravity.zAccel, gravity.xAccel, gravity.yAccel));
 
+        if (isBalancing && !isDancing()) {
+            if (gravAngles.theta > 3.375) {
+                double leftPow = -0.25;
+                double rightPow = -0.25;
+
+                // Account for fore/back tilt
+                double sign = Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (gravAngles.phi));
+                sign /= Math.abs(sign);
+                double foreBack = sign * Math.sin(org.firstinspires.ftc.teamcode.Constants.DEGS_TO_RADS * (gravAngles.theta) / 2.0);
+
+                leftPow *= foreBack;
+                rightPow *= foreBack;
+                setLeftPow(leftPow);
+                setRightPow(rightPow);
+            }
+            else {
+                setLeftPow(0);
+                setRightPow(0);
+                isBalancing = false;
+            }
+        }
+
+        if (gamepad2.left_stick_button && !prev2.left_stick_button)
+            isBalancing = !isBalancing;
 
         telemetry.addData("Glyph Count", glyphCount);
         telemetry.addData("Glyph Intake State", glyphInOutIntakeState);
         telemetry.addData("Intake Running State", intakeState);
         telemetry.addData("Glyph Intake Range Sensor", intakeSensorRange.getDistance(DistanceUnit.CM));
-
 
         telemetry.addData("Arm Extended", armExtended);
         telemetry.addData("Amp Sensor (returning volts)", ampSensor.getVoltage());
@@ -466,6 +509,17 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
         telemetry.addData("dL  ", dSensorL.getDistance(DistanceUnit.CM));
 
         telemetry.addData("dR  ", dSensorR.getDistance(DistanceUnit.CM));
+
+        telemetry.addData("acceleration    ", imu.getAcceleration());
+
+        telemetry.addData("linear acceleration    ", imu.getLinearAcceleration());
+
+
+        telemetry.addData("velocity    ", imu.getVelocity());
+
+        telemetry.addData("position    ", imu.getPosition());
+
+        telemetry.addData("calib    ", imu.isAccelerometerCalibrated());
 
         try {
             prev1.copy(gamepad1);

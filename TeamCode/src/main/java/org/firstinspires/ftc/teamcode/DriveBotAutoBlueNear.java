@@ -255,6 +255,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         }
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
+                belt(0.5);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
@@ -264,6 +265,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                     state = State.STATE_SCAN_JEWEL;
                 break;
             case STATE_SCAN_JEWEL:
+                belt(0);
                 prevTime = 0;
                 glyphOutput.setPosition(Constants.LEVEL_DISPENSER);
 
@@ -298,7 +300,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_RESET_JEWEL_HITTER:
-                relicHand.setPosition(0.5);
+                relicHand.setPosition(0.284);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
@@ -310,9 +312,9 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 if(!(runWithArmDistance(dSensorR)) || wallDetected == true) {
                     wallDetected = true;
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                        resetEncoders();
-                        reinitMotors(-0.1, -0.1);
-                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
+                    resetEncoders();
+                    reinitMotors(-0.1, -0.1);
+                    state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
@@ -423,6 +425,10 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 keyChecked = true;
         }
 
+        if(System.currentTimeMillis() - totalTime < 500)
+            relicArm.setPower(-1.0);
+        else
+            relicArm.setPower(0);
 
         telemetry.addData("DETECTED WALL", wallDetected);
 
