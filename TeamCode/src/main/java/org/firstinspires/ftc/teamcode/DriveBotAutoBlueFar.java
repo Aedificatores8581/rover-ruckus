@@ -292,6 +292,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.284);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 state = State.STATE_SCAN_KEY;
                 break;
@@ -403,7 +404,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_L_MEET_CRYPTOBOX:
                 if (checkEncoders(encToMeetCryptobox)) {
-                    dispenseGlyph = true;
+
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
                 }
@@ -507,6 +508,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
+                dispenseGlyph = true;
                 if (checkEncoders(encToDispense)) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -577,7 +579,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 retractDispenser = true;
         }
 
-        if(System.currentTimeMillis() - totalTime < 500)
+        if(System.currentTimeMillis() - totalTime > 500)
             relicArm.setPower(-1.0);
         else
             relicArm.setPower(0);

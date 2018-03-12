@@ -39,6 +39,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
     State state;
 
+    boolean sensing = false;
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaTrackables relicTrackables;
@@ -51,7 +52,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     boolean wallDetected = false;
 
     Gamepad prev1;
-
+    int count = 2;
+    int count1 = 0;
     long waitTime = 1600L;
     long prevTime, totalTime = 0;
     double speed = 0.075, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.0;
@@ -149,14 +151,16 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
         switch (vuMark) { // Blue is weird.
             case LEFT:
-
                 column = CryptoboxColumn.RIGHT;
+                count = 3;
                 break;
             case RIGHT:
                 column = CryptoboxColumn.LEFT;
+                count = 2;
                 break;
             case CENTER:
                 column = CryptoboxColumn.MID;
+                count = 1;
                 break;
 
         }
@@ -309,32 +313,48 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 relicHand.setPosition(0.5);
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                sensing = false;
                 setLeftPow(speed);
                 setRightPow(speed);
+                sensing = true;
                 state = state.STATE_DRIVE_TO_CRYPTOBOX;
                 break;
             case STATE_DRIVE_TO_CRYPTOBOX:
-                if(!(runWithArmDistance(dSensorL)) || wallDetected == true) {
-                    wallDetected = true;
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                if(dSensorL.getDistance(DistanceUnit.CM) <= 6 && sensing) {
                     jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                    setLeftPow(0);
-                    setRightPow(0);
-                    if (prevTime == 0)
-                        prevTime = System.currentTimeMillis();
-                    if (System.currentTimeMillis() - prevTime >= waitTime) {
-                        resetEncoders();
-                        reinitMotors(0.1, 0.1);
-                        state = state.STATE_CRYPTOBOX_RIGHT_SLOT;
-                    }
+                    resetEncoders();
+                    reinitMotors(speed, speed);
+
+                    sensing = false;
+                    state = State.STATE_CRYPTOBOX_RIGHT_SLOT;
                 }
                 break;
             case STATE_CRYPTOBOX_RIGHT_SLOT:
 
-                if (checkEncoders(encToMoveToLeft)) {
-                    if (column == CryptoboxColumn.RIGHT)
+                if(checkEncoders(Constants.ENC_TO_PASS_COLUMN - 20)&& !sensing) {
+                    jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                    jewelArm.setPosition(Constants.JEWEL_ARM_DETECT_POSITION);
+                    count1++;
+                    sensing = true;
+                }
+                if(dSensorL.getDistance(DistanceUnit.CM) == Double.NaN)
+                    wallDetected = false;
+                else
+                    wallDetected = true;
+                if(dSensorL.getDistance(DistanceUnit.CM) <= dSensorR.getDistance(DistanceUnit.CM) && wallDetected == true && sensing) {
+                    if(count1 == count) {
+                        jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
+                        resetEncoders();
+                        reinitMotors(-adjustSpeed, adjustSpeed);
                         state = State.STATE_RECORD_FACING;
-                    else
-                        state = State.STATE_CRYPTOBOX_CENTER_SLOT;
+                    }
+                    else {
+                        reinitMotors(speed, speed);
+                        state = State.STATE_DRIVE_TO_CRYPTOBOX;
+                    }
+
                 }
                 break;
             case STATE_CRYPTOBOX_CENTER_SLOT:
@@ -430,12 +450,15 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             switch (vuMark) {
                 case LEFT:
                     column = CryptoboxColumn.LEFT;
+                    count = 3;
                     break;
                 case RIGHT:
                     column = CryptoboxColumn.RIGHT;
+                    count = 1;
                     break;
                 case CENTER:
                     column = CryptoboxColumn.MID;
+                    count = 2;
                     break;
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
@@ -444,6 +467,9 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
 
         telemetry.addData("DETECTED WALL", wallDetected);
+
+        telemetry.addData("count", count);
+        telemetry.addData("count", count1);
 
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
