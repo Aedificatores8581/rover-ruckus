@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import java.lang.ArithmeticException;
 
@@ -9,7 +10,8 @@ import java.lang.ArithmeticException;
  */
 
 @Autonomous(name = "Smoothe Drive Test", group = "bepis")
-public class SmootheDriveTest extends Sensor2BotTemplate{
+@Disabled
+public class SmoothDriveTest extends Sensor2BotTemplate{
     private int totalEncoders;
     private double percentTimeChangingSpeedPerState;
     private double maxPower;
@@ -20,14 +22,14 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
     double acceleration;
 
 
-    private enum SmootheDriveState{
+    private enum SmoothDriveState {
         SPEED_UP,
         MAX_SPEED,
         SLOW_DOWN,
         STOP
     }
 
-    private SmootheDriveState smootheDriveState;
+    private SmoothDriveState smoothDriveState;
 
 
     public void init(){
@@ -44,7 +46,7 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
         percentTimeChangingSpeedPerState = 0.2;
         maxPower = 0.3;
         negation =  (totalEncoders < 0) ? (byte) -1 : 1;
-        smootheDriveState = SmootheDriveState.SPEED_UP;
+        smoothDriveState = SmoothDriveState.SPEED_UP;
 
     }
 
@@ -89,20 +91,20 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
 
     public void loop(){
 
-        switch(smootheDriveState){
+        switch(smoothDriveState){
             case SPEED_UP:
                 power = negation * ((((1 - INITIAL_SPEED_FACTOR) * maxPower) / (totalEncoders * percentTimeChangingSpeedPerState))
                         * (lm.getCurrentPosition()) + (INITIAL_SPEED_FACTOR * maxPower));
 
                 if(Math.abs(lm.getCurrentPosition()) >= Math.abs(encodersSpentChanging)){
-                    smootheDriveState = SmootheDriveState.MAX_SPEED;
+                    smoothDriveState = SmoothDriveState.MAX_SPEED;
                 }
                 break;
             case MAX_SPEED:
                 power = negation * maxPower;
 
                 if(Math.abs(lm.getCurrentPosition()) >= Math.abs(totalEncoders-encodersSpentChanging)){
-                    smootheDriveState = SmootheDriveState.SLOW_DOWN;
+                    smoothDriveState = SmoothDriveState.SLOW_DOWN;
                 }
                 break;
             case SLOW_DOWN:
@@ -110,11 +112,11 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
                         * (lm.getCurrentPosition() - (totalEncoders - encodersSpentChanging)) + maxPower);
 
                 if(Math.abs(lm.getCurrentPosition()) >= Math.abs(totalEncoders)){
-                    smootheDriveState = SmootheDriveState.STOP;
+                    smoothDriveState = SmoothDriveState.STOP;
                 }
 
                 if (Math.abs(power) < 0.03){
-                    smootheDriveState = SmootheDriveState.STOP;
+                    smoothDriveState = SmoothDriveState.STOP;
                 }
                 break;
             case STOP:
@@ -125,7 +127,7 @@ public class SmootheDriveTest extends Sensor2BotTemplate{
         setRightPow(power);
         setLeftPow(power);
 
-        telemetry.addData("State", smootheDriveState);
+        telemetry.addData("State", smoothDriveState);
         telemetry.addData("Motor Power", power);
         telemetry.addData("Right Distance: ", rm.getCurrentPosition());
         telemetry.addData("Left Distance: ", lm.getCurrentPosition());

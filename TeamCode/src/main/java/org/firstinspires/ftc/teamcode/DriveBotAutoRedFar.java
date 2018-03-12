@@ -233,10 +233,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             hasAngles = true;
         }
 
-        if(System.currentTimeMillis() - totalTime < 500)
-            relicArm.setPower(-1.0);
-        else
-            relicArm.setPower(0);
 
         if (!initServos) {
             initServos = true;
@@ -300,6 +296,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_RESET_JEWEL_HITTER:
                 relicHand.setPosition(0.284);
+                jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
                 state = State.STATE_SCAN_KEY;
                 break;
@@ -420,7 +417,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     reinitMotors(speed, speed);
-                    dispenseGlyph = true;
+
                     state = State.STATE_L_MEET_CRYPTOBOX;
 
                 }
@@ -550,7 +547,9 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
+
                 if (checkEncoders(encToDispense)) {
+                    dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;

@@ -17,6 +17,7 @@ import java.util.Locale;
  * Created by fgpor on 3/3/2018.
  */
 
+@Disabled
 public class DriveBotAutoBalance extends DriveBotTestTemplate{
 
     final double CLOSE = 0.0;
