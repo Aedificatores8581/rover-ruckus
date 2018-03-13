@@ -84,7 +84,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                             belt(-0.5);
                         }
                     });
-                } else if ((!triggered(gamepad1.right_trigger) && triggered(prev1.right_trigger)) || (!triggered(gamepad1.left_trigger) && triggered(prev1.left_trigger))) {
+                } else if (!triggered(gamepad1.right_trigger) && !triggered(gamepad1.left_trigger)) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
@@ -93,6 +93,9 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                         }
                     });
                 }
+
+                if ((gamepad2.left_stick_y > 0 && magFront.getState()) || (gamepad2.left_stick_y < 0 && magBack.getState()) || gamepad2.left_stick_y == 0)
+                    relicArm.setPower(gamepad2.left_stick_y);
 
                 // Gear shift
                 if (gamepad1.x && !prev1.x)
@@ -106,137 +109,22 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                 if (gamepad1.b && !prev1.b)
                     isBalancing = !isBalancing;
 
-                // Move jewel arm down
-                if (gamepad1.dpad_down)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            jewelArmServoValue -= 0.01;
-                            clampJewelArmServo();
-                        }
-                    });
-
-                // Move jewel arm up
-                if (gamepad1.dpad_up)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            jewelArmServoValue += 0.01;
-                            clampJewelArmServo();
-                        }
-                    });
-
-                // Move glyph dumper up
-                if (gamepad2.dpad_up || gamepad2.y)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            glyphDumpServoValue += 0.05;
-                            dumpServoManual = true;
-                            clampDumpServo();
-                        }
-                    });
-
-                // Move glyph dumper down
-                if (gamepad2.dpad_down || gamepad2.a)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            glyphDumpServoValue -= 0.05;
-                            dumpServoManual = true;
-                            clampDumpServo();
-                        }
-                    });
-
-                // Move glyph dumper level
-                if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            glyphDumpServoValue = 0.42;
-                            dumpServoManual = true;
-                            clampDumpServo();
-                        }
-                    });
-
-                // Move jewel flipper
-                if (gamepad1.dpad_left)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            jewelFlipperServoValue += 0.01;
-                            clampJewelArmServo();
-                        }
-                    });
-
-                // Move jewel flipper
-                if (gamepad1.dpad_right)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            jewelFlipperServoValue -= 0.01;
-                            clampJewelFlipperServo();
-                        }
-                    });
-
-                // Move relic hand
-                if (triggered(gamepad2.right_stick_y))
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (triggered(gamepad2.right_stick_y)) {
-                                relicHandServoValue += 0.006;
-                                clampRelicHandServo();
-                            }
-                        }
-                    });
-                if (triggered(-gamepad2.right_stick_y))
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (triggered(-gamepad2.right_stick_y)) {
-                                relicHandServoValue -= 0.006;
-                                clampRelicHandServo();
-                            }
-                        }
-                    });
-
-                // Move relic finger in
-                if (gamepad2.right_bumper)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            relicFingersServoValue -= 0.02;
-                            clampRelicFingersServo();
-                        }
-                    });
-
-                // Move relic finger out
-                if (gamepad2.left_bumper)
-                    inputActions.add(new Runnable() {
-                        @Override
-                        public void run() {
-                            relicFingersServoValue += 0.02;
-                            clampRelicFingersServo();
-                        }
-                    });
-
                 // Move glyph lift
                 if (triggered(gamepad2.left_trigger) && !triggered(prev2.left_trigger) && glyphLiftHigh.getState()) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
-                            glyphLift.setPower(0.75);
+                            glyphLift.setPower(0.5);
                         }
                     });
                 } else if (triggered(gamepad2.right_trigger) && !triggered(prev2.right_trigger) && glyphLiftLow.getState()) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
-                            glyphLift.setPower(-0.75);
+                            glyphLift.setPower(-0.5);
                         }
                     });
-                } else if ((!triggered(gamepad2.right_trigger) && triggered(prev1.right_trigger)) || (!triggered(gamepad2.left_trigger) && triggered(prev1.left_trigger))) {
+                } else if (!triggered(gamepad2.right_trigger) && !triggered(gamepad2.left_trigger)) {
                     inputActions.add(new Runnable() {
                         @Override
                         public void run() {
@@ -304,7 +192,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
     private byte armPos = 1;
-    private double jewelArmServoValue = 0, jewelFlipperServoValue = 0, relicHandServoValue = 0, relicFingersServoValue = 0, glyphDumpServoValue = 0;
+    private double jewelArmServoValue = 0, jewelFlipperServoValue = 0, relicFingersServoValue = 0, glyphDumpServoValue = 0;
+    private volatile double relicHandServoValue = 0;
     private boolean lifting, valueChange;
     private boolean armExtended;
     private boolean enableAutoGlyph = false;
@@ -364,6 +253,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         inputActions = new ConcurrentLinkedQueue<>();
 
         gamepadThread = new InputHandlerThread();
+        balanceThread = new RobotBalanceThread();
     }
 
     @Override
@@ -382,6 +272,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         isBalancing = false;
 
         gamepadThread.start();
+        balanceThread.start();
     }
 
     @Override
@@ -389,6 +280,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         super.stop();
 
         gamepadThread.interrupt();
+        balanceThread.interrupt();
     }
 
     protected void toggleSpeed() {
@@ -398,64 +290,75 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
             speedMult = SpeedToggle.SLOW;
     }
 
-    protected void clampJewelArmServo() {
-        if (jewelArmServoValue > 0.8) // Maximum position
-            jewelArmServoValue = 0.8;
-        if (jewelArmServoValue < 0.25) // Minimum position
-            jewelArmServoValue = 0.25;
-    }
+    protected void getServosFromGamepad() {
+        // Move jewel arm down
+        if (gamepad1.dpad_down) {
+            jewelArmServoValue -= 0.01;
+        }
 
-    protected void clampJewelFlipperServo() {
-        if (jewelFlipperServoValue > 0.95)
-            jewelFlipperServoValue = 0.95;
-        if (jewelFlipperServoValue < 0.05)
-            jewelFlipperServoValue = 0.05;
-    }
+        // Move jewel arm up
+        if (gamepad1.dpad_up) {
+            jewelArmServoValue += 0.01;
+        }
 
-    protected void clampRelicHandServo() {
+        // Move glyph dumper up
+        if (gamepad2.dpad_up || gamepad2.y) {
+            glyphDumpServoValue += 0.05;
+            dumpServoManual = true;
+        }
 
-        if (relicHandServoValue > 1) // Maximum position
-            relicHandServoValue = 1;
-        if (relicHandServoValue < 0) // Minimum position
-            relicHandServoValue = 0;
-        //0.188 = 0
-        //0.23 = 270
-        /*
-        arm position of servos
-        relic hand 270 degrees = 0.25
-        relic hand 0 degrees = 0.2
-        relic hand start position = 0.165
-         */
-    }
+        // Move glyph dumper down
+        if (gamepad2.dpad_down || gamepad2.a) {
+            glyphDumpServoValue -= 0.05;
+            dumpServoManual = true;
+        }
 
-    protected void clampRelicFingersServo() {
-        if (relicFingersServoValue > 1) // Maximum position
-            relicFingersServoValue = 1;
-        if (relicFingersServoValue < 0) // Minimum position
-            relicFingersServoValue = 0;
-    }
+        // Move glyph dumper level
+        if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) {
+            glyphDumpServoValue = 0.42;
+            dumpServoManual = true;
+        }
 
-    protected void clampDumpServo() {
-        if (glyphDumpServoValue > 1) // Maximum position
-            glyphDumpServoValue = 1;
-        if (glyphDumpServoValue < 0) // Minimum position
-            glyphDumpServoValue = 0;
+        // Move jewel flipper
+        if (gamepad1.dpad_left) {
+            jewelFlipperServoValue += 0.01;
+        }
+
+        // Move jewel flipper
+        if (gamepad1.dpad_right) {
+            jewelFlipperServoValue -= 0.01;
+        }
+
+        // Move relic hand
+        if (triggered(gamepad2.right_stick_y)) {
+            relicHandServoValue += 0.006;
+        }
+
+        // Move relic hand
+        if (triggered(-gamepad2.right_stick_y)) {
+            relicHandServoValue -= 0.006;
+        }
+
+        // Move relic finger in
+        if (gamepad2.right_bumper) {
+            relicFingersServoValue -= 0.02;
+        }
+
+        // Move relic finger out
+        if (gamepad2.left_bumper) {
+            relicFingersServoValue += 0.02;
+        }
     }
 
     protected void refreshServos() {
-        clampJewelArmServo();
-        clampJewelFlipperServo();
-        clampRelicHandServo();
-        clampRelicFingersServo();
-        clampDumpServo();
 
-        jewelArm.setPosition(jewelArmServoValue);
-        jewelFlipper.setPosition(jewelFlipperServoValue);
-        relicHand.setPosition(relicHandServoValue);
-        relicFingers.setPosition(relicFingersServoValue);
+        jewelArm.setPosition(Utilities.clamp(0.25, jewelArmServoValue, 0.8));
+        jewelFlipper.setPosition(Utilities.clamp(0.05, jewelFlipperServoValue, 0.95));
+        relicHand.setPosition(Utilities.clamp(0, relicHandServoValue, 1));
+        relicFingers.setPosition(Utilities.clamp(0, relicFingersServoValue, 1));
 
         if (dumpServoManual)
-            glyphOutput.setPosition(glyphDumpServoValue);
+            glyphOutput.setPosition(Utilities.clamp(0, glyphDumpServoValue, 1));
     }
 
     protected void setMotorPowers() {
@@ -475,6 +378,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                     action.run();
             }
 
+            getServosFromGamepad();
             refreshServos();
 
             switch (glyphLiftState) {
@@ -511,6 +415,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
             }
         } catch (Throwable e) {
             gamepadThread.interrupt();
+            balanceThread.interrupt();
             telemetry.addData("Exception", e);
             //throw e;
         }

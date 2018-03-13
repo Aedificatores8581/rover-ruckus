@@ -396,7 +396,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean triggered(double value) {
-        return value >= 0.05;
+        return value >= 0.25;
     }
 
     protected void resetEncoders() {
