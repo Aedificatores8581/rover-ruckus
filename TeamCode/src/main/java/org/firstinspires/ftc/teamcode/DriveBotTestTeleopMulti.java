@@ -34,7 +34,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                             leftPow *= foreBack;
                             rightPow *= foreBack;
 
-                            if (gamepad1.left_stick_x > 0) {
+                            if (gamepad1.left_stick_x > 0 ^ leftPow < 0) {
                                 leftPow *= 1 - (2 * gamepad1.left_stick_x);
                             } else {
                                 rightPow *= 1 + (2 * gamepad1.left_stick_x);
@@ -170,14 +170,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         public void run() {
             while (!Thread.interrupted()) {
                 getServosFromGamepad();
-            }
-        }
-    }
-
-    public class ServoSetterThread extends Thread {
-        @Override
-        public void run() {
-            while (!Thread.interrupted()) {
                 refreshServos();
             }
         }
@@ -194,7 +186,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     private Thread balanceThread;
     private volatile boolean isBalancing = false;
 
-    private Thread setServoThread;
     private Thread getServoThread;
 
     private GlyphLiftState glyphLiftState;
@@ -262,7 +253,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         gamepadThread = new InputHandlerThread();
         balanceThread = new RobotBalanceThread();
         getServoThread = new ServoGetterThread();
-        setServoThread = new ServoSetterThread();
     }
 
     @Override
@@ -287,7 +277,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         gamepadThread.start();
         balanceThread.start();
         getServoThread.start();
-        setServoThread.start();
     }
 
     @Override
@@ -297,7 +286,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         gamepadThread.interrupt();
         balanceThread.interrupt();
         getServoThread.interrupt();
-        setServoThread.interrupt();
     }
 
     protected void toggleSpeed() {
@@ -434,7 +422,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
             gamepadThread.interrupt();
             balanceThread.interrupt();
             getServoThread.interrupt();
-            setServoThread.interrupt();
             telemetry.addData("Exception", e);
             //throw e;
         }
