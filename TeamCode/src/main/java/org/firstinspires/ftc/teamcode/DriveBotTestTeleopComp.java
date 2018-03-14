@@ -83,6 +83,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         jewelFlipper.setPosition(0.5);
         relicHand.setPosition(0.4);
         glyphOutput.setPosition(0.0);
+        jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
 
         dumpServoManual = true;
         enableAutoGlyph = false;

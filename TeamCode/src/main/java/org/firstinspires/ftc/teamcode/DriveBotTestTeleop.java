@@ -420,9 +420,10 @@ public class DriveBotTestTeleop extends DriveBotTestTemplate {
                 }
                 break;
         }
-        Spherical3D gravAngles = cartesianToSpherical(new Cartesian3D(gravity.zAccel, gravity.xAccel, gravity.yAccel));
 
         if (isBalancing && !isDancing()) {
+            Spherical3D gravAngles = cartesianToSpherical(new Cartesian3D(gravity.zAccel, gravity.xAccel, gravity.yAccel));
+
             if (gravAngles.theta > 3.375) {
                 double leftPow = -0.25;
                 double rightPow = -0.25;
