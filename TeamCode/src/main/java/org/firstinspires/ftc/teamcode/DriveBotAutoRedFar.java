@@ -73,7 +73,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     // IMPORTANT: THIS OP-MODE WAITS ONE SECOND BEFORE STARTING. THIS MEANS THAT WE HAVE TWENTY-NINE SECONDS TO ACCOMPLISH TASKS, NOT THIRTY.
     public void start() {
         super.start();
-        relicTrackables.activate();
         //encToMoveToCenter = encToMoveToLeft + encToChangeColumn;
         //encToMoveToRight = encToMoveToLeft + (encToChangeColumn * 2);
         if (ramAngle > 1.0) {
@@ -147,6 +146,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
         prev1 = new Gamepad();
         column = CryptoboxColumn.MID;
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+        relicTrackables.activate();
     }
 
     @Override
@@ -282,6 +283,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 setLeftPow(.005 * mult);
                 setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(0.05);
+                if(prevTime == 0)
+                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
@@ -291,6 +294,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 setLeftPow(0);
                 setRightPow(0);
                 jewelFlipper.setPosition(1.0);
+                if(prevTime == 0)
+                    prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
