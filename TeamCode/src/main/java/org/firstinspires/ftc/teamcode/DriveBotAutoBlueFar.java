@@ -110,7 +110,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return true;
     }
 

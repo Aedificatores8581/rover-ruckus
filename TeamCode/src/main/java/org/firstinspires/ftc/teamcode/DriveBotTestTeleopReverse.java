@@ -49,7 +49,7 @@ public class DriveBotTestTeleopReverse extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return false;
     }
 

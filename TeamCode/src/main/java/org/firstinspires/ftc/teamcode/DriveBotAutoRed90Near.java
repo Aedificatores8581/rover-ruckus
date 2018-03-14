@@ -69,7 +69,7 @@ public class DriveBotAutoRed90Near extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return true;
     }
 

@@ -60,7 +60,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return false;
     }
 
