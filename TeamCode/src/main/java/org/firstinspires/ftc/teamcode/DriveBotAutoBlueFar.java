@@ -107,6 +107,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         relicHand.setPosition(0.5);
 
         initServos = false;
+        totalTime = System.currentTimeMillis();
     }
 
     @Override
@@ -243,7 +244,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-                totalTime = System.currentTimeMillis();
+
+                if(System.currentTimeMillis() - totalTime < 500)
+                    relicArm.setPower(-1.0);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
@@ -280,14 +283,18 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 setLeftPow(.005 * mult);
                 setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(0.05);
-                if (timeReached(prevTime, waitTime))
+                if(prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
                 setLeftPow(.005 * mult);
                 setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(1.0);
-                if (timeReached(prevTime, waitTime))
+                if(prevTime == 0)
+                    prevTime = System.currentTimeMillis();
+                if (System.currentTimeMillis() - prevTime >= waitTime)
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_RESET_JEWEL_HITTER:
