@@ -33,6 +33,13 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
                             leftPow *= foreBack;
                             rightPow *= foreBack;
+
+                            if (gamepad1.left_stick_x > 0) {
+                                leftPow *= 1 - (2 * gamepad1.left_stick_x);
+                            } else {
+                                rightPow *= 1 + (2 * gamepad1.left_stick_x);
+                            }
+
                             setLeftPow(leftPow);
                             setRightPow(rightPow);
                         } else {
@@ -51,15 +58,11 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     public class InputHandlerThread extends Thread {
         @Override
         public void run() {
-            boolean moveIntake = false;
-            boolean resetIntake = false;
             boolean moveLifter = false;
             boolean resetLifter = false;
 
             try {
                 while (!Thread.interrupted()) {
-                    getServosFromGamepad();
-
                     // Reset encoders
                     if (gamepad1.left_stick_button)
                         inputActions.add(new Runnable() {
@@ -77,36 +80,15 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                         });
 
                     // Move glyph intake and belt
-                    if (triggered(gamepad1.right_trigger) && !moveIntake) {
-                        inputActions.add(new Runnable() {
-                            @Override
-                            public void run() {
-                                succ(1.0);
-                                belt(0.5);
-                            }
-                        });
-                        moveIntake = true;
-                        resetIntake = false;
-                    } else if (triggered(gamepad1.left_trigger) && !moveIntake) {
-                        inputActions.add(new Runnable() {
-                            @Override
-                            public void run() {
-                                succ(-1.0);
-                                belt(-0.5);
-                            }
-                        });
-                        moveIntake = true;
-                        resetIntake = false;
-                    } else if (!triggered(gamepad1.right_trigger) && !triggered(gamepad1.left_trigger) && !resetIntake) {
-                        inputActions.add(new Runnable() {
-                            @Override
-                            public void run() {
-                                succ(0.0);
-                                belt(0.0);
-                            }
-                        });
-                        moveIntake = false;
-                        resetIntake = true;
+                    if (triggered(gamepad1.right_trigger)) {
+                        succ(1.0);
+                        belt(0.5);
+                    } else if (triggered(gamepad1.left_trigger)) {
+                        succ(-1.0);
+                        belt(-0.5);
+                    } else {
+                        succ(0.0);
+                        belt(0.0);
                     }
 
                     if ((gamepad2.left_stick_y > 0 && magFront.getState()) || (gamepad2.left_stick_y < 0 && magBack.getState()) || gamepad2.left_stick_y == 0)
@@ -125,33 +107,12 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                         isBalancing = !isBalancing;
 
                     // Move glyph lift
-                    if (triggered(gamepad2.left_trigger) && !moveLifter && glyphLiftHigh.getState()) {
-                        inputActions.add(new Runnable() {
-                            @Override
-                            public void run() {
-                                glyphLift.setPower(0.5);
-                            }
-                        });
-                        moveLifter = true;
-                        resetLifter = false;
-                    } else if (triggered(gamepad2.right_trigger) && !moveLifter && glyphLiftLow.getState()) {
-                        inputActions.add(new Runnable() {
-                            @Override
-                            public void run() {
-                                glyphLift.setPower(-0.5);
-                            }
-                        });
-                        moveLifter = true;
-                        resetLifter = false;
-                    } else if (!triggered(gamepad2.right_trigger) && !triggered(gamepad2.left_trigger) && !resetLifter) {
-                        inputActions.add(new Runnable() {
-                            @Override
-                            public void run() {
-                                glyphLift.setPower(0.0);
-                            }
-                        });
-                        moveLifter = false;
-                        resetLifter = true;
+                    if (triggered(gamepad2.left_trigger) && glyphLiftHigh.getState()) {
+                        glyphLift.setPower(0.5);
+                    } else if (triggered(gamepad2.right_trigger) && glyphLiftLow.getState()) {
+                        glyphLift.setPower(-0.5);
+                    } else if (!triggered(gamepad2.right_trigger) && !triggered(gamepad2.left_trigger)) {
+                        glyphLift.setPower(0.0);
                     }
 
                     // Toggle auto-glyphing
@@ -204,6 +165,24 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         }
     }
 
+    public class ServoGetterThread extends Thread {
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                getServosFromGamepad();
+            }
+        }
+    }
+
+    public class ServoSetterThread extends Thread {
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                refreshServos();
+            }
+        }
+    }
+
     private Gamepad prev1;
     private Gamepad prev2;
 
@@ -214,6 +193,9 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
     private Thread balanceThread;
     private volatile boolean isBalancing = false;
+
+    private Thread setServoThread;
+    private Thread getServoThread;
 
     private GlyphLiftState glyphLiftState;
     private SpeedToggle speedMult;
@@ -279,6 +261,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
         gamepadThread = new InputHandlerThread();
         balanceThread = new RobotBalanceThread();
+        getServoThread = new ServoGetterThread();
+        setServoThread = new ServoSetterThread();
     }
 
     @Override
@@ -302,6 +286,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
         gamepadThread.start();
         balanceThread.start();
+        getServoThread.start();
+        setServoThread.start();
     }
 
     @Override
@@ -310,6 +296,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
 
         gamepadThread.interrupt();
         balanceThread.interrupt();
+        getServoThread.interrupt();
+        setServoThread.interrupt();
     }
 
     protected void toggleSpeed() {
@@ -380,7 +368,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     }
 
     protected void refreshServos() {
-
         jewelArm.setPosition(Utilities.clamp(0.25, jewelArmServoValue, 0.8));
         jewelFlipper.setPosition(Utilities.clamp(0.05, jewelFlipperServoValue, 0.95));
         relicHand.setPosition(Utilities.clamp(0, relicHandServoValue, 1));
@@ -406,8 +393,6 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
                 if (action != null)
                     action.run();
             }
-
-            refreshServos();
 
             if (exception != null)
                 throw exception;
@@ -448,6 +433,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
             exception = null;
             gamepadThread.interrupt();
             balanceThread.interrupt();
+            getServoThread.interrupt();
+            setServoThread.interrupt();
             telemetry.addData("Exception", e);
             //throw e;
         }
