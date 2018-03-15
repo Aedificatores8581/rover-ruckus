@@ -335,13 +335,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         }
 
         // Move relic hand
-        if (triggered(gamepad2.right_stick_y)) {
-            relicHandServoValue += 0.006;
-        }
-
-        // Move relic hand
-        if (triggered(-gamepad2.right_stick_y)) {
-            relicHandServoValue -= 0.006;
+        if (Math.abs(gamepad2.right_stick_y) >= 0.25) {
+            relicHandServoValue += gamepad2.right_stick_y * 0.012;
         }
 
         // Move relic finger in
