@@ -29,6 +29,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     private VuforiaLocalizer vuforia;
     private RelicRecoveryVuMark vuMark;
 
+    boolean ranServoInit;
     boolean initServos, sensing = false;
     Gamepad prev1;
 
@@ -104,9 +105,9 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
 
         lIntake.setPosition(0.7);
 
-        relicHand.setPosition(0.5);
 
-        initServos = false;
+        initServos = true;
+        ranServoInit = false;
         totalTime = System.currentTimeMillis();
     }
 
@@ -240,13 +241,22 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             lIntake.setPosition(0.3);
 
             relicHand.setPosition(0.5);
+            ranServoInit = true;
+        }
+
+        if(System.currentTimeMillis() - totalTime < 500) {
+            relicArm.setPower(-1.0);
+        }
+        else {
+            relicArm.setPower(0);
+            if (!ranServoInit){
+                initServos = false;
+            }
+
         }
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
-
-                if(System.currentTimeMillis() - totalTime < 500)
-                    relicArm.setPower(-1.0);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_DOWN_POSITION);
@@ -586,15 +596,10 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 retractDispenser = true;
         }
 
-        if(System.currentTimeMillis() - totalTime > 500)
-            relicArm.setPower(-1.0);
-        else
-            relicArm.setPower(0);
 
 
         if (gyroAngles != null)
             telemetry.addData("Last GyroAngles", gyroAngles.getX() + "," + gyroAngles.getY() + "," + gyroAngles.getZ());
-
         telemetry.addData("State", state.name());
         telemetry.addData("Red Ratio", redRatio);
         telemetry.addData("Blue Ratio", blueRatio);
