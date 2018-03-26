@@ -31,10 +31,11 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
     private RelicRecoveryVuMark vuMark;
 
     boolean initServos;
+    boolean ranServoInit;
 
     boolean wallDetected = false;
 
-    double mult = 0;
+    double mult = -1;
     int count1 = 0;
     int count = 0;
     Gamepad prev1;
@@ -101,9 +102,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
 
         lIntake.setPosition(0.7);
 
-        relicHand.setPosition(0.5);
-
-        initServos = false;
+        initServos = true;
+        ranServoInit = false;
         totalTime = System.currentTimeMillis();
     }
 
@@ -241,6 +241,20 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             rIntake.setPosition(0.7);
 
             lIntake.setPosition(0.3);
+
+            relicHand.setPosition(0.5);
+            ranServoInit = true;
+        }
+
+        if(System.currentTimeMillis() - totalTime < 500) {
+            relicArm.setPower(-1.0);
+        }
+        else {
+            relicArm.setPower(0);
+            if (!ranServoInit){
+                initServos = false;
+            }
+
         }
 
         switch (state) {
@@ -258,7 +272,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
                 belt(0);
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
+                glyphOutput.setPosition(Constants.LEVEL_DISPENSER);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){
@@ -303,7 +317,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 relicHand.setPosition(0.284);
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                state = State.STATE_SCAN_KEY;
+                state = State.STATE_GYRO_ANGLES;
                 break;
             case STATE_SCAN_KEY:
                 if (System.currentTimeMillis() - prevTime >= 10000) {
@@ -313,6 +327,7 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_GYRO_ANGLES:
+                //TODO: Refractor STATE
                 gyroAngles = new GyroAngles(angles);
                 state = State.STATE_L_APPROACH_CRYPTOBOX;
 
@@ -485,7 +500,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                     resetEncoders();
                     reinitMotors(speed, speed);
                     state = State.STATE_C_MEET_CRYPTOBOX;
-                    dispenseGlyph = true;
                 }
                 break;
             case STATE_C_MEET_CRYPTOBOX:
@@ -540,7 +554,6 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_R_MEET_CRYPTOBOX:
                 if (checkEncoders(encToMeetCryptobox)) {
-                    dispenseGlyph = true;
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
@@ -553,8 +566,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
                 break;
             case STATE_DISPENSE_GLYPH:
 
+                glyphOutput.setPosition(dispensePosition);
                 if (checkEncoders(encToDispense)) {
-                    dispenseGlyph = true;
                     resetEncoders();
                     reinitMotors(-speed, -speed);
                     state = State.STATE_BACK_UP_TO_RAM_GLYPH;
@@ -563,6 +576,8 @@ public class DriveBotAutoRedFar extends DriveBotTestTemplate {
             case STATE_BACK_UP_TO_RAM_GLYPH:
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
+
+                glyphOutput.setPosition(retractDispensePosition);
                 if (System.currentTimeMillis() - prevTime >= 750) {
                     if (checkEncoders(encToBackUp)) {
                         resetEncoders();

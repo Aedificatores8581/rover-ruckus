@@ -34,7 +34,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
     Gamepad prev1;
 
     double distanceToWall = 0.35, distanceToCenterOfWall = 0.8;
-    double mult = 0;
+    double mult = 1;
     long waitTime = 2000L;
     long prevTime, prevTime2 = 0, totalTime = 0;
     double jewelArmDownPosition = 0.74, speed = -0.09, adjustSpeed = 0.06, dispensePosition = 1.0, retractDispensePosition = 0.3;
@@ -134,6 +134,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate");
 
@@ -268,7 +269,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_SCAN_JEWEL:
 
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
+                glyphOutput.setPosition(Constants.LEVEL_DISPENSER);
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){
                     setRightPow(0.01);
@@ -311,7 +312,7 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 relicHand.setPosition(0.284);
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 jewelArm.setPosition(Constants.JEWEL_ARM_UP_POSITION);
-                state = State.STATE_SCAN_KEY;
+                state = State.STATE_GYRO_ANGLES;
                 break;
             case STATE_SCAN_KEY:
                 if (timeReached(prevTime, 10000)) {
@@ -513,7 +514,6 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 break;
             case STATE_R_MEET_CRYPTOBOX:
                 if (checkEncoders(encToMeetCryptobox)) {
-                    dispenseGlyph = true;
                     gyroAngles = new GyroAngles(angles);
                     resetEncoders();
                     state = State.STATE_REINIT_MOTORS;
@@ -525,7 +525,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 state = State.STATE_DISPENSE_GLYPH;
                 break;
             case STATE_DISPENSE_GLYPH:
-                dispenseGlyph = true;
+
+                glyphOutput.setPosition(dispensePosition);
                 if (checkEncoders(encToDispense)) {
                     resetEncoders();
                     reinitMotors(-speed, -speed);
@@ -533,6 +534,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
                 }
                 break;
             case STATE_BACK_UP_TO_RAM_GLYPH:
+
+                glyphOutput.setPosition(retractDispensePosition);
                 if (checkEncoders(encToBackUp)) {
                     resetEncoders();
                     reinitMotors(speed * ramLeftMod, speed * ramRightMod);
@@ -576,6 +579,8 @@ public class DriveBotAutoBlueFar extends DriveBotTestTemplate {
             }
             if (vuMark != RelicRecoveryVuMark.UNKNOWN)
                 keyChecked = true;
+            else
+                column = CryptoboxColumn.MID;
         }
 
 

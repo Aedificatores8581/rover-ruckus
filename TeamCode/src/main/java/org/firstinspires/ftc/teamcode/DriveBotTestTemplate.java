@@ -61,7 +61,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double RETRACT_DISPENSE_POSITION = 1.0;
 
-        public static final double LEVEL_DISPENSER = 0.42;
+        public static final double LEVEL_DISPENSER = 0.5;
 
         public static final double RAMP_SPEED = 0.0625;
 

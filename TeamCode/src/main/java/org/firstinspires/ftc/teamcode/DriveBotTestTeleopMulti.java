@@ -18,6 +18,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         @Override
         public void run() {
             try {
+
                 while (!Thread.interrupted()) {
                     if (isBalancing && gravity != null) {
                         Spherical3D gravAngles = cartesianToSpherical(new Cartesian3D(gravity.zAccel, gravity.xAccel, gravity.yAccel));
@@ -199,7 +200,7 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     long waiting = 0, waitTime = 500;
 
     public enum SpeedToggle {
-        SLOW(0.5), // originally 0.45
+        SLOW(0.6), // originally 0.45
         FAST(0.7); // originally 0.80
 
         private double mult;
@@ -354,8 +355,11 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
         jewelArm.setPosition(Utilities.clamp(0.25, jewelArmServoValue, 0.8));
         jewelFlipper.setPosition(Utilities.clamp(0.05, jewelFlipperServoValue, 0.95));
         relicHand.setPosition(Utilities.clamp(0, relicHandServoValue, 1));
-        relicFingers.setPosition(Utilities.clamp(0, relicFingersServoValue, 1));
-
+        relicFingers.setPosition(Utilities.clamp(0.23, relicFingersServoValue, 0.63));
+        if (relicFingersServoValue > 0.63) // Maximum position
+            relicFingersServoValue = 0.63;
+        if (relicFingersServoValue < 0.23) // Minimum position
+            relicFingersServoValue = 0.23;
         if (dumpServoManual)
             glyphOutput.setPosition(Utilities.clamp(0, glyphDumpServoValue, 1));
     }
@@ -405,6 +409,9 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
             }
 
             telemetry.addData("Glyph lift state", glyphLiftState);
+            telemetry.addData("Relic Fingers", relicFingersServoValue);
+
+            telemetry.addData("Relic Fingers pos ", relicFingers.getPosition());
 
             try {
                 prev1.copy(gamepad1);
