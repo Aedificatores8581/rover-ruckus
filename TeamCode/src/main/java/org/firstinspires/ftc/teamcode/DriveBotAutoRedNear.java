@@ -50,7 +50,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     boolean initServos;
 
     boolean wallDetected = false;
-
+    int mult = -1;
     Gamepad prev1;
     int count = 2;
     int count1 = 0;
@@ -61,7 +61,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     //355  675 1050
     int timeToDispense, encToDispense = 485, encToRamGlyph = 400, encToBackUp = 350, encToBackUpAgain = 300, encToMoveToLeft = /*1130*/325, encToMoveToCenter = /*1530*/690, encToMoveToRight = /*1885*/1000;
     double glyphHold = 0.03, glyphDrop = 0.33;
-    double targetAngle = 80;
+    double targetAngle = 77;
     double ramLeftMod, ramRightMod, ramAngle = AutonomousDefaults.RAM_MOTOR_RATIO;
     CryptoboxColumn column;
     GyroAngles gyroAngles;
@@ -108,7 +108,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return true;
     }
 
@@ -273,6 +273,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
 
         switch (state) {
             case STATE_LOWER_JEWEL_ARM:
+                setLeftPow(-0.005);
+                setRightPow(-0.005);
                 belt(0.5);
                 checkKey = true;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
@@ -285,7 +287,17 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
             case STATE_SCAN_JEWEL:
 
                 belt(0);
-                glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
+                if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(-0.01);
+                    setLeftPow(-0.01);
+                    mult = -1;
+                }
+                else if(dSensorL.getDistance(DistanceUnit.CM) < dSensorR.getDistance(DistanceUnit.CM) && dSensorR.getDistance(DistanceUnit.CM) - dSensorL.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(0.01);
+                    setLeftPow(0.01);
+                    mult = 1;
+                }
+                glyphOutput.setPosition(Constants.LEVEL_DISPENSER);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
                 if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){

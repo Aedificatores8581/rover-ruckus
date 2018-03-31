@@ -84,7 +84,7 @@ public class DriveBotAutoBlueNear85Points extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return true;
     }
 

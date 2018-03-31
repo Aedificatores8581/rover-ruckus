@@ -60,7 +60,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return false;
     }
 
@@ -127,10 +127,10 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
     }
 
     protected void clampRelicFingersServo() {
-        if (relicFingersServoValue > 1) // Maximum position
-            relicFingersServoValue = 1;
-        if (relicFingersServoValue < 0) // Minimum position
-            relicFingersServoValue = 0;
+        if (relicFingersServoValue > 0.65) // Maximum position
+            relicFingersServoValue = 0.65;
+        if (relicFingersServoValue < 0.23) // Minimum position
+            relicFingersServoValue = 0.23;
     }
 
     protected void clampDumpServo() {
@@ -225,7 +225,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
         }
 
         if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.x) {
-            glyphDumpServoValue = 0.42;
+            glyphDumpServoValue = Constants.LEVEL_DISPENSER;
             dumpServoManual = true;
             clampDumpServo();
         }
@@ -383,7 +383,7 @@ public class DriveBotTestTeleopComp extends DriveBotTestTemplate {
 
         switch (glyphLiftState) {
             case LEVELING:
-                glyphOutput.setPosition(0.42);
+                glyphOutput.setPosition(0.5);
                 glyphLiftState = GlyphLiftState.LEVELED;
                 break;
             case ASCENDING:

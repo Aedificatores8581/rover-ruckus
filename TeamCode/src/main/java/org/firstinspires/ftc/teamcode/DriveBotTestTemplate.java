@@ -11,19 +11,14 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -64,7 +59,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
 
         public static final double RETRACT_DISPENSE_POSITION = 1.0;
 
-        public static final double LEVEL_DISPENSER = 0.42;
+        public static final double LEVEL_DISPENSER = 0.5;
 
         public static final double RAMP_SPEED = 0.0625;
 
@@ -226,7 +221,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         wilhelmScream = MediaPlayer.create(hardwareMap.appContext, R.raw.scream);
         danceMusic = MediaPlayer.create(hardwareMap.appContext, R.raw.dance);
 
-        if (isAutonomous()) {
+        if (needsGyroSensor()) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.mode = BNO055IMU.SensorMode.IMU;
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -394,7 +389,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     protected boolean triggered(double value) {
-        return value >= 0.25;
+        return value >= 0.15;
     }
 
     protected void resetEncoders() {
@@ -537,31 +532,31 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return false;
     }
 
-    protected double getPowerSmootheDrive(int currentEncoders, int totalEncoders, double percentTimeChangingSpeedPerState, double maxPower){
+    protected double getPowerSmootheDrive(int currentEncoders, int totalEncoders, double percentTimeChangingSpeedPerState, double maxPower) {
         double power = 0.0;
         byte negation; // We couldn't afford 3 extra bytes of storage, so we are using byte :-)
         int encodersSpentChanging;
 
         negation = (totalEncoders < 0) ? (byte) -1 : 1;
-        encodersSpentChanging = (int)(percentTimeChangingSpeedPerState * totalEncoders);
+        encodersSpentChanging = (int) (percentTimeChangingSpeedPerState * totalEncoders);
 
-        if (Math.abs(currentEncoders) < Math.abs(encodersSpentChanging)){
+        if (Math.abs(currentEncoders) < Math.abs(encodersSpentChanging)) {
             power = negation * ((((1 - Constants.INITIAL_SPEED_FACTOR) * maxPower) / (totalEncoders * percentTimeChangingSpeedPerState))
                     * (currentEncoders) + (Constants.INITIAL_SPEED_FACTOR * maxPower));
-        }else if ((Math.abs(currentEncoders) >= Math.abs(encodersSpentChanging))
-                && (Math.abs(currentEncoders) < Math.abs(totalEncoders - encodersSpentChanging))){
+        } else if ((Math.abs(currentEncoders) >= Math.abs(encodersSpentChanging))
+                && (Math.abs(currentEncoders) < Math.abs(totalEncoders - encodersSpentChanging))) {
             power = negation * maxPower;
-        } else if (Math.abs(currentEncoders) >= Math.abs(totalEncoders-encodersSpentChanging)){
-            power = negation * (-(maxPower/(totalEncoders * percentTimeChangingSpeedPerState))
+        } else if (Math.abs(currentEncoders) >= Math.abs(totalEncoders - encodersSpentChanging)) {
+            power = negation * (-(maxPower / (totalEncoders * percentTimeChangingSpeedPerState))
                     * (currentEncoders - (totalEncoders - encodersSpentChanging)) + maxPower);
-        }else{
+        } else {
             power = 0;
         }
 
         return power;
     }
 
-    protected void hitLeftJewel(){
+    protected void hitLeftJewel() {
         jewelFlipper.setPosition(1.0);
     }
 
@@ -570,7 +565,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
     }
 
     // This is here for not loading the gyro sensor when in teleop.
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return true;
     }
 
@@ -585,12 +580,12 @@ public abstract class DriveBotTestTemplate extends OpMode {
         return new Spherical3D(r, theta, phi);
     }
 
-    protected boolean smoothTurn(double currentAngle, double targetAngle){
+    protected boolean smoothTurn(double currentAngle, double targetAngle) {
         double error = currentAngle - targetAngle;
 
-        if(error > 180)
+        if (error > 180)
             error = error - 360;
-        if(error < -180)
+        if (error < -180)
             error = -error + 360;
         double turnRang = error / 100;
         turnRang = Range.clip(turnRang, -0.2, 0.2);
@@ -602,7 +597,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         }*/
         setLeftPow(turnRang);
         setRightPow(-turnRang);
-        if(Math.abs(error) < 1) {
+        if (Math.abs(error) < 1) {
             setLeftPow(0);
             setRightPow(0);
             return true;

@@ -99,7 +99,7 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
     }
 
     @Override
-    protected boolean isAutonomous() {
+    protected boolean needsGyroSensor() {
         return true;
     }
 
@@ -249,10 +249,13 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
         double blueRatio = colors.blue / (colors.red + colors.green + colors.blue);
         /*if(System.currentTimeMillis() - totalTime >= 250 && !magFront.getState())
             relicArm.setPower(1.0);
-        else*/ if(System.currentTimeMillis() - totalTime < 500)
+        else*/
+        if(System.currentTimeMillis() - totalTime < 500) {
             relicArm.setPower(-1.0);
-        else
+        }
+        else {
             relicArm.setPower(0);
+        }
         if (!initServos) {
             initServos = true;
             rIntake.setPosition(0.7);
