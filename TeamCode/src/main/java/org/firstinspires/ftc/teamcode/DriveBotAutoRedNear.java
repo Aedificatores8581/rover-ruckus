@@ -38,7 +38,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     }
 
     State state;
-
+    int mult = -1;
     boolean sensing = false;
     private int cameraMonitorViewId;
     private VuforiaLocalizer.Parameters parameters;
@@ -288,6 +288,16 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 glyphOutput.setPosition(/*Constants.GLYPH_DISPENSE_LEVEL*/ 0.42);
                 prevTime = 0;
                 jewelFlipper.setPosition(Constants.CENTER_FINGER);
+                if(dSensorL.getDistance(DistanceUnit.CM) > dSensorR.getDistance(DistanceUnit.CM) && dSensorL.getDistance(DistanceUnit.CM) - dSensorR.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(0.01);
+                    setLeftPow(0.01);
+                    mult = 1;
+                }
+                else if(dSensorL.getDistance(DistanceUnit.CM) < dSensorR.getDistance(DistanceUnit.CM) && dSensorR.getDistance(DistanceUnit.CM) - dSensorL.getDistance(DistanceUnit.CM) > 1){
+                    setRightPow(-0.01);
+                    setLeftPow(-0.01);
+                    mult = -1;
+                }
                 if (redRatio > Constants.RED_THRESHOLD)
                     state = State.STATE_HIT_LEFT_JEWEL;
                 else if (redRatio < Constants.RED_THRESHOLD)
@@ -296,6 +306,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_LEFT_JEWEL:
+                setLeftPow(.005 * mult);
+                setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(0.05);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -303,6 +315,8 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                     state = State.STATE_RESET_JEWEL_HITTER;
                 break;
             case STATE_HIT_RIGHT_JEWEL:
+                setLeftPow(.005 * mult);
+                setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(1.0);
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
@@ -421,10 +435,6 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
                 break;
         }
 
-        if(System.currentTimeMillis() - totalTime < 500)
-            relicArm.setPower(-1.0);
-        else
-            relicArm.setPower(0);
 
         if (dispenseGlyph) {
             glyphOutput.setPosition(dispensePosition);
@@ -530,9 +540,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
         STATE_BACK_UP_TO_RAM_GLYPH, // Ends when motors are at position. Always -> STATE_RAM_GLYPH_INTO_BOX
         STATE_RAM_GLYPH_INTO_BOX, // Ends when motors are at position. Always -> STATE_BACK_AWAY_FROM_RAMMED_GLYPH
         STATE_BACK_AWAY_FROM_RAMMED_GLYPH, // Ends when motors are at position. Always -> STATE_END
-        STATE_DRIVE_TO_PILE,
-        STATE_INTAKE,
-        STATE_DRIVE_BACK,
+
         STATE_END // Ends when the universe dies. Always -> STATE_RESURRECT_UNIVERSE
         // STATE_RESURRECT_UNIVERSE // uncomment when we have the technology to reverse entropy.
     }

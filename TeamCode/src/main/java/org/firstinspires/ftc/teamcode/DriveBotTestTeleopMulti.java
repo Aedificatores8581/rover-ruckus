@@ -201,8 +201,8 @@ public class DriveBotTestTeleopMulti extends DriveBotTestTemplate {
     long waiting = 0, waitTime = 500;
 
     public enum SpeedToggle {
-        SLOW(0.5), // originally 0.45
-        FAST(0.7); // originally 0.80
+        SLOW(1.0), // originally 0.45
+        FAST(1.0); // originally 0.80
 
         private double mult;
 

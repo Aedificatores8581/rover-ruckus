@@ -298,7 +298,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 setRightPow(0.005 * mult);
                 jewelFlipper.setPosition(0.05);
                 direction = JewelDirection.LEFT;
-
                 if (prevTime == 0)
                     prevTime = System.currentTimeMillis();
                 if (System.currentTimeMillis() - prevTime >= waitTime) {
@@ -471,10 +470,6 @@ public class DriveBotAutoBlueNear extends DriveBotTestTemplate {
                 keyChecked = true;
         }
 
-        if(System.currentTimeMillis() - totalTime < 500)
-            relicArm.setPower(-1.0);
-        else
-            relicArm.setPower(0);
 
         telemetry.addData("DETECTED WALL", wallDetected);
         telemetry.addData("count", count);

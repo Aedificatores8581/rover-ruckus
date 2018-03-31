@@ -30,9 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Locale;
 
-/**
- * Conjured into existence by The Saminator on 06-29-2017.
- */
+
 public abstract class DriveBotTestTemplate extends OpMode {
 
     MediaPlayer wilhelmScream, danceMusic;
@@ -81,7 +79,7 @@ public abstract class DriveBotTestTemplate extends OpMode {
         public static final int ENC_TO_PASS_COLUMN = 100;
 
 
-        private final static double INITIAL_SPEED_FACTOR = 0.2; // As a factor of maxPower in Smooth Drive;
+        private final static double INITIAL_SPEED_FACTOR = 0.2; // As a factor of maxPower in Smooth Jazz;
     }
 
     public enum IntakeState {
