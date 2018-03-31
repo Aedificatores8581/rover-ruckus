@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class SpicyDrive extends DriveBotTestTemplate {
 
     private static final double TURN_MULT = .75;
-
+    private static final double REV_POINT = 0.25;
+    int rsx = 1;
     @Override
     public void init(){
         super.init();
@@ -18,8 +19,8 @@ public class SpicyDrive extends DriveBotTestTemplate {
 
     @Override
     public void loop(){
-        setLeftPow((-gamepad1.left_stick_y) - TURN_MULT * (gamepad1.right_stick_x * gamepad1.left_stick_y));
-        setRightPow((-gamepad1.left_stick_y) + TURN_MULT * (gamepad1.right_stick_x * gamepad1.left_stick_y));
+        setLeftPow((-gamepad1.left_stick_y) - TURN_MULT * (gamepad1.right_stick_x * Math.round(gamepad1.left_stick_y)));
+        setRightPow((-gamepad1.left_stick_y) + TURN_MULT * (gamepad1.right_stick_x * Math.round(gamepad1.left_stick_y)));
     }
 
 }
