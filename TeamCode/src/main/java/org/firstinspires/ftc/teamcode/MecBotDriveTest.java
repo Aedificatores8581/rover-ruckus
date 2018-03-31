@@ -29,9 +29,9 @@ public class MecBotDriveTest extends MecBotTemplate {
 
         II = gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x;
 
-        III = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
+        III = gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x;
 
-        IV = gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x;
+        IV = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
 
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         if(max > 1){
