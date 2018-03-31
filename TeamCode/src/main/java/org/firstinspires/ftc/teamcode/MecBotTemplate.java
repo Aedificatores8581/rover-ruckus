@@ -33,7 +33,8 @@ import java.util.Locale;
 
 public abstract class MecBotTemplate extends OpMode{
     DcMotor lf, lr, rf, rr;
-    public static final DcMotor.Direction LDir = DcMotorSimple.Direction.FORWARD, RDir = DcMotorSimple.Direction.REVERSE;
+    public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;
+    public static final double BRAKE_POW = 0.01;
     public void init(){
         lf = hardwareMap.dcMotor.get("lf");
         lr = hardwareMap.dcMotor.get("lr");
@@ -42,13 +43,19 @@ public abstract class MecBotTemplate extends OpMode{
     }
 
     public void start(){
-        lf.setDirection(LDir);
-        lr.setDirection(LDir);
-        rf.setDirection(RDir);
-        rr.setDirection(RDir);
+        lf.setDirection(LDIR);
+        lr.setDirection(LDIR);
+        rf.setDirection(RDIR);
+        rr.setDirection(RDIR);
 
     }
-    public void refreshMotors(double I, double II, double III, double IV){
+    public void refreshMotors(double I, double II, double III, double IV, boolean brake){
+        if(brake && I + II + III + IV == 0){
+            I = BRAKE_POW;
+            II = BRAKE_POW;
+            III = -BRAKE_POW;
+            IV = -BRAKE_POW;
+        }
         lf.setPower(II);
         lr.setPower(III);
         rf.setPower(I);
