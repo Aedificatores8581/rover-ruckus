@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode;
  */
 
 public class WestBotDriveTest extends WestBotTemplate {
-
+    int mult = 0;
     @Override
     public void init(){
         super.init();
@@ -16,8 +16,13 @@ public class WestBotDriveTest extends WestBotTemplate {
     }
     @Override
     public void loop() {
-        setLeftPow((-gamepad1.left_stick_y) - TURN_MULT * (gamepad1.right_stick_x * Math.round(gamepad1.left_stick_y + .0000000000000000000001)));
-        setRightPow((-gamepad1.left_stick_y) + TURN_MULT * (gamepad1.right_stick_x * Math.round(gamepad1.left_stick_y) + .000000000000000000001));
+        mult = 0;
+        if(gamepad1.left_stick_y > 0)
+            mult = 1;
+        else if(gamepad1.left_stick_y < 0)
+            mult = -1;
+        setLeftPow((-gamepad1.left_stick_y) - TURN_MULT * (gamepad1.right_stick_x * mult));
+        setRightPow((-gamepad1.left_stick_y) + TURN_MULT * (gamepad1.right_stick_x * mult));
         brake(1);
     }
 
