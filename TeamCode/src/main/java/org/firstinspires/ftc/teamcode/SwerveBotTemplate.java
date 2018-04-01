@@ -82,13 +82,6 @@ public abstract class SwerveBotTemplate extends OpMode{
          }
          return a2;
     }
-    public double normalizeAngle(double angle){
-        double a2 = Math.abs(angle) %  360;
-        if(Math.abs(angle) != angle){
-            return 360 - a2;
-        }
-        return a2;
-    }
     public double normalizeAngle(double angle, double newStartAngle){
         angle += newStartAngle;
         double a2 = Math.abs(angle) %  360;
@@ -96,9 +89,6 @@ public abstract class SwerveBotTemplate extends OpMode{
             return 360 - a2;
         }
         return a2;
-    }
-    protected enum Direction{
-        LEFT, FORWARD, RIGHT, BACKWARD;
     }
     protected double getSwervoRotation(double desiredAngle, double currentAngle) {
         return normalizeAngle(desiredAngle, currentAngle) / 360 * swervoRotationRatio;
@@ -120,5 +110,22 @@ public abstract class SwerveBotTemplate extends OpMode{
             return Math.floor(d);
         }
         return Math.ceil(d);
+    }
+    public void refreshMotors(double I, double II, double III, double IV, boolean brake){
+        if(brake){
+            brake();
+        }
+        lf.setPower(II);
+        lr.setPower(III);
+        rf.setPower(I);
+        rr.setPower(IV);
+    }
+    public void brake(){
+        if(rf.getPower() == 0 && lf.getPower() == 0 && lr.getPower() == 0 && rr.getPower() == 0){
+            rf.setPower(-BRAKE_POW);
+            rr.setPower(BRAKE_POW);
+            lr.setPower(-BRAKE_POW);
+            lf.setPower(BRAKE_POW);
+        }
     }
 }

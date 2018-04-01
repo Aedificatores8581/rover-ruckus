@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by Frank Portman 3/31/2018.
  */
-
+@TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
 public class SwerveBotDriveTest extends SwerveBotTemplate{
-    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos;
+    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, temp, x, y;
     int swervoDirection;
     @Override
     public void init(){
@@ -27,14 +28,16 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
     @Override
     public void loop(){
         angleOfRotation = normalizeGyroAngle(gyroSensor.rawX());
+        x = gamepad1.left_stick_x;
+        y = gamepad1.left_stick_y;
+        I = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation) * gamepad1.right_stick_x;
 
-        I = gamepad1.left_stick_y + Math.cos(angleOfRotation) * gamepad1.right_stick_x;
+        II = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 90) * gamepad1.right_stick_x;
 
-        II = gamepad1.left_stick_y + Math.cos(angleOfRotation + 90) * gamepad1.right_stick_x;
+        III = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 180) * gamepad1.right_stick_x;
 
-        III = gamepad1.left_stick_y + Math.cos(angleOfRotation + 180) * gamepad1.right_stick_x;
+        IV = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 270) * gamepad1.right_stick_x;
 
-        IV = gamepad1.left_stick_y + Math.cos(angleOfRotation + 270) * gamepad1.right_stick_x;
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
 
         if(max > 1){
@@ -43,11 +46,11 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
             III /= max;
             IV /= max;
         }
-        if(gamepad1.left_stick_y != 0 || gamepad1.left_stick_x != 0)
+        if(Math.abs(gamepad1.left_stick_y) >= 0.2 || Math.abs(gamepad1.left_stick_x) >= 0.2)
             desiredPos = getGamepadAngle();
         desiredPos = getSwervoRotation(desiredAngle, startAngle);
         setSwervoPos(desiredPos);
-
+        refreshMotors(I, II, III, IV, true);
     }
     public void setSwervoPos(double pos){
         swervoDirection = (int)round(desiredPos - swervoPos);
