@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
 public class SwerveBotDriveTest extends SwerveBotTemplate{
-    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, temp, x, y;
+    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, x, y;
     int swervoDirection;
     public final double TURN_ANGLE = 0;
     @Override
@@ -47,9 +47,10 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
             III /= max;
             IV /= max;
         }
+
         if(Math.abs(gamepad1.left_stick_y) >= 0.2 || Math.abs(gamepad1.left_stick_x) >= 0.2)
-            desiredPos = getGamepadAngle();
-        desiredPos = getSwervoRotation(desiredAngle, startAngle);
+            desiredAngle = getGamepadAngle();
+        desiredPos = getSwervoRotation(desiredAngle + angleOfRotation, startAngle);
         setSwervoPos(desiredPos);
         refreshMotors(I, II, III, IV, true);
     }
