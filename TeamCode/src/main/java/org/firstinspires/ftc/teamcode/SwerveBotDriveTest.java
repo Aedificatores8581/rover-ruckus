@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 public class SwerveBotDriveTest extends SwerveBotTemplate{
     double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, temp, x, y;
     int swervoDirection;
+    public final double TURN_ANGLE = 0;
     @Override
     public void init(){
         super.init();
@@ -30,13 +31,13 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         angleOfRotation = normalizeGyroAngle(gyroSensor.rawX());
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-        I = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation) * gamepad1.right_stick_x;
+        I = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + TURN_ANGLE) * gamepad1.right_stick_x;
 
-        II = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 90) * gamepad1.right_stick_x;
+        II = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
 
-        III = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 180) * gamepad1.right_stick_x;
+        III = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
 
-        IV = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 270) * gamepad1.right_stick_x;
+        IV = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 180 + TURN_ANGLE) * gamepad1.right_stick_x;
 
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
 

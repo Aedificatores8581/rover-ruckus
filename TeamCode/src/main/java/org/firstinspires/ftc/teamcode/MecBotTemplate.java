@@ -55,4 +55,10 @@ public abstract class MecBotTemplate extends OpMode{
             lf.setPower(BRAKE_POW);
         }
     }
+    protected double round(double d){
+        if(d < 0){
+            return Math.floor(d);
+        }
+        return Math.ceil(d);
+    }
 }
