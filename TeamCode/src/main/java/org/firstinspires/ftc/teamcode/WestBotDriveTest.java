@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 /**
  * Created by Frank Portman on 3/31/2018.
  */
-
+@TeleOp(name = "westBotTestDrive", group = "Test_Drive")
 public class WestBotDriveTest extends WestBotTemplate {
     int mult = 0;
     @Override

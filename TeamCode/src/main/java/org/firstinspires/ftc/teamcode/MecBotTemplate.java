@@ -30,9 +30,8 @@ public abstract class MecBotTemplate extends OpMode{
 
     }
     public void refreshMotors(double I, double II, double III, double IV, boolean brake){
-        if(brake){
+        if(brake)
             brake();
-        }
         lf.setPower(II);
         lr.setPower(III);
         rf.setPower(I);
