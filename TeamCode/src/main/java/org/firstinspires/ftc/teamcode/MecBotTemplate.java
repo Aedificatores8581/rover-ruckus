@@ -1,64 +1,59 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
-
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Hardware;
-import com.qualcomm.robotcore.util.Range;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-import java.util.Locale;
 /**
- * Created by fgpor on 3/31/2018.
+ * Created by Frank Portman on 3/31/2018.
  */
 
 public abstract class MecBotTemplate extends OpMode{
     DcMotor lf, lr, rf, rr;
-    public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;
-    public static final double BRAKE_POW = 0.01;
+    private static final DcMotor.Direction
+            LDIR = DcMotorSimple.Direction.FORWARD,
+            RDIR = DcMotorSimple.Direction.REVERSE;
+    private static final double BRAKE_POW = 0.01;
+
     public void init(){
         lf = hardwareMap.dcMotor.get("lf");
         lr = hardwareMap.dcMotor.get("lr");
         rf = hardwareMap.dcMotor.get("rf");
         rr = hardwareMap.dcMotor.get("rr");
-    }
-
-    public void start(){
         lf.setDirection(LDIR);
         lr.setDirection(LDIR);
         rf.setDirection(RDIR);
         rr.setDirection(RDIR);
 
     }
+    public void start(){
+
+    }
     public void refreshMotors(double I, double II, double III, double IV, boolean brake){
-        if(brake && I + II + III + IV == 0){
-            I = BRAKE_POW;
-            II = BRAKE_POW;
-            III = -BRAKE_POW;
-            IV = -BRAKE_POW;
+        if(brake){
+            brake();
         }
         lf.setPower(II);
         lr.setPower(III);
         rf.setPower(I);
         rr.setPower(IV);
+    }
+    public void normalize(double I, double II, double III, double IV){
+        double max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
+        if(max > 1){
+            I /= max;
+            II /= max;
+            III /= max;
+            IV /= max;
+        }
+        refreshMotors(I, II, III, IV, true);
+    }
+    public void brake(){
+        if(rf.getPower() == 0 && lf.getPower() == 0 && lr.getPower() == 0 && rr.getPower() == 0){
+            rf.setPower(-BRAKE_POW);
+            rr.setPower(BRAKE_POW);
+            lr.setPower(-BRAKE_POW);
+            lf.setPower(BRAKE_POW);
+        }
     }
 }
