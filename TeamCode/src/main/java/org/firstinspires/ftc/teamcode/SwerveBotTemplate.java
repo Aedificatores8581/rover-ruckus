@@ -1,31 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
-
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.util.Range;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-import java.util.Locale;
 
 /**
  * Created by Frank Portman on 3/31/2018.
@@ -36,17 +19,18 @@ public abstract class SwerveBotTemplate extends OpMode{
     DcMotor lf, lr, rf, rr;
     Servo lfswervo, lrswervo, rfswervo, rrswervo;
     BNO055IMU imu;
-    GyroSensor gyroSensor;
+    GyroAngles gyroangles;
+    Orientation angles;
     double startAngle;
     double forwardAngle;
     double swervoRotationRatio;
-    private static final DcMotor.Direction
-            MDIR = DcMotorSimple.Direction.FORWARD,
-            SDIR = DcMotorSimple.Direction.FORWARD;
-    private static final double
-            BRAKE_POW = 0.01;
+
+    private static final DcMotor.Direction MDIR = DcMotorSimple.Direction.FORWARD;
+    private static final double BRAKE_POW = 0.01;
     public void init(){
         forwardAngle = 0;
+        swervoRotationRatio = 0;
+
         lf = hardwareMap.dcMotor.get("lf");
         lr = hardwareMap.dcMotor.get("lr");
         rf = hardwareMap.dcMotor.get("rf");
@@ -55,6 +39,7 @@ public abstract class SwerveBotTemplate extends OpMode{
         lrswervo = hardwareMap.servo.get("tlr");
         lfswervo = hardwareMap.servo.get("tlf");
         rrswervo = hardwareMap.servo.get("trr");
+
         lf.setDirection(MDIR);
         lr.setDirection(MDIR);
         rf.setDirection(MDIR);
@@ -69,10 +54,15 @@ public abstract class SwerveBotTemplate extends OpMode{
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        swervoRotationRatio = 0;
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
+        gyroangles = new GyroAngles(angles);
     }
     public void start(){
-        startAngle = gyroSensor.rawX();
+        startAngle = getGyroAngle();
+    }
+    public double getGyroAngle(){
+        return gyroangles.refreshGyroAngles(angles);
+        //return gyroSensor.rawX();
     }
     public double normalizeGyroAngle(double angle){
         angle += startAngle;
@@ -82,39 +72,25 @@ public abstract class SwerveBotTemplate extends OpMode{
          }
          return a2;
     }
-    public double normalizeAngle(double angle, double newStartAngle){
-        angle += newStartAngle;
-        double a2 = Math.abs(angle) %  360;
-        if(Math.abs(angle) != angle){
-            return 360 - a2;
-        }
-        return a2;
-    }
+
     protected double getSwervoRotation(double desiredAngle, double currentAngle) {
-        return normalizeAngle(desiredAngle, currentAngle) / 360 * swervoRotationRatio;
+        return UniversalFunctions.normalizeAngle(desiredAngle, currentAngle) / 360 * swervoRotationRatio;
     }
     protected double getSwervoAngle(double swervoRotation){
-        return normalizeAngle(swervoRotation / swervoRotationRatio * 360, 0);
+        return UniversalFunctions.normalizeAngle(swervoRotation / swervoRotationRatio * 360, 0);
     }
     protected double getGamepadAngle(){
         double x = gamepad1.right_stick_x;
         double y = gamepad1.right_stick_y;
-        return (round(y + 0.0000000000000001) / 2 + 0.5) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
+        return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     //I misuse the word "normalize". Don't change it.
     protected double normalizeGamepadAngle(double swervoAngle){
-        return normalizeAngle(getGamepadAngle(), getSwervoAngle(swervoAngle));
-    }
-    protected double round(double d){
-        if(d < 0){
-            return Math.floor(d);
-        }
-        return Math.ceil(d);
+        return UniversalFunctions.normalizeAngle(getGamepadAngle(), getSwervoAngle(swervoAngle));
     }
     public void refreshMotors(double I, double II, double III, double IV, boolean brake){
-        if(brake){
+        if(brake)
             brake();
-        }
         lf.setPower(II);
         lr.setPower(III);
         rf.setPower(I);

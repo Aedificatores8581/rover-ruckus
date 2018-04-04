@@ -20,7 +20,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
     @Override
     public void start(){
         super.start();
-        desiredAngle = normalizeGyroAngle(gyroSensor.rawX());
+        desiredAngle = normalizeGyroAngle(getGyroAngle());
         lfswervo.setPosition(normSwervoPos);
         rfswervo.setPosition(normSwervoPos);
         rrswervo.setPosition(normSwervoPos);
@@ -28,34 +28,29 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
     }
     @Override
     public void loop(){
-        angleOfRotation = normalizeGyroAngle(gyroSensor.rawX());
+        angleOfRotation = normalizeGyroAngle(getGyroAngle());
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-        I = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + TURN_ANGLE) * gamepad1.right_stick_x;
-
-        II = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
-
-        III = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
-
-        IV = Math.sqrt(x * x + y * y) * round(y) + Math.cos(angleOfRotation + 180 + TURN_ANGLE) * gamepad1.right_stick_x;
-
+        I = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + TURN_ANGLE) * gamepad1.right_stick_x;
+        II = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
+        III = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
+        IV = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + 180 + TURN_ANGLE) * gamepad1.right_stick_x;
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
-
         if(max > 1){
             I /= max;
             II /= max;
             III /= max;
             IV /= max;
         }
-
-        if(Math.abs(gamepad1.left_stick_y) >= 0.2 || Math.abs(gamepad1.left_stick_x) >= 0.2)
-            desiredAngle = getGamepadAngle();
-        desiredPos = getSwervoRotation(desiredAngle + angleOfRotation, startAngle);
+        if(Math.abs(gamepad1.left_stick_y) >= UniversalConstants.Triggered.STICK || Math.abs(gamepad1.left_stick_x) >= UniversalConstants.Triggered.STICK)
+            desiredAngle = normalizeGamepadAngle(swervoPos);
+        desiredPos = getSwervoRotation(desiredAngle, startAngle);
         setSwervoPos(desiredPos);
         refreshMotors(I, II, III, IV, true);
     }
     public void setSwervoPos(double pos){
-        swervoDirection = (int)round(desiredPos - swervoPos);
+
+        swervoDirection = (int)UniversalFunctions.round(desiredPos - swervoPos);
         Range.clip(swervoDirection, 1, -1);
         swervoPos +=  swervoDirection * normSwervoPos;
         if(normSwervoPos == 0)
