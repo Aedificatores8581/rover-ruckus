@@ -24,6 +24,13 @@ public class WestBotDriveTest extends WestBotTemplate {
     public void loop() {
         x = gamepad1.left_stick_x;
         rt = gamepad1.right_trigger;
+        b = gamepad1.right_trigger;
+        if(b >= UniversalConstants.Triggered.TRIGGER)
+            y = b;
+        else {
+            y = gamepad1.left_stick_y;
+            y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+        }
         switch(cs){
             case ARCADE:
                 mult = 0;
@@ -31,13 +38,7 @@ public class WestBotDriveTest extends WestBotTemplate {
                     mult = 1;
                 else if(gamepad1.left_stick_y < 0)
                     mult = -1;
-                b = gamepad1.right_trigger;
-                if(b >= UniversalConstants.Triggered.TRIGGER)
-                    y = b;
-                else {
-                    y = gamepad1.left_stick_y;
-                    y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-                }
+
                 setLeftPow((-gamepad1.left_stick_y) - TURN_MULT * (gamepad1.right_stick_x * mult));
                 setRightPow((-gamepad1.left_stick_y) + TURN_MULT * (gamepad1.right_stick_x * mult));
                 brake(1);
@@ -54,19 +55,12 @@ public class WestBotDriveTest extends WestBotTemplate {
                     switchMode = true;
                 break;
             case FIELD_CENTRIC:
-                b = gamepad1.right_trigger;
-                if(b >= UniversalConstants.Triggered.TRIGGER)
-                    y = b;
-                else {
-                    y = gamepad1.left_stick_y;
-                    y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-                }
                 if(y > 0)
                     mult = 1;
                 else if(y < 0)
                     mult = -1;
-                setLeftPow(y - TURN_MULT * (normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
-                setRightPow(y + TURN_MULT * (normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
+                setLeftPow(y - TURN_MULT * Math.cos(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
+                setRightPow(y + TURN_MULT * Math.cos(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
 
                 if(switchMode) {
                     cs = cs.TANK;

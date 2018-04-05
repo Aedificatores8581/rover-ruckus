@@ -90,7 +90,7 @@ public abstract class WestBotTemplate extends OpMode{
         FIELD_CENTRIC,
     }
     public enum DRIVE_MODE{
-        TRIGGER,
-        Y_AX,
+        TANK,
+        ELSE,
     }
 }
