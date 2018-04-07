@@ -37,21 +37,21 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         angleOfRotation = normalizeGyroAngle(getGyroAngle());
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-        IT = Math.cos(angleOfRotation + TURN_ANGLE) * xr;
-        IIT = Math.cos(angleOfRotation + 90 + TURN_ANGLE) * xr;
-        IIIT = Math.cos(angleOfRotation + 180 + TURN_ANGLE) * xr;
-        IVT = Math.cos(angleOfRotation + 270 + TURN_ANGLE) * xr;
+        I = Math.cos(angleOfRotation + TURN_ANGLE) * xr;
+        II = Math.cos(angleOfRotation + 90 + TURN_ANGLE) * xr;
+        III = Math.cos(angleOfRotation + 180 + TURN_ANGLE) * xr;
+        IV = Math.cos(angleOfRotation + 270 + TURN_ANGLE) * xr;
         if(normalized){
             max = Math.max(Math.max(Math.abs(IT), Math.abs(IIT)), Math.max(Math.abs(IIIT), Math.abs(IVT)));
-            IT /= max;
-            IIT /= max;
-            IIIT /= max;
-            IVT /= max;
+            I /= max;
+            II /= max;
+            III /= max;
+            IV /= max;
         }
-        I = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IT;
-        II = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IIT;
-        III = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IIIT;
-        IV = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IVT;
+        I += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+        II += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+        III += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+        IV += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         if(max > 1){
             I /= max;
