@@ -10,14 +10,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
 public class SwerveBotDriveTest extends SwerveBotTemplate{
-    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, x, y;
+    double angleOfRotation, I, II, III, IV, IT, IIT, IIIT, IVT, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, x, y, xr;
     int swervoDirection;
+    boolean normalized;
     public final double TURN_ANGLE = 0;
     @Override
     public void init(){
         super.init();
         swervoPos = 0;
         normSwervoPos = 0;
+        normalized = true;
     }
     @Override
     public void start(){
@@ -30,14 +32,26 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
     }
     @Override
     public void loop(){
+        xr = gamepad1.right_stick_x;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
         angleOfRotation = normalizeGyroAngle(getGyroAngle());
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-        I = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + TURN_ANGLE) * gamepad1.right_stick_x;
-        II = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
-        III = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + 90 + TURN_ANGLE) * gamepad1.right_stick_x;
-        IV = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + Math.cos(angleOfRotation + 180 + TURN_ANGLE) * gamepad1.right_stick_x;
+        IT = Math.cos(angleOfRotation + TURN_ANGLE) * xr;
+        IIT = Math.cos(angleOfRotation + 90 + TURN_ANGLE) * xr;
+        IIIT = Math.cos(angleOfRotation + 180 + TURN_ANGLE) * xr;
+        IVT = Math.cos(angleOfRotation + 270 + TURN_ANGLE) * xr;
+        if(normalized){
+            max = Math.max(Math.max(Math.abs(IT), Math.abs(IIT)), Math.max(Math.abs(IIIT), Math.abs(IVT)));
+            IT /= max;
+            IIT /= max;
+            IIIT /= max;
+            IVT /= max;
+        }
+        I = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IT;
+        II = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IIT;
+        III = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IIIT;
+        IV = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y) + IVT;
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         if(max > 1){
             I /= max;
