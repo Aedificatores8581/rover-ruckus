@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 /**
  * Created by Frank Portman 3/31/2018.
  */
@@ -28,6 +30,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
     }
     @Override
     public void loop(){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
         angleOfRotation = normalizeGyroAngle(getGyroAngle());
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
@@ -49,7 +52,6 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         refreshMotors(I, II, III, IV, true);
     }
     public void setSwervoPos(double pos){
-
         swervoDirection = (int)UniversalFunctions.round(desiredPos - swervoPos);
         Range.clip(swervoDirection, 1, -1);
         swervoPos +=  swervoDirection * normSwervoPos;

@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.UniversalFunctions;
 
 /**
  * Created by Frank Portman on 3/31/2018.
@@ -20,6 +19,7 @@ public abstract class MecBotTemplate extends OpMode{
     BNO055IMU imu;
     GyroAngles gyroangles;
     Orientation angles;
+    public static double SPEED = 1.0;
     private static final DcMotor.Direction
             LDIR = DcMotorSimple.Direction.FORWARD,
             RDIR = DcMotorSimple.Direction.REVERSE;
@@ -56,10 +56,10 @@ public abstract class MecBotTemplate extends OpMode{
     public void refreshMotors(double I, double II, double III, double IV, boolean brake){
         if(brake)
             brake();
-        lf.setPower(II);
-        lr.setPower(III);
-        rf.setPower(I);
-        rr.setPower(IV);
+        lf.setPower(SPEED * II);
+        lr.setPower(SPEED * III);
+        rf.setPower(SPEED * I);
+        rr.setPower(SPEED * IV);
     }
     public void normalize(double I, double II, double III, double IV){
         double max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
@@ -101,7 +101,7 @@ public abstract class MecBotTemplate extends OpMode{
         //return gyroSensor.rawX();
     }
     public double normalizeGyroAngle(double angle){
-        angle += startAngle;
+        angle -= startAngle;
         double a2 = Math.abs(angle) %  360;
         if(Math.abs(angle) != angle){
             return 360 - a2;

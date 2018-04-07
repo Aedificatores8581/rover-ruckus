@@ -24,7 +24,7 @@ public abstract class SwerveBotTemplate extends OpMode{
     double startAngle;
     double forwardAngle;
     double swervoRotationRatio;
-
+    public static double SPEED = 1.0;
     private static final DcMotor.Direction MDIR = DcMotorSimple.Direction.FORWARD;
     private static final double BRAKE_POW = 0.01;
     public void init(){
@@ -60,11 +60,10 @@ public abstract class SwerveBotTemplate extends OpMode{
     public void start(){
         startAngle = getGyroAngle();
     }
-    public double getGyroAngle(){
+    protected double getGyroAngle(){
         return gyroangles.refreshGyroAngles(angles);
-        //return gyroSensor.rawX();
     }
-    public double normalizeGyroAngle(double angle){
+    protected double normalizeGyroAngle(double angle){
         angle += startAngle;
         double a2 = Math.abs(angle) %  360;
          if(Math.abs(angle) != angle){
@@ -88,20 +87,24 @@ public abstract class SwerveBotTemplate extends OpMode{
     protected double normalizeGamepadAngle(double swervoAngle){
         return UniversalFunctions.normalizeAngle(getGamepadAngle(), getSwervoAngle(swervoAngle));
     }
-    public void refreshMotors(double I, double II, double III, double IV, boolean brake){
+    protected void refreshMotors(double I, double II, double III, double IV, boolean brake){
         if(brake)
             brake();
-        lf.setPower(II);
-        lr.setPower(III);
-        rf.setPower(I);
-        rr.setPower(IV);
+        lf.setPower(SPEED * II);
+        lr.setPower(SPEED * III);
+        rf.setPower(SPEED * I);
+        rr.setPower(SPEED * IV);
     }
-    public void brake(){
+    protected void brake(){
         if(rf.getPower() == 0 && lf.getPower() == 0 && lr.getPower() == 0 && rr.getPower() == 0){
             rf.setPower(-BRAKE_POW);
             rr.setPower(BRAKE_POW);
             lr.setPower(-BRAKE_POW);
             lf.setPower(BRAKE_POW);
         }
+    }
+    protected enum TurnMode{
+        TANK,
+        STATIONARY;
     }
 }

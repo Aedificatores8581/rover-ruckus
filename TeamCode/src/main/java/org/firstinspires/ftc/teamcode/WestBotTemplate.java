@@ -17,6 +17,7 @@ public abstract class WestBotTemplate extends OpMode{
     DcMotor lf, lr, rf, rr;
     public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;
     public static final double TURN_MULT = 0.75;
+    public static double SPEED = 1.0;
     BNO055IMU imu;
     GyroAngles gyroangles;
     Orientation angles;
@@ -53,7 +54,7 @@ public abstract class WestBotTemplate extends OpMode{
         //return gyroSensor.rawX();
     }
     public double normalizeGyroAngle(double angle){
-        angle += startAngle;
+        angle -= startAngle;
         double a2 = Math.abs(angle) %  360;
         if(Math.abs(angle) != angle){
             return 360 - a2;
@@ -69,17 +70,19 @@ public abstract class WestBotTemplate extends OpMode{
         return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     public void setLeftPow(double pow){
-        lf.setPower(pow);
-        lr.setPower(pow);
+        lf.setPower(SPEED * pow);
+        lr.setPower(SPEED * pow);
     }
     public void setRightPow(double pow){
-        rf.setPower(pow);
-        rr.setPower(pow);
+        rf.setPower(SPEED * pow);
+        rr.setPower(SPEED * pow);
     }
     public boolean brake(int dir){
         if(lf.getPower() == 0 && rf.getPower() == 0 && rr.getPower() == 0 &&rf.getPower() == 0) {
-            setLeftPow(0.05 * dir);
-            setRightPow(0.05 * dir);
+            lf.setPower(0.05 * dir);
+            rf.setPower(0.05 * dir);
+            lr.setPower(-0.05 * dir);
+            rr.setPower(-0.05 * dir);
             return true;
         }
         return false;
