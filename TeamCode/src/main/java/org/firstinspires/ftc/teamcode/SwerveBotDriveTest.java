@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
 public class SwerveBotDriveTest extends SwerveBotTemplate{
-    double angleOfRotation, I, II, III, IV, IT, IIT, IIIT, IVT, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, x, y, xr;
+    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, x, y, xr;
     int swervoDirection;
     boolean normalized;
     public final double TURN_ANGLE = 0;
@@ -42,7 +42,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         III = Math.cos(angleOfRotation + 180 + TURN_ANGLE) * xr;
         IV = Math.cos(angleOfRotation + 270 + TURN_ANGLE) * xr;
         if(normalized){
-            max = Math.max(Math.max(Math.abs(IT), Math.abs(IIT)), Math.max(Math.abs(IIIT), Math.abs(IVT)));
+            max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
             I /= max;
             II /= max;
             III /= max;
