@@ -53,7 +53,7 @@ public abstract class MecBotTemplate extends OpMode{
         startAngle = getGyroAngle();
 
     }
-    public void refreshMotors(double I, double II, double III, double IV, boolean brake){
+    protected void refreshMotors(double I, double II, double III, double IV, boolean brake){
         if(brake)
             brake();
         lf.setPower(SPEED * II);
@@ -61,7 +61,7 @@ public abstract class MecBotTemplate extends OpMode{
         rf.setPower(SPEED * I);
         rr.setPower(SPEED * IV);
     }
-    public void normalize(double I, double II, double III, double IV){
+    protected void normalize(double I, double II, double III, double IV){
         double max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         if(max > 1){
             I /= max;
@@ -71,7 +71,7 @@ public abstract class MecBotTemplate extends OpMode{
         }
         refreshMotors(I, II, III, IV, true);
     }
-    public void brake(){
+    protected void brake(){
         if(rf.getPower() == 0 && lf.getPower() == 0 && lr.getPower() == 0 && rr.getPower() == 0){
             rf.setPower(-BRAKE_POW);
             rr.setPower(BRAKE_POW);
@@ -79,14 +79,9 @@ public abstract class MecBotTemplate extends OpMode{
             lf.setPower(BRAKE_POW);
         }
     }
-
-    public enum ControlState{
+    protected enum ControlState{
         ARCADE,
         FIELD_CENTRIC,
-    }
-    public enum DriveMode{
-        TANK,
-        ELSE,
     }
     protected double normalizeGamepadAngle(double angle){
         return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
@@ -96,11 +91,11 @@ public abstract class MecBotTemplate extends OpMode{
         double y = gamepad1.right_stick_y;
         return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
-    public double getGyroAngle(){
+    protected double getGyroAngle(){
         return gyroangles.refreshGyroAngles(angles);
         //return gyroSensor.rawX();
     }
-    public double normalizeGyroAngle(double angle){
+    protected double normalizeGyroAngle(double angle){
         angle -= startAngle;
         double a2 = Math.abs(angle) %  360;
         if(Math.abs(angle) != angle){

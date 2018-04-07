@@ -79,8 +79,8 @@ public abstract class SwerveBotTemplate extends OpMode{
         return UniversalFunctions.normalizeAngle(swervoRotation / swervoRotationRatio * 360, 0);
     }
     protected double getGamepadAngle(){
-        double x = gamepad1.right_stick_x;
-        double y = gamepad1.right_stick_y;
+        double x = gamepad1.left_stick_x;
+        double y = gamepad1.left_stick_y;
         return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     //I misuse the word "normalize". Don't change it.
@@ -102,9 +102,5 @@ public abstract class SwerveBotTemplate extends OpMode{
             lr.setPower(-BRAKE_POW);
             lf.setPower(BRAKE_POW);
         }
-    }
-    protected enum TurnMode{
-        TANK,
-        STATIONARY;
     }
 }

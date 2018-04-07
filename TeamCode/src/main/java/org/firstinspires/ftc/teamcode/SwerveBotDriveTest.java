@@ -51,7 +51,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         setSwervoPos(desiredPos);
         refreshMotors(I, II, III, IV, true);
     }
-    public void setSwervoPos(double pos){
+    protected void setSwervoPos(double pos){
         swervoDirection = (int)UniversalFunctions.round(desiredPos - swervoPos);
         Range.clip(swervoDirection, 1, -1);
         swervoPos +=  swervoDirection * normSwervoPos;

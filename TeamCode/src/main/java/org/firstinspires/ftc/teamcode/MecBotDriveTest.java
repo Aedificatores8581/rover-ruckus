@@ -10,7 +10,6 @@ public class MecBotDriveTest extends MecBotTemplate {
     double I, II, III, IV, max, min, x, y, mult, rt;
     boolean brake;
     ControlState cs;
-    DriveMode dm;
     boolean switchMode = false, switchBool = false;
     @Override
     public void init(){
@@ -24,6 +23,7 @@ public class MecBotDriveTest extends MecBotTemplate {
         min = -1;
         mult = 0;
         rt = 0;
+        cs = ControlState.ARCADE;
     }
     @Override
     public void start(){

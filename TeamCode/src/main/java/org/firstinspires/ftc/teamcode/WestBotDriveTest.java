@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 @TeleOp(name = "westBotTestDrive", group = "Test_Drive")
 public class WestBotDriveTest extends WestBotTemplate {
-    CONTROL_STATE cs;
-    DRIVE_MODE dm;
+    ControlState cs;
     int mult = 0;
     double rt = 0, x = 0, y = 0, b = 0, angle = 0;
     boolean switchMode = false, switchBool = false;
     @Override
     public void init(){
         super.init();
+        cs = ControlState.ARCADE;
     }
     @Override
     public void start(){
@@ -92,5 +92,4 @@ public class WestBotDriveTest extends WestBotTemplate {
         }
 
     }
-
 }

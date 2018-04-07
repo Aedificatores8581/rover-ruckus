@@ -49,11 +49,11 @@ public abstract class WestBotTemplate extends OpMode{
     public void start(){
         startAngle = getGyroAngle();
     }
-    public double getGyroAngle(){
+    protected double getGyroAngle(){
         return gyroangles.refreshGyroAngles(angles);
         //return gyroSensor.rawX();
     }
-    public double normalizeGyroAngle(double angle){
+    protected double normalizeGyroAngle(double angle){
         angle -= startAngle;
         double a2 = Math.abs(angle) %  360;
         if(Math.abs(angle) != angle){
@@ -65,19 +65,19 @@ public abstract class WestBotTemplate extends OpMode{
         return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
     }
     protected double getGamepadAngle(){
-        double x = gamepad1.right_stick_x;
-        double y = gamepad1.right_stick_y;
+        double x = gamepad1.left_stick_x;
+        double y = gamepad1.left_stick_y;
         return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
-    public void setLeftPow(double pow){
+    protected void setLeftPow(double pow){
         lf.setPower(SPEED * pow);
         lr.setPower(SPEED * pow);
     }
-    public void setRightPow(double pow){
+    protected void setRightPow(double pow){
         rf.setPower(SPEED * pow);
         rr.setPower(SPEED * pow);
     }
-    public boolean brake(int dir){
+    protected boolean brake(int dir){
         if(lf.getPower() == 0 && rf.getPower() == 0 && rr.getPower() == 0 &&rf.getPower() == 0) {
             lf.setPower(0.05 * dir);
             rf.setPower(0.05 * dir);
@@ -87,13 +87,9 @@ public abstract class WestBotTemplate extends OpMode{
         }
         return false;
     }
-    public enum CONTROL_STATE{
+    protected enum ControlState{
         ARCADE,
         TANK,
         FIELD_CENTRIC,
-    }
-    public enum DRIVE_MODE{
-        TANK,
-        ELSE,
     }
 }
