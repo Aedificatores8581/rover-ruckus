@@ -6,8 +6,10 @@ package org.firstinspires.ftc.teamcode;
 
 public final class UniversalConstants {
 
-    public static final class Triggered{
+    protected static final class Triggered{
         public static final double STICK = 0.2;
         public static final double TRIGGER = 0.2;
     }
+
+
 }
