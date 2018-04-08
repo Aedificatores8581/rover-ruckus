@@ -42,11 +42,11 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         III = Math.cos(angleOfRotation + 180 + TURN_ANGLE) * xr;
         IV = Math.cos(angleOfRotation + 270 + TURN_ANGLE) * xr;
         if(normalized){
-            max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
-            I /= max;
-            II /= max;
-            III /= max;
-            IV /= max;
+            max = xr / Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
+            I *= max;
+            II *= max;
+            III *= max;
+            IV *= max;
         }
         I += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
         II += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
