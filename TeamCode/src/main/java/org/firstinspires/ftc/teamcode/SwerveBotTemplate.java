@@ -72,7 +72,7 @@ public abstract class SwerveBotTemplate extends OpMode{
          return a2;
     }
     protected double getSwervoRotation(double desiredAngle, double currentAngle) {
-        return UniversalFunctions.normalizeAngle(desiredAngle, currentAngle) / 360 * swervoRotationRatio;
+        return UniversalFunctions.normalizeAngle180(desiredAngle, currentAngle) / 360 * swervoRotationRatio;
     }
     protected double getSwervoAngle(double swervoRotation){
         return UniversalFunctions.normalizeAngle(swervoRotation / swervoRotationRatio * 360, 0);

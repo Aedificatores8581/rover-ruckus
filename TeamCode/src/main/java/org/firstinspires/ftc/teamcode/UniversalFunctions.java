@@ -19,5 +19,12 @@ public abstract class UniversalFunctions {
         }
         return a2;
     }
+    protected static double normalizeAngle180(double angle, double newStartAngle) {
+        double ang = normalizeAngle(angle, newStartAngle);
+        if(ang > 180){
+            ang = -180 + ang % 360;
+        }
+        return ang;
+    }
 
 }
