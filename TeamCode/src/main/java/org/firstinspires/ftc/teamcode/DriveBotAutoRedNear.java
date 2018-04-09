@@ -50,7 +50,7 @@ public class DriveBotAutoRedNear extends DriveBotTestTemplate {
     boolean initServos;
 
     boolean wallDetected = false;
-    int mult = -1;
+    private int mult = -1;
     Gamepad prev1;
     int count = 2;
     int count1 = 0;
