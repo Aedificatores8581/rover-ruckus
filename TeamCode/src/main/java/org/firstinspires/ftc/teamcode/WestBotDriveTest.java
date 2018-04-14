@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class WestBotDriveTest extends WestBotTemplate {
     ControlState cs;
     int mult = 0;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0;
+    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rp, lp;
     boolean switchMode = false, switchBool = false;
     @Override
     public void init(){
@@ -60,8 +60,8 @@ public class WestBotDriveTest extends WestBotTemplate {
                     mult = 1;
                 else if(y < 0)
                     mult = -1;
-                setLeftPow(y - TURN_MULT * Math.cos(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
-                setRightPow(y + TURN_MULT * Math.cos(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
+
+
                 if(switchMode) {
                     cs = cs.TANK;
                     switchMode = false;

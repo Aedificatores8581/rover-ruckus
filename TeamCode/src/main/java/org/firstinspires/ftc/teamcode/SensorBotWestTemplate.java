@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public abstract class SensorBotWestTemplate extends OpMode{
     DcMotor left, right;
+    Servo serv1, serv2;
     public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;
     public static final double TURN_MULT = 0.75;
     public static double SPEED = 1.0;
@@ -25,6 +27,8 @@ public abstract class SensorBotWestTemplate extends OpMode{
     public void init(){
         left = hardwareMap.dcMotor.get("left");
         right = hardwareMap.dcMotor.get("right");
+        //serv1 = hardwareMap.servo.get("s1");
+        //serv2 = hardwareMap.servo.get("s2");
         left.setDirection(LDIR);
         right.setDirection(RDIR);
 
@@ -46,7 +50,7 @@ public abstract class SensorBotWestTemplate extends OpMode{
         startAngle = getGyroAngle();
     }
     protected double getGyroAngle(){
-        return gyroangles.refreshGyroAngles(angles);
+        return gyroangles.refreshGyroAngles(imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT));
         //return gyroSensor.rawX();
     }
     protected double normalizeGyroAngle(double angle){
@@ -60,10 +64,22 @@ public abstract class SensorBotWestTemplate extends OpMode{
     protected double normalizeGamepadAngle(double angle){
         return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
     }
+
+    protected enum TurnDir{
+        FOR, BACK;
+    }
     protected double getGamepadAngle(){
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
-        return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
+        if(y < 0)
+            return Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
+        else if(y > 0)
+            return -Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
+        else if(x < 0)
+            return 180;
+        else
+            return 0;
+       // return (UniversalFunctions.round(y) / 2.0 + 0.5 * Math.abs(UniversalFunctions.round(y))) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     protected void setLeftPow(double pow){
         left.setPower(SPEED * pow);
