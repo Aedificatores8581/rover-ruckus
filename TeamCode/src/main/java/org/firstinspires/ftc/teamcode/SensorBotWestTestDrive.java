@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class SensorBotWestTestDrive extends SensorBotWestTemplate{
     ControlState cs;
     double mult = 0;
-    double cos;
+    double normAngle;
     boolean turn = false;
     double max;
     TurnDir td;
@@ -44,7 +44,6 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                     y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 }
 
-                cos = normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()));
                 mult = 0;
                 if(gamepad1.left_stick_y > 0)
                     mult = 1;
@@ -71,7 +70,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                 x = gamepad1.left_stick_x;
                 rad = Math.sqrt(x * x + y * y);
 
-                cos = normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()));
+                normAngle = Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
                 if(rad < UniversalConstants.Triggered.STICK) {
                     setLeftPow(0);
                     setRightPow(0);
@@ -79,29 +78,29 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                 else {
                     switch (td) {
                         case FOR:
-                            if (cos > 180 && turn) {
+                            if (Math.sin(normAngle) > 180 && turn) {
                                 td = TurnDir.BACK;
                                 mult *= -1;
                                 turn = false;
-                            } else if (cos <= 180)
+                            } else if (Math.sin(normAngle) <= 180)
                                 turn = true;
                             break;
                         case BACK:
-                            if (cos > 180 && turn) {
+                            if (Math.sin(normAngle) > 180 && turn) {
                                 td = TurnDir.FOR;
                                 turn = false;
                                 mult *= -1;
-                            } else if (cos <= 180)
+                            } else if (Math.sin(normAngle) <= 180)
                                 turn = true;
                             break;
                     }
-                    lp = -rad * mult - mult * Math.cos(Math.toRadians(cos));
-                    rp = -rad * mult + mult * Math.cos(Math.toRadians(cos));
+                    lp = -rad * mult - mult * Math.cos(normAngle);
+                    rp = -rad * mult + mult * Math.cos(normAngle);
                     max = Math.max(Math.abs(rp), Math.abs(lp));
                     rp = rp / max * rad;
                     lp = lp / max * rad;
-                    setLeftPow(-lp * 0.75);
-                    setRightPow(-rp * 0.75);
+                    setLeftPow(-lp);
+                    setRightPow(-rp);
                 }
                 rx = gamepad1.right_stick_x;
                 ry = gamepad1.right_stick_y;
