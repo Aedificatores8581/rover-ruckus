@@ -8,13 +8,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "westBotTestDrive", group = "Test_Drive")
 public class WestBotDriveTest extends WestBotTemplate {
     ControlState cs;
+    TurnDir td;
     int mult = 0;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rp, lp;
-    boolean switchMode = false, switchBool = false;
+    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rp, lp, rad, cos, max;
+    boolean switchMode = false, switchBool = false, turn = false;
     @Override
     public void init(){
         super.init();
         cs = ControlState.ARCADE;
+        td = TurnDir.FOR;
     }
     @Override
     public void start(){
@@ -56,12 +58,41 @@ public class WestBotDriveTest extends WestBotTemplate {
                 break;
             case FIELD_CENTRIC:
                 y = gamepad1.left_stick_y;
-                if(y > 0)
-                    mult = 1;
-                else if(y < 0)
-                    mult = -1;
+                x = gamepad1.left_stick_x;
+                rad = Math.sqrt(x * x + y * y);
 
-
+                cos = normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()));
+                if(rad < UniversalConstants.Triggered.STICK) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                }
+                else {
+                    switch (td) {
+                        case FOR:
+                            if (cos > 180 && turn) {
+                                td = TurnDir.BACK;
+                                mult *= -1;
+                                turn = false;
+                            } else if (cos <= 180)
+                                turn = true;
+                            break;
+                        case BACK:
+                            if (cos > 180 && turn) {
+                                td = TurnDir.FOR;
+                                turn = false;
+                                mult *= -1;
+                            } else if (cos <= 180)
+                                turn = true;
+                            break;
+                    }
+                    lp = -rad * mult - mult * Math.cos(Math.toRadians(cos));
+                    rp = -rad * mult + mult * Math.cos(Math.toRadians(cos));
+                    max = Math.max(Math.abs(rp), Math.abs(lp));
+                    rp = rp / max * rad;
+                    lp = lp / max * rad;
+                    setLeftPow(-lp * 0.75);
+                    setRightPow(-rp * 0.75);
+                }
                 if(switchMode) {
                     cs = cs.TANK;
                     switchMode = false;

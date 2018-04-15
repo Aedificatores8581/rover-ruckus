@@ -92,4 +92,8 @@ public abstract class WestBotTemplate extends OpMode{
         TANK,
         FIELD_CENTRIC,
     }
+
+    protected enum TurnDir{
+        FOR, BACK;
+    }
 }

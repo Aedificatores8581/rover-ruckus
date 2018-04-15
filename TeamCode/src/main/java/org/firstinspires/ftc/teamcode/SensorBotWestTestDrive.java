@@ -14,7 +14,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
     boolean turn = false;
     double max;
     TurnDir td;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp;
+    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad;
     boolean switchMode = false, switchBool = false;
     @Override
     public void init(){
@@ -23,6 +23,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
         servo2Position = 0;
         cs = ControlState.ARCADE;
         td = TurnDir.FOR;
+        rad = 0;
     }
     @Override
     public void start(){
@@ -68,7 +69,14 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
             case FIELD_CENTRIC:
                 y = gamepad1.left_stick_y;
                 x = gamepad1.left_stick_x;
+                rad = Math.sqrt(x * x + y * y);
+
                 cos = normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()));
+                if(rad < UniversalConstants.Triggered.STICK) {
+                    setLeftPow(0);
+                    setRightPow(0);
+                }
+                else {
                     switch (td) {
                         case FOR:
                             if (cos > 180 && turn) {
@@ -87,14 +95,14 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                                 turn = true;
                             break;
                     }
-                lp = -Math.sqrt(y * y + x * x) * mult + mult * 0.75 * Math.cos(Math.toRadians(cos));
-                rp = -Math.sqrt(y * y + x * x) * mult - mult * 0.75 * Math.cos(Math.toRadians(cos));
-                //max = Math.max(Math.abs(rp), Math.abs(lp));
-                //rp = rp / max* Math.sqrt(y * y + x * x) ;
-                //lp = lp / max * Math.sqrt(y * y + x * x) ;
-                setLeftPow(lp * 0.75);
-                setRightPow(rp * 0.75);
-
+                    lp = -rad * mult - mult * Math.cos(Math.toRadians(cos));
+                    rp = -rad * mult + mult * Math.cos(Math.toRadians(cos));
+                    max = Math.max(Math.abs(rp), Math.abs(lp));
+                    rp = rp / max * rad;
+                    lp = lp / max * rad;
+                    setLeftPow(-lp * 0.75);
+                    setRightPow(-rp * 0.75);
+                }
                 rx = gamepad1.right_stick_x;
                 ry = gamepad1.right_stick_y;
                 servo1Position += rx;
@@ -130,13 +138,14 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                 break;
         }
         telemetry.addData("Drive mode", cs);
-        telemetry.addData("angle", getGyroAngle() - startAngle);
+        /*telemetry.addData("angle", getGyroAngle() - startAngle);
         telemetry.addData("angle", normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
         telemetry.addData("gpangle", getGamepadAngle());
         telemetry.addData("lp", lp);
         telemetry.addData("rp", rp);
-        telemetry.addData("dr", -Math.sqrt(y * y + x * x) * mult);
+        telemetry.addData("dr", -rad * mult);p-
         telemetry.addData("cos", cos);
-        telemetry.addData("coscos", Math.cos(cos));
+        telemetry.addData("cos(cos)", Math.cos(cos));*/
+        telemetry.addData("Control state", td);
     }
 }
