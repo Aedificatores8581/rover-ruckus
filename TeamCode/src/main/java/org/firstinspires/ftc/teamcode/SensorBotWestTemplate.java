@@ -95,6 +95,10 @@ public abstract class SensorBotWestTemplate extends OpMode{
         }
         return false;
     }
+    protected enum FCTurnState{
+        SMOOTH,
+        FAST;
+    }
     protected enum ControlState{
         ARCADE,
         TANK,
