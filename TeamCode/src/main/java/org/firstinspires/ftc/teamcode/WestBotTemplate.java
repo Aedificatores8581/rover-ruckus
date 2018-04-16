@@ -96,4 +96,9 @@ public abstract class WestBotTemplate extends OpMode{
     protected enum TurnDir{
         FOR, BACK;
     }
+
+    protected enum FCTurnState{
+        SMOOTH,
+        FAST;
+    }
 }
