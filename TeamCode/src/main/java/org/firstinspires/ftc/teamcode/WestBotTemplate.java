@@ -77,6 +77,9 @@ public abstract class WestBotTemplate extends OpMode{
         rf.setPower(SPEED * pow);
         rr.setPower(SPEED * pow);
     }
+    protected void setStartAngle(){
+        startAngle = getGyroAngle();
+    }
     protected boolean brake(int dir){
         if(lf.getPower() == 0 && rf.getPower() == 0 && rr.getPower() == 0 &&rf.getPower() == 0) {
             lf.setPower(0.05 * dir);
