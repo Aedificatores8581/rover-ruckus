@@ -53,6 +53,9 @@ public abstract class SensorBotWestTemplate extends OpMode{
         return gyroangles.refreshGyroAngles(imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT));
         //return gyroSensor.rawX();
     }
+    protected void setStartAngle(){
+        startAngle = getGyroAngle();
+    }
     protected double normalizeGyroAngle(double angle){
         angle -= startAngle;
         double a2 = Math.abs(angle) %  360;

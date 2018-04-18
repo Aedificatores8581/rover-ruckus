@@ -15,10 +15,12 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
     boolean turn = true;
     double max;
     boolean bumpPressed;
+    boolean isAngleChanged;
     TurnDir td;
     FCTurnState ts;
     double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad;
     boolean switchMode = false, switchBool = false;
+    double turnMult;
     @Override
     public void init(){
         super.init();
@@ -30,6 +32,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
         ts = FCTurnState.SMOOTH;
         fsTurn = 1;
         bumpPressed  = false;
+        isAngleChanged = false;
     }
     @Override
     public void start(){
@@ -49,14 +52,13 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                     y = gamepad1.left_stick_y;
                     y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 }
-
+                turnMult = 1 - Math.abs(gamepad1.left_stick_y) * (1 - TURN_MULT);
                 if(gamepad1.left_stick_y > 0)
                     mult = 1;
                 else
                     mult = -1;
-
-                setLeftPow((-gamepad1.left_stick_y) - TURN_MULT * (gamepad1.right_stick_x * mult));
-                setRightPow((-gamepad1.left_stick_y) + TURN_MULT * (gamepad1.right_stick_x * mult));
+                setLeftPow((gamepad1.left_stick_y) + turnMult * (gamepad1.right_stick_x * mult));
+                setRightPow((gamepad1.left_stick_y) - turnMult * (gamepad1.right_stick_x * mult));
                 brake(1);
                 if(switchMode) {
                     cs = cs.FIELD_CENTRIC;
@@ -79,27 +81,35 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                 if(rad < UniversalConstants.Triggered.STICK) {
                     setLeftPow(0);
                     setRightPow(0);
+                    if(gamepad1.left_stick_button && !isAngleChanged) {
+                        setStartAngle();
+                        isAngleChanged = true;
+                    }
+                    else if(!gamepad1.left_stick_button){
+                        isAngleChanged = false;
+                    }
                 }
                 else {
                     switch (td) {
                         case FOR:
-                            if (Math.sin(normAngle) < Math.sin(Math.PI / 12 * 7) && turn) {
+                            if (Math.sin(normAngle) < 0 && turn) {
                                 td = TurnDir.BACK;
                                 mult *= -1;
                                 turn = false;
-                            } else if (Math.sin(normAngle) >= Math.sin(Math.PI / 12 * 7))
+                            } else if (Math.sin(normAngle) >= 0)
                                 turn = true;
                             break;
                         case BACK:
-                            if (Math.sin(normAngle) > Math.sin(Math.PI / 12 * 7) && turn) {
+                            if (Math.sin(normAngle) > 0 && turn) {
                                 td = TurnDir.FOR;
                                 turn = false;
                                 mult *= -1;
-                            } else if (Math.sin(normAngle) <= Math.sin(Math.PI / 12 * 7))
+                            } else if (Math.sin(normAngle) <= 0)
                                 turn = true;
                             break;
                     }
-                    switch(ts){
+                    fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
+                    /*switch(ts){
                         case FAST:
                             fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
                             if(gamepad1.right_bumper && bumpPressed){
@@ -119,14 +129,14 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                                 bumpPressed = true;
                             break;
 
-                    }
+                    }*/
                     lp = -rad * mult + mult * fsTurn * Math.cos(normAngle);
                     rp = -rad * mult - mult * fsTurn * Math.cos(normAngle);
-                    if(ts == FCTurnState.SMOOTH) {
+                    /*if(ts == FCTurnState.SMOOTH) {
                         max = Math.max(Math.abs(rp), Math.abs(lp));
                         rp = rp / max * rad;
                         lp = lp / max * rad;
-                    }
+                    }*/
                     setLeftPow(-lp);
                     setRightPow(-rp);
                 }
@@ -137,7 +147,6 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                 //serv1.setPosition(servo1Position);
                 //serv2.setPosition(servo2Position);
                 if(switchMode) {
-
                     cs = cs.TANK;
                     switchMode = false;
                     switchBool = false;
@@ -150,8 +159,8 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                     switchMode = true;
                 break;
             case TANK:
-                setLeftPow(-gamepad1.left_stick_y);
-                setRightPow(-gamepad1.right_stick_y);
+                setLeftPow(gamepad1.left_stick_y);
+                setRightPow(gamepad1.right_stick_y);
                 if(switchMode) {
                     cs = cs.ARCADE;
                     switchMode = false;
