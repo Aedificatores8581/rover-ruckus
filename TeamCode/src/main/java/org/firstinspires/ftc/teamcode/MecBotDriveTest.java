@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 @TeleOp(name = "MecBotTestDrive", group = "Test_Drive")
 public class MecBotDriveTest extends MecBotTemplate {
-    double I, II, III, IV, max, min, x, y, mult, rt;
+    double I, II, III, IV, max, min, x, y, mult, rt, rx;
     boolean brake;
     ControlState cs;
     boolean switchMode = false, switchBool = false;
@@ -36,12 +36,13 @@ public class MecBotDriveTest extends MecBotTemplate {
         x = Math.sqrt(x * x + y * y) * UniversalFunctions.round(x);
         y = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
         rt = gamepad1.right_trigger;
+        rx = gamepad1.right_stick_x;
         switch(cs){
             case ARCADE:
-                I = y - x - gamepad1.right_stick_x;
-                II = y + x + gamepad1.right_stick_x;
-                III = y - x + gamepad1.right_stick_x;
-                IV = y + x - gamepad1.right_stick_x;
+                I = y - x - rx;
+                II = y + x + rx;
+                III = y - x + rx;
+                IV = y + x - rx;
                 if(switchMode) {
                     cs = cs.FIELD_CENTRIC;
                     switchMode = false;
@@ -55,11 +56,11 @@ public class MecBotDriveTest extends MecBotTemplate {
                     switchMode = true;
                 break;
             case FIELD_CENTRIC:
-                mult = Math.cos(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
-                I = y - x - mult;
-                II = y + x + mult;
-                III = y - x + mult;
-                IV = y + x - mult;
+                mult = Math.cos(Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
+                I = mult * (y - x) - rx;
+                II = mult * (y + x) + rx;
+                III = mult * (y - x) + rx;
+                IV = mult * (y + x) - rx;
                 if(switchMode) {
                     cs = cs.ARCADE;
                     switchMode = false;
