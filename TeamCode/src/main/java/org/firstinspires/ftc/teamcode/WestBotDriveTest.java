@@ -15,7 +15,7 @@ public class WestBotDriveTest extends WestBotTemplate {
     FCTurnState ts;
     double normAngle;
     int mult = 0;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rp, lp, rad, max, turnMult = 0;
+    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rp, lp, rad, max, turnMult = 0, cos = 0, sin = 0, switchVal = Math.sin(Math.PI / 12 * 7);
     boolean switchMode = false, switchBool = false, turn = false, isAngleChanged = false;
     @Override
     public void init(){
@@ -34,41 +34,39 @@ public class WestBotDriveTest extends WestBotTemplate {
         rt = gamepad1.right_trigger;
         switch(cs){
             case ARCADE:
-                x = gamepad1.left_stick_x;
-                b = gamepad1.right_trigger;
-                if(b >= UniversalConstants.Triggered.TRIGGER)
-                    y = b;
-                else {
-                    y = gamepad1.left_stick_y;
-                    y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-                }
-                turnMult = 1 - Math.abs(gamepad1.left_stick_y) * (1 - TURN_MULT);
-                mult = 0;
-                if(gamepad1.left_stick_y > 0)
-                    mult = 1;
-                else if(gamepad1.left_stick_y < 0)
-                    mult = -1;
-                setLeftPow((-gamepad1.left_stick_y) - turnMult * (gamepad1.right_stick_x * mult));
-                setRightPow((-gamepad1.left_stick_y) + turnMult * (gamepad1.right_stick_x * mult));
-                brake(1);
-                if(switchMode) {
-                    cs = cs.FIELD_CENTRIC;
-                    switchMode = false;
-                    switchBool = false;
-                }
-                else if(rt < 0.2){
-                    switchMode = false;
-                    switchBool = true;
-                }
-                else if(rt > 0.2 && switchBool)
-                    switchMode = true;
-                break;
+                rt = gamepad1.right_trigger;
+                switch(cs){
+                    case ARCADE:
+                        x = gamepad1.left_stick_x;
+                        b = gamepad1.right_trigger;
+                        if(b >= UniversalConstants.Triggered.TRIGGER)
+                            y = b;
+                        else {
+                            y = gamepad1.left_stick_y;
+                            y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+                        }
+                        turnMult = 1 - gamepad1.left_stick_y * (1 - TURN_MULT);
+                        setLeftPow(-y - turnMult * x);
+                        setRightPow(-y + turnMult * x);
+                        brake(1);
+                        if(switchMode) {
+                            cs = cs.FIELD_CENTRIC;
+                            switchMode = false;
+                            switchBool = false;
+                            mult = 1;
+                        }
+                        else if(rt < 0.2){
+                            switchMode = false;
+                            switchBool = true;
+                        }
+                        else if(rt > 0.2 && switchBool)
+                            switchMode = true;
+                        break;
             case FIELD_CENTRIC:
                 y = gamepad1.left_stick_y;
                 x = gamepad1.left_stick_x;
                 rad = Math.sqrt(x * x + y * y);
-
-                normAngle = normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()));
+                normAngle = Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
                 if(rad < UniversalConstants.Triggered.STICK) {
                     setLeftPow(0);
                     setRightPow(0);
@@ -83,23 +81,26 @@ public class WestBotDriveTest extends WestBotTemplate {
                 else {
                     switch (td) {
                         case FOR:
-                            if (Math.sin(normAngle) < Math.sin(Math.PI / 12 * 7) && turn) {
-                            td = TurnDir.BACK;
-                            mult *= -1;
-                            turn = false;
-                        } else if (Math.sin(normAngle) >= Math.sin(Math.PI / 12 * 7))
-                            turn = true;
-                        break;
+                            sin = Math.sin(normAngle);
+                            if (Math.sin(normAngle) < 0 && turn) {
+                                td = TurnDir.BACK;
+                                mult *= -1;
+                                turn = false;
+                            } else if (Math.sin(normAngle) >= 0)
+                                turn = true;
+                            break;
                         case BACK:
-                            if (Math.sin(normAngle) > Math.sin(Math.PI / 12 * 7) && turn) {
+                            sin = Math.sin(normAngle);
+                            if (Math.sin(normAngle) > 0 && turn) {
                                 td = TurnDir.FOR;
                                 turn = false;
                                 mult *= -1;
-                            } else if (Math.sin(normAngle) <= Math.sin(Math.PI / 12 * 7))
+                            } else if (Math.sin(normAngle) <= 0)
                                 turn = true;
                             break;
                     }
-                    fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
+                    cos = Math.cos(normAngle);
+                    fsTurn = (Math.abs(cos) + 1);
                     /*switch(ts){
                         case FAST:
                             fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
@@ -120,16 +121,22 @@ public class WestBotDriveTest extends WestBotTemplate {
                                 bumpPressed = true;
                             break;
                     }*/
-                    lp = -rad * mult + mult * fsTurn * Math.cos(normAngle);
-                    rp = -rad * mult - mult * fsTurn * Math.cos(normAngle);
-                    /*if(ts == FCTurnState.SMOOTH) {
+                    lp = -rad * mult - mult * fsTurn * cos;
+                    rp = -rad * mult + mult * fsTurn * cos;
+/*                    if(ts == FCTurnState.SMOOTH) {
                         max = Math.max(Math.abs(rp), Math.abs(lp));
                         rp = rp / max * rad;
                         lp = lp / max * rad;
                     }*/
-                    setLeftPow(-lp);
-                    setRightPow(-rp);
-                }
+                    setLeftPow(lp / 2);
+                    setRightPow(rp / 2);
+                }/*
+                rx = gamepad1.right_stick_x;
+                ry = gamepad1.right_stick_y;
+                servo1Position += rx;
+                servo2Position += ry;
+                serv1.setPosition(servo1Position);
+                serv2.setPosition(servo2Position);*/
                 if(switchMode) {
                     cs = cs.TANK;
                     switchMode = false;
@@ -157,6 +164,20 @@ public class WestBotDriveTest extends WestBotTemplate {
                 else if(rt > 0.2 && switchBool)
                     switchMode = true;
                 break;
+            }
         }
+
+        telemetry.addData("Drive mode", cs);
+        telemetry.addData("angle", getGyroAngle() - startAngle);
+        telemetry.addData("angle", normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
+        telemetry.addData("gpangle", getGamepadAngle());
+        telemetry.addData("lp", lp);
+        telemetry.addData("rp", rp);
+        telemetry.addData("dr", -rad * mult);
+        telemetry.addData("angle", Math.toDegrees(normAngle));
+        telemetry.addData("cos", cos);
+        telemetry.addData("sin", cos);
+        telemetry.addData("Control state", td);
+        telemetry.addData("turn", turn);
     }
 }
