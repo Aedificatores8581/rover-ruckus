@@ -10,16 +10,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
 public class SwerveBotDriveTest extends SwerveBotTemplate{
-    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, x, y, xr;
+    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, xl, yr, yl, xr, mult, swervoAngle, botAngle;
     int swervoDirection;
-    boolean normalized;
-    public final double TURN_ANGLE = 0;
+    boolean normalized, turn;
+    SensorBotWestTemplate.TurnDir td;
+    public final double  I_TURN_ANGLE = 0;
+    public final double  II_TURN_ANGLE = 0;
+    public final double  III_TURN_ANGLE = 0;
+    public final double  IV_TURN_ANGLE = 0;
     @Override
     public void init(){
         super.init();
         swervoPos = 0;
         normSwervoPos = 0;
         normalized = true;
+        mult = 1;
     }
     @Override
     public void start(){
@@ -29,55 +34,89 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         rfswervo.setPosition(normSwervoPos);
         rrswervo.setPosition(normSwervoPos);
         lrswervo.setPosition(normSwervoPos);
+        turn = true;
     }
     @Override
     public void loop(){
         xr = gamepad1.right_stick_x;
+        yr = gamepad1.right_stick_y;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
         angleOfRotation = normalizeGyroAngle(getGyroAngle());
-        x = gamepad1.left_stick_x;
-        y = gamepad1.left_stick_y;
-        I = Math.cos(angleOfRotation + TURN_ANGLE) * xr;
-        II = Math.cos(angleOfRotation + 90 + TURN_ANGLE) * xr;
-        III = Math.cos(angleOfRotation + 180 + TURN_ANGLE) * xr;
-        IV = Math.cos(angleOfRotation + 270 + TURN_ANGLE) * xr;
-        if(normalized){
+        xl = gamepad1.left_stick_x;
+        yl = gamepad1.left_stick_y;
+        botAngle = Math.toRadians(normalizeGamepadAngleR(angleOfRotation));
+        I = -Math.cos(Math.toRadians(angleOfRotation + I_TURN_ANGLE)) * Math.sin(botAngle);
+        II = -Math.cos(Math.toRadians(angleOfRotation + 90 + II_TURN_ANGLE)) * Math.sin(botAngle);
+        III = -Math.cos(Math.toRadians(angleOfRotation + 180 + III_TURN_ANGLE)) * Math.sin(botAngle);
+        IV = -Math.cos(Math.toRadians(angleOfRotation + 270 + IV_TURN_ANGLE)) * Math.sin(botAngle);
+        if (normalized) {
             max = xr / Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
             I *= max;
             II *= max;
             III *= max;
             IV *= max;
         }
-        I += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-        II += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-        III += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-        IV += Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-        max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
-        if(max > 1){
+        I += Math.sqrt(xl * xl + yl * yl) * mult;
+        II += Math.sqrt(xl * xl + yl * yl) * mult;
+        III += Math.sqrt(xl * xl + yl * yl) * mult;
+        IV += Math.sqrt(xl * xl + yl * yl) * mult;
+        max = UniversalFunctions.maxAbs(I, II, III, IV);
+        if (max > 1) {
             I /= max;
             II /= max;
             III /= max;
             IV /= max;
         }
-        if(Math.abs(gamepad1.left_stick_y) >= UniversalConstants.Triggered.STICK || Math.abs(gamepad1.left_stick_x) >= UniversalConstants.Triggered.STICK)
-            desiredAngle = normalizeGamepadAngle(swervoPos);
-        desiredPos = getSwervoRotation(desiredAngle, startAngle);
-        setSwervoPos(desiredPos);
+        if (Math.abs(gamepad1.left_stick_y) >= UniversalConstants.Triggered.STICK || Math.abs(gamepad1.left_stick_x) >= UniversalConstants.Triggered.STICK)
+            desiredAngle = normalizeGamepadAngleL(swervoAngle);
+        switch (td) {
+            case FOR:
+                if (desiredAngle > 180 && turn) {
+                    td = SensorBotWestTemplate.TurnDir.BACK;
+                    mult *= -1;
+                    desiredAngle = UniversalFunctions.normalizeAngle(desiredAngle + 180, 0);
+                    turn = false;
+                } else if (desiredAngle <= 0)
+                    turn = true;
+                break;
+            case BACK:
+                if (desiredAngle < 180 && turn) {
+                    td = SensorBotWestTemplate.TurnDir.FOR;
+                    turn = false;
+                    mult *= -1;
+                } else if (desiredAngle <= 0)
+                    turn = true;
+                break;
+        }
+        desiredAngle = UniversalFunctions.normalizeAngle(desiredAngle, angleOfRotation);
+        desiredPos = getSwervoRotation(desiredAngle, swervoAngle);
+        swervoPos = getSwervoRotation(swervoAngle);
+        if ((int) swervoPos == (int) Math.abs(desiredPos)) {
+            lfswervo.setPosition(Math.abs(desiredPos));
+            rfswervo.setPosition(Math.abs(desiredPos));
+            rrswervo.setPosition(Math.abs(desiredPos));
+            lrswervo.setPosition(Math.abs(desiredPos));
+            swervoAngle = UniversalFunctions.normalizeAngle(getSwervoAngle(desiredPos) + swervoAngle);
+        } else if (desiredPos < 0) {
+            if (lfswervo.getPosition() < 1 && lfswervo.getPosition() > 0)
+                swervoAngle = prevRotation(swervoAngle);
+            else
+                swervoAngle = UniversalFunctions.normalizeAngle(swervoAngle - swervoRotationRatio);
+            lfswervo.setPosition(0);
+            rfswervo.setPosition(0);
+            rrswervo.setPosition(0);
+            lrswervo.setPosition(0);
+        } else if (desiredPos > 0) {
+            if (lfswervo.getPosition() < 1 && lfswervo.getPosition() > 0)
+                swervoAngle = nextRotation(swervoAngle);
+            else
+                swervoAngle = UniversalFunctions.normalizeAngle(swervoAngle + swervoRotationRatio);
+            lfswervo.setPosition(1);
+            rfswervo.setPosition(1);
+            rrswervo.setPosition(1);
+            lrswervo.setPosition(1);
+        }
         refreshMotors(I, II, III, IV, true);
-    }
-    protected void setSwervoPos(double pos){
-        swervoDirection = (int)UniversalFunctions.round(desiredPos - swervoPos);
-        Range.clip(swervoDirection, 1, -1);
-        swervoPos +=  swervoDirection * normSwervoPos;
-        if(normSwervoPos == 0)
-            normSwervoPos = 1;
-        else if(normSwervoPos == 1)
-            normSwervoPos = 0;
-        lfswervo.setPosition(normSwervoPos);
-        rfswervo.setPosition(normSwervoPos);
-        rrswervo.setPosition(normSwervoPos);
-        lrswervo.setPosition(normSwervoPos);
-        normSwervoPos = desiredPos - swervoPos;
-        Range.clip(normSwervoPos, 0, 1);
+
     }
 }

@@ -13,23 +13,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 /**
  * Created by Frank Portman on 3/31/2018.
  */
-
 public abstract class SwerveBotTemplate extends OpMode{
 
-    DcMotor lf, lr, rf, rr;
-    Servo lfswervo, lrswervo, rfswervo, rrswervo;
+    DcMotor lf, lr, rf, rr, cm;
+    Servo lfswervo, lrswervo, rfswervo, rrswervo, ballShift;
     BNO055IMU imu;
     GyroAngles gyroangles;
     Orientation angles;
     double startAngle;
     double forwardAngle;
-    double swervoRotationRatio;
+    final double swervoRotationRatio = 0;
+    final double ENCODER_RATIO = 0; //degrees per encoder tick
     public static double SPEED = 1.0;
     private static final DcMotor.Direction MDIR = DcMotorSimple.Direction.FORWARD;
     private static final double BRAKE_POW = 0.01;
+    private final DcMotor.Direction CMDIR = DcMotorSimple.Direction.FORWARD;
     public void init(){
         forwardAngle = 0;
-        swervoRotationRatio = 0;
 
         lf = hardwareMap.dcMotor.get("lf");
         lr = hardwareMap.dcMotor.get("lr");
@@ -39,11 +39,16 @@ public abstract class SwerveBotTemplate extends OpMode{
         lrswervo = hardwareMap.servo.get("tlr");
         lfswervo = hardwareMap.servo.get("tlf");
         rrswervo = hardwareMap.servo.get("trr");
-
+        ballShift = hardwareMap.servo.get("bs");
+        cm = hardwareMap.dcMotor.get("cm");
+        cm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        cm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        cm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lf.setDirection(MDIR);
         lr.setDirection(MDIR);
         rf.setDirection(MDIR);
         rr.setDirection(MDIR);
+        cm.setDirection(CMDIR);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -74,17 +79,34 @@ public abstract class SwerveBotTemplate extends OpMode{
     protected double getSwervoRotation(double desiredAngle, double currentAngle) {
         return UniversalFunctions.normalizeAngle180(desiredAngle, currentAngle) / 360 * swervoRotationRatio;
     }
+
+    protected double getSwervoRotation(double currentAngle) {
+        return currentAngle / 360 * swervoRotationRatio;
+    }
     protected double getSwervoAngle(double swervoRotation){
         return UniversalFunctions.normalizeAngle(swervoRotation / swervoRotationRatio * 360, 0);
     }
-    protected double getGamepadAngle(){
+
+    protected double getSwervoAngle180(double swervoRotation){
+        return UniversalFunctions.normalizeAngle180(swervoRotation / swervoRotationRatio * 360, 0);
+    }
+    protected double getGamepadAngleL(){
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
         return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     //I misuse the word "normalize". Don't change it.
-    protected double normalizeGamepadAngle(double swervoAngle){
-        return UniversalFunctions.normalizeAngle(getGamepadAngle(), getSwervoAngle(swervoAngle));
+    protected double normalizeGamepadAngleL(double angle){
+        return UniversalFunctions.normalizeAngle(getGamepadAngleL(), angle);
+    }
+    protected double getGamepadAngleR(){
+        double x = gamepad1.right_stick_x;
+        double y = gamepad1.right_stick_y;
+        return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
+    }
+    //I misuse the word "normalize". Don't change it.
+    protected double normalizeGamepadAngleR(double swervoAngle){
+        return UniversalFunctions.normalizeAngle(getGamepadAngleR(), normalizeGyroAngle(getGyroAngle()));
     }
     protected void refreshMotors(double I, double II, double III, double IV, boolean brake){
         if(brake)
@@ -101,5 +123,35 @@ public abstract class SwerveBotTemplate extends OpMode{
             lr.setPower(-BRAKE_POW);
             lf.setPower(BRAKE_POW);
         }
+    }
+    protected double nextRotation(double angle){
+        return UniversalFunctions.normalizeAngle(angle + swervoRotationRatio - getSwervoAngle(getSwervoRotation(angle) % 1));
+    }
+    protected double prevRotation(double angle){
+        return angle - getSwervoAngle(getSwervoRotation(angle) % 1);
+    }
+    protected enum TurnMode{
+        ARCADE,
+        FIELD_CENTRIC;
+    }
+    protected double getEncoderRotation(double angle){
+        return angle / 360 * ENCODER_RATIO;
+    }
+    protected double getMotorAngle(double enc){
+        return UniversalFunctions.normalizeAngle(enc * 360 / ENCODER_RATIO);
+    }
+    protected double getMotorAngle180(double enc){
+        return UniversalFunctions.normalizeAngle180(enc * 360 / ENCODER_RATIO);
+    }
+    protected double getEncoderRotation(double desiredAngle, double currentAngle) {
+        return UniversalFunctions.normalizeAngle180(desiredAngle, currentAngle) / 360 * ENCODER_RATIO;
+    }
+    protected enum DriveMode{
+        SWERVE,
+        TANK;
+    }
+    protected enum TankDriveMode{
+        SHIFT,
+        TANK;
     }
 }
