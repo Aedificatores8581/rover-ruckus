@@ -18,7 +18,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
     boolean isAngleChanged;
     TurnDir td;
     FCTurnState ts;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad;
+    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad, sin = 0, cos = 0;
     boolean switchMode = false, switchBool = false;
     double turnMult;
     @Override
@@ -29,7 +29,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
         cs = ControlState.ARCADE;
         td = TurnDir.FOR;
         rad = 0;
-        ts = FCTurnState.SMOOTH;
+        ts = FCTurnState.FAST;
         fsTurn = 1;
         bumpPressed  = false;
         isAngleChanged = false;
@@ -40,11 +40,10 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
     }
     @Override
     public void loop() {
-        x = gamepad1.left_stick_x;
         rt = gamepad1.right_trigger;
-
         switch(cs){
             case ARCADE:
+                x = gamepad1.left_stick_x;
                 b = gamepad1.right_trigger;
                 if(b >= UniversalConstants.Triggered.TRIGGER)
                     y = b;
@@ -52,13 +51,9 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                     y = gamepad1.left_stick_y;
                     y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 }
-                turnMult = 1 - Math.abs(gamepad1.left_stick_y) * (1 - TURN_MULT);
-                if(gamepad1.left_stick_y > 0)
-                    mult = 1;
-                else
-                    mult = -1;
-                setLeftPow((gamepad1.left_stick_y) + turnMult * (gamepad1.right_stick_x * mult));
-                setRightPow((gamepad1.left_stick_y) - turnMult * (gamepad1.right_stick_x * mult));
+                turnMult = 1 - gamepad1.left_stick_y * (1 - TURN_MULT);
+                setLeftPow(y + turnMult * x);
+                setRightPow(y - turnMult * x);
                 brake(1);
                 if(switchMode) {
                     cs = cs.FIELD_CENTRIC;
@@ -92,6 +87,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                 else {
                     switch (td) {
                         case FOR:
+                            sin = Math.sin(normAngle);
                             if (Math.sin(normAngle) < 0 && turn) {
                                 td = TurnDir.BACK;
                                 mult *= -1;
@@ -100,6 +96,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                                 turn = true;
                             break;
                         case BACK:
+                            sin = Math.sin(normAngle);
                             if (Math.sin(normAngle) > 0 && turn) {
                                 td = TurnDir.FOR;
                                 turn = false;
@@ -108,7 +105,8 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                                 turn = true;
                             break;
                     }
-                    fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
+                    cos = Math.cos(normAngle);
+                    fsTurn = (Math.abs(cos) + 1);
                     /*switch(ts){
                         case FAST:
                             fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
@@ -128,24 +126,23 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
                             else if(!gamepad1.right_bumper)
                                 bumpPressed = true;
                             break;
-
                     }*/
-                    lp = -rad * mult + mult * fsTurn * Math.cos(normAngle);
-                    rp = -rad * mult - mult * fsTurn * Math.cos(normAngle);
-                    /*if(ts == FCTurnState.SMOOTH) {
+                    lp = -rad * mult + mult * fsTurn * cos;
+                    rp = -rad * mult - mult * fsTurn * cos;
+/*                    if(ts == FCTurnState.SMOOTH) {
                         max = Math.max(Math.abs(rp), Math.abs(lp));
                         rp = rp / max * rad;
                         lp = lp / max * rad;
                     }*/
                     setLeftPow(-lp);
                     setRightPow(-rp);
-                }
+                }/*
                 rx = gamepad1.right_stick_x;
                 ry = gamepad1.right_stick_y;
                 servo1Position += rx;
                 servo2Position += ry;
-                //serv1.setPosition(servo1Position);
-                //serv2.setPosition(servo2Position);
+                serv1.setPosition(servo1Position);
+                serv2.setPosition(servo2Position);*/
                 if(switchMode) {
                     cs = cs.TANK;
                     switchMode = false;
@@ -182,8 +179,8 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate{
         telemetry.addData("rp", rp);
         telemetry.addData("dr", -rad * mult);
         telemetry.addData("angle", Math.toDegrees(normAngle));
-        telemetry.addData("cos(cos)", Math.cos(normAngle));
-        telemetry.addData("sin(sin)", Math.sin(normAngle));
+        telemetry.addData("cos", cos);
+        telemetry.addData("sin", cos);
         telemetry.addData("Control state", td);
         telemetry.addData("turn", turn);
     }
