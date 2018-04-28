@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Created by fgpor on 3/19/2018.
  */
+//
 @TeleOp(name = "Location", group = "no.")
 
 public class Locate extends OpMode{

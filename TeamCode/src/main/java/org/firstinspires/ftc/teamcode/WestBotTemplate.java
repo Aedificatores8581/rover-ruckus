@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 /**
  * Created by Frank Portman on 3/31/2018.
  */
-
+//
 public abstract class WestBotTemplate extends OpMode{
     DcMotor lf, lr, rf, rr;
     public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;

@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Created by fgpor on 3/22/2018.
  */
+//
 @TeleOp(name = "locate Single Thread", group = "no.")
 public class LocateSingleThread extends OpMode{
     Point point = new Point();
