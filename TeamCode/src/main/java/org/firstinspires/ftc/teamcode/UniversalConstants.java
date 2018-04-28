@@ -11,5 +11,4 @@ public final class UniversalConstants {
         public static final double TRIGGER = 0.2;
     }
 
-
 }

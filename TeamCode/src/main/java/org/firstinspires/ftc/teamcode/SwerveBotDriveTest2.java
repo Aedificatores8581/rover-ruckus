@@ -1,23 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 /**
- * Created by fgpor on 4/23/2018.
+ * Created by fgpor on 4/21/2018.
+ */
+/*
+THIS CODE IN ITS CURRENT STATE WILL NOT WORK. WE NEED THE ENCODERS FIRST
  */
 @TeleOp(name = "SwervBotTestDrive2", group = "Test_Drive")
-public class CrabBotDriveTest extends SwerveBotTemplate {
-    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, xl, yl, yr, xr, mult, cmAngle, turnMult, cos, lp, rp, rad, normAngle, sin;
+public class SwerveBotDriveTest2 extends SwerveBotTemplate {
+    double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, xl, yl, yr, xr, mult, cmAngle, turnMult;
     boolean normalized, turn;
     int encPos;
     DriveMode dm;
     TankDriveMode tdm;
     TurnMode tm;
-    WestBotTemplate.TurnDir tdWest;
     SensorBotWestTemplate.TurnDir td;
-    WestBotTemplate.ControlState cs;
     final double
             I_TURN_ANGLE = 0,
             II_TURN_ANGLE = 0,
@@ -36,14 +38,15 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
         td = SensorBotWestTemplate.TurnDir.FOR;
         turn = true;
         dm = DriveMode.SWERVE;
-        //Put desired west coast turn mode here
-        cs = WestBotTemplate.ControlState.FIELD_CENTRIC;
+
     }
+
     @Override
     public void start() {
         super.start();
         desiredAngle = normalizeGyroAngle(getGyroAngle());
     }
+
     @Override
     public void loop() {
         xr = gamepad1.right_stick_x;
@@ -68,7 +71,7 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
                 III = -Math.cos(Math.toRadians(angleOfRotation + 180 + III_TURN_ANGLE)) * turnMult;
                 IV = -Math.cos(Math.toRadians(angleOfRotation + 270 + IV_TURN_ANGLE)) * turnMult;
                 if (normalized) {
-                    max = xr / Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
+                    max = xr / UniversalFunctions.maxAbs(I, II, III, IV);
                     I *= max;
                     II *= max;
                     III *= max;
@@ -124,25 +127,6 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
                     case SHIFT:
                         cmAngle = UniversalFunctions.normalizeAngle(getMotorAngle(encPos));
                         desiredAngle = UniversalFunctions.normalizeAngle(0, angleOfRotation);
-                        switch(td){
-                            case FOR:
-                                if (desiredAngle > 180 && turn) {
-                                    td = SensorBotWestTemplate.TurnDir.BACK;
-                                    mult *= -1;
-                                    desiredAngle = UniversalFunctions.normalizeAngle(desiredAngle + 180, 0);
-                                    turn = false;
-                                } else if (desiredAngle <= 0)
-                                    turn = true;
-                                break;
-                            case BACK:
-                                if (desiredAngle < 180 && turn) {
-                                    td = SensorBotWestTemplate.TurnDir.FOR;
-                                    turn = false;
-                                    mult *= -1;
-                                } else if (desiredAngle <= 0)
-                                    turn = true;
-                                break;
-                        }
                         desiredPos = getEncoderRotation(desiredAngle, cmAngle);
                         encPos = (int)getEncoderRotation(cmAngle);
                         cm.setPower(Math.sin(Math.toRadians(encPos)));
@@ -152,55 +136,10 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
                         }
                         break;
                     case TANK:
-                        switch(cs){
-                            case ARCADE:
-                                switch(cs){
-                                    case ARCADE:
-                                        yl = -Math.sqrt(xl * xl + yl * yl) * UniversalFunctions.round(yl);
-                                        turnMult = 1 - gamepad1.left_stick_y * (1 - TURN_MULT);
-                                        refreshMotors(-yl + turnMult * xr, -yl - turnMult * xr, -yl - turnMult * xr, -yl * turnMult * xr, true);
-                                        break;
-                                    case FIELD_CENTRIC:
-                                        rad = Math.sqrt(xl * xl + yl * yl);
-                                        normAngle = Math.toRadians(normalizeGamepadAngleL(normalizeGyroAngle(getGyroAngle())));
-                                        if(rad < UniversalConstants.Triggered.STICK) {
-                                            refreshMotors(0, 0, 0, 0, true);
-                                        }
-                                        else {
-                                            switch (td) {
-                                                case FOR:
-                                                    sin = Math.sin(normAngle);
-                                                    if (Math.sin(normAngle) < 0 && turn) {
-                                                        tdWest = WestBotTemplate.TurnDir.BACK;
-                                                        mult *= -1;
-                                                        turn = false;
-                                                    } else if (Math.sin(normAngle) >= 0)
-                                                        turn = true;
-                                                    break;
-                                                case BACK:
-                                                    sin = Math.sin(normAngle);
-                                                    if (Math.sin(normAngle) > 0 && turn) {
-                                                        tdWest = WestBotTemplate.TurnDir.FOR;
-                                                        turn = false;
-                                                        mult *= -1;
-                                                    } else if (Math.sin(normAngle) <= 0)
-                                                        turn = true;
-                                                    break;
-                                            }
-                                            cos = Math.cos(normAngle);
-                                            lp = -rad * mult - mult * (Math.abs(cos) + 1) * cos;
-                                            rp = -rad * mult + mult * (Math.abs(cos) + 1) * cos;
-                                            refreshMotors(rp, lp, lp, rp, true);
-                                        }
-                                        break;
-                                    case TANK:
-                                        lp = -gamepad1.left_stick_y;
-                                        rp = -gamepad1.right_stick_y;
-                                        refreshMotors(rp, lp, lp, rp, true);
-                                        break;
-                                }
-                        }
+                        //PUT DESIRED WCD TURNMODE HERE
                 }
+
         }
+
     }
 }

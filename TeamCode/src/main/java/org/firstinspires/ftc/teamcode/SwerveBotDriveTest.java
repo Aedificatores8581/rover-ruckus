@@ -11,13 +11,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
 public class SwerveBotDriveTest extends SwerveBotTemplate{
     double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, xl, yr, yl, xr, mult, swervoAngle, botAngle;
-    int swervoDirection;
     boolean normalized, turn;
     SensorBotWestTemplate.TurnDir td;
-    public final double  I_TURN_ANGLE = 0;
-    public final double  II_TURN_ANGLE = 0;
-    public final double  III_TURN_ANGLE = 0;
-    public final double  IV_TURN_ANGLE = 0;
+    public final double
+            I_TURN_ANGLE = 0,
+            II_TURN_ANGLE = 0,
+            III_TURN_ANGLE = 0,
+            IV_TURN_ANGLE = 0;
     @Override
     public void init(){
         super.init();
@@ -50,7 +50,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
         III = -Math.cos(Math.toRadians(angleOfRotation + 180 + III_TURN_ANGLE)) * Math.sin(botAngle);
         IV = -Math.cos(Math.toRadians(angleOfRotation + 270 + IV_TURN_ANGLE)) * Math.sin(botAngle);
         if (normalized) {
-            max = xr / Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
+            max = xr / UniversalFunctions.maxAbs(I, II, III, IV);
             I *= max;
             II *= max;
             III *= max;
@@ -117,6 +117,5 @@ public class SwerveBotDriveTest extends SwerveBotTemplate{
             lrswervo.setPosition(1);
         }
         refreshMotors(I, II, III, IV, true);
-
     }
 }
