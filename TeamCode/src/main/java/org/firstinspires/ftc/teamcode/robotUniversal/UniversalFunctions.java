@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.robotUniversal;
 
+import org.opencv.core.Mat;
+
+import java.util.Arrays;
+
 /**
  * Created by Frank Portman on 4/1/2018.
  */
@@ -40,101 +44,55 @@ public abstract class UniversalFunctions {
         }
         return ang;
     }
-    
 
 
 
 
 
-
-
-
-
-
-
-
-
-    /*
-    *
-    * MAXIMUM FUNCTIONS
-    *
-    */
-    public static double max(double a, double b, double c){
-        return Math.max(Math.max(a, b), c);
-    }
-    public static double max(double a, double b, double c, double d){
-        return Math.max(max(a, b, c), d);
-    }
-    public static double max(double a, double b, double c, double d, double e){
-        return Math.max(max(a, b, c, d), e);
-    }
-    public static double max(double a, double b, double c, double d, double e, double f){
-        return Math.max(max(a, b, c, d, e), f);
-    }
-    public static double max(double a, double b, double c, double d, double e, double f, double g){
-        return Math.max(max(a, b, c, d, e, f), g);
-    }
-    public static double max(double a, double b, double c, double d, double e, double f, double g, double h){
-        return Math.max(max(a, b, c, d, e, f, g), h);
-    }
-    public static double maxAbs(double a, double b, double c){
-        return Math.max(Math.max(Math.abs(a), Math.abs(b)), Math.abs(c));
-    }
-    public static double maxAbs(double a, double b, double c, double d){
-        return Math.max(maxAbs(a, b, c), Math.abs(d));
-    }
-    public static double maxAbs(double a, double b, double c, double d, double e){
-        return Math.max(maxAbs(a, b, c, d), Math.abs(e));
-    }
-    public static double maxAbs(double a, double b, double c, double d, double e, double f){
-        return Math.max(maxAbs(a, b, c, d, e), Math.abs(f));
-    }
-    public static double maxAbs(double a, double b, double c, double d, double e, double f, double g){
-        return Math.max(maxAbs(a, b, c, d, e, f), Math.abs(g));
-    }
-    public static double maxAbs(double a, double b, double c, double d, double e, double f, double g, double h){
-        return Math.max(maxAbs(a, b, c, d, e, f, g), Math.abs(h));
+    double max(double... ds) {
+        switch(ds.length){
+            case 0: return 0.0;
+            case 1: return ds[0];
+            case 2: return Math.max(ds[0], ds[1]);
+            default: return Math.max(ds[0],
+                    max(Arrays.copyOfRange(ds, 1, ds.length)));
+        }
     }
 
-    /*
-    *
-    * MINIMUM FUNCTIONS
-    *
-    */
-    public static double min(double a, double b, double c){
-        return Math.min(Math.min(a, b), c);
+    double maxAbs(double... ds) {
+        for (int i = 0; i < ds.length; ++i){
+            ds[i] = Math.abs(ds[i]);
+        }
+
+        switch(ds.length){
+            case 0: return 0.0;
+            case 1: return ds[0];
+            case 2: return Math.max(ds[0], ds[1]);
+            default: return Math.max(ds[0],
+                    max(Arrays.copyOfRange(ds, 1, ds.length)));
+        }
     }
-    public static double min(double a, double b, double c, double d){
-        return Math.min(min(a, b, c), d);
+
+    double min(double... ds){
+        switch(ds.length){
+            case 0: return 0.0;
+            case 1: return ds[0];
+            case 2: return Math.min(ds[0], ds[1]);
+            default: return Math.min(ds[0],
+                    min(Arrays.copyOfRange(ds,1, ds.length)));
+        }
     }
-    public static double min(double a, double b, double c, double d, double e){
-        return Math.min(min(a, b, c, d), e);
-    }
-    public static double min(double a, double b, double c, double d, double e, double f){
-        return Math.min(min(a, b, c, d, e), f);
-    }
-    public static double min(double a, double b, double c, double d, double e, double f, double g){
-        return Math.min(min(a, b, c, d, e, f), g);
-    }
-    public static double min(double a, double b, double c, double d, double e, double f, double g, double h){
-        return Math.min(min(a, b, c, d, e, f, g), h);
-    }
-    public static double minAbs(double a, double b, double c){
-        return Math.min(Math.min(Math.abs(a), Math.abs(b)), Math.abs(c));
-    }
-    public static double minAbs(double a, double b, double c, double d){
-        return Math.min(maxAbs(a, b, c), Math.abs(d));
-    }
-    public static double minAbs(double a, double b, double c, double d, double e){
-        return Math.min(maxAbs(a, b, c, d), Math.abs(e));
-    }
-    public static double minAbs(double a, double b, double c, double d, double e, double f){
-        return Math.min(maxAbs(a, b, c, d, e), Math.abs(f));
-    }
-    public static double minAbs(double a, double b, double c, double d, double e, double f, double g){
-        return Math.min(maxAbs(a, b, c, d, e, f), Math.abs(g));
-    }
-    public static double minAbs(double a, double b, double c, double d, double e, double f, double g, double h){
-        return Math.min(maxAbs(a, b, c, d, e, f, g), Math.abs(h));
+
+    double minAbs(double... ds){
+        for (int i = 0; i < ds.length; ++i){
+            ds[i] = Math.abs(ds[i]);
+        }
+        switch(ds.length){
+            case 0: return 0.0;
+            case 1: return ds[0];
+            case 2: return Math.min(ds[0], ds[1]);
+            default: return Math.min(ds[0],
+                    min(Arrays.copyOfRange(ds,1, ds.length)));
+        }
     }
 }
