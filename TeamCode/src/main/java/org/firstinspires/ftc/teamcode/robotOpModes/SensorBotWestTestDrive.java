@@ -1,13 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.robotTemplates.SensorBotWestTemplate;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
  * Created by Frank Portamn on 4/8/2018.
  */
 //
 @TeleOp(name = "SensorBot Test_Drive", group = "sensorBotWest")
-public class SensorBotWestTestDrive extends SensorBotWestTemplate{
+public class SensorBotWestTestDrive extends SensorBotWestTemplate {
     ControlState cs;
     double mult = 0;
     double normAngle;

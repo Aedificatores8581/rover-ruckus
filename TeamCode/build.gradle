@@ -12,6 +12,11 @@
 apply from: '../build.common.gradle'
 android {
     compileSdkVersion 23
+    buildToolsVersion '27.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 dependencies {
     compile project(':FtcRobotController')

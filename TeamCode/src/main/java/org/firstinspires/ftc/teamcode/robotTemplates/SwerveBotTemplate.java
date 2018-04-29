@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotTemplates;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
  * Created by Frank Portman on 3/31/2018.
@@ -16,15 +18,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //
 public abstract class SwerveBotTemplate extends OpMode{
 
-    DcMotor lf, lr, rf, rr, cm;
-    Servo lfswervo, lrswervo, rfswervo, rrswervo, ballShift;
-    BNO055IMU imu;
-    GyroAngles gyroangles;
-    Orientation angles;
-    double startAngle;
-    double forwardAngle;
-    final double swervoRotationRatio = 0;
-    final double ENCODER_RATIO = 0; //degrees per encoder tick
+    public DcMotor lf, lr, rf, rr, cm;
+    public Servo lfswervo, lrswervo, rfswervo, rrswervo, ballShift;
+    public BNO055IMU imu;
+    public GyroAngles gyroangles;
+    public Orientation angles;
+    public double startAngle;
+    public double forwardAngle;
+    public final double swervoRotationRatio = 0;
+    public final double ENCODER_RATIO = 0; //degrees per encoder tick
     public static double SPEED = 1.0;
     private static final DcMotor.Direction MDIR = DcMotorSimple.Direction.FORWARD;
     private static final double BRAKE_POW = 0.01;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotUniversal;
 
 /**
  * Created by Frank Portman on 4/3/2018.
@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode;
 //
 public final class UniversalConstants {
 
-    protected static final class Triggered{
+    public static final class Triggered{
         public static final double STICK = 0.2;
         public static final double TRIGGER = 0.2;
     }
