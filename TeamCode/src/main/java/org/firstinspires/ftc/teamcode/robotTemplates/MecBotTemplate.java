@@ -1,27 +1,32 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotTemplates;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
  * Created by Frank Portman on 3/31/2018.
  */
 //
-public abstract class WestBotTemplate extends OpMode{
+public abstract class MecBotTemplate extends OpMode{
     DcMotor lf, lr, rf, rr;
-    public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;
-    public static final double TURN_MULT = 0.75;
-    public static double SPEED = 1.0;
+    double startAngle;
     BNO055IMU imu;
     GyroAngles gyroangles;
     Orientation angles;
-    double startAngle;
+    public static double SPEED = 1.0;
+    private static final DcMotor.Direction
+            LDIR = DcMotorSimple.Direction.FORWARD,
+            RDIR = DcMotorSimple.Direction.REVERSE;
+    private static final double BRAKE_POW = 0.01;
+
     public void init(){
         lf = hardwareMap.dcMotor.get("lf");
         lr = hardwareMap.dcMotor.get("lr");
@@ -44,10 +49,49 @@ public abstract class WestBotTemplate extends OpMode{
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
         gyroangles = new GyroAngles(angles);
-    }
 
+    }
     public void start(){
         startAngle = getGyroAngle();
+
+    }
+    protected void refreshMotors(double I, double II, double III, double IV, boolean brake){
+        if(brake)
+            brake();
+        lf.setPower(SPEED * II);
+        lr.setPower(SPEED * III);
+        rf.setPower(SPEED * I);
+        rr.setPower(SPEED * IV);
+    }
+    protected void normalize(double I, double II, double III, double IV){
+        double max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
+        if(max > 1){
+            I /= max;
+            II /= max;
+            III /= max;
+            IV /= max;
+        }
+        refreshMotors(I, II, III, IV, true);
+    }
+    protected void brake(){
+        if(rf.getPower() == 0 && lf.getPower() == 0 && lr.getPower() == 0 && rr.getPower() == 0){
+            rf.setPower(-BRAKE_POW);
+            rr.setPower(BRAKE_POW);
+            lr.setPower(-BRAKE_POW);
+            lf.setPower(BRAKE_POW);
+        }
+    }
+    protected enum ControlState{
+        ARCADE,
+        FIELD_CENTRIC,
+    }
+    protected double normalizeGamepadAngle(double angle){
+        return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
+    }
+    protected double getGamepadAngle(){
+        double x = gamepad1.right_stick_x;
+        double y = gamepad1.right_stick_y;
+        return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     protected double getGyroAngle(){
         return gyroangles.refreshGyroAngles(angles);
@@ -60,48 +104,5 @@ public abstract class WestBotTemplate extends OpMode{
             return 360 - a2;
         }
         return a2;
-    }
-    protected double normalizeGamepadAngle(double angle){
-        return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
-    }
-    protected double getGamepadAngle(){
-        double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
-        return (UniversalFunctions.round(y) / 2 + 0.5 * Math.abs(y)) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
-    }
-    protected void setLeftPow(double pow){
-        lf.setPower(SPEED * pow);
-        lr.setPower(SPEED * pow);
-    }
-    protected void setRightPow(double pow){
-        rf.setPower(SPEED * pow);
-        rr.setPower(SPEED * pow);
-    }
-    protected void setStartAngle(){
-        startAngle = getGyroAngle();
-    }
-    protected boolean brake(int dir){
-        if(lf.getPower() == 0 && rf.getPower() == 0 && rr.getPower() == 0 &&rf.getPower() == 0) {
-            lf.setPower(0.05 * dir);
-            rf.setPower(0.05 * dir);
-            lr.setPower(-0.05 * dir);
-            rr.setPower(-0.05 * dir);
-            return true;
-        }
-        return false;
-    }
-    protected enum ControlState{
-        ARCADE,
-        TANK,
-        FIELD_CENTRIC,
-    }
-
-    protected enum TurnDir{
-        FOR, BACK;
-    }
-
-    protected enum FCTurnState{
-        SMOOTH,
-        FAST;
     }
 }

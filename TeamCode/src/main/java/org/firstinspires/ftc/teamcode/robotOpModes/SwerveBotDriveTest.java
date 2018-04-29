@@ -1,16 +1,20 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.robotTemplates.SensorBotWestTemplate;
+import org.firstinspires.ftc.teamcode.robotTemplates.SwerveBotTemplate;
+import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
  * Created by Frank Portman 3/31/2018.
  */
 //
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
-public class SwerveBotDriveTest extends SwerveBotTemplate{
+public class SwerveBotDriveTest extends SwerveBotTemplate {
     double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, xl, yr, yl, xr, mult, swervoAngle, botAngle;
     boolean normalized, turn;
     SensorBotWestTemplate.TurnDir td;

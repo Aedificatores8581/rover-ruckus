@@ -1,9 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
+import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
+import org.firstinspires.ftc.teamcode.robotTemplates.SensorBotWestTemplate;
+import org.firstinspires.ftc.teamcode.robotTemplates.SwerveBotTemplate;
 
 /**
  * Created by fgpor on 4/21/2018.

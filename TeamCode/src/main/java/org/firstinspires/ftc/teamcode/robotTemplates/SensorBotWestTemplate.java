@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotTemplates;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
  * Created by Frank Portman on 4/8/2018.
@@ -23,7 +25,7 @@ public abstract class SensorBotWestTemplate extends OpMode{
     BNO055IMU imu;
     GyroAngles gyroangles;
     Orientation angles;
-    double startAngle;
+    public double startAngle;
     public void init(){
         left = hardwareMap.dcMotor.get("left");
         right = hardwareMap.dcMotor.get("right");
@@ -49,14 +51,14 @@ public abstract class SensorBotWestTemplate extends OpMode{
     public void start(){
         startAngle = getGyroAngle();
     }
-    protected double getGyroAngle(){
+    public double getGyroAngle(){
         return gyroangles.refreshGyroAngles(imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT));
         //return gyroSensor.rawX();
     }
-    protected void setStartAngle(){
+    public void setStartAngle(){
         startAngle = getGyroAngle();
     }
-    protected double normalizeGyroAngle(double angle){
+    public double normalizeGyroAngle(double angle){
         angle -= startAngle;
         double a2 = Math.abs(angle) %  360;
         if(Math.abs(angle) != angle){
@@ -64,14 +66,14 @@ public abstract class SensorBotWestTemplate extends OpMode{
         }
         return a2;
     }
-    protected double normalizeGamepadAngle(double angle){
+    public double normalizeGamepadAngle(double angle){
         return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
     }
 
-    protected enum TurnDir{
+    public enum TurnDir{
         FOR, BACK;
     }
-    protected double getGamepadAngle(){
+    public double getGamepadAngle(){
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
         if(y < 0)
@@ -84,13 +86,13 @@ public abstract class SensorBotWestTemplate extends OpMode{
             return 0;
        // return (UniversalFunctions.round(y) / 2.0 + 0.5 * Math.abs(UniversalFunctions.round(y))) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
-    protected void setLeftPow(double pow){
+    public void setLeftPow(double pow){
         left.setPower(SPEED * pow);
     }
-    protected void setRightPow(double pow){
+    public void setRightPow(double pow){
         right.setPower(SPEED * pow);
     }
-    protected boolean brake(int dir){
+    public boolean brake(int dir){
         if(left.getPower() == 0 && right.getPower() == 0) {
             setLeftPow(0.05 * dir);
             setRightPow(0.05 * dir);
@@ -98,11 +100,11 @@ public abstract class SensorBotWestTemplate extends OpMode{
         }
         return false;
     }
-    protected enum FCTurnState{
+    public enum FCTurnState{
         SMOOTH,
         FAST;
     }
-    protected enum ControlState{
+    public enum ControlState{
         ARCADE,
         TANK,
         FIELD_CENTRIC,
