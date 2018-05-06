@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robotTemplates.OldBotTemplate;
 
@@ -7,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robotTemplates.OldBotTemplate;
  * Conjured into existence by The Saminator on 2018-05-06.
  */
 
+@TeleOp(name = "High Five!", group = "why sipp when you can succ")
 public class OldBotHighFive extends OldBotTemplate {
     final double JEWEL_HAND_LENGTH = 9.6;
     final double JEWEL_HAND_THRESHOLD = 8;
