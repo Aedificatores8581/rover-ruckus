@@ -13,14 +13,12 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 @TeleOp(name = "westBotTestDrive", group = "Test_Drive")
 public class WestBotDriveTest extends WestBotTemplate {
     ControlState cs;
-
-    double fsTurn;
     boolean bumpPressed;
     TurnDir td;
     FCTurnState ts;
-    double normAngle;
+    double normAngle, switchVal = Math.sin(Math.PI / 12 * 7);
     int mult = 0;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rp, lp, rad, max, turnMult = 0, cos = 0, sin = 0, switchVal = Math.sin(Math.PI / 12 * 7);
+    double rt = 0, x = 0, y = 0, b = 0, rp, lp, rad, max, turnMult = 0, cos = 0, sin = 0, fsTurn;
     boolean switchMode = false, switchBool = false, turn = false, isAngleChanged = false;
     @Override
     public void init(){
