@@ -22,7 +22,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
     boolean isAngleChanged;
     TurnDir td;
     FCTurnState ts;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad, sin = 0, cos = 0;
+    double rt = 0, x = 0, y = 0, b = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad, sin = 0, cos = 0;
     boolean switchMode = false, switchBool = false;
     double turnMult;
     @Override
