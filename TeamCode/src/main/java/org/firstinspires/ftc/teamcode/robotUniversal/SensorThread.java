@@ -40,6 +40,3 @@ public class SensorThread<T> implements Runnable {
     }
 }
 // Interface containing sensor function
-interface SensorFunction<T> {
-    T sensFunc();
-}
