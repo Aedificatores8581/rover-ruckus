@@ -49,7 +49,6 @@ public abstract class MecBotTemplate extends OpMode{
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
         gyroangles = new GyroAngles(angles);
-
     }
     public void start(){
         startAngle = getGyroAngle();
