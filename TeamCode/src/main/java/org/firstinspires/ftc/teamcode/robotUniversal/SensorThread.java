@@ -13,7 +13,6 @@ public class SensorThread<T> implements Runnable {
     private T value;
     private SensorFunction<T> sensFunc;
 
-
     public void run(){
         while(running){
             value = sensFunc.sensFunc();
