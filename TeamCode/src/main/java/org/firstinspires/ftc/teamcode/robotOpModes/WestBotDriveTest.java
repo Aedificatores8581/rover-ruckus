@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 public class WestBotDriveTest extends WestBotTemplate {
     ControlState cs;
     TurnDir td;
-    boolean bumpPressed;
     double switchVal = Math.sin(Math.PI / 12 * 7);
     int mult = 0;
     double rt, x, y, b, rp, lp, rad, max, turnMult, cos = 0, sin, normAngle, fsTurn;
@@ -130,6 +129,6 @@ public class WestBotDriveTest extends WestBotTemplate {
         telemetry.addData("lp", lp);
         telemetry.addData("rp", rp);
         telemetry.addData("angle", Math.toDegrees(normAngle));
-        telemetry.addData("gamepad angle", normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
+        telemetry.addData("gamepad angle", normalizeGamepadAngle(0));
     }
 }
