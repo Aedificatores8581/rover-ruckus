@@ -13,32 +13,33 @@ public class SensorThread<T> implements Runnable {
     private T value;
     private SensorFunction<T> sensFunc;
 
-    public void run(){
-        while(running){
+
+    public void run() {
+        while (running) {
             value = sensFunc.sensFunc();
         }
     }
 
-    boolean getRunning(){
+    boolean getRunning() {
         return this.running;
     }
 
-    void setRunning(boolean r){
+    void setRunning(boolean r) {
         this.running = r;
     }
 
-    T getValue(){
+    T getValue() {
         return this.value;
     }
 
 
-    public SensorThread(SensorFunction<T> f){
+    public SensorThread(SensorFunction<T> f) {
         running = true;
 
         this.sensFunc = f;
     }
-}
-// Interface containing sensor function
-interface SensorFunction<T> {
-    T sensFunc();
+
+    public interface SensorFunction<T> {
+        T sensFunc();
+    }
 }
