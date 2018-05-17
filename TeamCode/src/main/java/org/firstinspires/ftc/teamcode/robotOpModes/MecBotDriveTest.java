@@ -39,16 +39,13 @@ public class MecBotDriveTest extends MecBotTemplate {
     public void loop(){
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-        x = Math.sqrt(x * x + y * y) * UniversalFunctions.round(x);
-        y = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+
         rt = gamepad1.right_trigger;
         rx = gamepad1.right_stick_x;
         switch(cs){
             case ARCADE:
-                I = y - x - rx;
-                II = y + x + rx;
-                III = y - x + rx;
-                IV = y + x - rx;
+                x = Math.sqrt(x * x + y * y) * UniversalFunctions.round(x);
+                y = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 if(switchMode) {
                     cs = cs.FIELD_CENTRIC;
                     switchMode = false;
@@ -66,10 +63,6 @@ public class MecBotDriveTest extends MecBotTemplate {
                 telemetry.addData("angle", Math.toDegrees(angle));
                 y = Math.cos(angle) * rad;
                 x = Math.sin(angle) * rad;
-                I = y - x - rx;
-                II = y + x + rx;
-                III = y - x + rx;
-                IV = y + x - rx;
                 if(switchMode) {
                     cs = cs.ARCADE;
                     switchMode = false;
@@ -83,6 +76,10 @@ public class MecBotDriveTest extends MecBotTemplate {
                     switchMode = true;
                 break;
         }
+        I = y - x - rx;
+        II = y + x + rx;
+        III = y - x + rx;
+        IV = y + x - rx;
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         I = I * y/ max;
         II = II * y  / max;
