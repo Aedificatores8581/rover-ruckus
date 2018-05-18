@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 //
 @TeleOp(name = "MecBotTestDrive", group = "Test_Drive")
 public class MecBotDriveTest extends MecBotTemplate {
-    double I, II, III, IV, max, min, x, y, angle, rt, rx, rad;
+    double I, II, III, IV, max, min, x, y, angle, rt, rx, rad, turnMult;
     boolean brake;
     ControlState cs;
     boolean switchMode = false, switchBool = false;
@@ -39,7 +39,6 @@ public class MecBotDriveTest extends MecBotTemplate {
     public void loop(){
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-
         rt = gamepad1.right_trigger;
         rx = gamepad1.right_stick_x;
         switch(cs){
@@ -76,10 +75,11 @@ public class MecBotDriveTest extends MecBotTemplate {
                     switchMode = true;
                 break;
         }
-        I = y - x - rx;
-        II = y + x + rx;
-        III = y - x + rx;
-        IV = y + x - rx;
+        turnMult = 1 - rad * (1 - TURN_MULT);
+        I = y - x - rx * turnMult;
+        II = y + x + rx * turnMult;
+        III = y - x + rx * turnMult;
+        IV = y + x - rx * turnMult;
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         I = I * y/ max;
         II = II * y  / max;

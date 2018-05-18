@@ -22,6 +22,7 @@ public abstract class MecBotTemplate extends OpMode{
     GyroAngles gyroangles;
     Orientation angles;
     public static double SPEED = 1.0;
+    public final double TURN_MULT = 1;
     private static final DcMotor.Direction
             LDIR = DcMotorSimple.Direction.FORWARD,
             RDIR = DcMotorSimple.Direction.REVERSE;
