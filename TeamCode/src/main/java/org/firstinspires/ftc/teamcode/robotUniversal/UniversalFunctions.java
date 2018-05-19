@@ -49,7 +49,7 @@ public abstract class UniversalFunctions {
 
 
 
-    double max(double... ds) {
+    public static double max(double... ds) {
         switch(ds.length){
             case 0: return 0.0;
             case 1: return ds[0];
@@ -59,7 +59,7 @@ public abstract class UniversalFunctions {
         }
     }
 
-    double maxAbs(double... ds) {
+    public static double maxAbs(double... ds) {
         for (int i = 0; i < ds.length; ++i){
             ds[i] = Math.abs(ds[i]);
         }
@@ -73,7 +73,7 @@ public abstract class UniversalFunctions {
         }
     }
 
-    double min(double... ds){
+    public static double min(double... ds){
         switch(ds.length){
             case 0: return 0.0;
             case 1: return ds[0];
@@ -83,7 +83,7 @@ public abstract class UniversalFunctions {
         }
     }
 
-    double minAbs(double... ds){
+    public static double minAbs(double... ds){
         for (int i = 0; i < ds.length; ++i){
             ds[i] = Math.abs(ds[i]);
         }
