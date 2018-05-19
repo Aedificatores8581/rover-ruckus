@@ -22,7 +22,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
     boolean isAngleChanged;
     TurnDir td;
     FCTurnState ts;
-    double rt = 0, x = 0, y = 0, b = 0, angle = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad, sin = 0, cos = 0;
+    double rt = 0, x = 0, y = 0, b = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad, sin = 0, cos = 0;
     boolean switchMode = false, switchBool = false;
     double turnMult;
     @Override
@@ -111,42 +111,11 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
                     }
                     cos = Math.cos(normAngle);
                     fsTurn = (Math.abs(cos) + 1);
-                    /*switch(ts){
-                        case FAST:
-                            fsTurn = (Math.abs(Math.cos(normAngle)) + 1);
-                            if(gamepad1.right_bumper && bumpPressed){
-                                ts = FCTurnState.SMOOTH;
-                                bumpPressed = false;
-                            }
-                            else if(!gamepad1.right_bumper)
-                                bumpPressed = true;
-                            break;
-                        case SMOOTH:
-                            fsTurn = 1;
-                            if(gamepad1.right_bumper && bumpPressed){
-                                ts = FCTurnState.FAST;
-                                bumpPressed = false;
-                            }
-                            else if(!gamepad1.right_bumper)
-                                bumpPressed = true;
-                            break;
-                    }*/
                     lp = -rad * mult + mult * fsTurn * cos;
                     rp = -rad * mult - mult * fsTurn * cos;
-/*                    if(ts == FCTurnState.SMOOTH) {
-                        max = Math.max(Math.abs(rp), Math.abs(lp));
-                        rp = rp / max * rad;
-                        lp = lp / max * rad;
-                    }*/
                     setLeftPow(-lp);
                     setRightPow(-rp);
-                }/*
-                rx = gamepad1.right_stick_x;
-                ry = gamepad1.right_stick_y;
-                servo1Position += rx;
-                servo2Position += ry;
-                serv1.setPosition(servo1Position);
-                serv2.setPosition(servo2Position);*/
+                }
                 if(switchMode) {
                     cs = cs.TANK;
                     switchMode = false;

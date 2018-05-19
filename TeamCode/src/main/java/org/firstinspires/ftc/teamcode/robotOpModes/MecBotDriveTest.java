@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robotOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.MecBotTemplate;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 //
 @TeleOp(name = "MecBotTestDrive", group = "Test_Drive")
 public class MecBotDriveTest extends MecBotTemplate {
-    double I, II, III, IV, max, min, x, y, mult, rt, rx;
+    double I, II, III, IV, max, min, x, y, angle, rt, rx, rad, turnMult;
     boolean brake;
     ControlState cs;
     boolean switchMode = false, switchBool = false;
@@ -25,8 +26,9 @@ public class MecBotDriveTest extends MecBotTemplate {
         brake = true;
         max = 1;
         min = -1;
-        mult = 0;
+        angle = 0;
         rt = 0;
+        rad = 0;
         cs = ControlState.ARCADE;
     }
     @Override
@@ -37,52 +39,56 @@ public class MecBotDriveTest extends MecBotTemplate {
     public void loop(){
         x = gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
-        x = Math.sqrt(x * x + y * y) * UniversalFunctions.round(x);
-        y = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
         rt = gamepad1.right_trigger;
         rx = gamepad1.right_stick_x;
         switch(cs){
             case ARCADE:
-                I = y - x - rx;
-                II = y + x + rx;
-                III = y - x + rx;
-                IV = y + x - rx;
+                x = Math.sqrt(x * x + y * y) * UniversalFunctions.round(x);
+                y = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 if(switchMode) {
                     cs = cs.FIELD_CENTRIC;
                     switchMode = false;
                     switchBool = false;
                 }
-                else if(rt < 0.2){
+                else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
                     switchBool = true;
                 }
-                else if(rt > 0.2 && switchBool)
+                else if(rt > UniversalConstants.Triggered.TRIGGER && switchBool)
                     switchMode = true;
                 break;
             case FIELD_CENTRIC:
-                mult = Math.cos(Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle()))));
-                I = mult * (y - x) - rx;
-                II = mult * (y + x) + rx;
-                III = mult * (y - x) + rx;
-                IV = mult * (y + x) - rx;
+                angle = Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
+                telemetry.addData("angle", Math.toDegrees(angle));
+                y = Math.cos(angle) * rad;
+                x = Math.sin(angle) * rad;
                 if(switchMode) {
                     cs = cs.ARCADE;
                     switchMode = false;
                     switchBool = false;
                 }
-                else if(rt < 0.2){
+                else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
                     switchBool = true;
                 }
-                else if(rt > 0.2 && switchBool)
+                else if(rt > UniversalConstants.Triggered.TRIGGER && switchBool)
                     switchMode = true;
                 break;
         }
+        turnMult = 1 - rad * (1 - TURN_MULT);
+        I = y - x - rx * turnMult;
+        II = y + x + rx * turnMult;
+        III = y - x + rx * turnMult;
+        IV = y + x - rx * turnMult;
         max = Math.max(Math.max(Math.abs(I), Math.abs(II)), Math.max(Math.abs(III), Math.abs(IV)));
         I = I * y/ max;
         II = II * y  / max;
         III = III *  y/ max;
         IV = IV * y / max;
         refreshMotors(I, II, III, IV, true);
+
+        telemetry.addData("Control State: ", cs);
+        telemetry.addData("x", x);
+        telemetry.addData("y", y);
     }
 }
