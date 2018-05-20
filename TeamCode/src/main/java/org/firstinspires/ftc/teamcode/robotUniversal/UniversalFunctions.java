@@ -7,7 +7,6 @@ import java.util.Arrays;
 /**
  * Created by Frank Portman on 4/1/2018.
  */
- //
 public abstract class UniversalFunctions {
     public static double round(double d) {
         if (d < 0) {
@@ -44,9 +43,6 @@ public abstract class UniversalFunctions {
         }
         return ang;
     }
-
-
-
 
 
     public static double max(double... ds) {

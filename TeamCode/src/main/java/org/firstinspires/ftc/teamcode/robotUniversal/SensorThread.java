@@ -38,8 +38,4 @@ public class SensorThread<T> implements Runnable {
 
         this.sensFunc = f;
     }
-
-    public interface SensorFunction<T> {
-        T sensFunc();
-    }
 }
