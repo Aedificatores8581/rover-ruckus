@@ -1,21 +1,10 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
-
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
-import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
-import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 
+/**
+ * Created by Frank Portman on 5/21/2018
+ */
 public class Mecanum2 extends MecanumDT {
     double angle, y, x, rad, rt, rx, max, I, II, III, IV;
     double turnMult;
@@ -48,7 +37,7 @@ public class Mecanum2 extends MecanumDT {
                 y = Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 break;
             case FIELD_CENTRIC:
-                angle = Math.toRadians(normalizeGamepadAngleL(normalizeGyroAngle(getGyroAngle())));
+                angle = Math.toRadians(normalizeGamepadAngleL(normalizeGyroAngle()));
                 y = Math.cos(angle) * rad;
                 x = Math.sin(angle) * rad;
                 break;

@@ -8,6 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 
+/**
+ * Created by Frank Portman on 5/21/2018
+ */
 import java.util.ArrayList;
 
 public abstract class Drivetrain extends Robot {
@@ -27,7 +30,6 @@ public abstract class Drivetrain extends Robot {
     public void init(){
         super.init();
     }
-    public abstract void initialize();
     public void brake(){
         for(int i = 0; i < driveMotors.size(); i++)
             driveMotors.get(i).setPower(brakePow);

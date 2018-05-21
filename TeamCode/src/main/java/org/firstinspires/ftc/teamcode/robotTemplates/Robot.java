@@ -14,6 +14,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
+/**
+ * Created by Frank Portman on 5/21/2018
+ */
+
 public abstract class Robot extends OpMode {
     GyroAngles gyroangles;
     Orientation angles;
@@ -43,7 +47,8 @@ public abstract class Robot extends OpMode {
     public void setStartAngle(){
         startAngle = getGyroAngle();
     }
-    public double normalizeGyroAngle(double angle){
+    public double normalizeGyroAngle(){
+        double angle = getGyroAngle();
         angle -= startAngle;
         double a2 = Math.abs(angle) %  360;
         if(Math.abs(angle) != angle){

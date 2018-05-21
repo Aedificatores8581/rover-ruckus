@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 
+/**
+ * Created by Frank Portman on 5/21/2018
+ */
 public abstract class MecanumDT extends Drivetrain {
     DcMotor lf, lr, rf, rr;
     double turnMult = 1;
@@ -33,18 +36,6 @@ public abstract class MecanumDT extends Drivetrain {
     }
 
     public void setDirection(){
-
-    }
-    @Override
-    /*public void initialize() {
-        rf = hardwareMap.dcMotor.get("rf");
-        lf = hardwareMap.dcMotor.get("lf");
-
-        lr = hardwareMap.dcMotor.get("lr");
-
-        rr = hardwareMap.dcMotor.get("rr");
-    }*/
-    public void initialize(){
 
     }
     @Override
