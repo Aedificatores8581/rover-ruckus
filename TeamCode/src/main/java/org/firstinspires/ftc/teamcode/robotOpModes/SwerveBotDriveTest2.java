@@ -50,7 +50,7 @@ public class SwerveBotDriveTest2 extends SwerveBotTemplate {
     @Override
     public void start() {
         super.start();
-        desiredAngle = normalizeGyroAngle(getGyroAngle());
+        desiredAngle = normalizeGyroAngle();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SwerveBotDriveTest2 extends SwerveBotTemplate {
         switch(dm){
             case SWERVE:
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
-                angleOfRotation = normalizeGyroAngle(getGyroAngle());
+                angleOfRotation = normalizeGyroAngle();
                 turnMult = 1 - yl * (1 - TURN_MULT);
                 switch(tm){
                     case FIELD_CENTRIC:

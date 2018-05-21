@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
  * Created by Frank Portman on 4/8/2018.
  */
 //
-public abstract class SensorBotWestTemplate extends OpMode{
+public abstract class SensorBotWestTemplate extends WestBotTemplate{
     DcMotor left, right;
     Servo serv1, serv2;
     public static final DcMotor.Direction LDIR = DcMotorSimple.Direction.FORWARD, RDIR = DcMotorSimple.Direction.REVERSE;
@@ -47,10 +47,10 @@ public abstract class SensorBotWestTemplate extends OpMode{
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
         gyroangles = new GyroAngles(angles);
     }
-
     public void start(){
         startAngle = getGyroAngle();
     }
+    //Returns angle read by the gyro sensor
     public double getGyroAngle(){
         return gyroangles.refreshGyroAngles(imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT));
         //return gyroSensor.rawX();
@@ -69,22 +69,8 @@ public abstract class SensorBotWestTemplate extends OpMode{
     public double normalizeGamepadAngle(double angle){
         return UniversalFunctions.normalizeAngle(getGamepadAngle(), angle);
     }
-
     public enum TurnDir{
         FOR, BACK;
-    }
-    public double getGamepadAngle(){
-        double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
-        if(y < 0)
-            return Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
-        else if(y > 0)
-            return -Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
-        else if(x < 0)
-            return 180;
-        else
-            return 0;
-       // return (UniversalFunctions.round(y) / 2.0 + 0.5 * Math.abs(UniversalFunctions.round(y))) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
     public void setLeftPow(double pow){
         left.setPower(SPEED * pow);

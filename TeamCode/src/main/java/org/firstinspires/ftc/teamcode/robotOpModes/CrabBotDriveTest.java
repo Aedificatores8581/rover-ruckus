@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
- * Created by fgpor on 4/23/2018.
+ * Created by Frank Portman on 4/23/2018.
  */
 //
 @TeleOp(name = "CrabBotDriveTest", group = "Test_Drive")
@@ -49,7 +49,7 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
     @Override
     public void start() {
         super.start();
-        desiredAngle = normalizeGyroAngle(getGyroAngle());
+        desiredAngle = normalizeGyroAngle();
     }
     @Override
     public void loop() {
@@ -60,7 +60,7 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
         switch(dm){
             case SWERVE:
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
-                angleOfRotation = normalizeGyroAngle(getGyroAngle());
+                angleOfRotation = normalizeGyroAngle();
                 turnMult = 1 - yl * (1 - TURN_MULT);
                 switch(tm){
                     case FIELD_CENTRIC:
@@ -169,7 +169,7 @@ public class CrabBotDriveTest extends SwerveBotTemplate {
                                         break;
                                     case FIELD_CENTRIC:
                                         rad = Math.sqrt(xl * xl + yl * yl);
-                                        normAngle = Math.toRadians(normalizeGamepadAngleL(normalizeGyroAngle(getGyroAngle())));
+                                        normAngle = Math.toRadians(normalizeGamepadAngleL(normalizeGyroAngle()));
                                         if(rad < UniversalConstants.Triggered.STICK) {
                                             refreshMotors(0, 0, 0, 0, true);
                                         }

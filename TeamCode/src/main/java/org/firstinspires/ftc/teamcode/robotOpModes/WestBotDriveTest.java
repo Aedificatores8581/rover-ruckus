@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robotOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.WestBotTemplate;
+import org.firstinspires.ftc.teamcode.robotTemplates.WestCoastDT;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
@@ -35,41 +36,36 @@ public class WestBotDriveTest extends WestBotTemplate {
         rt = gamepad1.right_trigger;
         switch(cs) {
             case ARCADE:
-                rt = gamepad1.right_trigger;
-                switch (cs) {
-                    case ARCADE:
-                        x = gamepad1.left_stick_x;
-                        b = gamepad1.right_trigger;
-                        y = gamepad1.left_stick_y;
-                        y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-                        turnMult = 1 - gamepad1.left_stick_y * (1 - TURN_MULT);
-                        setLeftPow(-y - turnMult * x);
-                        setRightPow(-y + turnMult * x);
-                        brake(1);
-                        if (switchMode) {
-                            cs = cs.FIELD_CENTRIC;
-                            switchMode = false;
-                            switchBool = false;
-                            mult = 1;
-                        } else if (rt < 0.2) {
-                            switchMode = false;
-                            switchBool = true;
-                        } else if (rt > 0.2 && switchBool)
-                            switchMode = true;
-                        break;
-                    case FIELD_CENTRIC:
-                        y = gamepad1.left_stick_y;
-                        x = gamepad1.left_stick_x;
-                        rad = Math.sqrt(x * x + y * y);
-                        normAngle = Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
-                        if (rad < UniversalConstants.Triggered.STICK) {
-                            setLeftPow(-0.01);
-                            setRightPow(0.01);
-                            if (gamepad1.left_stick_button && !isAngleChanged) {
-                                setStartAngle();
-                                isAngleChanged = true;
-                            } else if (!gamepad1.left_stick_button) {
-                                isAngleChanged = false;
+                x = gamepad1.right_stick_x;
+                y = gamepad1.left_stick_y;
+                y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
+                turnMult = 1 - gamepad1.left_stick_y * (1 - TURN_MULT);
+                setLeftPow(-y - turnMult * x);
+                setRightPow(-y + turnMult * x);
+                brake(1);
+                if (switchMode) {
+                    cs = cs.FIELD_CENTRIC;
+                    switchMode = false;
+                    switchBool = false;
+                    mult = 1;
+                    } else if (rt < 0.2) {
+                    switchMode = false;
+                    switchBool = true;
+                    } else if (rt > 0.2 && switchBool)
+                        switchMode = true;
+                break;
+                case FIELD_CENTRIC:
+                    y = gamepad1.left_stick_y;
+                    x = gamepad1.left_stick_x;
+                    rad = Math.sqrt(x * x + y * y);
+                    normAngle = Math.toRadians(normalizeGamepadAngle(normalizeGyroAngle()));
+                    if (rad < UniversalConstants.Triggered.STICK) {
+                        setLeftPow(0);
+                        setRightPow(0);
+                        if (gamepad1.left_stick_button && !isAngleChanged) {
+                            setStartAngle();
+                            isAngleChanged = true; } else if (!gamepad1.left_stick_button) {
+                            isAngleChanged = false;
                             }
                         } else {
                             switch (td) {
@@ -94,8 +90,8 @@ public class WestBotDriveTest extends WestBotTemplate {
                             }
                             cos = Math.cos(normAngle);
                             fsTurn = (Math.abs(cos) + 1);
-                            lp = -rad * mult + mult * fsTurn * cos;
-                            rp = -rad * mult - mult * fsTurn * cos;
+                            lp = -rad * mult - mult * fsTurn * cos;
+                            rp = -rad * mult + mult * fsTurn * cos;
                             setLeftPow(lp * SPEED);
                             setRightPow(rp * SPEED);
                         }
@@ -123,12 +119,17 @@ public class WestBotDriveTest extends WestBotTemplate {
                             switchMode = true;
                         break;
                 }
-        }
         telemetry.addData("Drive mode", cs);
-        telemetry.addData("Control state", td);;
+        telemetry.addData("angle", getGyroAngle() - startAngle);
+        telemetry.addData("angle", normalizeGamepadAngle(normalizeGyroAngle()));
+        telemetry.addData("gpangle", getGamepadAngle());
         telemetry.addData("lp", lp);
         telemetry.addData("rp", rp);
+        telemetry.addData("dr", -rad * mult);
         telemetry.addData("angle", Math.toDegrees(normAngle));
-        telemetry.addData("gamepad angle", normalizeGamepadAngle(0));
+        telemetry.addData("cos", cos);
+        telemetry.addData("sin", cos);
+        telemetry.addData("Control state", td);
+        telemetry.addData("turn", turn);
     }
 }

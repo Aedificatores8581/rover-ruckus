@@ -53,7 +53,6 @@ public abstract class MecBotTemplate extends OpMode{
     }
     public void start(){
         startAngle = getGyroAngle();
-
     }
     protected void refreshMotors(double I, double II, double III, double IV, boolean brake){
         if(brake)
@@ -105,4 +104,5 @@ public abstract class MecBotTemplate extends OpMode{
         }
         return a2;
     }
+
 }

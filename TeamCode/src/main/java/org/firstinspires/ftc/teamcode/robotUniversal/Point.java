@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.robotUniversal;
 
 /**
- * Created by fgpor on 3/19/2018.
+ * Created by Frank Portman on 3/19/2018.
  */
-//
 public class Point {
     protected double x;
     protected double y;

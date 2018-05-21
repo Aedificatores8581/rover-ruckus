@@ -34,7 +34,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate {
     @Override
     public void start(){
         super.start();
-        desiredAngle = normalizeGyroAngle(getGyroAngle());
+        desiredAngle = normalizeGyroAngle();
         lfswervo.setPosition(normSwervoPos);
         rfswervo.setPosition(normSwervoPos);
         rrswervo.setPosition(normSwervoPos);
@@ -46,7 +46,7 @@ public class SwerveBotDriveTest extends SwerveBotTemplate {
         xr = gamepad1.right_stick_x;
         yr = gamepad1.right_stick_y;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
-        angleOfRotation = normalizeGyroAngle(getGyroAngle());
+        angleOfRotation = normalizeGyroAngle();
         xl = gamepad1.left_stick_x;
         yl = gamepad1.left_stick_y;
         botAngle = Math.toRadians(normalizeGamepadAngleR(angleOfRotation));
