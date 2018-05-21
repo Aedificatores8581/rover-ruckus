@@ -11,19 +11,29 @@ import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 import java.util.ArrayList;
 
 public abstract class Drivetrain extends Robot {
-    GyroAngles gyroangles;
-    Orientation angles;
-    BNO055IMU imu;
-    ArrayList<DcMotor> motors;
-    public Drivetrain(String[] names, DcMotor[] m, DcMotor.Direction[] dir){
-        for(int j = 0; j < names.length; j++){
-            m[j] = hardwareMap.dcMotor.get(names[j]);
-            m[j].setDirection(dir[j]);
-            motors.add(m[j]);
+    ArrayList<DcMotor> driveMotors;
+    double brakePow;
+    public Drivetrain(double pow){
+        String[] names = names();
+        DcMotor[] motors = motors();
+        DcMotor.Direction[] dir = dir();
+        for(int i = 0; i < dir.length; i++){
+            motors[i] = hardwareMap.dcMotor.get(names[i]);
+            motors[i].setDirection(dir[i]);
+            driveMotors.add(motors[i]);
         }
+        brakePow = pow;
     }
     public void init(){
         super.init();
     }
-    public abstract void brake();
+    public abstract void initialize();
+    public void brake(){
+        for(int i = 0; i < driveMotors.size(); i++)
+            driveMotors.get(i).setPower(brakePow);
+    }
+
+    public abstract String[] names();
+    public abstract DcMotor[] motors();
+    public abstract DcMotor.Direction[] dir();
 }
