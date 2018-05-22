@@ -30,13 +30,17 @@ public abstract class MecanumDT extends Drivetrain {
         super.start();
     }
     public void setDirection(double ang, double speed){
-
+        ang = UniversalFunctions.normalizeAngle(120 - UniversalFunctions.normalizeAngle(ang));
+        double c = Math.sin(Math.toRadians(ang)) / speed;
+        double rflr = Math.sin(Math.toRadians(120 - ang)) / 2 / c;
+        double lfrr = Math.sin(Math.toRadians(ang)) / 2 / c;
+        rf.setPower(rflr);
+        lf.setPower(rflr);
+        lf.setPower(lfrr);
+        rr.setPower(lfrr);
     }
     public void setDirection(Vector2 vel){
-    }
-
-    public void setDirection(){
-
+        setDirection(vel.angle(), vel.magnitude());
     }
     @Override
     public String[] names(){
@@ -61,6 +65,12 @@ public abstract class MecanumDT extends Drivetrain {
         rr.setPower(IV);
     }
 
+    public void refreshMotors(double I, double II, double III, double IV, double speed){
+        rf.setPower(speed * I);
+        lf.setPower(speed * II);
+        lr.setPower(speed * III);
+        rr.setPower(speed * IV);
+    }
     protected enum ControlState{
         ARCADE,
         FIELD_CENTRIC,
@@ -68,4 +78,5 @@ public abstract class MecanumDT extends Drivetrain {
     public void setTurnMult(double tm){
         turnMult = tm;
     }
+
 }
