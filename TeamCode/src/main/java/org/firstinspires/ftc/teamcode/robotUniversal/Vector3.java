@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.robotUniversal;
 
+/**
+ * Created by vzyrianov on 5/22/2018
+ */
+
 public class Vector3 {
     public double x;
     public double y;
