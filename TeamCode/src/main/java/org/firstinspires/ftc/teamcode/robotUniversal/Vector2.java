@@ -9,7 +9,7 @@ public class Vector2 {
     public double x;
     public double y;
 
-    public Vector2(){
+    public Vector2() {
         x = 0.0;
         y = 0.0;
     }
@@ -48,6 +48,21 @@ public class Vector2 {
     //Dot Product
     public double dot(Vector2 vector) {
         return vector.x * this.x + vector.y * this.y;
+    }
+
+    //Cross Product with z parameter equal to zero
+    public Vector3 cross(Vector2 vector) {
+        Vector3 a = new Vector3();
+        Vector3 b = new Vector3();
+
+        a.x = this.x;
+        a.y = this.y;
+
+        b.x = vector.x;
+        b.y = vector.y;
+
+        Vector3 result = a.cross(b);
+        return result;
     }
 
     //Angular component of the vector if it was converted to polar coordinates
