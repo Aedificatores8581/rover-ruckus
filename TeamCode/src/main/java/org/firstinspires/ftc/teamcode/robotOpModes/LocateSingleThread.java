@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robotUniversal.Point;
+import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 
 /**
  * Created by fgpor on 3/22/2018.
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.Point;
 //
 @TeleOp(name = "locate Single Thread", group = "no.")
 public class LocateSingleThread extends OpMode{
-    Point point = new Point();
+    Vector2 point = new Vector2();
     int n = 0;
         BNO055IMU imu;
         Orientation theta;
@@ -62,8 +62,8 @@ public class LocateSingleThread extends OpMode{
             tf = System.currentTimeMillis();
             A = Math.sqrt(Math.pow(acc.xAccel, 2) + Math.pow(acc.yAccel, 2) + Math.pow(acc.zAccel, 2));
             thi = (double) theta.thirdAngle;
-            point.addX(C * A * Math.pow((tf - ti), 2) * Math.cos(thi) / 2 - b * d * Math.cos(180 - thi));
-            point.addY(C * A * Math.pow((tf - ti), 2) * Math.sin(thi) / 2 - b * d * Math.sin(180 - thi));
+            point.x += (C * A * Math.pow((tf - ti), 2) * Math.cos(thi) / 2 - b * d * Math.cos(180 - thi));
+            point.y += (C * A * Math.pow((tf - ti), 2) * Math.sin(thi) / 2 - b * d * Math.sin(180 - thi));
             ti = tf;
             if(Ltriggered()) {
                 setLeftPow(gamepad1.left_stick_y + gamepad1.right_stick_x * mult);
