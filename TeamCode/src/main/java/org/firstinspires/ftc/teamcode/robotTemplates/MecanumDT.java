@@ -29,11 +29,21 @@ public abstract class MecanumDT extends Drivetrain {
     public void start(){
         super.start();
     }
+    public double getRFLRPower(double ang, double speed){
+        return Math.sin(Math.toRadians(ang)) * speed / 2;
+    }
+    public double getRFLRPower(Vector2 vel){
+        return getRFLRPower(vel.angle(), vel.magnitude());
+    }
+    public double getLFRRPower(double ang, double speed){
+        return Math.cos(Math.toRadians(ang)) * speed / 2;
+    }
+    public double getLFRRPower(Vector2 vel){
+        return getRFLRPower(vel.angle(), vel.magnitude());
+    }
     public void setDirection(double ang, double speed){
-        ang = UniversalFunctions.normalizeAngle(120 - UniversalFunctions.normalizeAngle(ang));
-        double c = Math.sin(Math.toRadians(ang)) / speed;
-        double rflr = Math.sin(Math.toRadians(120 - ang)) / 2 / c;
-        double lfrr = Math.sin(Math.toRadians(ang)) / 2 / c;
+        double rflr = getRFLRPower(ang, speed);
+        double lfrr = getLFRRPower(ang, speed);
         rf.setPower(rflr);
         lf.setPower(rflr);
         lf.setPower(lfrr);
@@ -64,7 +74,6 @@ public abstract class MecanumDT extends Drivetrain {
         lr.setPower(III);
         rr.setPower(IV);
     }
-
     public void refreshMotors(double I, double II, double III, double IV, double speed){
         rf.setPower(speed * I);
         lf.setPower(speed * II);
