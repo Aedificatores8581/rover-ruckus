@@ -17,6 +17,7 @@ public abstract class Drivetrain extends Robot {
     ArrayList<DcMotor> driveMotors;
     double brakePow;
     public Drivetrain(double pow){
+        super(true);
         String[] names = names();
         DcMotor[] motors = motors();
         DcMotor.Direction[] dir = dir();
@@ -38,4 +39,8 @@ public abstract class Drivetrain extends Robot {
     public abstract String[] names();
     public abstract DcMotor[] motors();
     public abstract DcMotor.Direction[] dir();
+    public enum TurnDir{
+        FORWARD,
+        BACKWARD;
+    }
 }
