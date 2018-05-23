@@ -91,4 +91,16 @@ public abstract class UniversalFunctions {
                     min(Arrays.copyOfRange(ds,1, ds.length)));
         }
     }
+    public static String[] formatArrayStr(String str, int len){
+        String[] ret = new String[len];
+        int i = 0, ind = str.indexOf(","), next;
+        while (ind != -1) {
+            next = str.indexOf(",", ind + 1);
+            if (next == -1)
+                next = str.length();
+            ret[i] = str.substring(ind, next);
+        }
+        return ret;
+    }
+
 }
