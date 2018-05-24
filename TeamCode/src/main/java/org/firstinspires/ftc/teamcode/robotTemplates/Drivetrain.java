@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public abstract class Drivetrain extends Robot {
     ArrayList<DcMotor> driveMotors;
     double brakePow;
+    double speed;
     public Drivetrain(double pow){
         super(true);
         String[] names = names();
