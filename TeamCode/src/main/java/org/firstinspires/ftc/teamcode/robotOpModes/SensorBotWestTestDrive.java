@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.SensorBotWestTemplate;
@@ -47,7 +48,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
         rt = gamepad1.right_trigger;
         switch(cs){
             case ARCADE:
-                x = gamepad1.left_stick_x;
+                x = gamepad1.right_stick_x;
                 b = gamepad1.right_trigger;
                 if(b >= UniversalConstants.Triggered.TRIGGER)
                     y = b;
@@ -55,7 +56,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
                     y = gamepad1.left_stick_y;
                     y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 }
-                turnMult = 1 - gamepad1.left_stick_y * (1 - TURN_MULT);
+                turnMult = 1 - Math.abs(gamepad1.left_stick_y) * (1 - TURN_MULT);
                 setLeftPow(y + turnMult * x);
                 setRightPow(y - turnMult * x);
                 brake(1);
