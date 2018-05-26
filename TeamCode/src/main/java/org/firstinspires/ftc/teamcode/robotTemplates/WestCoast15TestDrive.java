@@ -8,7 +8,6 @@ public class WestCoast15TestDrive extends OpMode {
     WestCoast15 WCD15 = new WestCoast15(0.001, 0.5);
     boolean switchMode = false, canSwitch = false;
     double rt;
-
     public void init(){
         WCD15.init();
         WCD15.cs = WestCoastDT.ControlState.ARCADE;
@@ -21,8 +20,8 @@ public class WestCoast15TestDrive extends OpMode {
 
     @Override
     public void loop(){
-        WCD15.loop();
         rt = gamepad1.right_trigger;
+        WCD15.loop();
         switch(WCD15.cs){
             case ARCADE:
                 if(switchMode){
