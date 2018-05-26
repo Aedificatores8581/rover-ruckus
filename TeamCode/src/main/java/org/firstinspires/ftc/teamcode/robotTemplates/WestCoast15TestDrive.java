@@ -12,6 +12,8 @@ public class WestCoast15TestDrive extends OpMode {
         WCD15.init();
         WCD15.cs = WestCoastDT.ControlState.ARCADE;
         WCD15.direction = WestCoastDT.Direction.FOR;
+        WCD15.activateGamepad1();
+        WCD15.activateGamepad2();
     }
 
     public void start(){

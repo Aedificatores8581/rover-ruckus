@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
-
-
 /**
  * Created by Frank Portman on 5/21/2018
  */
@@ -29,12 +27,7 @@ public abstract class WestCoastDT extends Drivetrain {
         FOR,
         BACK
     }
-    public void setTurnMult(double mult){
-        turnMult = mult;
-    }
-    public void switchTurnDir(double ang){
-
-    }
+    //returns the direction the robot is moving
     public Direction setTurnDir(){
         if(leftPow + rightPow > 0)
             direction = Direction.FOR;
@@ -42,14 +35,19 @@ public abstract class WestCoastDT extends Drivetrain {
             direction = Direction.BACK;
         return direction;
     }
+    //Sets the power of the left motor(s)
     public abstract void setLeftPow(double pow);
+    //Sets the power of the right motor(s)
     public abstract void setRightPow(double pow);
+    //Sets the power of the left motor(s) to the leftPow variable
     public void setLeftPow(){
         setLeftPow(leftPow);
     }
+    //Sets the power of the right motor(s) to the rightPow variable
     public void setRightPow(){
         setRightPow(rightPow);
     }
+    //Sets the maximum speed of the drive motors
     public void setSpeed(double s){
         speed = s;
     }

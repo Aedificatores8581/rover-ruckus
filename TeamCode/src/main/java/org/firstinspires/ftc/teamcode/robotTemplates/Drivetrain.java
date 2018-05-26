@@ -34,12 +34,15 @@ public abstract class Drivetrain extends Robot {
     public void init(){
         super.init();
     }
+    //gives the motors holding power
     public void brake(){
         for(int i = 0; i < driveMotors.size(); i++)
             driveMotors.get(i).setPower(brakePow);
     }
-
+    //returns the names of the motors of the drivetrain
     public abstract String[] names();
+    //returns the motors of the drivetrain
     public abstract DcMotor[] motors();
+    //returns the directions of the motors of the drivetrain
     public abstract DcMotor.Direction[] dir();
 }
