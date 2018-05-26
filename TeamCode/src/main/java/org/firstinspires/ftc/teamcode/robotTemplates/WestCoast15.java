@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
  */
 public class WestCoast15 extends WestCoastDT{
     DcMotor rf, lf, lr, rr;
-    double rt, x, y, turnMult, rad, normAngle, sin, mult, cos, fsTurn, lp, rp;
+    double rt, x, y, turnMult, normAngle, sin, mult, cos, fsTurn;
     boolean turn;
     public WestCoast15(double brakePow, double sped){
         super(brakePow);
@@ -23,28 +23,25 @@ public class WestCoast15 extends WestCoastDT{
     }
     public void loop(){
         rt = gamepad1.right_trigger;
+        updateGamepad1();
         switch(cs) {
             case ARCADE:
-                x = gamepad1.right_stick_x;
-                y = gamepad1.left_stick_y;
-                y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-                turnMult = 1 - gamepad1.left_stick_y * (1 - super.turnMult);
-                setLeftPow((-y - turnMult * x) * speed);
-                setRightPow((-y + turnMult * x)* speed);
+                turnMult = 1 - lStick1.magnitude() * (1 - super.turnMult);
+                leftPow = (-lStick1.y - turnMult * rStick1.x) * speed;
+                rightPow = (-lStick1.y + turnMult * rStick1.x)* speed;
                 break;
             case FIELD_CENTRIC:
-                y = gamepad1.left_stick_y;
-                x = gamepad1.left_stick_x;
-                rad = Math.sqrt(x * x + y * y);
-                normAngle = Math.toRadians(normalizeGamepadAngleL(normalizeGyroAngle()));
-                if (rad < UniversalConstants.Triggered.STICK)
+                y = lStick1.y;
+                x = lStick1.x;
+                normAngle = Math.toRadians(UniversalFunctions.normalizeAngle(lStick1.angle(), normalizeGyroAngle()));
+                if (lStick1.magnitude() < UniversalConstants.Triggered.STICK)
                     brake();
                 else {
-                    switch (td) {
+                    switch (direction) {
                         case FOR:
                             sin = Math.sin(normAngle);
                             if (Math.sin(normAngle) < 0 && turn) {
-                                td = TurnDir.BACK;
+                                direction = Direction.BACK;
                                 mult *= -1;
                                 turn = false;
                             } else if (Math.sin(normAngle) >= 0)
@@ -53,7 +50,7 @@ public class WestCoast15 extends WestCoastDT{
                         case BACK:
                             sin = Math.sin(normAngle);
                             if (Math.sin(normAngle) > 0 && turn) {
-                                td = TurnDir.FOR;
+                                direction = Direction.FOR;
                                 turn = false;
                                 mult *= -1;
                             } else if (Math.sin(normAngle) <= 0)
@@ -62,42 +59,38 @@ public class WestCoast15 extends WestCoastDT{
                     }
                     cos = Math.cos(normAngle);
                     fsTurn = (Math.abs(cos) + 1);
-                    lp = -rad * mult - mult * fsTurn * cos;
-                    rp = -rad * mult + mult * fsTurn * cos;
-                    setLeftPow(lp * speed);
-                    setRightPow(rp * speed);
+                    leftPow = mult * (-lStick1.magnitude() - fsTurn * cos);
+                    rightPow = mult * (-lStick1.magnitude() + fsTurn * cos);
                 }
                 break;
             case TANK:
-                setLeftPow(-gamepad1.left_stick_y * speed);
-                setRightPow(-gamepad1.right_stick_y * speed);
+                leftPow = -gamepad1.left_stick_y;
+                rightPow = -gamepad1.right_stick_y;
                 break;
         }
+        setLeftPow();
+        setRightPow();
     }
-    @Override
+    public void setLeftPow(double pow) {
+        lf.setPower(pow * speed);
+        lr.setPower(pow * speed);
+        leftPow = pow;
+    }
+    public void setRightPow(double pow){
+        rf.setPower(pow * speed);
+        rr.setPower(pow * speed);
+        rightPow = pow;
+    }
     public DcMotor[] motors(){
         DcMotor[] motors = {rf, lf, lr, rr};
         return motors;
     }
-    @Override
     public String[] names(){
         String[] names = {"rf", "lf", "lr", "rr"};
         return names;
     }
-    @Override
     public DcMotor.Direction[] dir(){
-        DcMotor.Direction[] dir = {DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE, DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD};
+        DcMotor.Direction[] dir = {FORWARD, REVERSE, REVERSE, FORWARD};
         return dir;
-    }
-
-    public void setLeftPow(double pow) {
-        lf.setPower(pow);
-        lr.setPower(pow);
-        leftPow = pow;
-    }
-    public void setRightPow(double pow){
-        rf.setPower(pow);
-        rr.setPower(pow);
-        rightPow = pow;
     }
 }

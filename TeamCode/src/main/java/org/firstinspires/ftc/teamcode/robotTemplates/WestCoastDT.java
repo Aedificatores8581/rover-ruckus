@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class WestCoastDT extends Drivetrain {
     double turnMult = 1;
     double leftPow, rightPow;
-    TurnDir td;
+    Direction direction;
     ControlState cs;
     public WestCoastDT(double brakePow){
         super(brakePow);
@@ -26,7 +26,7 @@ public abstract class WestCoastDT extends Drivetrain {
         FIELD_CENTRIC
     }
     //Used in field-centric mode to determine the robot's direction
-    public enum TurnDir{
+    public enum Direction{
         FOR,
         BACK
     }
@@ -36,12 +36,12 @@ public abstract class WestCoastDT extends Drivetrain {
     public void switchTurnDir(double ang){
 
     }
-    public TurnDir setTurnDir(){
+    public Direction setTurnDir(){
         if(leftPow + rightPow > 0)
-            td = TurnDir.FOR;
+            direction = Direction.FOR;
         else if(leftPow != rightPow)
-            td = TurnDir.BACK;
-        return td;
+            direction = Direction.BACK;
+        return direction;
     }
     public abstract void setLeftPow(double pow);
     public abstract void setRightPow(double pow);
@@ -49,7 +49,10 @@ public abstract class WestCoastDT extends Drivetrain {
         setLeftPow(leftPow);
     }
     public void setRightPow(){
-        setLeftPow(rightPow);
+        setRightPow(rightPow);
+    }
+    public void setSpeed(double s){
+        speed = s;
     }
 
 }
