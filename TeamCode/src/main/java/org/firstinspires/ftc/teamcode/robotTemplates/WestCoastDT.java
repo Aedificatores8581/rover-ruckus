@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by Frank Portman on 5/21/2018
