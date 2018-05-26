@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
+import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 
 /**
  * Created by Frank Portman on 5/21/2018
@@ -24,6 +25,7 @@ public abstract class Robot extends OpMode {
     BNO055IMU imu;
     double startAngle;
     boolean usingIMU;
+    Vector2 lStick1, rStick1, lStick2, rStick2;
     public Robot(boolean imu){
         usingIMU = imu;
     }
@@ -95,6 +97,42 @@ public abstract class Robot extends OpMode {
         else
             return 0;
         // return (UniversalFunctions.round(y) / 2.0 + 0.5 * Math.abs(UniversalFunctions.round(y))) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
+    }
+    public void activateGamepad1(){
+        lStick1 = new Vector2();
+        rStick1 = new Vector2();
+    }
+    public void activateGamepad2(){
+        lStick2 = new Vector2();
+        rStick2 = new Vector2();
+    }
+    public void updateLeftStick1(){
+        lStick1.x = gamepad1.left_stick_x;
+        lStick1.y = gamepad1.left_stick_y;
+    }
+    public void updateRightStick1() {
+        rStick1.x = gamepad1.right_stick_x;
+        rStick1.y = gamepad1.right_stick_y;
+    }
+    public void updateLeftStick2(){
+        lStick2.x = gamepad2.left_stick_x;
+        lStick2.y = gamepad2.left_stick_y;
+    }
+    public void updateRightStick2(){
+        rStick2.x = gamepad2.right_stick_x;
+        rStick2.y = gamepad2.right_stick_y;
+    }
+    public void updateGamepad2(){
+        updateLeftStick2();
+        updateRightStick2();
+    }
+    public void updateGamepad1(){
+        updateLeftStick1();
+        updateRightStick1();
+    }
+    public void updateGamepads(){
+        updateGamepad1();
+        updateGamepad2();
     }
 
 }
