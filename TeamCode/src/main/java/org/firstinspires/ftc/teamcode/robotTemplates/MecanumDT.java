@@ -115,7 +115,7 @@ public abstract class MecanumDT extends Drivetrain {
         rightForePow /= max;
     }
 
-    protected enum ControlState{
+    public enum ControlState{
         ARCADE,
         FIELD_CENTRIC
     }

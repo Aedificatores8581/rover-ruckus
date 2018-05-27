@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
  * Created by Frank Portman on 5/21/2018
  */
 public class Mecanum2 extends MecanumDT {
-    double turnMult, angleBetween;
-    ControlState cs;
+    public double turnMult, angleBetween;
+    public ControlState cs;
     public Mecanum2(double brakePow, double sped) {
         super(brakePow);
         speed = sped;

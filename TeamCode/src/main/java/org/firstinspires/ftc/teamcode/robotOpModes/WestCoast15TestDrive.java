@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.WestCoast15;
 import org.firstinspires.ftc.teamcode.robotTemplates.WestCoastDT;
+import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 
 /**
  * Created by Frank Portman on 5/25/2018
@@ -38,11 +39,11 @@ public class WestCoast15TestDrive extends OpMode {
                     canSwitch = false;
                     WCD15.mult = 1;
                 }
-                else if(rt < 0.2){
+                else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
                     canSwitch = true;
                 }
-                else if(rt > 0.2 && canSwitch)
+                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
                     switchMode = true;
                 break;
             case FIELD_CENTRIC:
@@ -52,11 +53,11 @@ public class WestCoast15TestDrive extends OpMode {
                     canSwitch = false;
                     WCD15.mult = 1;
                 }
-                else if(rt < 0.2){
+                else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
                     canSwitch = true;
                 }
-                else if(rt > 0.2 && canSwitch)
+                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
                     switchMode = true;
                 break;
 
@@ -67,11 +68,11 @@ public class WestCoast15TestDrive extends OpMode {
                     canSwitch = false;
                     WCD15.mult = 1;
                 }
-                else if(rt < 0.2){
+                else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
                     canSwitch = true;
                 }
-                else if(rt > 0.2 && canSwitch)
+                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
                     switchMode = true;
                 break;
         }
