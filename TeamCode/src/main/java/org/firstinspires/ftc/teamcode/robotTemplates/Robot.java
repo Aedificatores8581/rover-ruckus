@@ -68,7 +68,7 @@ public abstract class Robot extends OpMode {
         }
         return a2;
     }
-    public void setGyroAngle(){
+    public void setRobotAngle(){
         robotAngle.setFromPolar(1, Math.toRadians(normalizeGyroAngle()));
     }
     public double normalizeGamepadAngleL(double angle){

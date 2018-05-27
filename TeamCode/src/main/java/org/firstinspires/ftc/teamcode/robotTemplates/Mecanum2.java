@@ -24,7 +24,7 @@ public class Mecanum2 extends MecanumDT {
     @Override
     public void loop() {
         updateGamepad1();
-        setGyroAngle();
+        setRobotAngle();
         angleBetween = lStick1.angleBetween(robotAngle);
         setRightForePow(angleBetween, lStick1.magnitude());
         setLeftForePow(angleBetween, lStick1.magnitude());

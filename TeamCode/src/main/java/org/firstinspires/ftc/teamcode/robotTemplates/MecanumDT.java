@@ -117,7 +117,7 @@ public abstract class MecanumDT extends Drivetrain {
 
     protected enum ControlState{
         ARCADE,
-        FIELD_CENTRIC,
+        FIELD_CENTRIC
     }
 
     @Override
