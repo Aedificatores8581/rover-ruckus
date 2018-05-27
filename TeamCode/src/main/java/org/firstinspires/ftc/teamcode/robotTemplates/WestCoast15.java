@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.robotTemplates;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
-import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 /**
  * Created by Frank Portman on 5/21/2018
@@ -14,13 +13,16 @@ public class WestCoast15 extends WestCoastDT{
     public double turnMult, mult, cos;
     public boolean turn;
     public double angleBetween;
+    public WestCoast15(){
+        super(0.001);
+        speed = 1;
+    }
     public WestCoast15(double brakePow, double sped){
         super(brakePow);
         speed = sped;
     }
     public void loop(){
         updateGamepad1();
-
         switch(cs) {
             case ARCADE:
                 turnMult = 1 - lStick1.magnitude() * (1 - super.turnMult);

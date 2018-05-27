@@ -87,21 +87,6 @@ public abstract class Robot extends OpMode {
             return 0;
         // return (UniversalFunctions.round(y) / 2.0 + 0.5 * Math.abs(UniversalFunctions.round(y))) * 180 + Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
     }
-    public double normalizeGamepadAngleR(double angle){
-        return UniversalFunctions.normalizeAngle(getGamepadAngleL(), angle);
-    }
-    public double getGamepadAngleR(){
-        double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
-        if(y < 0)
-            return Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
-        else if(y > 0)
-            return -Math.toDegrees(Math.acos(x / (Math.sqrt(x * x + y * y))));
-        else if(x < 0)
-            return 180;
-        else
-            return 0;
-    }
     //instantiates the vectors representing the first gamepad's sticks
     public void activateGamepad1(){
         lStick1 = new Vector2();
