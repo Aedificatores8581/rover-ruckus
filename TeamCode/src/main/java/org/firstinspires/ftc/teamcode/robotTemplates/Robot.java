@@ -26,6 +26,7 @@ public abstract class Robot extends OpMode {
     double startAngle;
     boolean usingIMU;
     Vector2 lStick1, rStick1, lStick2, rStick2;
+    Vector2 robotAngle;
     public Robot(boolean imu){
         usingIMU = imu;
     }
@@ -43,6 +44,7 @@ public abstract class Robot extends OpMode {
             imu.initialize(parameters);
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, GyroAngles.ORDER, GyroAngles.UNIT);
             gyroangles = new GyroAngles(angles);
+            robotAngle = new Vector2();
         }
     }
     public void start(){
@@ -65,6 +67,9 @@ public abstract class Robot extends OpMode {
             return 360 - a2;
         }
         return a2;
+    }
+    public void setGyroAngle(){
+        robotAngle.setFromPolar(1, Math.toRadians(normalizeGyroAngle()));
     }
     public double normalizeGamepadAngleL(double angle){
         return UniversalFunctions.normalizeAngle(getGamepadAngleL(), angle);
