@@ -30,6 +30,9 @@ public abstract class Robot extends OpMode {
     public Robot(boolean imu){
         usingIMU = imu;
     }
+    public Robot(){
+        usingIMU = true;
+    }
     public void init() {
         if(usingIMU) {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
