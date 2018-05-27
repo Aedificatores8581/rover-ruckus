@@ -1,8 +1,14 @@
-package org.firstinspires.ftc.teamcode.robotTemplates;
+package org.firstinspires.ftc.teamcode.robotOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.robotTemplates.WestCoast15;
+import org.firstinspires.ftc.teamcode.robotTemplates.WestCoastDT;
+
+/**
+ * Created by Frank Portman on 5/25/2018
+ */
 @TeleOp(name = "WCD15 Test Drive", group = "Test Drive")
 public class WestCoast15TestDrive extends OpMode {
     WestCoast15 WCD15 = new WestCoast15(0.001, 0.5);

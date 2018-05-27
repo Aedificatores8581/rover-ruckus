@@ -4,10 +4,10 @@ package org.firstinspires.ftc.teamcode.robotTemplates;
  * Created by Frank Portman on 5/21/2018
  */
 public abstract class WestCoastDT extends Drivetrain {
-    double turnMult = 1;
-    double leftPow, rightPow;
-    Direction direction;
-    ControlState cs;
+    public double turnMult = 1;
+    public double leftPow, rightPow;
+    public Direction direction;
+    public ControlState cs;
     public WestCoastDT(double brakePow){
         super(brakePow);
         leftPow = 0;
@@ -23,10 +23,6 @@ public abstract class WestCoastDT extends Drivetrain {
         FIELD_CENTRIC
     }
     //Used in field-centric mode to determine the robot's direction
-    public enum Direction{
-        FOR,
-        BACK
-    }
     //returns the direction the robot is moving
     public Direction setTurnDir(){
         if(leftPow + rightPow > 0)
