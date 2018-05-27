@@ -17,8 +17,8 @@ import java.util.ArrayList;
 public abstract class Drivetrain extends Robot {
     public final DcMotor.Direction FORWARD = DcMotor.Direction.FORWARD, REVERSE = DcMotor.Direction.REVERSE;
     ArrayList<DcMotor> driveMotors;
-    double brakePow;
-    double speed;
+    public double brakePow;
+    public double speed = 1;
     public Drivetrain(double pow){
         super(true);
         String[] names = names();
@@ -45,4 +45,12 @@ public abstract class Drivetrain extends Robot {
     public abstract DcMotor[] motors();
     //returns the directions of the motors of the drivetrain
     public abstract DcMotor.Direction[] dir();
+
+    public enum Direction{
+        FOR,
+        BACK
+    }
+    public void setPower(DcMotor m, double pow){
+        m.setPower(pow *  speed);
+    }
 }
