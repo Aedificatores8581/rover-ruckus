@@ -12,30 +12,27 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
  * Created by Frank Portman on 5/27/2018
  */
 @TeleOp(name = "Mec2 Test Drive", group = "Test Drive")
-public class Mecanum2TestDrive extends OpMode {
-
-    Mecanum2 mec2 = new Mecanum2(0.01, 0.75);
+public class Mecanum2TestDrive extends Mecanum2 {
     boolean switchMode = false, canSwitch = false;
     double rt;
-
     public void init(){
-        mec2.init();
-        mec2.cs = MecanumDT.ControlState.ARCADE;
-        mec2.activateGamepad1();
+        super.init();
+        super.speed = 1;
+        super.brakePow = 0.01;
+        super.cs = MecanumDT.ControlState.ARCADE;
+        super.activateGamepad1();
     }
-
     public void start(){
-        mec2.start();
+        super.start();
     }
-
     @Override
     public void loop(){
-        mec2.loop();
+        super.loop();
         rt = gamepad1.right_trigger;
-        switch(mec2.cs){
+        switch(super.cs){
             case ARCADE:
                 if(switchMode){
-                    mec2.cs = MecanumDT.ControlState.FIELD_CENTRIC;
+                    super.cs = MecanumDT.ControlState.FIELD_CENTRIC;
                     switchMode = false;
                     canSwitch = false;
                 }
@@ -48,7 +45,7 @@ public class Mecanum2TestDrive extends OpMode {
                 break;
             case FIELD_CENTRIC:
                 if(switchMode){
-                    mec2.cs = MecanumDT.ControlState.ARCADE;
+                    super.cs = MecanumDT.ControlState.ARCADE;
                     switchMode = false;
                     canSwitch = false;
                 }

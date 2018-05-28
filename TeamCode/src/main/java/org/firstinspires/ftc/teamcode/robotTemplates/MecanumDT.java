@@ -14,13 +14,17 @@ import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 
+import java.util.ResourceBundle;
+
 /**
  * Created by Frank Portman on 5/21/2018
  */
-public abstract class MecanumDT extends Drivetrain {
+public class MecanumDT extends Drivetrain {
     DcMotor lf, lr, rf, rr;
     double turnMult = 1;
-    public double leftForePow, rightForePow, turnPow;
+    public ControlState cs;
+    public double maxTurn = 1;
+    public double leftForePow, rightForePow, turnPow, angleBetween;
     public MecanumDT(double brakePow){
         super(brakePow);
     }
@@ -114,12 +118,28 @@ public abstract class MecanumDT extends Drivetrain {
         leftForePow /= max;
         rightForePow /= max;
     }
-
     public enum ControlState{
         ARCADE,
         FIELD_CENTRIC
     }
-
+    public void loop() {
+        updateGamepad1();
+        setRobotAngle();
+        angleBetween = lStick1.angleBetween(robotAngle);
+        setRightForePow(angleBetween, lStick1.magnitude());
+        setLeftForePow(angleBetween, lStick1.magnitude());
+        switch (cs) {
+            case ARCADE:
+                turnMult = 1 - lStick1.magnitude() * (1 - maxTurn);
+                setTurn(rStick1.magnitude() * turnMult);
+                break;
+            case FIELD_CENTRIC:
+                setTurn(Math.sin(rStick1.angleBetween(robotAngle)));
+                break;
+        }
+        normalizeMotorPow();
+        refreshMotors();
+    }
     @Override
     public String[] names(){
         String[] names = {"rf", "lf", "lr", "rr"};
