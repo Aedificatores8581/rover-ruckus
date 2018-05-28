@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
  * Created by Frank Portman on 5/21/2018
  */
 public class MecanumDT extends Drivetrain {
-    DcMotor lf, lr, rf, rr;
+    DcMotor lf, la, rf, ra;
     double turnMult = 1;
     public ControlState cs;
     public double maxTurn = 1;
@@ -91,22 +91,22 @@ public class MecanumDT extends Drivetrain {
     public void refreshMotors(double I, double II, double III, double IV){
         rf.setPower(I);
         lf.setPower(II);
-        lr.setPower(III);
-        rr.setPower(IV);
+        la.setPower(III);
+        ra.setPower(IV);
     }
     //sets the motor powers to the specified values at the specified speed
     public void refreshMotors(double I, double II, double III, double IV, double speed){
         rf.setPower(speed * I);
         lf.setPower(speed * II);
-        lr.setPower(speed * III);
-        rr.setPower(speed * IV);
+        la.setPower(speed * III);
+        ra.setPower(speed * IV);
     }
     //sets the motor powers to rightForePow and leftForePow respectively
     public void refreshMotors(){
         setPower(rf, rightForePow - turnPow);
-        setPower(lr, rightForePow + turnPow);
+        setPower(la, rightForePow + turnPow);
         setPower(lf, leftForePow + turnPow);
-        setPower(rr, leftForePow - turnPow);
+        setPower(ra, leftForePow - turnPow);
     }
     //sets the turnMult variable
     public void setTurnMult(double tm){
@@ -140,21 +140,15 @@ public class MecanumDT extends Drivetrain {
         normalizeMotorPow();
         refreshMotors();
     }
-    @Override
-    public String[] names(){
-        String[] names = {"rf", "lf", "lr", "rr"};
-        return names;
-    }
-
-    @Override
-    public DcMotor[] motors(){
-        DcMotor[] motors = {rf, lf, lr, rr};
-        return motors;
-    }
-    @Override
-    public DcMotor.Direction[] dir(){
-        DcMotor.Direction[] dir = {DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE, DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD};
-        return dir;
+    public void  initMotors(){
+        rf = hardwareMap.dcMotor.get("rf");
+        lf = hardwareMap.dcMotor.get("lf");
+        la = hardwareMap.dcMotor.get("la");
+        ra = hardwareMap.dcMotor.get("ra");
+        rf.setDirection(REVERSE);
+        ra.setDirection(REVERSE);
+        lf.setDirection(FORWARD);
+        la.setDirection(FORWARD);
     }
 
 }

@@ -19,7 +19,9 @@ public class Mecanum2 extends MecanumDT {
     }
     @Override
     public void init() {
+        usingIMU = true;
         super.init();
+        initMotors();
     }
     @Override
     public void start(){
@@ -27,21 +29,6 @@ public class Mecanum2 extends MecanumDT {
     }
     @Override
     public void loop() {
-        updateGamepad1();
-        setRobotAngle();
-        angleBetween = lStick1.angleBetween(robotAngle);
-        setRightForePow(angleBetween, lStick1.magnitude());
-        setLeftForePow(angleBetween, lStick1.magnitude());
-        switch (cs) {
-            case ARCADE:
-                turnMult = 1 - lStick1.magnitude() * (1 - super.turnMult);
-                setTurn(rStick1.magnitude() * turnMult);
-                break;
-            case FIELD_CENTRIC:
-                setTurn(Math.sin(rStick1.angleBetween(robotAngle)));
-                break;
-        }
-        normalizeMotorPow();
-        refreshMotors();
+        super.loop();
     }
 }

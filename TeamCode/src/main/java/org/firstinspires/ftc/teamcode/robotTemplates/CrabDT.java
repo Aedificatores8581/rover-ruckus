@@ -12,27 +12,12 @@ public abstract class CrabDT extends Drivetrain {
     double speed, dir = 1;
     final double encRatio;
     TurnMode tm;
-    TurnDir td;
+    //SwerveDT.TurnDir td;
     public CrabDT(double encRat, double brake, double sped){
         super(brake);
         encRatio = encRat;
         speed = sped;
         clutch = hardwareMap.servo.get("bs");
-    }
-    @Override
-    public DcMotor[] motors(){
-        DcMotor[] motors = {rf, lf, lr, rr, cm};
-        return motors;
-    }
-    @Override
-    public String[] names(){
-        String[] names = {"rf", "lf", "lr", "rr", "cm"};
-        return names;
-    }
-    @Override
-    public DcMotor.Direction[] dir(){
-        DcMotor.Direction[] dir = {DcMotor.Direction.FORWARD, DcMotor.Direction.REVERSE, DcMotor.Direction.REVERSE, DcMotor.Direction.FORWARD ,DcMotor.Direction.FORWARD};
-        return dir;
     }
     //sets motor power within the specified parameters
     protected void refreshMotors(double I, double II, double III, double IV){
@@ -73,7 +58,7 @@ public abstract class CrabDT extends Drivetrain {
         return UniversalFunctions.normalizeAngle180(desiredAngle, currentAngle) / 360 * encRatio;
     }
 
-    public double setWheelVelocity(double ang, double sped){
+    /*public double setWheelVelocity(double ang, double sped){
         switch(td){
             case FORWARD:
                 if(Math.sin(Math.toRadians(getEncoderRotation(ang, normalizeGyroAngle()))) < 0){
@@ -91,7 +76,7 @@ public abstract class CrabDT extends Drivetrain {
                 break;
         }
         return ang;
-    }
+    }*/
     //switches the control system from swerve to non-holonomic
     public enum DriveMode{
         SWERVE,

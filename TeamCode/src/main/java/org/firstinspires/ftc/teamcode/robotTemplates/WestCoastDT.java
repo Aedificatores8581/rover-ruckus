@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 
 /**
  * Created by Frank Portman on 5/21/2018
  */
 public abstract class WestCoastDT extends Drivetrain {
+    public DcMotor rf, lf, la, ra;
     public double turnMult, angleBetween, directionMult = 1, cos;
     public double maxTurn = 1;
     public double leftPow, rightPow;
@@ -22,8 +25,13 @@ public abstract class WestCoastDT extends Drivetrain {
         SMOOTH,
         FAST
     }
+
+    @Override
     public void init(){
         super.init();
+
+    }
+    public void initMotors(){
     }
     public void loop(){
         updateGamepad1();
@@ -100,9 +108,15 @@ public abstract class WestCoastDT extends Drivetrain {
         return direction;
     }
     //Sets the power of the left motor(s)
-    public abstract void setLeftPow(double pow);
+    public void setLeftPow(double pow){
+        setPower(lf, pow);
+        setPower(la, pow);
+    }
     //Sets the power of the right motor(s)
-    public abstract void setRightPow(double pow);
+    public void setRightPow(double pow){
+        setPower(rf, pow);
+        setPower(ra, pow);
+    }
     //Sets the power of the left motor(s) to the leftPow variable
     public void setLeftPow(){
         setLeftPow(leftPow);
@@ -114,6 +128,9 @@ public abstract class WestCoastDT extends Drivetrain {
     //Sets the maximum speed of the drive motors
     public void setSpeed(double s){
         speed = s;
+    }
+    public void start(){
+        super.start();
     }
 
 }
