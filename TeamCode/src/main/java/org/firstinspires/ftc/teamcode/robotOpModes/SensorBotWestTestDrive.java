@@ -121,7 +121,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
                                 switchTSBool = false;
                             }
                             else if(lt < 0.2){
-                                switchMode = false;
+                                switchTurnState = false;
                                 switchTSBool = true;
                             }
                             else if(lt > 0.2 && switchTSBool)

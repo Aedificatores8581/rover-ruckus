@@ -13,7 +13,7 @@ public abstract class SensorBot extends Robot {
     Servo phoneServo1, phoneServo2;
     double  ps1InitPos = 0,
             ps2InitPos = 0;
-    WestCoastDT drivetrain = new WestCoastDT(0.05) {
+    public WestCoastDT drivetrain = new WestCoastDT(0.05) {
         @Override
         public void setLeftPow(double pow) {
 
@@ -40,11 +40,6 @@ public abstract class SensorBot extends Robot {
         public DcMotor.Direction[] dir() {
             DcMotor.Direction[] dir = {FORWARD, REVERSE};
             return dir;
-        }
-
-        @Override
-        public void loop() {
-
         }
     };
     public void init(){
