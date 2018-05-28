@@ -1,21 +1,17 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
-import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
-import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
-
 /**
  * Created by Frank Portman on 5/21/2018
  */
 public class Mecanum2 extends MecanumDT {
     public double turnMult, angleBetween;
-    public ControlState cs;
     public Mecanum2(){
         super(0.01);
-        speed = 1;
+        maxSpeed = 1;
     }
     public Mecanum2(double brakePow, double sped) {
         super(brakePow);
-        speed = sped;
+        maxSpeed = sped;
     }
     @Override
     public void init() {

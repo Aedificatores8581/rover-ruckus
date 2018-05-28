@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
-import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
-
-
+/**
+ * Created by Frank Portman on 5/27/2018
+ */
 public abstract class SensorBot extends Robot {
     public DcMotor lm, rm;
     Servo phoneServo1, phoneServo2;

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.robotTemplates.WestCoast15;
 import org.firstinspires.ftc.teamcode.robotTemplates.WestCoastDT;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
@@ -26,7 +24,6 @@ public class WestCoast15TestDrive extends WestCoast15 {
     @Override
     public void start(){super.start();
     }
-
     @Override
     public void loop(){
         rt = gamepad1.right_trigger;
@@ -60,7 +57,6 @@ public class WestCoast15TestDrive extends WestCoast15 {
                 else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
                     switchMode = true;
                 break;
-
             case TANK:
                 if(switchMode){
                     cs = cs.ARCADE;

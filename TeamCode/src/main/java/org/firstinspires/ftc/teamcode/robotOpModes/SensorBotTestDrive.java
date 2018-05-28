@@ -15,7 +15,6 @@ public class SensorBotTestDrive extends SensorBot {
     @Override
     public void init(){
         super.init();
-        drivetrain.init();
         drivetrain.cs = WestCoastDT.ControlState.ARCADE;
         drivetrain.direction = WestCoastDT.Direction.FOR;
         activateGamepad1();

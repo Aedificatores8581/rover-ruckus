@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.Mecanum2;
-import org.firstinspires.ftc.teamcode.robotTemplates.MecanumDT;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 
 
@@ -17,9 +15,9 @@ public class Mecanum2TestDrive extends Mecanum2 {
     double rt;
     public void init(){
         super.init();
-        super.speed = 1;
+        super.maxSpeed = 1;
         super.brakePow = 0.01;
-        super.cs = MecanumDT.ControlState.ARCADE;
+        super.ControlState = ControlState.ARCADE;
         super.activateGamepad1();
     }
     public void start(){
@@ -29,10 +27,10 @@ public class Mecanum2TestDrive extends Mecanum2 {
     public void loop(){
         super.loop();
         rt = gamepad1.right_trigger;
-        switch(super.cs){
+        switch(ControlState){
             case ARCADE:
                 if(switchMode){
-                    super.cs = MecanumDT.ControlState.FIELD_CENTRIC;
+                    ControlState = ControlState.FIELD_CENTRIC;
                     switchMode = false;
                     canSwitch = false;
                 }
@@ -45,7 +43,7 @@ public class Mecanum2TestDrive extends Mecanum2 {
                 break;
             case FIELD_CENTRIC:
                 if(switchMode){
-                    super.cs = MecanumDT.ControlState.ARCADE;
+                    ControlState = ControlState.ARCADE;
                     switchMode = false;
                     canSwitch = false;
                 }

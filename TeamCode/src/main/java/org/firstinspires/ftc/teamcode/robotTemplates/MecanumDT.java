@@ -1,20 +1,9 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robotUniversal.GyroAngles;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
-
-import java.util.ResourceBundle;
 
 /**
  * Created by Frank Portman on 5/21/2018
@@ -22,14 +11,14 @@ import java.util.ResourceBundle;
 public class MecanumDT extends Drivetrain {
     DcMotor lf, la, rf, ra;
     double turnMult = 1;
-    public ControlState cs;
-    public double maxTurn = 1;
+    public ControlState ControlState;
     public double leftForePow, rightForePow, turnPow, angleBetween;
     public MecanumDT(double brakePow){
         super(brakePow);
     }
     public void init(){
         super.init();
+        minTurn = 1;
     }
     public void start(){
         super.start();
@@ -125,20 +114,23 @@ public class MecanumDT extends Drivetrain {
     public void loop() {
         updateGamepad1();
         setRobotAngle();
-        angleBetween = lStick1.angleBetween(robotAngle);
-        setRightForePow(angleBetween, lStick1.magnitude());
-        setLeftForePow(angleBetween, lStick1.magnitude());
-        switch (cs) {
+        angleBetween = leftStick1.angleBetween(robotAngle);
+        setRightForePow(angleBetween, leftStick1.magnitude());
+        setLeftForePow(angleBetween, leftStick1.magnitude());
+        switch (ControlState) {
             case ARCADE:
-                turnMult = 1 - lStick1.magnitude() * (1 - maxTurn);
-                setTurn(rStick1.magnitude() * turnMult);
+                turnMult = 1 - leftStick1.magnitude() * (1 - minTurn);
+                setTurn(rightStick1.magnitude() * turnMult);
                 break;
             case FIELD_CENTRIC:
-                setTurn(Math.sin(rStick1.angleBetween(robotAngle)));
+                setTurn(Math.sin(rightStick1.angleBetween(robotAngle)));
                 break;
         }
         normalizeMotorPow();
         refreshMotors();
+    }
+    public void brake(){
+        refreshMotors(brakePow, brakePow, -brakePow, -brakePow);
     }
     public void  initMotors(){
         rf = hardwareMap.dcMotor.get("rf");
@@ -149,6 +141,10 @@ public class MecanumDT extends Drivetrain {
         ra.setDirection(REVERSE);
         lf.setDirection(FORWARD);
         la.setDirection(FORWARD);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        la.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        ra.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
     }
 
 }
