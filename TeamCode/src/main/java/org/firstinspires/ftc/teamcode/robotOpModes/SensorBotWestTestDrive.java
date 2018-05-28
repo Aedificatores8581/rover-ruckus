@@ -23,8 +23,9 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
     TurnDir td;
     FCTurnState ts;
     double rt = 0, x = 0, y = 0, b = 0, rx = 0, ry = 0, servo1Position, servo2Position, lp, rp, rad, sin = 0, cos = 0;
-    boolean switchMode = false, switchBool = false;
+    boolean switchMode = false, switchBool = false, switchTurnState, switchTSBool;
     double turnMult;
+    double lt;
     @Override
     public void init(){
         super.init();
@@ -37,6 +38,8 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
         fsTurn = 1;
         bumpPressed  = false;
         isAngleChanged = false;
+        switchTurnState = false;
+        switchTSBool = false;
     }
     @Override
     public void start(){
@@ -45,16 +48,13 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
     @Override
     public void loop() {
         rt = gamepad1.right_trigger;
+        lt = gamepad1.left_trigger;
         switch(cs){
             case ARCADE:
                 x = gamepad1.right_stick_x;
                 b = gamepad1.right_trigger;
-                if(b >= UniversalConstants.Triggered.TRIGGER)
-                    y = b;
-                else {
-                    y = gamepad1.left_stick_y;
-                    y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
-                }
+                y = gamepad1.left_stick_y;
+                y = -Math.sqrt(x * x + y * y) * UniversalFunctions.round(y);
                 turnMult = 1 - Math.abs(gamepad1.left_stick_y) * (1 - TURN_MULT);
                 setLeftPow(y + turnMult * x);
                 setRightPow(y - turnMult * x);
@@ -110,9 +110,45 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
                             break;
                     }
                     cos = Math.cos(normAngle);
-                    fsTurn = (Math.abs(cos) + 1);
-                    lp = -rad * mult + mult * fsTurn * cos;
-                    rp = -rad * mult - mult * fsTurn * cos;
+                    switch(ts){
+                        case FAST:
+                            fsTurn = Math.abs(cos) + 1;
+                            lp = -rad * mult + mult * fsTurn * cos;
+                            rp = -rad * mult - mult * fsTurn * cos;
+                            if(lt > 0.2) {
+                                ts = FCTurnState.SMOOTH;
+                                switchTurnState = false;
+                                switchTSBool = false;
+                            }
+                            else if(lt < 0.2){
+                                switchMode = false;
+                                switchTSBool = true;
+                            }
+                            else if(lt > 0.2 && switchTSBool)
+                                switchTurnState = true;
+                            break;
+                        case SMOOTH:
+                            if(cos > 0) {
+                                rp = -mult;
+                                lp = mult * Math.cos(2 * normAngle);
+                            }
+                            else{
+                                lp = -mult;
+                                rp = mult * Math.cos(2 * normAngle);
+                            }
+                            if(lt > 0.2) {
+                                ts = FCTurnState.FAST;
+                                switchTurnState = false;
+                                switchTSBool = false;
+                            }
+                            else if(lt < 0.2){
+                                switchMode = false;
+                                switchTSBool = true;
+                            }
+                            else if(lt > 0.2 && switchTSBool)
+                                switchTurnState = true;
+                            break;
+                    }
                     setLeftPow(-lp);
                     setRightPow(-rp);
                 }
@@ -145,6 +181,7 @@ public class SensorBotWestTestDrive extends SensorBotWestTemplate {
                 break;
         }
         telemetry.addData("Drive mode", cs);
+        telemetry.addData("FSTurnState", ts);
         telemetry.addData("angle", getGyroAngle() - startAngle);
         telemetry.addData("angle", normalizeGamepadAngle(normalizeGyroAngle(getGyroAngle())));
         telemetry.addData("gpangle", getGamepadAngle());

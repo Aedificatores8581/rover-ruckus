@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 
-public class SensorBot extends Robot {
+public abstract class SensorBot extends Robot {
     DcMotor lm, rm;
     Servo phoneServo1, phoneServo2;
     double  ps1InitPos = 0,
