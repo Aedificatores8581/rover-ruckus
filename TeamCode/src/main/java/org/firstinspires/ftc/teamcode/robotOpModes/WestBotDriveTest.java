@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.Mecanum2;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
  */
 //
 @TeleOp(name = "westBotTestDrive", group = "Test_Drive")
+@Disabled
 public class WestBotDriveTest extends WestBotTemplate {
     ControlState cs;
     TurnDir td;

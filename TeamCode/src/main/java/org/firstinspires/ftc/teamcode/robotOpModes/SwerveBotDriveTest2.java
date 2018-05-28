@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robotTemplates.SwerveBotTemplate;
 THIS CODE IN ITS CURRENT STATE WILL NOT WORK. WE NEED THE ENCODERS FIRST
  */
 @TeleOp(name = "SwervBotTestDrive2", group = "Test_Drive")
+@Disabled
 public class SwerveBotDriveTest2 extends SwerveBotTemplate {
     double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, xl, yl, yr, xr, mult, cmAngle, turnMult;
     boolean normalized, turn;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 //
 @TeleOp(name = "Location", group = "no.")
-
+@Disabled
 public class Locate extends OpMode{
     Vector2 point = new Vector2();
     int n = 0;

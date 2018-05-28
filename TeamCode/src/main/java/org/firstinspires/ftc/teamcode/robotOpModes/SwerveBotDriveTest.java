@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
  */
 //
 @TeleOp(name = "SwervBotTestDrive", group = "Test_Drive")
+@Disabled
 public class SwerveBotDriveTest extends SwerveBotTemplate {
     double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, swervoPos, normSwervoPos, xl, yr, yl, xr, mult, swervoAngle, botAngle;
     boolean normalized, turn;

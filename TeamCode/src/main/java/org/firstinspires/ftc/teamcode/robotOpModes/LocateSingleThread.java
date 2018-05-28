@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
  */
 //
 @TeleOp(name = "locate Single Thread", group = "no.")
+@Disabled
 public class LocateSingleThread extends OpMode{
     Vector2 point = new Vector2();
     int n = 0;

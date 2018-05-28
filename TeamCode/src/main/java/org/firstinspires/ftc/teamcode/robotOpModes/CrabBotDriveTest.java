@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
  * Created by Frank Portman on 4/23/2018.
  */
 //
+@Disabled
 @TeleOp(name = "CrabBotDriveTest", group = "Test_Drive")
 public class CrabBotDriveTest extends SwerveBotTemplate {
     double angleOfRotation, I, II, III, IV, max, desiredAngle, desiredPos, xl, yl, yr, xr, mult, cmAngle, turnMult, cos, lp, rp, rad, normAngle, sin;

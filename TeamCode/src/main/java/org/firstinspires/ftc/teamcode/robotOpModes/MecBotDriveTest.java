@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.MecBotTemplate;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
  */
 //
 @TeleOp(name = "MecBotTestDrive", group = "Test_Drive")
+@Disabled
 public class MecBotDriveTest extends MecBotTemplate {
     double I, II, III, IV, max, min, x, y, angle, rt, rx, rad, turnMult;
     boolean brake;
