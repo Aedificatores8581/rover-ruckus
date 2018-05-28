@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
  */
 public class WestCoast15 extends WestCoastDT{
     public DcMotor rf, lf, lr, rr;
-    public double turnMult, mult, cos;
+    public double turnMult, directionMult, cos;
     public boolean turn;
     public double angleBetween;
     public WestCoast15(){
@@ -39,7 +39,7 @@ public class WestCoast15 extends WestCoastDT{
                         case FOR:
                             if (Math.sin(angleBetween) < 0 && turn) {
                                 direction = Direction.BACK;
-                                mult *= -1;
+                                directionMult *= -1;
                                 turn = false;
                             } else if (Math.sin(angleBetween) >= 0)
                                 turn = true;
@@ -48,15 +48,28 @@ public class WestCoast15 extends WestCoastDT{
                             if (Math.sin(angleBetween) > 0 && turn) {
                                 direction = Direction.FOR;
                                 turn = false;
-                                mult *= -1;
+                                directionMult *= -1;
                             } else if (Math.sin(angleBetween) <= 0)
                                 turn = true;
                             break;
                     }
                     cos = Math.cos(angleBetween);
-                    turnMult = (Math.abs(cos) + 1);
-                    leftPow = mult * (-lStick1.magnitude() - turnMult * cos);
-                    rightPow = mult * (-lStick1.magnitude() + turnMult * cos);
+                    switch(ts){
+                        case FAST:
+                            turnMult = Math.abs(cos) + 1;
+                            leftPow = directionMult * (-lStick1.magnitude() - turnMult * cos);
+                            rightPow = directionMult * (-lStick1.magnitude() + turnMult * cos);
+                            break;
+                        case SMOOTH:
+                            if(cos > 0) {
+                                rightPow = -directionMult;
+                                leftPow = directionMult * Math.cos(2 * angleBetween);
+                            }
+                            else{
+                                leftPow = -directionMult;
+                                rightPow = directionMult * Math.cos(2 * angleBetween);
+                            }
+                    }
                 }
                 break;
             case TANK:

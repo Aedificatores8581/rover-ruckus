@@ -8,10 +8,15 @@ public abstract class WestCoastDT extends Drivetrain {
     public double leftPow, rightPow;
     public Direction direction;
     public ControlState cs;
+    public FCTurnState ts;
     public WestCoastDT(double brakePow){
         super(brakePow);
         leftPow = 0;
         rightPow = 0;
+    }
+    public enum FCTurnState{
+        SMOOTH,
+        FAST
     }
     public void init(){
         super.init();

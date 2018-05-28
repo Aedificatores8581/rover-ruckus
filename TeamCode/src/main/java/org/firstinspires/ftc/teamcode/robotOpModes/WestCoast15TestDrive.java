@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 @TeleOp(name = "WCD15 Test Drive", group = "Test Drive")
 public class WestCoast15TestDrive extends WestCoast15 {
     boolean switchMode = false, canSwitch = false;
-    double rt;
+    double rt, lt;
     @Override
     public void init(){
         cs = WestCoastDT.ControlState.ARCADE;
@@ -36,7 +36,7 @@ public class WestCoast15TestDrive extends WestCoast15 {
                     cs = cs.FIELD_CENTRIC;
                     switchMode = false;
                     canSwitch = false;
-                    mult = 1;
+                    directionMult = 1;
                 }
                 else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
@@ -46,11 +46,11 @@ public class WestCoast15TestDrive extends WestCoast15 {
                     switchMode = true;
                 break;
             case FIELD_CENTRIC:
+                lt = gamepad1.left_trigger;
                 if(switchMode){
                     cs = cs.TANK;
                     switchMode = false;
                     canSwitch = false;
-                    mult = 1;
                 }
                 else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
@@ -65,7 +65,7 @@ public class WestCoast15TestDrive extends WestCoast15 {
                     cs = cs.ARCADE;
                     switchMode = false;
                     canSwitch = false;
-                    mult = 1;
+                    directionMult = 1;
                 }
                 else if(rt < UniversalConstants.Triggered.TRIGGER){
                     switchMode = false;
