@@ -10,9 +10,6 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
  */
 public class WestCoast15 extends WestCoastDT{
     public DcMotor rf, lf, lr, rr;
-    public double turnMult, directionMult, cos;
-    public boolean turn;
-    public double angleBetween;
     public WestCoast15(){
         super(0.001);
         speed = 1;
@@ -22,63 +19,7 @@ public class WestCoast15 extends WestCoastDT{
         speed = sped;
     }
     public void loop(){
-        updateGamepad1();
-        switch(cs) {
-            case ARCADE:
-                turnMult = 1 - lStick1.magnitude() * (1 - super.turnMult);
-                leftPow = -lStick1.y - turnMult * rStick1.x;
-                rightPow = -lStick1.y + turnMult * rStick1.x;
-                break;
-            case FIELD_CENTRIC:
-                setRobotAngle();
-                angleBetween = lStick1.angleBetween(robotAngle);
-                if (lStick1.magnitude() < UniversalConstants.Triggered.STICK)
-                    brake();
-                else {
-                    switch (direction) {
-                        case FOR:
-                            if (Math.sin(angleBetween) < 0 && turn) {
-                                direction = Direction.BACK;
-                                directionMult *= -1;
-                                turn = false;
-                            } else if (Math.sin(angleBetween) >= 0)
-                                turn = true;
-                            break;
-                        case BACK:
-                            if (Math.sin(angleBetween) > 0 && turn) {
-                                direction = Direction.FOR;
-                                turn = false;
-                                directionMult *= -1;
-                            } else if (Math.sin(angleBetween) <= 0)
-                                turn = true;
-                            break;
-                    }
-                    cos = Math.cos(angleBetween);
-                    switch(ts){
-                        case FAST:
-                            turnMult = Math.abs(cos) + 1;
-                            leftPow = directionMult * (-lStick1.magnitude() - turnMult * cos);
-                            rightPow = directionMult * (-lStick1.magnitude() + turnMult * cos);
-                            break;
-                        case SMOOTH:
-                            if(cos > 0) {
-                                rightPow = -directionMult;
-                                leftPow = directionMult * Math.cos(2 * angleBetween);
-                            }
-                            else{
-                                leftPow = -directionMult;
-                                rightPow = directionMult * Math.cos(2 * angleBetween);
-                            }
-                    }
-                }
-                break;
-            case TANK:
-                leftPow = -gamepad1.left_stick_y;
-                rightPow = -gamepad1.right_stick_y;
-                break;
-        }
-        setLeftPow();
-        setRightPow();
+        super.loop();
     }
     public void setLeftPow(double pow) {
         lf.setPower(pow * speed);
