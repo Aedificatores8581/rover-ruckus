@@ -12,8 +12,10 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 public class SensorBotTestDrive extends SensorBot {
     double rt, lt;
     boolean switchMode = false, canSwitch = false, switchTurnState = false, switchTSBool = false;
+    @Override
     public void init(){
         super.init();
+        drivetrain.init();
         drivetrain.cs = WestCoastDT.ControlState.ARCADE;
         drivetrain.direction = WestCoastDT.Direction.FOR;
         activateGamepad1();
@@ -21,9 +23,11 @@ public class SensorBotTestDrive extends SensorBot {
         drivetrain.setSpeed(1.0);
         drivetrain.ts = WestCoastDT.FCTurnState.SMOOTH;
     }
+    @Override
     public void start(){
         super.start();
     }
+    @Override
     public void loop(){
         rt = gamepad1.right_trigger;
         super.loop();

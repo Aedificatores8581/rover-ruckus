@@ -9,45 +9,41 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 
 
 public abstract class SensorBot extends Robot {
-    DcMotor lm, rm;
+    public DcMotor lm, rm;
     Servo phoneServo1, phoneServo2;
     double  ps1InitPos = 0,
             ps2InitPos = 0;
     public WestCoastDT drivetrain = new WestCoastDT(0.05) {
+
+        @Override
+        public void init(){
+            usingIMU = false;
+            super.init();
+        }
         @Override
         public void setLeftPow(double pow) {
-
+            setPower(lm, pow);
+            leftPow  = pow;
         }
 
         @Override
         public void setRightPow(double pow) {
-
-        }
-
-        @Override
-        public String[] names() {
-            String[] names = {"lm", "rm"};
-            return names;
-        }
-
-        @Override
-        public DcMotor[] motors() {
-            DcMotor[] motors = {lm, rm};
-            return motors;
-        }
-
-        @Override
-        public DcMotor.Direction[] dir() {
-            DcMotor.Direction[] dir = {FORWARD, REVERSE};
-            return dir;
+            setPower(rm, pow);
+            rightPow = pow;
         }
     };
+    @Override
     public void init(){
         super.init();
-        phoneServo1 = hardwareMap.servo.get("ps1");
-        phoneServo2 = hardwareMap.servo.get("ps2");
-        phoneServo1.setPosition(ps1InitPos);
-        phoneServo2.setPosition(ps2InitPos);
+        lm = hardwareMap.dcMotor.get("lm");
+        rm = hardwareMap.dcMotor.get("rm");
+        lm.setDirection(drivetrain.FORWARD);
+        rm.setDirection(drivetrain.REVERSE);
+        drivetrain.init();
+        //phoneServo1 = hardwareMap.servo.get("ps1");
+        //phoneServo2 = hardwareMap.servo.get("ps2");
+        //phoneServo1.setPosition(ps1InitPos);
+        //phoneServo2.setPosition(ps2InitPos);
     }
     public void start(){
         super.start();

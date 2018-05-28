@@ -27,8 +27,8 @@ public abstract class SensorBotWestTemplate extends WestBotTemplate{
     Orientation angles;
     public double startAngle;
     public void init(){
-        left = hardwareMap.dcMotor.get("left");
-        right = hardwareMap.dcMotor.get("right");
+        left = hardwareMap.dcMotor.get("lm");
+        right = hardwareMap.dcMotor.get("rm");
         //serv1 = hardwareMap.servo.get("s1");
         //serv2 = hardwareMap.servo.get("s2");
         left.setDirection(LDIR);

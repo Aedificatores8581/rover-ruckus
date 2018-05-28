@@ -16,6 +16,7 @@ public class WestCoast15TestDrive extends WestCoast15 {
     double rt, lt;
     @Override
     public void init(){
+        super.init();
         cs = WestCoastDT.ControlState.ARCADE;
         direction = WestCoastDT.Direction.FOR;
         activateGamepad1();
