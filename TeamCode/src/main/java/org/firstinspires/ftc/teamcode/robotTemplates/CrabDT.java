@@ -96,6 +96,7 @@ public class CrabDT extends HolonomicDT {
     //specifies the turn multiplier
     public void init(){
         encPos = cm.getCurrentPosition();
+        tdm = TankDriveMode.SHIFT;
         /*
         TankDrive.controlState = TankDT.ControlState.ARCADE;
         TankDrive.direction = TankDT.Direction.FOR;
@@ -112,23 +113,11 @@ public class CrabDT extends HolonomicDT {
                 switchTurnState();
                 setVelocity(leftStick1);
                 refreshMotors();
-                if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
-                    dm = DriveMode.TANK;
-                    tdm = TankDriveMode.SHIFT;
-                }
                 break;
             case TANK:
                 switch (tdm) {
                     case SHIFT:
-                        cmAngle = UniversalFunctions.normalizeAngle(getMotorAngle(encPos));
-                        desiredAngle = UniversalFunctions.normalizeAngle(0, angleOfRotation);
-                        desiredPos = getEncoderRotation(desiredAngle, cmAngle);
-                        encPos = (int) getEncoderRotation(cmAngle);
-                        cm.setPower(Math.sin(Math.toRadians(encPos)));
-                        if (Math.abs(desiredAngle) < angleThreshhold) {
-                            clutch.setPosition(tankPos);
-                            tdm = TankDriveMode.TANK;
-                        }
+                        switchToTank();
                         break;
                     case TANK:
                         TankDrive.loop();
@@ -237,6 +226,17 @@ public class CrabDT extends HolonomicDT {
         maxPow = UniversalFunctions.maxAbs(ra.getPower(), la.getPower(), rf.getPower(), lf.getPower());
         if (maxPow > 1) {
             refreshMotors(rf.getPower() / maxPow, lf.getPower() / maxPow, la.getPower() / maxPow, ra.getPower() / maxPow);
+        }
+    }
+    public void switchToTank(){
+        cmAngle = UniversalFunctions.normalizeAngle(getMotorAngle(encPos));
+        desiredAngle = UniversalFunctions.normalizeAngle(0, angleOfRotation);
+        desiredPos = getEncoderRotation(desiredAngle, cmAngle);
+        encPos = (int) getEncoderRotation(cmAngle);
+        cm.setPower(Math.sin(Math.toRadians(encPos)));
+        if (Math.abs(desiredAngle) < angleThreshhold) {
+            clutch.setPosition(tankPos);
+            tdm = TankDriveMode.TANK;
         }
     }
 }
