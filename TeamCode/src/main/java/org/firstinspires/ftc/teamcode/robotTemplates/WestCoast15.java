@@ -53,5 +53,8 @@ public class WestCoast15 extends TankDT {
         la.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
         ra.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
     }
+    public void normalizeMotors(){
+
+    }
 
 }

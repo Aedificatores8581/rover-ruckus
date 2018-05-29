@@ -35,4 +35,5 @@ public abstract class Drivetrain extends Robot {
     public void setPower(DcMotor m, double pow){
         m.setPower(pow *  maxSpeed);
     }
+    public abstract void normalizeMotors();
 }

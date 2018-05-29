@@ -8,11 +8,9 @@ import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 /**
  * Created by Frank Portman on 5/21/2018
  */
-public class MecanumDT extends Drivetrain {
+public class MecanumDT extends HolonomicDT {
     DcMotor lf, la, rf, ra;
-    double turnMult = 1;
-    public ControlState ControlState;
-    public double leftForePow, rightForePow, turnPow, angleBetween;
+    public double leftForePow, rightForePow, angleBetween;
     public MecanumDT(double brakePow){
         super(brakePow);
     }
@@ -43,13 +41,13 @@ public class MecanumDT extends Drivetrain {
         return getLeftForePow(vel.angle(), vel.magnitude());
     }
     //sets the power of the motors in order to drive at a given angle at a given speed
-    public void setDirection(double ang, double speed){
+    public void setVelocity(double ang, double speed){
         rightForePow = getRightForePow(ang, speed);
         leftForePow= getLeftForePow(ang, speed);
     }
     //sets the power of the motors in order to drive at a given velocity
-    public void setDirection(Vector2 vel){
-        setDirection(vel.angle(), vel.magnitude());
+    public void setVelocity(Vector2 vel){
+        setVelocity(vel.angle(), vel.magnitude());
     }
     //sets the power of the left fore and right rear motors
     public void setLeftForePow(double pow){
@@ -102,14 +100,10 @@ public class MecanumDT extends Drivetrain {
         turnMult = tm;
     }
     //normalizes the motor powers to never go above 1 or below -1
-    public void normalizeMotorPow(){
+    public void normalizeMotors(){
         double max = UniversalFunctions.maxAbs(leftForePow, rightForePow);
         leftForePow /= max;
         rightForePow /= max;
-    }
-    public enum ControlState{
-        ARCADE,
-        FIELD_CENTRIC
     }
     public void loop() {
         updateGamepad1();
@@ -117,16 +111,8 @@ public class MecanumDT extends Drivetrain {
         angleBetween = leftStick1.angleBetween(robotAngle);
         setRightForePow(angleBetween, leftStick1.magnitude());
         setLeftForePow(angleBetween, leftStick1.magnitude());
-        switch (ControlState) {
-            case ARCADE:
-                turnMult = 1 - leftStick1.magnitude() * (1 - minTurn);
-                setTurn(rightStick1.magnitude() * turnMult);
-                break;
-            case FIELD_CENTRIC:
-                setTurn(Math.sin(rightStick1.angleBetween(robotAngle)));
-                break;
-        }
-        normalizeMotorPow();
+        switchTurnState();
+        normalizeMotors();
         refreshMotors();
     }
     public void brake(){

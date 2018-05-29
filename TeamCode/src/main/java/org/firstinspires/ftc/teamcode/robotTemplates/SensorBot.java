@@ -33,6 +33,9 @@ public abstract class SensorBot extends Robot {
         public void initMotors() {
 
         }
+        public void normalizeMotors(){
+
+        }
     };
     @Override
     public void init(){
