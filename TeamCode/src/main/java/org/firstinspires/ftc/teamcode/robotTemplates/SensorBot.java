@@ -12,7 +12,6 @@ public abstract class SensorBot extends Robot {
     double  ps1InitPos = 0,
             ps2InitPos = 0;
     public WestCoastDT drivetrain = new WestCoastDT(0.05) {
-
         @Override
         public void init(){
             usingIMU = false;
@@ -50,5 +49,4 @@ public abstract class SensorBot extends Robot {
     public void loop(){
 
     }
-
 }
