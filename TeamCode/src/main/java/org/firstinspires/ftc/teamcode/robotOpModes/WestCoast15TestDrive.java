@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.robotOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robotTemplates.WestCoast15;
-import org.firstinspires.ftc.teamcode.robotTemplates.WestCoastDT;
+import org.firstinspires.ftc.teamcode.robotTemplates.TankDT;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 
 /**
@@ -15,8 +15,8 @@ public class WestCoast15TestDrive extends WestCoast15 {
     @Override
     public void init(){
         super.init();
-        cs = WestCoastDT.ControlState.ARCADE;
-        direction = WestCoastDT.Direction.FOR;
+        controlState = TankDT.ControlState.ARCADE;
+        direction = TankDT.Direction.FOR;
         activateGamepad1();
         activateGamepad2();
         setSpeed(0.5);
@@ -28,10 +28,10 @@ public class WestCoast15TestDrive extends WestCoast15 {
     public void loop(){
         rt = gamepad1.right_trigger;
         super.loop();
-        switch(cs){
+        switch(controlState){
             case ARCADE:
                 if(switchMode){
-                    cs = cs.FIELD_CENTRIC;
+                    controlState = ControlState.FIELD_CENTRIC;
                     switchMode = false;
                     canSwitch = false;
                     directionMult = 1;
@@ -46,7 +46,7 @@ public class WestCoast15TestDrive extends WestCoast15 {
             case FIELD_CENTRIC:
                 lt = gamepad1.left_trigger;
                 if(switchMode){
-                    cs = cs.TANK;
+                    controlState = ControlState.TANK;
                     switchMode = false;
                     canSwitch = false;
                 }
@@ -59,7 +59,7 @@ public class WestCoast15TestDrive extends WestCoast15 {
                 break;
             case TANK:
                 if(switchMode){
-                    cs = cs.ARCADE;
+                    controlState = ControlState.ARCADE;
                     switchMode = false;
                     canSwitch = false;
                     directionMult = 1;

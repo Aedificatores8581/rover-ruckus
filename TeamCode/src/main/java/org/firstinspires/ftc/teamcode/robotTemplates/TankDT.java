@@ -7,16 +7,16 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 /**
  * Created by Frank Portman on 5/21/2018
  */
-public class WestCoastDT extends Drivetrain {
+public abstract class TankDT extends Drivetrain {
     public DcMotor rf, lf, la, ra;
     public double turnMult, angleBetween, directionMult = 1, cos;
     public double maxTurn = 1;
     public double leftPow, rightPow;
     public Direction direction;
-    public ControlState cs;
+    public ControlState controlState;
     private boolean turn = false;
     public FCTurnState ts;
-    public WestCoastDT(double brakePow){
+    public TankDT(double brakePow){
         super(brakePow);
         leftPow = 0;
         rightPow = 0;
@@ -43,7 +43,7 @@ public class WestCoastDT extends Drivetrain {
     //Basic Tele-Op driving functionality
     public void loop(){
         updateGamepad1();
-        switch(cs) {
+        switch(controlState) {
             case ARCADE:
                 turnMult = 1 - leftStick1.magnitude() * (1 - maxTurn);
                 leftPow = -leftStick1.y - turnMult * rightStick1.x;
@@ -109,17 +109,9 @@ public class WestCoastDT extends Drivetrain {
         return direction;
     }
     //Sets the power of the left motor(s)
-    public void setLeftPow(double pow){
-        setPower(lf, pow);
-        setPower(la, pow);
-        leftPow = pow;
-    }
+    public abstract void setLeftPow(double pow);
     //Sets the power of the right motor(s)
-    public void setRightPow(double pow){
-        setPower(rf, pow);
-        setPower(ra, pow);
-        rightPow = pow;
-    }
+    public abstract void setRightPow(double pow);
     //Sets the power of the left motor(s) to the leftPow variable
     public void setLeftPow(){
         setLeftPow(leftPow);
@@ -132,20 +124,7 @@ public class WestCoastDT extends Drivetrain {
     public void setSpeed(double speed){
         maxSpeed = speed;
     }
-    public void initMotors(){
-        rf = hardwareMap.dcMotor.get("rf");
-        lf = hardwareMap.dcMotor.get("lf");
-        la = hardwareMap.dcMotor.get("la");
-        ra = hardwareMap.dcMotor.get("ra");
-        rf.setDirection(REVERSE);
-        ra.setDirection(REVERSE);
-        lf.setDirection(FORWARD);
-        la.setDirection(FORWARD);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
-        la.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
-        ra.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
-    }
+    public abstract void initMotors();
     public void brake(){
 
     }

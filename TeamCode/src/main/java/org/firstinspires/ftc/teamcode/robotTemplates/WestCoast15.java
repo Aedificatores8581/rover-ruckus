@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 /**
  * Created by Frank Portman on 5/21/2018
  */
-public class WestCoast15 extends WestCoastDT{
+public class WestCoast15 extends TankDT {
+    public DcMotor rf, lf, la, ra;
     public WestCoast15(){
         super(0.001);
         maxSpeed = 1;
@@ -36,4 +39,19 @@ public class WestCoast15 extends WestCoastDT{
         ra.setPower(pow * maxSpeed);
         rightPow = pow;
     }
+    public void initMotors(){
+        rf = hardwareMap.dcMotor.get("rf");
+        lf = hardwareMap.dcMotor.get("lf");
+        la = hardwareMap.dcMotor.get("la");
+        ra = hardwareMap.dcMotor.get("ra");
+        rf.setDirection(REVERSE);
+        ra.setDirection(REVERSE);
+        lf.setDirection(FORWARD);
+        la.setDirection(FORWARD);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        la.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        ra.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+    }
+
 }

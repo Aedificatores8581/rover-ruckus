@@ -11,7 +11,7 @@ public abstract class SensorBot extends Robot {
     Servo phoneServo1, phoneServo2;
     double  ps1InitPos = 0,
             ps2InitPos = 0;
-    public WestCoastDT drivetrain = new WestCoastDT(0.05) {
+    public TankDT drivetrain = new TankDT(0.05) {
         @Override
         public void init(){
             usingIMU = false;
@@ -27,6 +27,11 @@ public abstract class SensorBot extends Robot {
         public void setRightPow(double pow) {
             setPower(rm, pow);
             rightPow = pow;
+        }
+
+        @Override
+        public void initMotors() {
+
         }
     };
     @Override

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robotOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotTemplates.SensorBot;
-import org.firstinspires.ftc.teamcode.robotTemplates.WestCoastDT;
+import org.firstinspires.ftc.teamcode.robotTemplates.TankDT;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 
 @TeleOp(name = "SensorBot test drive", group = "Test Drive")
@@ -13,12 +13,12 @@ public class SensorBotTestDrive extends SensorBot {
     @Override
     public void init(){
         super.init();
-        drivetrain.cs = WestCoastDT.ControlState.ARCADE;
-        drivetrain.direction = WestCoastDT.Direction.FOR;
+        drivetrain.controlState = TankDT.ControlState.ARCADE;
+        drivetrain.direction = TankDT.Direction.FOR;
         activateGamepad1();
         activateGamepad2();
         drivetrain.setSpeed(1.0);
-        drivetrain.ts = WestCoastDT.FCTurnState.SMOOTH;
+        drivetrain.ts = TankDT.FCTurnState.SMOOTH;
     }
     @Override
     public void start(){
@@ -28,10 +28,10 @@ public class SensorBotTestDrive extends SensorBot {
     public void loop(){
         rt = gamepad1.right_trigger;
         super.loop();
-        switch(drivetrain.cs) {
+        switch(drivetrain.controlState) {
             case ARCADE:
                 if (switchMode) {
-                    drivetrain.cs = WestCoastDT.ControlState.FIELD_CENTRIC;
+                    drivetrain.controlState = TankDT.ControlState.FIELD_CENTRIC;
                     switchMode = false;
                     canSwitch = false;
                     drivetrain.directionMult = 1;
@@ -46,7 +46,7 @@ public class SensorBotTestDrive extends SensorBot {
                 switch (drivetrain.ts) {
                     case FAST:
                         if (lt > UniversalConstants.Triggered.TRIGGER) {
-                            drivetrain.ts = WestCoastDT.FCTurnState.SMOOTH;
+                            drivetrain.ts = TankDT.FCTurnState.SMOOTH;
                             switchTurnState = false;
                             switchTSBool = false;
                         } else if (lt < UniversalConstants.Triggered.TRIGGER) {
@@ -57,7 +57,7 @@ public class SensorBotTestDrive extends SensorBot {
                         break;
                     case SMOOTH:
                         if (lt > UniversalConstants.Triggered.TRIGGER) {
-                            drivetrain.ts = WestCoastDT.FCTurnState.FAST;
+                            drivetrain.ts = TankDT.FCTurnState.FAST;
                             switchTurnState = false;
                             switchTSBool = false;
                         } else if (lt < 0.2) {
@@ -69,7 +69,7 @@ public class SensorBotTestDrive extends SensorBot {
 
                 }
                 if (switchMode) {
-                    drivetrain.cs = WestCoastDT.ControlState.TANK;
+                    drivetrain.controlState = TankDT.ControlState.TANK;
                     switchMode = false;
                     canSwitch = false;
                 } else if (rt < UniversalConstants.Triggered.TRIGGER) {
@@ -81,7 +81,7 @@ public class SensorBotTestDrive extends SensorBot {
 
             case TANK:
                 if (switchMode) {
-                    drivetrain.cs = WestCoastDT.ControlState.ARCADE;
+                    drivetrain.controlState = TankDT.ControlState.ARCADE;
                     switchMode = false;
                     canSwitch = false;
                     drivetrain.directionMult = 1;
