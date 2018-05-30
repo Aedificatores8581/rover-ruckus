@@ -10,8 +10,12 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
  */
 @TeleOp(name = "WCD15 Test Drive", group = "Test Drive")
 public class WestCoast15TestDrive extends WestCoast15 {
-    boolean switchMode = false, canSwitch = false;
-    double rt, lt;
+    boolean switchControlState    = false,
+            canSwitchControlState = false,
+            switchTurnState       = false,
+            canSwitchTurnState    = false;
+    double  rt,
+            lt;
     @Override
     public void init(){
         super.init();
@@ -30,46 +34,74 @@ public class WestCoast15TestDrive extends WestCoast15 {
         super.loop();
         switch(controlState){
             case ARCADE:
-                if(switchMode){
+                if(switchControlState){
                     controlState = ControlState.FIELD_CENTRIC;
-                    switchMode = false;
-                    canSwitch = false;
+                    switchControlState = false;
+                    canSwitchControlState = false;
                     directionMult = 1;
                 }
                 else if(rt < UniversalConstants.Triggered.TRIGGER){
-                    switchMode = false;
-                    canSwitch = true;
+                    switchControlState = false;
+                    canSwitchControlState = true;
                 }
-                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
-                    switchMode = true;
+                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitchControlState)
+                    switchControlState = true;
                 break;
             case FIELD_CENTRIC:
                 lt = gamepad1.left_trigger;
-                if(switchMode){
+                switch(turnState){
+                    case FAST:
+                        if(switchTurnState){
+                            turnState = FCTurnState.SMOOTH;
+                            switchTurnState = false;
+                            canSwitchTurnState = false;
+                        }
+                        else if(lt < UniversalConstants.Triggered.TRIGGER){
+                            switchTurnState = false;
+                            canSwitchTurnState = true;
+                        }
+                        else if(lt > UniversalConstants.Triggered.TRIGGER && canSwitchControlState)
+                            switchTurnState = true;
+                        break;
+                    case SMOOTH:
+                        if(switchTurnState){
+                            turnState = FCTurnState.FAST;
+                            switchTurnState = false;
+                            canSwitchTurnState = false;
+                        }
+                        else if(lt < UniversalConstants.Triggered.TRIGGER){
+                            switchTurnState = false;
+                            canSwitchTurnState = true;
+                        }
+                        else if(lt > UniversalConstants.Triggered.TRIGGER && canSwitchControlState)
+                            switchTurnState = true;
+                        break;
+                }
+                if(switchControlState){
                     controlState = ControlState.TANK;
-                    switchMode = false;
-                    canSwitch = false;
+                    switchControlState = false;
+                    canSwitchControlState = false;
                 }
                 else if(rt < UniversalConstants.Triggered.TRIGGER){
-                    switchMode = false;
-                    canSwitch = true;
+                    switchControlState = false;
+                    canSwitchControlState = true;
                 }
-                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
-                    switchMode = true;
+                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitchControlState)
+                    switchControlState = true;
                 break;
             case TANK:
-                if(switchMode){
+                if(switchControlState){
                     controlState = ControlState.ARCADE;
-                    switchMode = false;
-                    canSwitch = false;
+                    switchControlState = false;
+                    canSwitchControlState = false;
                     directionMult = 1;
                 }
                 else if(rt < UniversalConstants.Triggered.TRIGGER){
-                    switchMode = false;
-                    canSwitch = true;
+                    switchControlState = false;
+                    canSwitchControlState = true;
                 }
-                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitch)
-                    switchMode = true;
+                else if(rt > UniversalConstants.Triggered.TRIGGER && canSwitchControlState)
+                    switchControlState = true;
                 break;
         }
     }
