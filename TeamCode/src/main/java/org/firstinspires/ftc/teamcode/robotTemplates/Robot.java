@@ -24,7 +24,7 @@ public abstract class Robot extends OpMode {
     Orientation angles;
     BNO055IMU imu;
     double startAngle;
-    boolean usingIMU;
+    public boolean usingIMU;
     Vector2 leftStick1, rightStick1, leftStick2, rightStick2;
     Vector2 robotAngle;
     public Robot(boolean imu){

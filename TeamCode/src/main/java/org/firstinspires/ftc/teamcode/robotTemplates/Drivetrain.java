@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 
 /**
  * Created by Frank Portman on 5/21/2018
@@ -9,7 +11,6 @@ import java.util.ArrayList;
 
 public abstract class Drivetrain extends Robot {
     public final DcMotor.Direction FORWARD = DcMotor.Direction.FORWARD, REVERSE = DcMotor.Direction.REVERSE;
-    public ArrayList<DcMotor> driveMotors;
     public double minTurn;
     public double brakePow;
     public double maxSpeed = 1;
