@@ -9,13 +9,17 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
  */
 public abstract class TankDT extends Drivetrain {
     public DcMotor rf, lf, la, ra;
-    public double turnMult, angleBetween, directionMult = 1, cos;
-    public double maxTurn = 1;
-    public double leftPow, rightPow;
-    public Direction direction;
+    public double       turnMult,
+                        angleBetween,
+                        directionMult = 1,
+                        cos,
+                        maxTurn       = 1,
+                        leftPow,
+                        rightPow;
+    private boolean     turn          = false;
+    public Direction    direction;
     public ControlState controlState;
-    private boolean turn = false;
-    public FCTurnState ts;
+    public FCTurnState  turnState;
     public TankDT(double brakePow){
         super(brakePow);
         leftPow = 0;
@@ -74,7 +78,7 @@ public abstract class TankDT extends Drivetrain {
                             break;
                     }
                     cos = Math.cos(angleBetween);
-                    switch(ts){
+                    switch(turnState){
                         case FAST:
                             turnMult = Math.abs(cos) + 1;
                             leftPow = directionMult * (-leftStick1.magnitude() - turnMult * cos);
