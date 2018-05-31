@@ -18,7 +18,7 @@ public class SensorBotTestDrive extends SensorBot {
         activateGamepad1();
         activateGamepad2();
         drivetrain.setSpeed(1.0);
-        drivetrain.ts = TankDT.FCTurnState.SMOOTH;
+        drivetrain.turnState = TankDT.FCTurnState.SMOOTH;
     }
     @Override
     public void start(){
@@ -43,10 +43,10 @@ public class SensorBotTestDrive extends SensorBot {
                 break;
             case FIELD_CENTRIC:
                 lt = gamepad1.left_trigger;
-                switch (drivetrain.ts) {
+                switch (drivetrain.turnState) {
                     case FAST:
                         if (lt > UniversalConstants.Triggered.TRIGGER) {
-                            drivetrain.ts = TankDT.FCTurnState.SMOOTH;
+                            drivetrain.turnState = TankDT.FCTurnState.SMOOTH;
                             switchTurnState = false;
                             switchTSBool = false;
                         } else if (lt < UniversalConstants.Triggered.TRIGGER) {
@@ -57,7 +57,7 @@ public class SensorBotTestDrive extends SensorBot {
                         break;
                     case SMOOTH:
                         if (lt > UniversalConstants.Triggered.TRIGGER) {
-                            drivetrain.ts = TankDT.FCTurnState.FAST;
+                            drivetrain.turnState = TankDT.FCTurnState.FAST;
                             switchTurnState = false;
                             switchTSBool = false;
                         } else if (lt < 0.2) {
