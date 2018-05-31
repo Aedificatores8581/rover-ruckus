@@ -17,7 +17,7 @@ public class Mecanum2TestDrive extends Mecanum2 {
         super.init();
         super.maxSpeed = 1;
         super.brakePow = 0.01;
-        super.ControlState = ControlState.ARCADE;
+        super.turnState = turnState.ARCADE;
         super.activateGamepad1();
     }
     @Override
@@ -28,10 +28,10 @@ public class Mecanum2TestDrive extends Mecanum2 {
     public void loop(){
         super.loop();
         rt = gamepad1.right_trigger;
-        switch(ControlState){
+        switch(turnState){
             case ARCADE:
                 if(switchMode){
-                    ControlState = ControlState.FIELD_CENTRIC;
+                    turnState = turnState.FIELD_CENTRIC;
                     switchMode = false;
                     canSwitch = false;
                 }
@@ -44,7 +44,7 @@ public class Mecanum2TestDrive extends Mecanum2 {
                 break;
             case FIELD_CENTRIC:
                 if(switchMode){
-                    ControlState = ControlState.ARCADE;
+                    turnState = turnState.ARCADE;
                     switchMode = false;
                     canSwitch = false;
                 }

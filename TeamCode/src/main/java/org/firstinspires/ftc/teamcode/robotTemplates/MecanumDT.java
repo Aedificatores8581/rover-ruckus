@@ -34,7 +34,7 @@ public class MecanumDT extends HolonomicDT {
 
     //returns the power of the left fore and right rear motors needed to drive at a given angle at a given speed
     public double getLeftForePow(double ang, double speed){
-        return Math.cos(ang) * speed / 2;
+        return Math.cos(ang + Math.PI / 4) * speed / 2;
     }
     //returns the power of the left fore and right rear motors needed to drive along a given vector
     public double getLeftForePow(Vector2 vel){
