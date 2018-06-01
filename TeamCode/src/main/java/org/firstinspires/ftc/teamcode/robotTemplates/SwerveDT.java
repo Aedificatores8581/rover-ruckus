@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public abstract class SwerveDT extends Drivetrain {
     DcMotor rf, lf, lr, rr;
     Servo rfSwervo, lfSwervo, lrSwervo, rrSwervo;
-    public SwerveDT(double brake, double rfSwervoStart, double lfSwervoStart, double lrSwervoStart, double rrSwervoStart){
-        super(brake);
+    public SwerveDT(DcMotor.ZeroPowerBehavior z, double rfSwervoStart, double lfSwervoStart, double lrSwervoStart, double rrSwervoStart){
+        super(z);
     }
 
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotTemplates;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 /**
  * Created by Frank Portman on 5/21/2018
  */
@@ -8,8 +10,8 @@ public abstract class WestCoastDT extends Drivetrain {
     public double leftPow, rightPow;
     public Direction direction;
     public ControlState controlState;
-    public WestCoastDT(double brakePow){
-        super(brakePow);
+    public WestCoastDT(DcMotor.ZeroPowerBehavior z){
+        super(z);
         leftPow = 0;
         rightPow = 0;
     }
