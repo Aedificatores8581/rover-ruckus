@@ -347,8 +347,9 @@ String thisIsAVariable = "this is a variable";
 
 
 CONSTANTS should use UPPER_SNAKE_CASE. . .
-
+```java
 public static final int MR_FOO = 15;
+```
 
 . . . and should generally be used to eliminate magic numbers in the code.
 
