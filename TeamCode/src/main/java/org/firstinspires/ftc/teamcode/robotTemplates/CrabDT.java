@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.robotUniversal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.robotUniversal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 
+<<<<<<< HEAD
 
 public class CrabDT extends HolonomicDT {
     public DcMotor rf, lf, la, ra, cm;
@@ -52,6 +53,19 @@ public class CrabDT extends HolonomicDT {
     };
     public CrabDT(double encRat, double brake, double speed){
         super(brake);
+=======
+public abstract class CrabDT extends Drivetrain {
+    enum TurnDir {FOR, BACK};
+
+    DcMotor rf, lf, lr, rr, cm;
+    Servo clutch;
+    double speed, dir = 1;
+    final double encRatio;
+    TurnMode tm;
+    TurnDir td;
+    public CrabDT(double encRat, DcMotor.ZeroPowerBehavior z, double sped){
+        super(z);
+>>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
         encRatio = encRat;
         maxSpeed = speed;
     }
@@ -93,6 +107,7 @@ public class CrabDT extends HolonomicDT {
         setPower(la, III);
         setPower(ra, IV);
     }
+<<<<<<< HEAD
     @Override
     //Gives the motors holding power
     public void brake(){
@@ -103,6 +118,9 @@ public class CrabDT extends HolonomicDT {
             lf.setPower(brakePow);
         }
     }
+=======
+
+>>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
     //specifies the turn multiplier
     @Override
     public void init(){
@@ -130,19 +148,31 @@ public class CrabDT extends HolonomicDT {
                 }
         }
     }
+
     //returns the number of encoder ticks coresponding to specified angle
     public double getEncoderRotation(double angle){
         return angle / 360 * encRatio;
     }
+
     //returns the angle of rotation coresponding to a specified number of encoder ticks
     public double getMotorAngle(double enc){
         return UniversalFunctions.normalizeAngle(enc * 360 / encRatio);
     }
+<<<<<<< HEAD
+=======
+
+    //normalizes getMotorAngle from -180 to 180 degrees
+    public double getMotorAngle180(double enc){
+        return UniversalFunctions.normalizeAngle180(enc * 360 / encRatio);
+    }
+
+>>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
     //returns the number of encoder ticks coresponding to specified change in angle
     public double getEncoderRotation(double desiredAngle, double currentAngle) {
         return UniversalFunctions.normalizeAngle180(desiredAngle, currentAngle) / 360 * encRatio;
     }
 
+<<<<<<< HEAD
     public void setVelocity(double ang, double speed){
         cmAngle = UniversalFunctions.normalizeAngle(getMotorAngle(encPos));
         if (Math.abs(gamepad1.left_stick_y) >= UniversalConstants.Triggered.STICK || Math.abs(gamepad1.left_stick_x) >= UniversalConstants.Triggered.STICK)
@@ -173,14 +203,31 @@ public class CrabDT extends HolonomicDT {
                 if(!wheelModeSet) {
                     cm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     wheelModeSet = true;
+=======
+    public double setWheelVelocity(double ang, double sped){
+        switch(td){
+            case FOR:
+                if(Math.sin(Math.toRadians(getEncoderRotation(ang, normalizeGyroAngle()))) < 0){
+                    dir *= -1;
+                    ang += 180;
+                    td = TurnDir.BACK;
+>>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
                 }
                 encPos = cm.getCurrentPosition();
                 cm.setPower(Math.sin(Math.toRadians(getMotorAngle(desiredCMEncoderPos - encPos))));
                 break;
+<<<<<<< HEAD
             case FAST:
                 if(!wheelModeSet) {
                     cm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     wheelModeSet = true;
+=======
+            case BACK:
+                if(Math.sin(Math.toRadians(getEncoderRotation(ang, normalizeGyroAngle()))) < 0){
+                    dir *= -1;
+                    ang += 180;
+                    td = TurnDir.FOR;
+>>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
                 }
                 encPos += desiredCMEncoderPos;
                 cm.setTargetPosition(encPos);
@@ -209,11 +256,13 @@ public class CrabDT extends HolonomicDT {
             switchMode = TankDriveMode.TANK;
         }
     }
+
     //switches the control system from swerve to non-holonomic
     public enum DriveMode{
         SWERVE,
         TANK
     }
+
     //switches from the act of switching DriveModes
     public enum TankDriveMode{
         SHIFT,

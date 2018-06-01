@@ -8,19 +8,35 @@ import org.firstinspires.ftc.teamcode.robotUniversal.Vector2;
 /**
  * Created by Frank Portman on 5/21/2018
  */
+<<<<<<< HEAD
 public class MecanumDT extends HolonomicDT {
     DcMotor lf, la, rf, ra;
     public double leftForePow, rightForePow, angleBetween;
     public MecanumDT(double brakePow){
         super(brakePow);
+=======
+public abstract class MecanumDT extends Drivetrain {
+    DcMotor lf, lr, rf, rr;
+    double turnMult = 1;
+    public double leftForePow, rightForePow, turnPow;
+
+
+    public MecanumDT(DcMotor.ZeroPowerBehavior z){
+        super(z);
+>>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
     }
+
+
     public void init(){
         super.init();
         minTurn = 1;
     }
+
     public void start(){
         super.start();
     }
+
+
 
     //returns the power of the left rear and right fore motors needed to drive at a given angle at a given speed
     public double getRightForePow(double ang, double speed){
@@ -36,44 +52,54 @@ public class MecanumDT extends HolonomicDT {
     public double getLeftForePow(double ang, double speed){
         return Math.cos(ang + Math.PI / 4) * speed / 2;
     }
+
     //returns the power of the left fore and right rear motors needed to drive along a given vector
     public double getLeftForePow(Vector2 vel){
         return getLeftForePow(vel.angle(), vel.magnitude());
     }
+
     //sets the power of the motors in order to drive at a given angle at a given speed
     public void setVelocity(double ang, double speed){
         rightForePow = getRightForePow(ang, speed);
         leftForePow= getLeftForePow(ang, speed);
     }
+
     //sets the power of the motors in order to drive at a given velocity
     public void setVelocity(Vector2 vel){
         setVelocity(vel.angle(), vel.magnitude());
     }
+
     //sets the power of the left fore and right rear motors
     public void setLeftForePow(double pow){
         leftForePow = pow;
     }
+
     //sets the power of the left fore and right rear motors in order to drive at a given angle at a given speed
     public void setLeftForePow(double ang, double speed){
         setLeftForePow(getLeftForePow(ang, speed));
     }
+
     //sets the direction of the right fore and left rear motors
     public void setRightForePow(double pow){
         rightForePow = pow;
     }
+
     //sets the direction of the right fore and left rear motors in order to drive at a given angle at a given speed
     public void setRightForePow(double ang, double speed){
         setRightForePow(getLeftForePow(ang, speed));
     }
+
     //sets the direction of the motors in order to drive at a given velocity
     public void setRightForePow(Vector2 vel){
         setRightForePow(vel.angle(), vel.magnitude());
     }
+
     //sets the turnPow variable
     public void setTurn(double pow){
         pow *= turnMult;
         turnPow = pow;
     }
+
     //sets the motor powers to the specified values
     public void refreshMotors(double I, double II, double III, double IV){
         rf.setPower(I);
