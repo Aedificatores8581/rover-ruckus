@@ -16,40 +16,40 @@ if (bar == 30) {
 	System.out.println("bat");
 }
 ```
-	* **Don't** use:
-	```java
-	if (bar == 30)
-	{
-		System.out.println("bat");
-	}
-	```
+* **Don't** use:
+```java
+if (bar == 30)
+{
+	System.out.println("bat");
+}
+```
 
-	* That's just weird and confusing and makes finding what statements go with what brackets hard.
+* That's just weird and confusing and makes finding what statements go with what brackets hard.
 
 * One liners are ok for in same cases, like:
 ```java
 if (shorty != 3) foo();
 ```
 
-	* This just makes reading the code so much nicer.
+* This just makes reading the code so much nicer.
 
-	* DO NOT do this with multiple statements.
-		```java
-		while (true) {if (shorty != 3) foo();}
-		```
+* DO NOT do this with multiple statements.
+```java
+while (true) {if (shorty != 3) foo();}
+```
 
-	 BUT, this is acceptable
-	 ```java
-	 while (true) {
-	 	 if (shorty != 3) foo();
-	 }
-	 ```
+BUT, this is acceptable
+```java
+while (true) {
+	 if (shorty != 3) foo();
+}
+```
 
-	 * Brackets should be excluded from such single-liners
-	 ```java
-	 if (shorty != 3) {foo();} // This is a no no
-	 if (shorty != 3) foo();   // This does the same thing and has a lot less clutter.
-	 ```
+* Brackets should be excluded from such single-liners
+```java
+if (shorty != 3) {foo();} // This is a no no
+if (shorty != 3) foo();   // This does the same thing and has a lot less clutter.
+```
 
 * With if-statements, try and keep the same style throughout the entirety of the if-else clause
 
