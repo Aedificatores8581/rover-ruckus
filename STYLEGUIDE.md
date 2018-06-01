@@ -15,12 +15,8 @@ Also, feel free to propose changes to the styleguide.
 if (bar == 30) {
 	System.out.println("bat");
 }
-```
-<<<<<<< HEAD
+``
 **Don't** use:
-=======
-* **Don't** use:
->>>>>>> 58e20ac65e0db89ca5cd5f00c4d30b60db1dacb8
 ```java
 if (bar == 30)
 {
@@ -28,26 +24,16 @@ if (bar == 30)
 }
 ```
 
-<<<<<<< HEAD
 That's just weird and confusing and makes finding what statements go with what brackets hard.
-=======
-* That's just weird and confusing and makes finding what statements go with what brackets hard.
->>>>>>> 58e20ac65e0db89ca5cd5f00c4d30b60db1dacb8
 
 * One liners are ok for in same cases, like:
 ```java
 if (shorty != 3) foo();
 ```
 
-<<<<<<< HEAD
 This just makes reading the code so much nicer.
 
 DO NOT do this with multiple statements.
-=======
-* This just makes reading the code so much nicer.
-
-* DO NOT do this with multiple statements.
->>>>>>> 58e20ac65e0db89ca5cd5f00c4d30b60db1dacb8
 ```java
 while (true) {if (shorty != 3) foo();}
 ```
@@ -55,19 +41,11 @@ while (true) {if (shorty != 3) foo();}
 BUT, this is acceptable
 ```java
 while (true) {
-<<<<<<< HEAD
 	if (shorty != 3) foo();
 }
 ```
 
 Brackets should be excluded from such single-liners
-=======
-	 if (shorty != 3) foo();
-}
-```
-
-* Brackets should be excluded from such single-liners
->>>>>>> 58e20ac65e0db89ca5cd5f00c4d30b60db1dacb8
 ```java
 if (shorty != 3) {foo();} // This is a no no
 if (shorty != 3) foo();   // This does the same thing and has a lot less clutter.
