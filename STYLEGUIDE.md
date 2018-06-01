@@ -1,8 +1,7 @@
 ## STYLEGUIDE
 ###### For Team 8581 Aedificatores.
 
-![alt text][logo]
-[logo]: https://pbs.twimg.com/profile_images/823235140067409920/3bLfT8sI_400x400.jpg
+![alt text](https://pbs.twimg.com/profile_images/823235140067409920/3bLfT8sI_400x400.jpg)
 
 The style guide IS NOT A STRICT SET OF RULES
 Flexibility exists, and breaking any conventions set is ok if the programmer is conscious of his/her decision, and it doesn't
