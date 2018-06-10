@@ -38,27 +38,27 @@ public abstract class MecanumDT extends Drivetrain {
 
 
 
-    //returns the power of the left rear and right fore motors needed to drive at a given angle at a given speed
+    //returns the power of the left rear and right fore motors needed to drive at a given getAngle at a given speed
     public double getRightForePow(double ang, double speed){
         return Math.sin(ang + Math.PI / 4) * speed / 2;
     }
 
     //returns the power of the left rear and right fore motors needed to drive along a given vector
     public double getRightForePow(Vector2 vel){
-        return getRightForePow(vel.angle(), vel.magnitude());
+        return getRightForePow(vel.getAngle(), vel.magnitude());
     }
 
-    //returns the power of the left fore and right rear motors needed to drive at a given angle at a given speed
+    //returns the power of the left fore and right rear motors needed to drive at a given getAngle at a given speed
     public double getLeftForePow(double ang, double speed){
         return Math.cos(ang + Math.PI / 4) * speed / 2;
     }
 
     //returns the power of the left fore and right rear motors needed to drive along a given vector
     public double getLeftForePow(Vector2 vel){
-        return getLeftForePow(vel.angle(), vel.magnitude());
+        return getLeftForePow(vel.getAngle(), vel.magnitude());
     }
 
-    //sets the power of the motors in order to drive at a given angle at a given speed
+    //sets the power of the motors in order to drive at a given getAngle at a given speed
     public void setVelocity(double ang, double speed){
         rightForePow = getRightForePow(ang, speed);
         leftForePow= getLeftForePow(ang, speed);
@@ -66,7 +66,7 @@ public abstract class MecanumDT extends Drivetrain {
 
     //sets the power of the motors in order to drive at a given velocity
     public void setVelocity(Vector2 vel){
-        setVelocity(vel.angle(), vel.magnitude());
+        setVelocity(vel.getAngle(), vel.magnitude());
     }
 
     //sets the power of the left fore and right rear motors
@@ -74,7 +74,7 @@ public abstract class MecanumDT extends Drivetrain {
         leftForePow = pow;
     }
 
-    //sets the power of the left fore and right rear motors in order to drive at a given angle at a given speed
+    //sets the power of the left fore and right rear motors in order to drive at a given getAngle at a given speed
     public void setLeftForePow(double ang, double speed){
         setLeftForePow(getLeftForePow(ang, speed));
     }
@@ -84,14 +84,14 @@ public abstract class MecanumDT extends Drivetrain {
         rightForePow = pow;
     }
 
-    //sets the direction of the right fore and left rear motors in order to drive at a given angle at a given speed
+    //sets the direction of the right fore and left rear motors in order to drive at a given getAngle at a given speed
     public void setRightForePow(double ang, double speed){
         setRightForePow(getLeftForePow(ang, speed));
     }
 
     //sets the direction of the motors in order to drive at a given velocity
     public void setRightForePow(Vector2 vel){
-        setRightForePow(vel.angle(), vel.magnitude());
+        setRightForePow(vel.getAngle(), vel.magnitude());
     }
 
     //sets the turnPow variable
@@ -134,7 +134,7 @@ public abstract class MecanumDT extends Drivetrain {
     public void loop() {
         updateGamepad1();
         setRobotAngle();
-        angleBetween = leftStick1.angleBetween(robotAngle);
+        angleBetween = leftStick1.getAngleBetween(robotAngle);
         setRightForePow(angleBetween, leftStick1.magnitude());
         setLeftForePow(angleBetween, leftStick1.magnitude());
         switchTurnState();

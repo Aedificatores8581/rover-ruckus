@@ -16,7 +16,7 @@ public abstract class HolonomicDT extends Drivetrain {
         super.start();
     }
 
-    //sets the power of the motors in order to drive at a given angle at a given speed
+    //sets the power of the motors in order to drive at a given getAngle at a given speed
     public abstract void setVelocity(double ang, double speed);
     //sets the power of the motors in order to drive at a given velocity
     public abstract void setVelocity(Vector2 vel);
@@ -38,7 +38,7 @@ public abstract class HolonomicDT extends Drivetrain {
                 setTurn(rightStick1.x);
                 break;
             case FIELD_CENTRIC:
-                setTurn(Math.sin(rightStick1.angleBetween(robotAngle)));
+                setTurn(Math.sin(rightStick1.getAngleBetween(robotAngle)));
                 break;
         }
     }

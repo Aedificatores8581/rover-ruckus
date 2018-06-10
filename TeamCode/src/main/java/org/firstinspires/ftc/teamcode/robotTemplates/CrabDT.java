@@ -149,12 +149,12 @@ public abstract class CrabDT extends Drivetrain {
         }
     }
 
-    //returns the number of encoder ticks coresponding to specified angle
+    //returns the number of encoder ticks coresponding to specified getAngle
     public double getEncoderRotation(double angle){
         return angle / 360 * encRatio;
     }
 
-    //returns the angle of rotation coresponding to a specified number of encoder ticks
+    //returns the getAngle of rotation coresponding to a specified number of encoder ticks
     public double getMotorAngle(double enc){
         return UniversalFunctions.normalizeAngle(enc * 360 / encRatio);
     }
@@ -167,7 +167,7 @@ public abstract class CrabDT extends Drivetrain {
     }
 
 >>>>>>> bded60090eafc2d2157f1a924ecde0559db2f773
-    //returns the number of encoder ticks coresponding to specified change in angle
+    //returns the number of encoder ticks coresponding to specified change in getAngle
     public double getEncoderRotation(double desiredAngle, double currentAngle) {
         return UniversalFunctions.normalizeAngle180(desiredAngle, currentAngle) / 360 * encRatio;
     }

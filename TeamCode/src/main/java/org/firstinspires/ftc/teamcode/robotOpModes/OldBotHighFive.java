@@ -19,7 +19,7 @@ public class OldBotHighFive extends OldBotTemplate {
 
     @Override
     public void start() {
-        jewelArm.setPosition(0.36);
+        jewelArm.setPosition(JEWEL_ARM_POSITION);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class Vector2 {
         this.y = y;
     }
 
-    //Sets the vector to equal the cartesian equivalent of the polar vector composed of a length and an angle
+    //Sets the vector to equal the cartesian equivalent of the polar vector composed of a length and an getAngle
     public void setFromPolar(double r, double theta) {
         this.x = Math.cos(theta) * r;
         this.y = Math.sin(theta) * r;
@@ -30,18 +30,19 @@ public class Vector2 {
         y += vector.y;
     }
 
+    //NOTE TO PREVIOUS AUTHOR: Previous version multiplied the argument by -1, which was possibly unintended behavior. This new version doesn't modify the argument.
     public void subtract(Vector2 vector) {
-        vector.scalarMultiply(-1);
-        add(vector);
+        x -= vector.x;
+        y -= vector.y;
     }
 
-    public void scalarMultiply(double a) {
-        x *= a;
-        y *= a;
+    public void scalarMultiply(double multiplier) {
+        x *= multiplier;
+        y *= multiplier;
     }
 
     //Length of vector
-    public double magnitude() {
+    public double getMagnitude() {
         return Math.sqrt(x*x + y*y);
     }
 
@@ -50,30 +51,20 @@ public class Vector2 {
         return vector.x * this.x + vector.y * this.y;
     }
 
-    //Cross Product with z parameter equal to zero
-    public Vector3 cross(Vector2 vector) {
-        Vector3 a = new Vector3();
-        Vector3 b = new Vector3();
-
-        a.x = this.x;
-        a.y = this.y;
-
-        b.x = vector.x;
-        b.y = vector.y;
-
-        Vector3 result = a.cross(b);
-        return result;
+    //Cross Product of two 2d vectors is always pointed either into or out of the 2d plane, thus it can be represented with a single number.
+    public double cross(Vector2 vector) {
+        return (this.x * vector.y) - (this.y * vector.x);
     }
 
     //Angular component of the vector if it was converted to polar coordinates
-    //Returns angle in radians
-    public double angle() {
+    //Returns getAngle in radians
+    public double getAngle() {
         return Math.atan2(y, x);
     }
 
-    //Returns angle between two vectors in radians.
-    public double angleBetween(Vector2 vector) {
-        return Math.acos(this.dot(vector) / (this.magnitude() * vector.magnitude()));
+    //Returns getAngle between two vectors in radians.
+    public double getAngleBetween(Vector2 vector) {
+        return Math.acos(this.dot(vector) / (this.getMagnitude() * vector.getMagnitude()));
     }
 
     public String toString(){

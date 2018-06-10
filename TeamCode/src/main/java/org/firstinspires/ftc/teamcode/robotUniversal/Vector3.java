@@ -27,19 +27,21 @@ public class Vector3 {
         z += vector.z;
     }
 
+    //NOTE TO PREVIOUS AUTHOR: Previous version multiplied the argument by -1, which was possibly unintended behavior. This new version doesn't modify the argument.
     public void subtract(Vector3 vector) {
-        vector.scalarMultiply(-1);
-        add(vector);
+        x -= vector.x;
+        y -= vector.y;
+        z -= vector.z;
     }
 
-    public void scalarMultiply(double a) {
-        x *= a;
-        y *= a;
-        z *= a;
+    public void scalarMultiply(double multiplier) {
+        x *= multiplier;
+        y *= multiplier;
+        z *= multiplier;
     }
 
     //Length of vector
-    public double magnitude() {
+    public double getMagnitude() {
         return Math.sqrt(x*x + y*y + z*z);
     }
 
@@ -59,9 +61,19 @@ public class Vector3 {
         return result;
     }
 
-    //Returns angle between two vectors in radians.
-    public double angleBetween(Vector3 vector) {
-        return Math.acos(this.dot(vector) / (this.magnitude() * vector.magnitude()));
+    //Returns the getAngle of how much the vector is raised or lowered vertically.
+    public double getVerticalAngle() {
+        return Math.atan2(this.z, getMagnitude());
+    }
+
+    //Returns the getAngle of how much the vector is turned horizontally, around the vertical axis.
+    public double getHorizontalAngle() {
+        return Math.atan2(this.y, this.x);
+    }
+
+    //Returns getAngle between two vectors in radians.
+    public double getAngleBetween(Vector3 vector) {
+        return Math.acos(this.dot(vector) / (this.getMagnitude() * vector.getMagnitude()));
     }
 
     public String toString(){

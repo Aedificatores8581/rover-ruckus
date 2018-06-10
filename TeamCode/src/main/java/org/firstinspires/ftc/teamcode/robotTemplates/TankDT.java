@@ -55,7 +55,7 @@ public abstract class TankDT extends Drivetrain {
                 break;
             case FIELD_CENTRIC:
                 setRobotAngle();
-                angleBetween = leftStick1.angleBetween(robotAngle);
+                angleBetween = leftStick1.getAngleBetween(robotAngle);
                 if (leftStick1.magnitude() < UniversalConstants.Triggered.STICK)
                     brake();
                 else {
