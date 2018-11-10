@@ -12,14 +12,14 @@
 apply from: '../build.common.gradle'
 android {
     compileSdkVersion 23
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 dependencies {
-    compile project(':FtcRobotController')
-    compile project(':openCVLibrary320')
-    compile project(':DogeCV')
+    implementation project(':FtcRobotController')
+    implementation project(':openCVLibrary320')
+    api 'org.openftc:rev-extensions-2:1.0'
 }
