@@ -95,8 +95,8 @@ public abstract class TankDT extends Drivetrain {
                     switch (turnState) {
                         case FAST:
                             turnMult = Math.abs(cos) + 1;
-                            leftPow = directionMult * (leftVect.magnitude() - turnMult * cos);
-                            rightPow = directionMult * (leftVect.magnitude() + turnMult * cos);
+                            leftPow = directionMult * (leftVect.magnitude() + turnMult * cos);
+                            rightPow = directionMult * (leftVect.magnitude() - turnMult * cos);
                             break;
 
                         case SMOOTH:
@@ -129,6 +129,14 @@ public abstract class TankDT extends Drivetrain {
         angleVect.setFromPolar(1, angle);
         teleOpLoop(leftVect, rightVect, angleVect);
     }
+    public void mildSpicyDrive(Vector2 leftVect, double leftBumper, double rightBumper){
+        turnMult = 1 - leftVect.magnitude() * (1 - maxTurn);
+        Vector2 turnVect = new Vector2(rightBumper - leftBumper, 0);
+        leftPow = leftVect.y + leftVect.x * turnVect.x;
+        rightPow = leftVect.y - leftVect.x * turnVect.x;
+        setLeftPow();
+        setRightPow();
+    }
 
     public void driveToPoint(double x, double y, Direction dir){
         direction = dir;
@@ -145,8 +153,8 @@ public abstract class TankDT extends Drivetrain {
             }
             double sin = Math.sin(angleBetween);
             turnMult = Math.abs(sin) + 1;
-            leftPow = directionMult * (UniversalFunctions.clamp(0, destination.magnitude(), 1) - turnMult * sin);
-            rightPow = directionMult * (UniversalFunctions.clamp(0, destination.magnitude(), 1) + turnMult * sin);
+            leftPow = directionMult * (UniversalFunctions.clamp(0, destination.magnitude(), 1) + turnMult * sin);
+            rightPow = directionMult * (UniversalFunctions.clamp(0, destination.magnitude(), 1) - turnMult * sin);
         switch (direction) {
             case FOR:
                 if (Math.sin(angleBetween) < 0) {
@@ -186,7 +194,7 @@ public abstract class TankDT extends Drivetrain {
 
     public synchronized void driveToPointCircular(double x, double y, Direction dir, double maxSpeed){
         this.maxSpeed = maxSpeed;
-        
+
     }
 
     public synchronized void updateLocation(double leftChange, double rightChange){

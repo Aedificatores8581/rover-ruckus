@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes;
+package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 
-@Disabled
 @TeleOp(name = "Cheesy Test Drive", group = "wcd")
 public class CheesyTest extends WestBot15 {
     @Override
@@ -51,5 +50,10 @@ public class CheesyTest extends WestBot15 {
         drivetrain.rightPow = leftStick1.y - drivetrain.turnMult * rightStick1.x;
         drivetrain.setRightPow();
         drivetrain.setLeftPow();
+
+        telemetry.addData("lfpow: ", drivetrain.leftFore.getPower());
+        telemetry.addData("lrpow: ", drivetrain.leftRear.getPower());
+        telemetry.addData("rfpow: ", drivetrain.rightFore.getPower());
+        telemetry.addData("rrpow: ", drivetrain.rightRear.getPower());
     }
 }

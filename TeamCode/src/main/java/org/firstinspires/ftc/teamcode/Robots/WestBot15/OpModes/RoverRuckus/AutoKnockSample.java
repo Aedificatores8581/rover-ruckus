@@ -58,8 +58,8 @@ public class AutoKnockSample extends WestBot15 {
 
         Vector2 _elementVector = new Vector2(detector.element.y + 320, -detector.element.x - 240);
 
-        double adjustedVerticalAngle = _elementVector.y / 640 * motoG4.verticalAngleOfViewRear();
-        double adjustedHorizontalAngle = _elementVector.x / 480 * motoG4.horizontalAngleOfViewRear();
+        double adjustedVerticalAngle = _elementVector.y / 640 * motoG4.rearCamera.verticalAngleOfView();
+        double adjustedHorizontalAngle = _elementVector.x / 480 * motoG4.rearCamera.horizontalAngleOfView();
 
         double locationPointY = 11 / Math.tan(adjustedVerticalAngle);
         double locationPointX = locationPointY * Math.tan(adjustedHorizontalAngle);

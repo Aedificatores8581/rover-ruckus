@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
+import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 /**
  * Created by Frank Portman on 5/21/2018
@@ -36,12 +38,14 @@ public class WestCoast15 extends TankDT {
     }
 
     public void setLeftPow(double pow) {
+        pow = UniversalFunctions.clamp(-1, pow, 1);
         leftFore.setPower(pow * maxSpeed);
         leftRear.setPower(pow * maxSpeed);
         leftPow = pow;
     }
 
     public void setRightPow(double pow) {
+        pow = UniversalFunctions.clamp(-1, pow, 1);
         rightFore.setPower(pow * maxSpeed);
         rightRear.setPower(pow * maxSpeed);
         rightPow = pow;
@@ -58,10 +62,10 @@ public class WestCoast15 extends TankDT {
         rightFore.setZeroPowerBehavior(zeroPowerBehavior);
         rightRear.setZeroPowerBehavior(zeroPowerBehavior);
 
-        rightFore.setDirection(REVERSE);
-        rightRear.setDirection(REVERSE);
-        leftFore.setDirection(FORWARD);
-        leftRear.setDirection(FORWARD);
+        rightFore.setDirection(FORWARD);
+        rightRear.setDirection(FORWARD);
+        leftFore.setDirection(REVERSE);
+        leftRear.setDirection(REVERSE);
         lfEncoder = new MotorEncoder(leftFore);
         lrEncoder = new MotorEncoder(leftRear);
         rfEncoder = new MotorEncoder(rightFore);
@@ -95,7 +99,18 @@ public class WestCoast15 extends TankDT {
     public double averageRightEncoders(){
         return (rfEncoder.currentPosition + rrEncoder.currentPosition) / 2;
     }
-
+    public void spicyDrive(Vector2 leftStick1, double leftTrigger, double rightTrigger){
+        double velocity = rightTrigger - leftTrigger;
+        leftFore.setPower(maxSpeed * (velocity + leftStick1.x));
+        leftRear.setPower(maxSpeed * (velocity + leftStick1.x));
+        rightFore.setPower(maxSpeed * (velocity - leftStick1.x));
+        rightRear.setPower(maxSpeed * (velocity - leftStick1.x));
+    }
+    public void spicyDrive2(Vector2 leftStick1, double leftTrigger, double rightTrigger){
+        double velocity = rightTrigger - leftTrigger;
+        setLeftPow(velocity + leftStick1.x);
+        setRightPow(velocity - leftStick1.x);
+    }
     @Override
     public double averageEncoders() {
         return (averageLeftEncoders() + averageRightEncoders()) / 2;

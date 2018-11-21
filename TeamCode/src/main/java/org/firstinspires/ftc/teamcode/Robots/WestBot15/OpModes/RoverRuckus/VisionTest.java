@@ -32,8 +32,8 @@ public class VisionTest extends OpMode {
         FtcRobotControllerActivity.frameGrabber.detector = this.detector;
     }
     public void initLoop() {
-        telemetry.addData("location 1", motoG4.getObjectLocationRear(detector.elements.get(0), detector.result().size(), 2));
-        telemetry.addData("location 2", motoG4.getObjectLocationRear2(detector.elements.get(0), detector.result().size(), 2));
+        telemetry.addData("location 1", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
+        telemetry.addData("location 2", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
     }
 
     @Override
@@ -42,15 +42,15 @@ public class VisionTest extends OpMode {
     public void loop() {
         Vector2 _elementVector = new Vector2(detector.element.y + 320, -detector.element.x - 240);
 
-        double adjustedVerticalAngle = _elementVector.y / 640 * motoG4.verticalAngleOfViewRear();
-        double adjustedHorizontalAngle = _elementVector.x / 480 * motoG4.horizontalAngleOfViewRear();
+        double adjustedVerticalAngle = _elementVector.y / 640 * motoG4.rearCamera.verticalAngleOfView();
+        double adjustedHorizontalAngle = _elementVector.x / 480 * motoG4.rearCamera.horizontalAngleOfView();
 
         double locationPointY = 11 / Math.tan(adjustedVerticalAngle);
         double locationPointX = locationPointY * Math.tan(adjustedHorizontalAngle);
         Point locationPoint = new Point(locationPointX, locationPointY);
 
         telemetry.addData("location 1", (int) (100 * locationPoint.x) / 100.0 + ", " + (int) (100 * locationPoint.y) / 100.0);
-        telemetry.addData("location 2", motoG4.getObjectLocationRear2(detector.element.clone(), detector.workingImage.size(), 2));
+        telemetry.addData("location 2", motoG4.rearCamera.getObjectLocation(detector.element.clone(), detector.workingImage.size(), 2));
         telemetry.addData("center", (float) detector.element.x + ", " + (float) detector.element.y);
         telemetry.addData("size", detector.workingImage.size());
         telemetry.addData("Element Vector", _elementVector);
