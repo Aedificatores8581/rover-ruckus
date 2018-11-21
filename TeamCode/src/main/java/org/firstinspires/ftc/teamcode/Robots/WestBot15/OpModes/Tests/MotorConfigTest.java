@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetra
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 @TeleOp(name = "MotorTestSetPow: Config Test", group = "Test")
-public class MotorTestSetPow extends OpMode {
+public class MotorConfigTest extends OpMode {
 
     DcMotor rightfront, rightback, leftfront, leftback;
 

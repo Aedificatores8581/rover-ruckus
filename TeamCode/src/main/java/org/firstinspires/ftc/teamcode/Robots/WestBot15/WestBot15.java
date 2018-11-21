@@ -41,10 +41,10 @@ public abstract class WestBot15 extends Robot {
     @Override
     public void init(){
         msStuckDetectInit = 50000000;
-        super.init();
+        super.init();                       // Sets up imu
 
-        drivetrain.maxSpeed = 1.0;
-        drivetrain.initMotors(hardwareMap);
+        drivetrain.maxSpeed = 1.0;          // Possible Cause for red motor
+        drivetrain.initMotors(hardwareMap); // Possible cause for Red Motor
 
         drivetrain.position = new Pose();
         motoG4 = new MotoG4();

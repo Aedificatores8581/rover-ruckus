@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 
 @TeleOp(name = "motorTest")
-public class MotorTest extends WestBot15 {
+public class MotorTest extends WestBot15 { // Possible Motor Issue in WestBot15
 
     public void init() {
         super.init();
@@ -16,8 +16,8 @@ public class MotorTest extends WestBot15 {
     public void loop(){
         drivetrain.maxSpeed = 0.5;
         updateGamepad1();
-        if(gamepad1.left_stick_button)
-            drivetrain.spicyDrive(leftStick1, gamepad1.right_trigger, gamepad1.left_trigger);
+        if(gamepad1.a)
+            drivetrain.spicyDrive2(leftStick1, gamepad1.right_trigger, gamepad1.left_trigger);
         else
             drivetrain.spicyDrive(leftStick1, gamepad1.right_trigger, gamepad1.left_trigger);
 
@@ -27,6 +27,8 @@ public class MotorTest extends WestBot15 {
         telemetry.addData("rrpow: ", drivetrain.rightRear.getPower());
         telemetry.addData("leftPow", drivetrain.leftPow);
         telemetry.addData("rightPow", drivetrain.rightPow);
+
+        telemetry.addData("A Button", gamepad1.a);
 
     }
 
