@@ -27,7 +27,8 @@ public class AutoScaleCraterTest extends WestBot15 {
 
     // 100 is a temporary value.
     // TODO: This needs to be tuned.
-    private final static int ON_CRATER_RIM_THRESHOLD = 60;
+    private static double on_crater_rim_threshold = 0.20;
+    private static final double CRATER_ANGLE_ADJUSTMENT_INCREMENT = 0.01;
     public boolean onCrater = false;
 
     @Override
@@ -54,20 +55,31 @@ public class AutoScaleCraterTest extends WestBot15 {
 
     @Override
     public void loop() {
-        if (Math.abs(gyroAngles.getY()) > ON_CRATER_RIM_THRESHOLD) {
+
+        if (getGyroAngleY() > on_crater_rim_threshold) {
             onCrater = true;
         } else {
             onCrater = false;
         }
 
-        if (!onCrater) {
-			drivetrain.setRightPow(0.2);
-			drivetrain.setLeftPow(0.2);
-		}
+        // TEMP
+        if (gamepad1.left_bumper) {
+            on_crater_rim_threshold -= CRATER_ANGLE_ADJUSTMENT_INCREMENT;
+        } else if (gamepad1.right_bumper) {
+            on_crater_rim_threshold += CRATER_ANGLE_ADJUSTMENT_INCREMENT;
+        }
+
+        //if (!onCrater) {
+		//	drivetrain.setRightPow(0.2);
+		//	drivetrain.setLeftPow(0.2);
+		//}
 
         drivetrain.updateEncoders();
 
+        telemetry.addData("Rim Threshold", on_crater_rim_threshold);
         telemetry.addData("onCrater?", onCrater);
-        telemetry.addData("Robot Y", gyroAngles.getY());
+        telemetry.addData("Robot Y", getGyroAngleY());
+        //telemetry.addData("Robot X", getGyroAngleX());
+        //telemetry.addData("Robot Z", getGyroAngle());
     }
 }
