@@ -40,7 +40,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if(gamepad2.left_stick_button && gamepad2.right_stick_button)
             engame = true;
         
-        drivetrain.teleOpLoop(new Vector2(gamepad1.right_trigger- gamepad1.left_trigger, 0), leftStick1, 0);
+        drivetrain.spicyDrive(leftStick1, gamepad1.left_trigger, gamepad1.right_trigger);
 /*
         intaek.intakeMode = gamepad2.left_bumper ? Intake.IntakeMode.GOLD : Intake.IntakeMode.SILVER;
         intaek.setModePower(gamepad2.left_trigger);
