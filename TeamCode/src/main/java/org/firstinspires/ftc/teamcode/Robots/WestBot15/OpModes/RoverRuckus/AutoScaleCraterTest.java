@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.Universal.UniversalConstants.MS_STU
 /**
  * Written by Theo Lovinski, 5/11/2018.
  *
- * This is a test, it should be coupled with other routines in autonomous.
+ * This is a test, among many.
  */
 
 @Autonomous(name = "ScaleCrater", group = "Auto Testing")
