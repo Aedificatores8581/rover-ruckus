@@ -12,19 +12,25 @@ import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 public class WVTeleop extends WestBot15 {
     TouchSensor topLiftSensor;
     TouchSensor bottomLiftSensor;
+
     DcMotor liftMotor, intakeMotor;
     CRServo frontIntakeMotor, backIntakeMotor;
+
     Servo dispensor, topRatchetServo, sideRatchetServo;
-    boolean isDespensing = false;
-    double dispensorOpenPosition = 0;
-    double dispensorPartiallyOpenPosition = 0;
-    double dispensorClosedPosition = 0;
+
+    private boolean isDespensing = false;
+    private double dispensorOpenPosition,
+            dispensorPartiallyOpenPosition,
+            dispensorClosedPosition = 0;
+
     public void init(){
         usingIMU = false;
         super.init();
+
         topLiftSensor = new TouchSensor();
-        topLiftSensor.init(hardwareMap, "tts");
         bottomLiftSensor = new TouchSensor();
+
+        topLiftSensor.init(hardwareMap, "tts");
         bottomLiftSensor.init(hardwareMap, "bts");
         frontIntakeMotor = hardwareMap.crservo.get("bis");
         backIntakeMotor = hardwareMap.crservo.get("fis");
@@ -34,23 +40,30 @@ public class WVTeleop extends WestBot15 {
         intakeMotor = hardwareMap.dcMotor.get("im");
     }
 
-    public void start(){ }
+    public void start() { }
+
     public void loop(){
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger + gamepad1.left_stick_x;
         drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger - gamepad1.left_stick_x;
+
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
+
         frontIntakeMotor.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
         backIntakeMotor.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
-        if(gamepad2.x)
+
+        if (gamepad2.x) {
             isDespensing = true;
-        else
+        } else {
             isDespensing = false;
-        if(gamepad2.left_trigger > gamepad2.right_trigger && !isDespensing)
+        }
+
+        if (gamepad2.left_trigger > gamepad2.right_trigger && !isDespensing) {
             dispensor.setPosition(dispensorPartiallyOpenPosition);
-        else if(!isDespensing)
+        } else if(!isDespensing) {
             dispensor.setPosition(dispensorClosedPosition);
-        else
+        } else {
             dispensor.setPosition(dispensorOpenPosition);
+        }
     }
 }

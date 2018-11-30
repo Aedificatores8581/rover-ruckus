@@ -25,8 +25,6 @@ public class AutoScaleCraterTest extends WestBot15 {
     GyroAngles gyroAngles;
     Orientation angle;
 
-    // 100 is a temporary value.
-    // TODO: This needs to be tuned.
     private static double onCraterRimThreshold = 0.20;
     private static final double CRATER_ANGLE_ADJUSTMENT_INCREMENT = 0.01;
     public boolean onCrater = false;
