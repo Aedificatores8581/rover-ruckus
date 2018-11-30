@@ -95,8 +95,8 @@ public abstract class TankDT extends Drivetrain {
                     switch (turnState) {
                         case FAST:
                             turnMult = Math.abs(cos) + 1;
-                            leftPow = directionMult * (leftVect.magnitude() + turnMult * cos);
-                            rightPow = directionMult * (leftVect.magnitude() - turnMult * cos);
+                            leftPow = directionMult * (leftVect.magnitude() - turnMult * cos);
+                            rightPow = directionMult * (leftVect.magnitude() + turnMult * cos);
                             break;
 
                         case SMOOTH:
@@ -146,7 +146,6 @@ public abstract class TankDT extends Drivetrain {
                 case FOR:
                     directionMult = 1;
                     break;
-
                 case BACK:
                     directionMult = -1;
                     break;
@@ -162,7 +161,6 @@ public abstract class TankDT extends Drivetrain {
                     leftPow = -rightPow;
                 }
                 break;
-
             case BACK:
                 directionMult = -1;
                 if (Math.sin(angleBetween) > 0) {
@@ -201,6 +199,7 @@ public abstract class TankDT extends Drivetrain {
         leftChange = leftChange / ENC_PER_INCH;
         rightChange = rightChange / ENC_PER_INCH;
         double angle = 0;
+        turnVector = new Vector2();
         if(rightChange == leftChange)
             turnVector.setFromPolar(rightChange, position.angle);
         else {
@@ -292,5 +291,4 @@ public abstract class TankDT extends Drivetrain {
 
     public abstract double averageLeftEncoders();
     public abstract double averageRightEncoders();
-    public abstract double averageEncoders();
 }

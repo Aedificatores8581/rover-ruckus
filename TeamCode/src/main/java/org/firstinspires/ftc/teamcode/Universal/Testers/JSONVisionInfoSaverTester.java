@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.Universal.Testers;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import junit.framework.Test;
+
 import org.firstinspires.ftc.teamcode.Universal.JSONAutonGetter;
-import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,41 +47,21 @@ public class JSONVisionInfoSaverTester extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.dpad_up) {
-            if ((currentLocationIndex - 1) < 0) {
-                currentLocationIndex = testLocations.size() - 1;
-            }
+            // mod operation causes index to wrap around in case currentLocationIndex becomes negative
             currentLocationIndex = (currentLocationIndex - 1) % testLocations.size();
         }
 
         if (gamepad1.dpad_down) {
 
-            if ((currentLocationIndex + 1) > testLocations.size()) {
-                currentLocationIndex = 0;
-            } else {
-                currentLocationIndex++;
-            }
-        }
-
-        if (gamepad1.left_stick_y > UniversalConstants.Triggered.STICK){
-            testLocations.get(currentLocationIndex).x += 1;
-        }else if (gamepad1.left_stick_y < -UniversalConstants.Triggered.STICK){
-            testLocations.get(currentLocationIndex).x -= 1;
-        }
-
-        if (gamepad1.right_stick_y > UniversalConstants.Triggered.STICK){
-            testLocations.get(currentLocationIndex).y += 1;
-        }else if (gamepad1.right_stick_y < -UniversalConstants.Triggered.STICK){
-            testLocations.get(currentLocationIndex).y -= 1;
+            // mod operation causes index to wrap around in case currentLocationIndex becomes negative
+            currentLocationIndex = (currentLocationIndex + 1) % testLocations.size();
         }
 
         if (gamepad1.a && !prev1.a) {
             try {
-                jsonAutonGetter.jsonObject.put("locations", testLocations.toArray());
                 jsonAutonGetter.saveToFile();
             } catch (IOException e) {
                 telemetry.addData("Issue with File Saving", e.getMessage());
-            } catch (JSONException e) {
-                telemetry.addData("JSON Issue with File Saving", e.getMessage());
             }
         }
 
@@ -107,11 +90,11 @@ public class JSONVisionInfoSaverTester extends OpMode {
 }
 
 class TestLocation {
-    public String name;
-    public int x;
-    public int y;
+    String name;
+    int x;
+    int y;
 
-    TestLocation(JSONObject jsonObject) throws JSONException, NullPointerException {
+    public TestLocation(JSONObject jsonObject) throws JSONException, NullPointerException {
         this.name = jsonObject.getString("name");
         this.x = jsonObject.getInt("x");
         this.y = jsonObject.getInt("y");

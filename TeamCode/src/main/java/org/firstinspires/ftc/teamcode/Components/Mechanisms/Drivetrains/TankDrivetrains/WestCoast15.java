@@ -18,11 +18,10 @@ public class WestCoast15 extends TankDT {
     public MotorEncoder rfEncoder, lfEncoder, lrEncoder, rrEncoder;
     public DcMotor.ZeroPowerBehavior zeroPowerBehavior;
     //TODO: Find this value
-    public final double MAX_ENC_VAL = 3036;
 
     public WestCoast15() {
         ENC_PER_INCH = 140 / Math.PI;
-        DISTANCE_BETWEEN_WHEELS = 390.9515 / 25.4;
+        DISTANCE_BETWEEN_WHEELS = 391.60085 / 25.4;
         zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT;
         maxSpeed = 1;
         leftMotors = new DcMotor[]{leftFore, leftRear};
@@ -30,6 +29,8 @@ public class WestCoast15 extends TankDT {
     }
 
     public WestCoast15(DcMotor.ZeroPowerBehavior zeroPowBehavior, double speed) {
+        ENC_PER_INCH = 140 / Math.PI;
+        DISTANCE_BETWEEN_WHEELS = 391.60085 / 25.4;
         zeroPowerBehavior = zeroPowBehavior;
         maxSpeed = speed;
 
@@ -38,14 +39,20 @@ public class WestCoast15 extends TankDT {
     }
 
     public void setLeftPow(double pow) {
-        pow = UniversalFunctions.clamp(-1, pow, 1);
+        if(pow >= 1)
+            pow = 1;
+        if(pow <= -1)
+            pow = -1;
         leftFore.setPower(pow * maxSpeed);
         leftRear.setPower(pow * maxSpeed);
         leftPow = pow;
     }
 
     public void setRightPow(double pow) {
-        pow = UniversalFunctions.clamp(-1, pow, 1);
+        if(pow >= 1)
+            pow = 1;
+        if(pow <= -1)
+            pow = -1;
         rightFore.setPower(pow * maxSpeed);
         rightRear.setPower(pow * maxSpeed);
         rightPow = pow;
@@ -57,15 +64,24 @@ public class WestCoast15 extends TankDT {
         leftRear = map.dcMotor.get("la");
         rightRear = map.dcMotor.get("ra");
 
-        leftFore.setZeroPowerBehavior(zeroPowerBehavior);
-        leftRear.setZeroPowerBehavior(zeroPowerBehavior);
-        rightFore.setZeroPowerBehavior(zeroPowerBehavior);
-        rightRear.setZeroPowerBehavior(zeroPowerBehavior);
+        //leftFore.setZeroPowerBehavior(zeroPowerBehavior);
+        //leftRear.setZeroPowerBehavior(zeroPowerBehavior);
+        //rightFore.setZeroPowerBehavior(zeroPowerBehavior);
+        //rightRear.setZeroPowerBehavior(zeroPowerBehavior);
 
-        rightFore.setDirection(FORWARD);
-        rightRear.setDirection(FORWARD);
-        leftFore.setDirection(REVERSE);
-        leftRear.setDirection(REVERSE);
+        rightFore.setDirection(REVERSE);
+        rightRear.setDirection(REVERSE);
+        leftFore.setDirection(FORWARD);
+        leftRear.setDirection(FORWARD);
+        leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         lfEncoder = new MotorEncoder(leftFore);
         lrEncoder = new MotorEncoder(leftRear);
         rfEncoder = new MotorEncoder(rightFore);
@@ -111,9 +127,4 @@ public class WestCoast15 extends TankDT {
         setLeftPow(velocity + leftStick1.x);
         setRightPow(velocity - leftStick1.x);
     }
-    @Override
-    public double averageEncoders() {
-        return (averageLeftEncoders() + averageRightEncoders()) / 2;
-    }
-
 }
