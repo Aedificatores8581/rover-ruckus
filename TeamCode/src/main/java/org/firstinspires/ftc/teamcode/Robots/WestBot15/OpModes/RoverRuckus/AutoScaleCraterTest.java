@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.Universal.UniversalConstants.MS_STU
 /**
  * Written by Theo Lovinski, 5/11/2018.
  *
- * This is a test, it should be coupled with other routines in autonomous.
+ * This is a test, among many.
  */
 
 @Autonomous(name = "ScaleCrater", group = "Auto Testing")
@@ -27,7 +27,8 @@ public class AutoScaleCraterTest extends WestBot15 {
 
     // 100 is a temporary value.
     // TODO: This needs to be tuned.
-    private final static int ON_CRATER_RIM_THRESHOLD = 60;
+    private static double onCraterRimThreshold = 0.20;
+    private static final double CRATER_ANGLE_ADJUSTMENT_INCREMENT = 0.01;
     public boolean onCrater = false;
 
     @Override
@@ -54,20 +55,31 @@ public class AutoScaleCraterTest extends WestBot15 {
 
     @Override
     public void loop() {
-        if (Math.abs(gyroAngles.getY()) > ON_CRATER_RIM_THRESHOLD) {
+
+        if (getGyroAngleY() > onCraterRimThreshold) {
             onCrater = true;
         } else {
             onCrater = false;
         }
 
-        if (!onCrater) {
-            drivetrain.setRightPow(0.2);
-            drivetrain.setLeftPow(0.2);
+        // TEMP
+        if (gamepad1.left_bumper) {
+            onCraterRimThreshold -= CRATER_ANGLE_ADJUSTMENT_INCREMENT;
+        } else if (gamepad1.right_bumper) {
+            onCraterRimThreshold += CRATER_ANGLE_ADJUSTMENT_INCREMENT;
         }
+
+        //if (!onCrater) {
+		//	drivetrain.setRightPow(0.2);
+		//	drivetrain.setLeftPow(0.2);
+		//}
 
         drivetrain.updateEncoders();
 
+        telemetry.addData("Rim Threshold", onCraterRimThreshold);
         telemetry.addData("onCrater?", onCrater);
-        telemetry.addData("Robot Y", gyroAngles.getY());
+        telemetry.addData("Robot Y", getGyroAngleY());
+        //telemetry.addData("Robot X", getGyroAngleX());
+        //telemetry.addData("Robot Z", getGyroAngle());
     }
 }
