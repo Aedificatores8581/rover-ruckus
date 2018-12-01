@@ -17,8 +17,8 @@ import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
-@Autonomous(name = "crater auto 1", group = "competition autonomous")
-public class CraterAuto1 extends WestBot15 {
+@Autonomous(name = "crater sans comments", group = "competition autonomous")
+public class CraterAutoSansComments extends WestBot15 {
     private final double PARK_MOTOR_SPEED = 0.4;
 
     BlockDetector detector;
@@ -27,15 +27,11 @@ public class CraterAuto1 extends WestBot15 {
     private Vector2 sampleVect = new Vector2();
     private Pose robotPose = new Pose();
 
-    //private boolean hasDrove;
-
     private double prevLeft, prevRight = 0;
     private double hardNewY;
     private double rightEncPosition, leftEncPosition;
     private double startTime = 0;
 
-    //private boolean hasDriven = false;
-    //private boolean parking
     private boolean onCrater = false;
 
     private GyroAngles gyroAngles;
@@ -75,10 +71,6 @@ public class CraterAuto1 extends WestBot15 {
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void initLoop(){
-        //telemetry.addData("location 1", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
-    }
-
     @Override
     public void start(){
         super.start();
@@ -91,75 +83,27 @@ public class CraterAuto1 extends WestBot15 {
         switch (autoState) {
             case LOWER: break;
             case SAMPLE:
-            updateLocation(drivetrain.averageLeftEncoders() - prevLeft, drivetrain.averageRightEncoders() - prevRight);
+                updateLocation(drivetrain.averageLeftEncoders() - prevLeft, drivetrain.averageRightEncoders() - prevRight);
 
-            prevLeft = drivetrain.averageLeftEncoders();
-            prevRight = drivetrain.averageRightEncoders();
+                prevLeft = drivetrain.averageLeftEncoders();
+                prevRight = drivetrain.averageRightEncoders();
 
-            setRobotAngle();
+                setRobotAngle();
 
-            drivetrain.maxSpeed = 0.2;
+                drivetrain.maxSpeed = 0.2;
 
 
-            Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
-            temp.x += 640 / 2;
-            temp.y -= 480 / 2;
+                Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
+                temp.x += 640 / 2;
+                temp.y -= 480 / 2;
 
-            double vertAng = temp.y / 480 * motoG4.rearCamera.horizontalAngleOfView();
-            double horiAng = temp.x / 640 * motoG4.rearCamera.verticalAngleOfView();
+                double vertAng = temp.y / 480 * motoG4.rearCamera.horizontalAngleOfView();
+                double horiAng = temp.x / 640 * motoG4.rearCamera.verticalAngleOfView();
 
-            double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - 0.364773814);
-            double newX = newY * Math.tan(horiAng);
+                double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - 0.364773814);
+                double newX = newY * Math.tan(horiAng);
 
-            newY *= -1;
-
-            /*
-            if (UniversalFunctions.getTimeInSeconds() - startTime > 1 && !hasDrove) {
-                hasDrove = true;
-                sampleVect = new Vector2(newX - motoG4.getLocation().x, newY + motoG4.getLocation().y);
-            }
-
-            if (!hasDrove && !hasDriven) {
-                hasDriven = true;
-                hardNewY = newY;
-                rightEncPosition = drivetrain.averageRightEncoders();
-                leftEncPosition = drivetrain.averageLeftEncoders();
-            } else {
-                hasDriven = true;
-            }
-
-            if (hasDrove) {
-                if (!hasDriven) {
-                    Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
-
-                    rightEncPosition = drivetrain.averageRightEncoders();
-                    leftEncPosition = drivetrain.averageLeftEncoders();
-
-                    drivetrain.updateEncoders();
-                    drivetrain.updateLocation(leftEncPosition - prevLeft, rightEncPosition - prevRight);
-
-                    prevLeft = leftEncPosition;
-                    prevRight = rightEncPosition;
-
-                    newVect.setFromPolar(UniversalFunctions.clamp(0, sampleVect.magnitude(), 1), sampleVect.angle());
-
-                    drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                    drivetrain.setLeftPow();
-                    drivetrain.setRightPow();
-
-                    if (drivetrain.position.radius() - sampleVect.magnitude() < 6) {
-                        hasDriven = true;
-                        drivetrain.setLeftPow(-drivetrain.leftPow);
-                        drivetrain.setRightPow(-drivetrain.rightPow);
-                    }
-                } else {
-                    if (drivetrain.position.radius() < 6) {
-                        autoState = AutoState.CLAIM;
-                    }
-                }
-                break;
-            }
-            */
+                newY *= -1;
 
             case CLAIM:
 
@@ -188,50 +132,45 @@ public class CraterAuto1 extends WestBot15 {
 
                 drivetrain.teleOpLoop(new Vector2(Math.sqrt(2)/2, Math.sqrt(2) / 2), new Vector2(), 0);
                 break;
-
-                /*if(hasDrove) {
-            drivetrain.updateLocation(drivetrain.averageLeftEncoders() - prevLeft0, drivetrain.averageRightEncoders() - prevRight);
-            prevLeft0 = drivetrain.averageLeftEncoders();
-            prevRight = drivetrain.averageRightEncoders();
-            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, TankDT.Direction.FOR);
-            if(gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER) {
-                hasDrove = false;
-                drivetrain.setLeftPow(0);
-                drivetrain.setRightPow(0);
-            }
-        }*/
         }
+
         telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
         telemetry.addData("left pow", drivetrain.leftFore.getPower());
         telemetry.addData("sampleVect, ", sampleVect);
         telemetry.addData("desired distance, ", drivetrain.ENC_PER_INCH * hardNewY);
         telemetry.addData("distance traveled, ", drivetrain.averageLeftEncoders() - leftEncPosition );
         telemetry.addData("element position", detector.element);
-
     }
 
-    public void stop(){
+    public void stop() {
         super.stop();
         detector.isInitialized = false;
     }
 
-    public void updateLocation(double leftChange, double rightChange){
+    public void updateLocation(double leftChange, double rightChange) {
         leftChange = leftChange / drivetrain.ENC_PER_INCH;
         rightChange = rightChange / drivetrain.ENC_PER_INCH;
+
         double angle = 0;
         Vector2 turnVector = new Vector2();
-        if(rightChange == leftChange)
+
+        if (rightChange == leftChange) {
             turnVector.setFromPolar(rightChange, robotPose.angle);
-        else {
+        } else {
             double radius = drivetrain.DISTANCE_BETWEEN_WHEELS / 2 * (leftChange + rightChange) / (rightChange - leftChange);
+
             angle = (rightChange - leftChange) / (drivetrain.DISTANCE_BETWEEN_WHEELS);
             radius = Math.abs(radius);
             turnVector.setFromPolar(radius, angle);
             turnVector.setFromPolar(radius - turnVector.x, angle);
-            if(Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
+
+            if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange)) {
                 turnVector.x *= -1;
+            }
         }
+
         turnVector.rotate(robotPose.angle);
+
         robotPose.add(turnVector);
         robotPose.angle += angle;
     }
