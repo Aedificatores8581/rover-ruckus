@@ -97,7 +97,6 @@ public class DepotAuto extends WestBot15 {
                 }
                 if (!hasDrove && !hasDriven) {
                     hasDriven = true;
-                    hardNewY = newY;
                     rightEncPosition = drivetrain.averageRightEncoders();
                     leftEncPosition = drivetrain.averageLeftEncoders();
                 } else
@@ -106,9 +105,9 @@ public class DepotAuto extends WestBot15 {
 
                     if (!hasDriven) {
                         Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
+                        drivetrain.updateEncoders();
                         rightEncPosition = drivetrain.averageRightEncoders();
                         leftEncPosition = drivetrain.averageLeftEncoders();
-                        drivetrain.updateEncoders();
                         drivetrain.updateLocation(leftEncPosition - prevLeft, rightEncPosition - prevRight);
                         prevLeft = leftEncPosition;
                         prevRight = rightEncPosition;
@@ -116,12 +115,28 @@ public class DepotAuto extends WestBot15 {
                         drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
                         drivetrain.setLeftPow();
                         drivetrain.setRightPow();
-                        if (drivetrain.position.radius() - sampleVect.magnitude() < 6)
+                        if (sampleVect.magnitude() - drivetrain.position.radius() < 6) {
                             autoState = AutoState.CLAIM;
+                            hardNewY = drivetrain.position.y;
+                        }
                     }
                     break;
                 }
             case CLAIM:
+                sampleVect.setFromPolar(UniversalFunctions.clamp(0, sampleVect.magnitude(), 1), sampleVect.angle());
+                drivetrain.teleOpLoop(sampleVect, new Vector2(), robotAngle);
+                if(drivetrain.position.y - 2 < 2 * hardNewY){
+                    drivetrain.setRightPow(0);
+                    drivetrain.setLeftPow(0);
+                    //claim
+                    autoState = AutoState.PARK;
+                }
+                drivetrain.updateEncoders();
+                rightEncPosition = drivetrain.averageRightEncoders();
+                leftEncPosition = drivetrain.averageLeftEncoders();
+                drivetrain.updateLocation(leftEncPosition - prevLeft, rightEncPosition - prevRight);
+                prevLeft = leftEncPosition;
+                prevRight = rightEncPosition;
                 break;
             case PARK:
                 setRobotAngle();
@@ -142,10 +157,7 @@ public class DepotAuto extends WestBot15 {
             }
         }*/
         }telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
-        telemetry.addData("left pow", drivetrain.leftFore.getPower());
         telemetry.addData("sampleVect, ", sampleVect);
-        telemetry.addData("desired distance, ", drivetrain.ENC_PER_INCH * hardNewY);
-        telemetry.addData("distance traveled, ", drivetrain.averageLeftEncoders() - leftEncPosition);
         telemetry.addData("element position", detector.element);
 
     }

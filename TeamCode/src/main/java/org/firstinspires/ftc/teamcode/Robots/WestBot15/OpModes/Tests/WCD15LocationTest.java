@@ -66,7 +66,7 @@ public class WCD15LocationTest extends WestBot15{
         drivetrain.position.y += drivetrain.turnVector.y;
         drivetrain.position.angle += angle;
         telemetry.addData("position", drivetrain.position.toString());
-        telemetry.addData("leftposition", drivetrain.leftFore.getCurrentPosition());
-        telemetry.addData("rightposition", drivetrain.rightFore.getCurrentPosition());
+        telemetry.addData("leftposition", drivetrain.averageLeftEncoders());
+        telemetry.addData("rightposition", drivetrain.averageRightEncoders());
      }
 }
