@@ -196,24 +196,29 @@ public abstract class TankDT extends Drivetrain {
     }
 
     public synchronized void updateLocation(double leftChange, double rightChange){
-        leftChange = leftChange / ENC_PER_INCH;
-        rightChange = rightChange / ENC_PER_INCH;
+        leftChange /= ENC_PER_INCH;
+        rightChange /= ENC_PER_INCH;
         double angle = 0;
+        double radius = 0;
         turnVector = new Vector2();
-        if(rightChange == leftChange)
+        if (rightChange == leftChange)
             turnVector.setFromPolar(rightChange, position.angle);
         else {
-            double radius = DISTANCE_BETWEEN_WHEELS / 2 * (leftChange + rightChange) / (rightChange - leftChange);
+            radius = DISTANCE_BETWEEN_WHEELS / 2 * (leftChange + rightChange) / (rightChange - leftChange);
             angle = (rightChange - leftChange) / (DISTANCE_BETWEEN_WHEELS);
-            radius = Math.abs(radius);
-            turnVector.setFromPolar(radius, angle);
-            turnVector.setFromPolar(radius - turnVector.x, angle);
-            if(Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
-                turnVector.x *= -1;
+            turnVector.x = radius * Math.cos(angle) - radius;
+            turnVector.y = radius * Math.sin(angle);
+            /*radius = Math.abs(radius);
+            drivetrain.turnVector.setFromPolar(radius, angle);
+            drivetrain.turnVector.setFromPolar(radius - drivetrain.turnVector.x, angle);
+            */
+            //if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
+            //drivetrain.turnVector.x *= -1;
         }
-        turnVector.rotate(position.angle);
-        position.add(turnVector);
-        position.angle += angle;
+        turnVector.rotate(position.angle - Math.PI / 2);
+        position.x += turnVector.x;
+        position.y += turnVector.y;
+        position.angle -= angle;
     }
     
     //Sets the power of the left motor(s)

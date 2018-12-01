@@ -29,7 +29,7 @@ public class WestCoast15 extends TankDT {
     }
 
     public WestCoast15(DcMotor.ZeroPowerBehavior zeroPowBehavior, double speed) {
-        ENC_PER_INCH = 140 / Math.PI;
+        ENC_PER_INCH = 70 / Math.PI;
         DISTANCE_BETWEEN_WHEELS = 391.60085 / 25.4;
         zeroPowerBehavior = zeroPowBehavior;
         maxSpeed = speed;

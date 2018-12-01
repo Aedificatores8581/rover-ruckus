@@ -55,18 +55,27 @@ public class WCD15LocationTest extends WestBot15{
         else {
             radius = drivetrain.DISTANCE_BETWEEN_WHEELS / 2 * (leftChange + rightChange) / (rightChange - leftChange);
             angle = (rightChange - leftChange) / (drivetrain.DISTANCE_BETWEEN_WHEELS);
-            radius = Math.abs(radius);
+            drivetrain.turnVector.x = radius * Math.cos(angle) - radius;
+            drivetrain.turnVector.y = radius * Math.sin(angle);
+            /*radius = Math.abs(radius);
             drivetrain.turnVector.setFromPolar(radius, angle);
             drivetrain.turnVector.setFromPolar(radius - drivetrain.turnVector.x, angle);
-            if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
-                drivetrain.turnVector.x *= -1;
+            */
+            //if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
+                //drivetrain.turnVector.x *= -1;
         }
-        drivetrain.turnVector.rotate(drivetrain.position.angle);
+        drivetrain.turnVector.rotate(drivetrain.position.angle - Math.PI / 2);
         drivetrain.position.x += drivetrain.turnVector.x;
         drivetrain.position.y += drivetrain.turnVector.y;
-        drivetrain.position.angle += angle;
+        drivetrain.position.angle -= angle;
         telemetry.addData("position", drivetrain.position.toString());
         telemetry.addData("leftposition", drivetrain.averageLeftEncoders());
         telemetry.addData("rightposition", drivetrain.averageRightEncoders());
+        telemetry.addData("leftChange", prevLeft);
+        telemetry.addData("rightChange", prevRight);
+        telemetry.addData("turnVector", drivetrain.turnVector);
+        telemetry.addData("average left encoders inches", drivetrain.averageLeftEncoders() / drivetrain.ENC_PER_INCH);
+        telemetry.addData("angle", angle);
+        telemetry.addData("radius", radius);
      }
 }

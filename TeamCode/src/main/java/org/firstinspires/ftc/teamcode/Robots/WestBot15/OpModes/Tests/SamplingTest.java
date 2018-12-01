@@ -70,7 +70,8 @@ public class SamplingTest extends WestBot15 {
     }
 
     public void loop(){
-        updateLocation(drivetrain.averageLeftEncoders() - prevLeft, drivetrain.averageRightEncoders() - prevRight);
+        drivetrain.updateEncoders();
+        drivetrain.updateLocation(drivetrain.averageLeftEncoders() - prevLeft, drivetrain.averageRightEncoders() - prevRight);
         prevLeft = drivetrain.averageLeftEncoders();
         prevRight = drivetrain.averageRightEncoders();
         setRobotAngle();
@@ -95,25 +96,27 @@ public class SamplingTest extends WestBot15 {
             drivetrain.setLeftPow(0);
             drivetrain.setRightPow(0);
         }
-        if(hasDrove){
-            if(gamepad1.right_stick_button && !hasDriven){
+        if(hasDrove) {
+            if (gamepad1.right_stick_button && !hasDriven) {
                 hasDriven = true;
                 hardNewY = newY;
-            }
-            else
+            } else
                 hasDriven = false;
-            if(hasDriven){
+            if (hasDriven) {
                 Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
 
-                if(!parking) {
+                if (!parking) {
                     drivetrain.updateEncoders();
                     newVect.x -= robotPose.x;
                     newVect.y -= robotPose.y;
-                    newVect.setFromPolar(UniversalFunctions.clamp(0, sampleVect.magnitude(), 1), sampleVect.angle());
+                    if (newVect.magnitude() > 12)
+                        newVect.setFromPolar(1, newVect.angle());
+                    else
+                        newVect.scalarMultiply(1.0 / 12);
                     drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
                     drivetrain.setLeftPow();
                     drivetrain.setRightPow();
-                }
+                }/*
 
                 if(!parking && newVect.magnitude() < 4) {
                     parking = true;
@@ -133,9 +136,8 @@ public class SamplingTest extends WestBot15 {
                         onCrater = true;
                     } else {
                         onCrater = false;
-                    }
+                    }*/
 
-                }
             }
         }
         /*if(hasDrove) {
