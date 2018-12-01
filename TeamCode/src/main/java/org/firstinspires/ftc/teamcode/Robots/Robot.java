@@ -22,6 +22,7 @@ public abstract class Robot extends OpMode {
 
     public BNO055IMU      imu;
     public double  startAngle;
+    public double startAngleY;
 
     //Use this variable to set the angle of the robot which coresponds to zero degrees
     public double  zeroDegreeAngle = 0;
@@ -94,6 +95,10 @@ public abstract class Robot extends OpMode {
     //Normalizes the gyro measure
     public double normalizeGyroAngle(){
         return UniversalFunctions.normalizeAngleDegrees(getGyroAngle(), startAngle);
+    }
+
+    public double normalizeGyroAngleY(){
+        return UniversalFunctions.normalizeAngleDegrees(getGyroAngleY(), startAngleY);
     }
 
     //Sets the angle value of robotAngle

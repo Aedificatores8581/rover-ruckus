@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Robots.Robot;
 import org.firstinspires.ftc.teamcode.Universal.Map.Map2;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.opencv.core.Point3;
 
@@ -40,7 +41,7 @@ public abstract class WestBot15 extends Robot {
 
     @Override
     public void init(){
-        msStuckDetectInit = 50000000;
+        msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
         super.init();
 
         drivetrain.maxSpeed = 1.0;
