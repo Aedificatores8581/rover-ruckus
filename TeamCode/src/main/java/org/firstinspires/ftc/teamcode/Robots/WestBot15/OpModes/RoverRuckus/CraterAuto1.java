@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
+import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.GyroAngles;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
 import org.opencv.core.Point;
+import org.opencv.core.Point3;
 
 import ftc.vision.Detector;
 
@@ -49,7 +51,13 @@ public class CraterAuto1 extends WestBot15 {
         detector = new BlockDetector();
         angle = new Orientation();
         gyroAngles = new GyroAngles(angle);
+        motoG4 = new MotoG4();
+        motoG4.setLocationAndOrientation(
+                new Point3(0, 0, 12),
+                new Point3(0, 0, 0)
+        );
 
+        usingIMU = true;
         super.init();
 
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
@@ -59,7 +67,9 @@ public class CraterAuto1 extends WestBot15 {
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
 
-        normalizeGyroAngle();
+        normalizeGyroAngleY();
+        setStartAngle();
+        startAngleY = getGyroAngleY();
 
         drivetrain.controlState = TankDT.ControlState.FIELD_CENTRIC;
         drivetrain.direction = TankDT.Direction.BACK;
