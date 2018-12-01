@@ -12,8 +12,10 @@ public class LimitSwitchTest extends OpMode {
 
     @Override
     public void init() {
-        top.init(hardwareMap, "top");
-        bottom.init(hardwareMap, "bot");
+        top = new TouchSensor();
+        bottom = new TouchSensor();
+        top.init(hardwareMap, "tts");
+        bottom.init(hardwareMap, "bts");
     }
 
     @Override

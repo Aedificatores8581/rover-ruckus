@@ -15,7 +15,7 @@ public class TouchSensor {
     }
     //returns whether the sensor is pressed
     public boolean isPressed(){
-        return touchSensor.getState();
+        return !touchSensor.getState();
     }
     public String toString(){
         return isPressed() ? "pressed" : "released";
