@@ -26,6 +26,7 @@ public class SamplingTest extends WestBot15 {
     double hardNewY;
     boolean hasDriven = false;
     boolean parking= false, onCrater = false;
+    Vector2 newVect = new Vector2();
     Point newNewPoint = new Point();
     double rightEncPosition, leftEncPosition;
     Vector2 sampleVect = new Vector2();
@@ -38,7 +39,7 @@ public class SamplingTest extends WestBot15 {
     private final static int ON_CRATER_RIM_THRESHOLD = 60;
 
     public void init(){
-        drivetrain.position = new Pose();
+        drivetrain.position = new Pose(0, 0, Math.PI / 2);
         msStuckDetectInit = 500000;
         usingIMU = true;
         super.init();
@@ -66,16 +67,21 @@ public class SamplingTest extends WestBot15 {
     @Override
     public void start(){
         super.start();
-        drivetrain.position = new Pose(0, 0, 0);
+        drivetrain.position = new Pose(0, 0, Math.PI / 2);
     }
 
     public void loop(){
         drivetrain.updateEncoders();
-        drivetrain.updateLocation(drivetrain.averageLeftEncoders() - prevLeft, drivetrain.averageRightEncoders() - prevRight);
+        double leftChange = drivetrain.averageLeftEncoders() - prevLeft;
+        double rightChange = drivetrain.averageRightEncoders() - prevRight;
+        drivetrain.updateLocation(leftChange, rightChange);
         prevLeft = drivetrain.averageLeftEncoders();
         prevRight = drivetrain.averageRightEncoders();
         setRobotAngle();
         drivetrain.maxSpeed = 0.2;
+        if(gamepad1.left_trigger > 0.2){
+            drivetrain.maxSpeed = 0.4;
+        }
 
         Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
         temp.x += 640/ 2;
@@ -103,20 +109,21 @@ public class SamplingTest extends WestBot15 {
             } else
                 hasDriven = false;
             if (hasDriven) {
-                Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
+                newVect = new Vector2(sampleVect.x, sampleVect.y);
 
-                if (!parking) {
-                    drivetrain.updateEncoders();
-                    newVect.x -= robotPose.x;
-                    newVect.y -= robotPose.y;
-                    if (newVect.magnitude() > 12)
+                    newVect.x -= drivetrain.position.x;
+                    newVect.y -= drivetrain.position.y;
+                    Vector2 temp2 = new Vector2(newVect.x, newVect.y);
+                      if (newVect.magnitude() > 12)
                         newVect.setFromPolar(1, newVect.angle());
                     else
                         newVect.scalarMultiply(1.0 / 12);
                     drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
                     drivetrain.setLeftPow();
                     drivetrain.setRightPow();
-                }/*
+                telemetry.addData("temp2 radius", temp2.magnitude());
+                    telemetry.addData("temp2", (int) temp2.x + ", " + (int)temp2.y);
+                /*
 
                 if(!parking && newVect.magnitude() < 4) {
                     parking = true;
@@ -151,38 +158,20 @@ public class SamplingTest extends WestBot15 {
                 drivetrain.setRightPow(0);
             }
         }*/
-        telemetry.addData("horiAng: ", Math.toDegrees(horiAng));
-        telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
-        telemetry.addData("left pow", drivetrain.leftFore.getPower());
         telemetry.addData("sampleVect, ", sampleVect);
-        telemetry.addData("desired distance, ", drivetrain.ENC_PER_INCH * hardNewY);
-        telemetry.addData("distance traveled, ", drivetrain.averageLeftEncoders() - leftEncPosition );
         telemetry.addData("element position", detector.element);
-
+        telemetry.addData("position", drivetrain.position.toString());
+        telemetry.addData("leftposition", drivetrain.averageLeftEncoders());
+        telemetry.addData("rightposition", drivetrain.averageRightEncoders());
+        telemetry.addData("leftChange", prevLeft);
+        telemetry.addData("rightChange", prevRight);
+        telemetry.addData("turnVector", drivetrain.turnVector);
+        telemetry.addData("newVect", newVect);
+        telemetry.addData("newVect magnitude", newVect.magnitude());
     }
 
     public void stop(){
         super.stop();
         detector.isInitialized = false;
-    }
-    public void updateLocation(double leftChange, double rightChange){
-        leftChange = leftChange / drivetrain.ENC_PER_INCH;
-        rightChange = rightChange / drivetrain.ENC_PER_INCH;
-        double angle = 0;
-        Vector2 turnVector = new Vector2();
-        if(rightChange == leftChange)
-            turnVector.setFromPolar(rightChange, robotPose.angle);
-        else {
-            double radius = drivetrain.DISTANCE_BETWEEN_WHEELS / 2 * (leftChange + rightChange) / (rightChange - leftChange);
-            angle = (rightChange - leftChange) / (drivetrain.DISTANCE_BETWEEN_WHEELS);
-            radius = Math.abs(radius);
-            turnVector.setFromPolar(radius, angle);
-            turnVector.setFromPolar(radius - turnVector.x, angle);
-            if(Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
-                turnVector.x *= -1;
-        }
-        turnVector.rotate(robotPose.angle);
-        robotPose.add(turnVector);
-        robotPose.angle += angle;
     }
 }

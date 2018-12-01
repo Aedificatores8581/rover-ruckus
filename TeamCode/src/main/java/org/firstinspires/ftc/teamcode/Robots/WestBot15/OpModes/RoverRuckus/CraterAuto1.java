@@ -43,7 +43,7 @@ public class CraterAuto1 extends WestBot15 {
     private GyroAngles gyroAngles;
     private Orientation angle;
 
-    private final static int ON_CRATER_RIM_THRESHOLD = 60;
+    private final static int ON_CRATER_RIM_THRESHOLD = 15;
     AutoState autoState = AutoState.LOWER;
 
     public void init() {
