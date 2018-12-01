@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.Universal.Math.GyroAngles;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.opencv.core.Point3;
 
-import static org.firstinspires.ftc.teamcode.Universal.UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
-
 /**
  * Written by Theo Lovinski, 5/11/2018.
  *
@@ -25,9 +23,9 @@ public class AutoScaleCraterTest extends WestBot15 {
     GyroAngles gyroAngles;
     Orientation angle;
 
-    private static double onCraterRimThreshold = 0.20;
-    private static final double CRATER_ANGLE_ADJUSTMENT_INCREMENT = 0.01;
-    public boolean onCrater = false;
+    private static final double ON_CRATER_RIM_THRESHOLD = 15;
+    // private static final double CRATER_ANGLE_ADJUSTMENT_INCREMENT = 1;
+    public boolean onCrater = false; // ABSTRACT
 
     @Override
     public void init() {
@@ -37,9 +35,13 @@ public class AutoScaleCraterTest extends WestBot15 {
         usingIMU = true;
         super.init();
 
-        msStuckDetectInit = MS_STUCK_DETECT_INIT_DEFAULT;
-        normalizeGyroAngle();
+        msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
+        normalizeGyroAngleY();
         setStartAngle();
+        startAngleY = getGyroAngleY();
+
+        telemetry.addData("Start Y angle.", Math.abs(normalizeGyroAngleY()));
+        telemetry.addData("onCrater?", onCrater);
 
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(
@@ -54,29 +56,26 @@ public class AutoScaleCraterTest extends WestBot15 {
     @Override
     public void loop() {
 
-        if (getGyroAngleY() > onCraterRimThreshold) {
+        if (Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD) {
             onCrater = true;
         } else {
             onCrater = false;
         }
 
-        // TEMP
-        if (gamepad1.left_bumper) {
-            onCraterRimThreshold -= CRATER_ANGLE_ADJUSTMENT_INCREMENT;
-        } else if (gamepad1.right_bumper) {
-            onCraterRimThreshold += CRATER_ANGLE_ADJUSTMENT_INCREMENT;
-        }
-
-        //if (!onCrater) {
-		//	drivetrain.setRightPow(0.2);
-		//	drivetrain.setLeftPow(0.2);
-		//}
+        if (!onCrater) {
+            drivetrain.setRightPow(0.4);
+            drivetrain.setLeftPow(0.4);
+        } else {
+            // Stopped
+            drivetrain.setRightPow(0.0);
+            drivetrain.setLeftPow(0.0);
+		}
 
         drivetrain.updateEncoders();
 
-        telemetry.addData("Rim Threshold", onCraterRimThreshold);
+        telemetry.addData("Rim Threshold", ON_CRATER_RIM_THRESHOLD);
         telemetry.addData("onCrater?", onCrater);
-        telemetry.addData("Robot Y", getGyroAngleY());
+        telemetry.addData("Robot Y", Math.abs(normalizeGyroAngleY()));
         //telemetry.addData("Robot X", getGyroAngleX());
         //telemetry.addData("Robot Z", getGyroAngle());
     }

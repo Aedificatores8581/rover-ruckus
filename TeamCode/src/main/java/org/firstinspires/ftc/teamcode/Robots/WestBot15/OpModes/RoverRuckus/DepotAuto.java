@@ -19,11 +19,15 @@ import ftc.vision.Detector;
 @Autonomous (name = "Depot auto", group = "competition autonomous   ")
 public class DepotAuto extends WestBot15 {
     BlockDetector detector;
+
     boolean hasDrove;
+
     double prevLeft, prevRight = 0;
     double hardNewY;
+
     boolean hasDriven = false;
-    boolean parking= false, onCrater = false;
+    boolean parking, onCrater = false;
+
     Point newNewPoint = new Point();
     double rightEncPosition, leftEncPosition;
     Vector2 sampleVect = new Vector2();

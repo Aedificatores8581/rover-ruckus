@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 
-@TeleOp(name = "Tele op")
+@TeleOp(name = "Teleop")
 public class WVTeleop extends WestBot15 {
     TouchSensor topLiftSensor;
     TouchSensor bottomLiftSensor;
@@ -42,7 +42,7 @@ public class WVTeleop extends WestBot15 {
 
     public void start() { }
 
-    public void loop(){
+    public void loop() {
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger + gamepad1.left_stick_x;
         drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger - gamepad1.left_stick_x;
 
