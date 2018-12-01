@@ -11,18 +11,18 @@ public class RatchetServoTest extends OpMode {
 
     Servo sideRatchetServo, topRatchetServo;
     // Side
-    // Closed: 0.2
-    // Open: 0.4
+    // Closed: 0.1
+    // Open: 0.3
 
     // Top
-    // Closed 1.0
-    // Open:
+    // Closed .92
+    // Open: .7
     @Override
     public void init() {
         topRatchetServo = hardwareMap.servo.get("trat");
         sideRatchetServo = hardwareMap.servo.get("srat");
-        sideRatchetServo.setPosition(0.5);
-        topRatchetServo.setPosition(0.5);
+        sideRatchetServo.setPosition(0.4);
+        topRatchetServo.setPosition(0.7);
     }
 
     @Override
