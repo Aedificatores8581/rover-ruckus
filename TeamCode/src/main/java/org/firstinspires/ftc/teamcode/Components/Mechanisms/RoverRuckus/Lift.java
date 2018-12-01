@@ -8,10 +8,10 @@ public class Lift {
     public DcMotor liftMotor;
     public Servo topRatchetServo, sideRatchetServo;
     //TODO: find these values
-    public final double  TOP_RATCHET_NOT_ENGAGED  = 0 ,
-                         TOP_RATCHET_ENGAGED   = 1 ,
-                         SIDE_RATCHET_NOT_ENGAGED = 0 ,
-                         SIDE_RATCHET_ENGAGED  = 1 ;
+    public final double  TOP_RATCHET_NOT_ENGAGED  = 0.7,
+                         TOP_RATCHET_ENGAGED   = 0.92 ,
+                         SIDE_RATCHET_NOT_ENGAGED = 0.38 ,
+                         SIDE_RATCHET_ENGAGED  = 0.08 ;
     private final double TIME_TO_SWITCH_MS          = 20,
                          TICKS_PER_INCH             = 0,
                          MAX_LIFT_DISTANCE          = 30;
@@ -19,11 +19,9 @@ public class Lift {
     private double height;
     private double timer;
 
-    private RatchetState ratchetState;
+    public RatchetState ratchetState;
 
     public Lift() {
-        ratchetState = RatchetState.DISENGAGED;
-        switchRatchetState();
         height = 0;
     }
 
@@ -47,13 +45,13 @@ public class Lift {
     public void switchRatchetState(){
         resetTimer();
         switch (ratchetState){
-            case DISENGAGED:
-            case UP:
+            case DISENGAGED: break;
+            case DOWN:
                 topRatchetServo.setPosition(TOP_RATCHET_ENGAGED);
                 sideRatchetServo.setPosition(SIDE_RATCHET_NOT_ENGAGED);
                 break;
 
-            case DOWN:
+            case UP:
                 topRatchetServo.setPosition(TOP_RATCHET_NOT_ENGAGED);
                 sideRatchetServo.setPosition(SIDE_RATCHET_ENGAGED);
                 break;
@@ -63,12 +61,9 @@ public class Lift {
                 sideRatchetServo.setPosition(SIDE_RATCHET_NOT_ENGAGED);
                 break;
         }
-        setPower();
     }
 
-    public void setPower(){
-        setPower(liftMotor.getPower());
-    }
+
     public void setPower(double power) {
         if(hasSwitched()) {
             switch (ratchetState) {

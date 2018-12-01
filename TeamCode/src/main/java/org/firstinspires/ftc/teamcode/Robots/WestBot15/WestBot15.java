@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Robots.Robot;
 import org.firstinspires.ftc.teamcode.Universal.Map.Map2;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.opencv.core.Point3;
 
@@ -28,7 +29,7 @@ public abstract class WestBot15 extends Robot {
     public boolean isAutonomous = false;
     //IMPORTANT: phone locations should be taken in relation to the robot, not the field
     //public Intake intaek = new Intake();
-    //public Lift lift = new Lift();
+    public Lift lift = new Lift();
     //public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
 
@@ -40,7 +41,7 @@ public abstract class WestBot15 extends Robot {
 
     @Override
     public void init(){
-        msStuckDetectInit = 50000000;
+        msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
         super.init();
 
         drivetrain.maxSpeed = 1.0;
@@ -49,11 +50,8 @@ public abstract class WestBot15 extends Robot {
         drivetrain.position = new Pose();
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(-2.12598425, 1.57480315, 9.17322835), new Point3(0, 0, 0));
-        /*if (false) {
-            aextendo.init(hardwareMap, isAutonomous);
-            intaek.init(hardwareMap);
-            lift.init(hardwareMap);
-        }*/
+        //aextendo.init(hardwareMap, isAutonomous);
+        //intaek.init(hardwareMap);
     }
 
     @Override
