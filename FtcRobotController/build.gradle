@@ -7,14 +7,15 @@ android {
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 19
+        targetSdkVersion 26
     }
 
-    compileSdkVersion 23
+    compileSdkVersion 26
+    buildToolsVersion '28.0.3'
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -25,3 +26,8 @@ repositories {
 }
 
 apply from: 'build.release.gradle'
+
+dependencies {
+    implementation project(':openCVLibrary320')
+    api project(path: ':openCVLibrary320')
+}

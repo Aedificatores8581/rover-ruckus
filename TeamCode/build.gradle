@@ -13,3 +13,16 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
+android {
+    compileSdkVersion 23
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+dependencies {
+    implementation project(':FtcRobotController')
+    implementation project(':openCVLibrary320')
+    api 'org.openftc:rev-extensions-2:1.0'
+}
