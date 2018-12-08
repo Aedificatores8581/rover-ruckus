@@ -167,9 +167,21 @@ public class DepotAuto extends WestBot15 {
                     newVect.setFromPolar(1, newVect.angle());
                 else
                     newVect.scalarMultiply(1.0 / 12);
-                drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                drivetrain.setLeftPow();
-                drivetrain.setRightPow();
+
+                if (Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD) {
+                    onCrater = true;
+                } else {
+                    onCrater = false;
+                }
+                if(onCrater){
+                    drivetrain.setLeftPow(0);
+                    drivetrain.setRightPow(0);
+                }
+                else {
+                    drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
+                    drivetrain.setLeftPow();
+                    drivetrain.setRightPow();
+                }
                 if(newVect.magnitude() < 0.5){
                     drivetrain.setRightPow(0);
                     drivetrain.setLeftPow(0);
