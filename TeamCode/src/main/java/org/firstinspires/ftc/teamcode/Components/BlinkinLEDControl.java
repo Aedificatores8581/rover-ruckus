@@ -70,8 +70,8 @@ interface blinkinPWMColors {
 }
 
 public class BlinkinLEDControl {
-	public blinkinServoColors servoColors;
-	public blinkinPWMColors pwmColors;
+	protected blinkinServoColors servoColors;
+	protected blinkinPWMColors pwmColors;
 
 	public Servo colorControlServo;
 	public PWMOutputController colorControlModulator;
@@ -119,4 +119,18 @@ public class BlinkinLEDControl {
 	}
 
 	public void grabCustomSetting() { }
+
+	public void switchDisplayState(blinkinLightsState state) { lightState = state; }
+
+	public void switchDisplayState() {
+		if (lightState == blinkinLightsState.AESTHETIC) {
+			lightState = blinkinLightsState.FUNCTIONAL;
+		} else if (lightState == blinkinLightsState.FUNCTIONAL) {
+			lightState = blinkinLightsState.AESTHETIC;
+		} else {
+			lightState = blinkinLightsState.AESTHETIC;
+		}
+	}
+
+	public blinkinLightsState getDisplayState() { return lightState; }
 }
