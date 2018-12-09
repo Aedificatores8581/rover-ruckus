@@ -1,4 +1,50 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Components.Blinkin;
 
-public class blinkinPresets {
+public interface BlinkinPresets {
+    double  BLACK = 0.99,
+            DARK_GREY = 0.97,
+            GRAY = 0.95,
+            WHITE = 0.93,
+            VIOLET = 0.91,
+            BLUE_VIOLET = 0.89,
+            BLUE = 0.87,
+            DARK_BLUE = 0.85,
+            SKY_BLUE = 0.83,
+            AQUA = 0.81,
+            BLUE_GREEN = 0.79,
+            GREEN = 0.77,
+            DARK_GREEN = 0.75,
+            LIME = 0.73,
+            LAWN_GREEN = 0.71,
+            YELLOW = 0.69,
+            GOLD = 0.67,
+            ORANGE = 0.65,
+            RED_ORANGE = 0.63,
+            RED = 0.61,
+            DARK_RED = 0.59,
+            HOT_PINK = 0.57;
+
+    int RAW_PWM_PORT = 0;
+    int RAW_PWM_BLACK = 1995,
+            RAW_PWM_DARK_GREY = 1985,
+            RAW_PWM_GRAY = 1975,
+            RAW_PWM_WHITE = 1965,
+            RAW_PWM_VIOLET = 1955,
+            RAW_PWM_BLUE_VIOLET = 1945,
+            RAW_PWM_BLUE = 1935,
+            RAW_PWM_DARK_BLUE = 1925,
+            RAW_PWM_SKY_BLUE = 1915,
+            RAW_PWM_AQUA = 1905,
+            RAW_PWM_BLUE_GREEN = 1895,
+            RAW_PWM_GREEN = 1885,
+            RAW_PWM_DARK_GREEN = 1875,
+            RAW_PWM_LIME = 1865,
+            RAW_PWM_LAWN_GREEN = 1855,
+            RAW_PWM_YELLOW = 1845,
+            RAW_PWM_GOLD = 1835,
+            RAW_PWM_ORANGE = 1825,
+            RAW_PWM_RED_ORANGE = 1815,
+            RAW_PWM_RED = 1805,
+            RAW_PWM_DARK_RED = 1795,
+            RAW_PWM_HOT_PINK = 1785;
 }
