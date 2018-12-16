@@ -14,7 +14,9 @@ import java.util.List;
 
 import ftc.vision.Detector;
 
-public class BlockDetector extends Detector {
+public class
+
+BlockDetector extends Detector {
 
     public ArrayList<Point> elements = new ArrayList<Point>(1);
     public Point element = new Point();

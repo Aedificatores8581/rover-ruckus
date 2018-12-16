@@ -295,7 +295,10 @@ public abstract class TankDT extends Drivetrain {
         leftPow = lp;
         rightPow = rp;
     }
-
+    public void stop(){
+        setLeftPow(0);
+        setRightPow(0);
+    }
     public abstract double averageLeftEncoders();
     public abstract double averageRightEncoders();
 }

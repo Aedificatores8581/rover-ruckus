@@ -123,7 +123,7 @@ public class LinearOpModeCamera extends LinearOpMode {
     data = parameters.flatten();
 
     if (preview == null) {
-      ((FtcRobotControllerActivity) hardwareMap.appContext).initPreviewLinear(camera, this, previewCallback);
+      //((FtcRobotControllerActivity) hardwareMap.appContext).initPreviewLinear(camera, this, previewCallback);
     }
   }
 
@@ -155,7 +155,7 @@ public class LinearOpModeCamera extends LinearOpMode {
   public void stopCamera() {
     if (camera != null) {
       if (preview != null) {
-        ((FtcRobotControllerActivity) hardwareMap.appContext).removePreviewLinear(this);
+     //   ((FtcRobotControllerActivity) hardwareMap.appContext).removePreviewLinear(this);
         preview = null;
       }
       camera.stopPreview();
