@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinLEDControl;
 import org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinPresets;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
 import static org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinLEDControl.MAX_PWM_ADDRESS;
 import static org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinLEDControl.MIN_PWM_ADDRESS;
@@ -20,13 +21,18 @@ import static org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinLEDContro
 
 @TeleOp(name = "Blinkin Test", group = "tests")
 public class BlinkinTest extends WestBot15 {
-    BlinkinLEDControl blinkinLEDControl;
-    BlinkinPresets blinkinPresets;
+    public BlinkinLEDControl blinkinLEDControl;
+    public BlinkinPresets blinkinPresets;
     private static double selected_pattern = 0.4;
 
     @Override
     public void init() {
-        super.init();
+        blinkinLEDControl = new BlinkinLEDControl();
+
+        usingIMU = false;
+
+        msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
+
         blinkinLEDControl.setSolidColor(blinkinPresets.VIOLET);
         blinkinLEDControl.switchDisplayState();
     }
