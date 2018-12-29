@@ -40,8 +40,10 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if (aextendo.isRetracted()) {
             drivetrain.leftPow *= drivetrain.maxSpeed;
             drivetrain.rightPow *= drivetrain.maxSpeed;
-        } else {
-            drivetrain.leftPow *= aextendo.getExtensionLength() / 10;
+        } else if (!aextendo.isRetracted()) {
+            if (aextendo.getExtensionLength() / 10 < drivetrain.maxSpeed) {
+                drivetrain.leftPow *= aextendo.getExtensionLength() / 10;
+            } // else { something went terribly wrong! }
         }
 
         drivetrain.setLeftPow();
