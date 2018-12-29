@@ -10,12 +10,13 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 public class Intake {
     public Servo dispensor;
     public DcMotor motor;
+
     public double maxSpeed = 1;
     //TODO: find these values
     public final double CLOSED_DISPENSOR_POSITION = 0, OPEN_DISPENSOR_POSITION = 1;
 
-    public Intake(){
-    }
+    public Intake() { }
+
     public void init(HardwareMap hardwareMap){
         motor = hardwareMap.dcMotor.get("int");
         dispensor = hardwareMap.servo.get("idis");
@@ -36,8 +37,10 @@ public class Intake {
 
     public String toString(){
         String dispensorState = "closed";
-        if(dispensor.getPosition() == OPEN_DISPENSOR_POSITION)
+        if (dispensor.getPosition() == OPEN_DISPENSOR_POSITION) {
             dispensorState = "open";
+        }
+
         return getPower() + ", " + "dispensor " + dispensorState;
     }
 }

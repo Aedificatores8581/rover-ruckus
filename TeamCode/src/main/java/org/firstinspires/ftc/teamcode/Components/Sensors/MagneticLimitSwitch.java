@@ -8,11 +8,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class MagneticLimitSwitch {
     private DigitalChannel limitSwitch;
+
     //initializes the switch
-    public void init(HardwareMap hardwareMap, String name){
+    public void init(HardwareMap hardwareMap, String name) {
         limitSwitch = hardwareMap.digitalChannel.get(name);
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
     }
+
     //returns a boolean representing whether the switch is activated
     public boolean isActivated(){
         return limitSwitch.getState();

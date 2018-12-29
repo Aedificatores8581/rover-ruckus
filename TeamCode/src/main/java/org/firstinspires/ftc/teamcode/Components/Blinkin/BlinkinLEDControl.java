@@ -25,6 +25,14 @@ public class BlinkinLEDControl {
 
 	public blinkinLightsState lightState;
 
+	public void setSolidColor(double PWM) {
+		colorControlServo.setPosition(PWM);
+	}
+
+	public void setSolidColor(int PWM) {
+		colorControlModulator.setPulseWidthPeriod(blinkinPresets.RAW_PWM_PORT, PWM);
+	}
+
 	public void init(HardwareMap hardwareMap) {
 		colorControlServo = hardwareMap.servo.get("blinkin");
 		lightState = blinkinLightsState.AESTHETIC;
@@ -34,14 +42,6 @@ public class BlinkinLEDControl {
 	public void init() {
 		lightState = blinkinLightsState.AESTHETIC;
 		setSolidColor(blinkinPresets.RAW_PWM_AQUA);
-	}
-
-	public void setSolidColor(double PWM) {
-		colorControlServo.setPosition(PWM);
-	}
-
-	public void setSolidColor(int PWM) {
-		colorControlModulator.setPulseWidthPeriod(blinkinPresets.RAW_PWM_PORT, PWM);
 	}
 
 	public static final double MAX_PWM_ADDRESS = -0.05;

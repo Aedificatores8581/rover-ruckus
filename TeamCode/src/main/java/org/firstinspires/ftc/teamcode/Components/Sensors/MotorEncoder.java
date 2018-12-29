@@ -6,11 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by Frank Portman on 6/2/2018
  */
 public class MotorEncoder {
-
-    public DcMotor    motor;
+    public DcMotor motor;
     public int resetPosition   = 0,
                currentPosition = 0;
-
 
     public MotorEncoder(DcMotor dc){
         motor = dc;
@@ -22,7 +20,7 @@ public class MotorEncoder {
     }
 
     //Updates and returns the current position of the encoder
-    public double updateEncoder(){
+    public double updateEncoder() {
         currentPosition = motor.getCurrentPosition() - resetPosition;
         return currentPosition;
     }
@@ -32,9 +30,8 @@ public class MotorEncoder {
         resetPosition = motor.getCurrentPosition();
     }
 
-
     //resets the encoder in the motor and sets the currentPosition and resetPosition variables to 0
-    public void hardResetEncoder(){
+    public void hardResetEncoder() {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         currentPosition = 0;
         resetPosition = 0;
