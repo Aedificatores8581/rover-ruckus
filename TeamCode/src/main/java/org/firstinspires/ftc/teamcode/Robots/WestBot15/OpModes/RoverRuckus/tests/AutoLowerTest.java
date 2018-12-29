@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
+package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus.tests;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
