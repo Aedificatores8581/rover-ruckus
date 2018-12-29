@@ -26,39 +26,48 @@ public class DigitalCamera {
         }
 
     }
+
     //TODO: Add magnification to calculations
-    public DigitalCamera(double focalLength, double pixelSize, double resolutionX, double resolutionY){
+    public DigitalCamera(double focalLength, double pixelSize, double resolutionX, double resolutionY) {
         this.focalLength = focalLength;
         cameraSensor = new CameraSensor(pixelSize, resolutionX, resolutionY);
     }
-    public DigitalCamera(double focalLength, double width, double height){
+
+    public DigitalCamera(double focalLength, double width, double height) {
         this.focalLength = focalLength;
         cameraSensor = new CameraSensor(width, height);
     }
-    public void setLocation(Point3 location){
+
+    public void setLocation(Point3 location) {
         x = location.x;
         y = location.y;
         z = location.z;
     }
-    public void setLocation(DigitalCamera aCamera){
+
+    public void setLocation(DigitalCamera aCamera) {
         setLocation(new Point3(aCamera.x, aCamera.y, aCamera.z));
     }
-    public void setOrientation(Point3 orientation){
+
+    public void setOrientation(Point3 orientation) {
         xAng = orientation.x;
         yAng = orientation.y;
         zAng = orientation.z;
     }
-    public void setOrientation(DigitalCamera aCamera){
+
+    public void setOrientation(DigitalCamera aCamera) {
         setOrientation(new Point3(aCamera.xAng, aCamera.yAng, aCamera.zAng));
     }
+
     public void setLocationAndOrientation(Point3 location, Point3 orientation){
         setOrientation(orientation);
         setLocation(location);
     }
+
     public void setLocationAndOrientation(DigitalCamera aCamera){
         setLocation(aCamera);
         setOrientation(aCamera);
     }
+
     public void setLocationAndOrientation(Pose3 pose){
         x = pose.x;
         y = pose.y;
@@ -67,6 +76,7 @@ public class DigitalCamera {
         yAng = pose.yAngle;
         zAng = pose.zAngle;
     }
+
     public Point getObjectLocation(Point pointOnImage, Size imageSize, double objectHeight){
         Vector2 temp = new Vector2(pointOnImage.y, -pointOnImage.x);
         temp.x -= imageSize.height/ 2;
@@ -78,34 +88,42 @@ public class DigitalCamera {
         double newY = (z - objectHeight / 2) / Math.tan(-vertAng);
         double newX = newY * Math.tan(horiAng) + x;
         newY += y;
+
         return new Point(newX, newY);
     }
+
     public void updateLocation(double xChange, double yChange, double zChange){
         x += xChange;
         y += yChange;
         z += zChange;
     }
+
     public void updateLocation(Point3 differentialPosition){
         updateLocation(differentialPosition.x, differentialPosition.y, differentialPosition.z);
     }
+
     public void updateOrientation(double xChange, double yChange, double zChange){
         xAng += xChange;
         yAng += yChange;
         zAng += zChange;
         normalizeAngles();
     }
+
     public void updateOrientation(Point3 differentialOrientation){
         updateOrientation(differentialOrientation.x, differentialOrientation.y, differentialOrientation.z);
     }
+
     public double horizontalAngleOfView(double widthRatio){
         return 2 * Math.atan2(cameraSensor.width * widthRatio, 2 * focalLength);
     }
+
     public double horizontalAngleOfView(){
         return horizontalAngleOfView(1);
     }
     public double verticalAngleOfView(double heightRatio){
         return 2 * Math.atan2(cameraSensor.height * heightRatio, 2 * focalLength);
     }
+
     public double verticalAngleOfView(){
         return verticalAngleOfView(1);
     }
