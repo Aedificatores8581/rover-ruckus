@@ -100,7 +100,7 @@ public class CraterAutoCycle extends WestBot15 {
                     else{
                         drivetrain.setLeftPow(0);
                         drivetrain.setRightPow(0);
-                        double desiredExtensionLength = newVect.magnitude()- aextendo.EXTENSION_OFFSET + aextendo.getArticulatorLength();
+                        /*double desiredExtensionLength = newVect.magnitude()- aextendo.EXTENSION_OFFSET + aextendo.getArticulatorLength();
                         if(UniversalFunctions.withinTolerance(aextendo.getTotalExtensionLength(), desiredExtensionLength, -2, 1)) {
                             aextendo.aextendTM(desiredExtensionLength);
                             intaek.setPower(1);
@@ -110,7 +110,7 @@ public class CraterAutoCycle extends WestBot15 {
                             intaek.setPower(0);
                             if(aextendo.isRetracted())
                                 autoState = CraterAutoCycleState.RETURN;
-                        }
+                        }*/
                     }
                 }
                 break;
