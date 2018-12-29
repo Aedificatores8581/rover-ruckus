@@ -1,33 +1,39 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
-//@TeleOp(name = "teleop")
+@TeleOp (name = "teleop2")
 public class RoverRuckusTeleOp extends WestBot15 {
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
-    @Override
     public void init(){
         isAutonomous = false;
         usingIMU = false;
         super.init();
         activateGamepad1();
         activateGamepad2();
-        drivetrain.controlState = TankDT.ControlState.ARCADE;
-
     }
-    @Override
     public void start(){
         super.start();
     }
-    @Override
     public void loop(){
         updateGamepad1();
         updateGamepad2();
-        
-        drivetrain.draev(leftStick1, gamepad1.left_trigger, gamepad1.right_trigger);
 
+        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x;
+        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x;
+        drivetrain.leftPow*= 0.7;
+        drivetrain.rightPow*= 0.7;
+        drivetrain.setLeftPow();
+        drivetrain.setRightPow();
+        if(!gamepad1.right_stick_button)
+            aextendo.aextendTM(rightStick1.y);
+        else
+            aextendo.aextendTM(-rightStick1.y);
+        /*
         if(gamepad1.a)
             extensionState = ExtensionState.RESETTING;
         switch (extensionState) {
@@ -60,7 +66,9 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
             mineralContainer.openCage();
         else
-            mineralContainer.closeCage();
+            mineralContainer.closeCage();*/
+        telemetry.addData("extensionLength", aextendo.getExtensionLength());
+
     }
     enum ExtensionState{
         RESETTING,

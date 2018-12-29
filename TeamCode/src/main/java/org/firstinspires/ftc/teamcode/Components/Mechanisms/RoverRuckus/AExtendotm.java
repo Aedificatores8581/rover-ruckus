@@ -12,12 +12,12 @@ public class AExtendotm {
     public DcMotor extendo;
     public Servo marker, leftArticulator, rightArticulator;
     public ArticulationState articulationState;
-    public TouchSensor backSwitch, frontSwitch;
+    public TouchSensor backSwitch = new TouchSensor(), frontSwitch = new TouchSensor();
     public final double EXTENSION_OFFSET = 0, MARKER_OFFSET = 0;
     public double maxSpeed = 1;
     //TODO: find these values
     public boolean isAutonomous = false;
-    private final double MAX_EXTENSION_LENGTH = 36,
+    private final double MAX_EXTENSION_LENGTH = 29,
                         GEAR_RATIO = 7.5,
                         TICKS_PER_REVOLUTION = 7,
                         TICKS_PER_INCH = (210/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)*25.4,
@@ -34,16 +34,9 @@ public class AExtendotm {
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(isAutonomous ? DcMotor.RunMode.RUN_TO_POSITION : DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    //TODO:add limit switch code
     public void aextendTM(double value) {
-        if(getExtensionLength() > 0 && getExtensionLength() < MAX_EXTENSION_LENGTH) {
-            if (extendo.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)) {
-                extendo.setPower(maxSpeed * value);
-            } else {
-                extendo.setTargetPosition((int) (value * TICKS_PER_INCH));
-            }
-        } else {
-            extendo.setPower(0);
-        }
+        extendo.setPower(value*maxSpeed);
     }
 
     public double getExtensionLength() {
