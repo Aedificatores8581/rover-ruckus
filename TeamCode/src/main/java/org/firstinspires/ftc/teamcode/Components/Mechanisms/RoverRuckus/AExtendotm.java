@@ -19,7 +19,7 @@ public class AExtendotm {
                         MARKER_OPEN_POSITION = 1,
                         MAX_EXTENSION_LENGTH = 36,
                         ENC_PER_RADIAN = 10,
-                        TICKS_PER_INCH = 500,
+                        TICKS_PER_INCH = 210/Math.PI*25.4,
                         LEFT_ARTICULATOR_UPRIGHT_POSITION = 0,
                         RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0,
                         ARTICULATOR_LENGTH = 0;
