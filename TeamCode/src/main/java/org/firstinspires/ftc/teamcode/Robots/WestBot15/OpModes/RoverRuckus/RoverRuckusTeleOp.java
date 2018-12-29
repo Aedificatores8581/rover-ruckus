@@ -32,7 +32,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
             extensionState = ExtensionState.RESETTING;
         switch (extensionState) {
             case NON_RESETTING:
-                aextendo.aextendTM(rightStick1.magnitude());
+                aextendo.aextendTM(rightStick1.y);
                 if (gamepad1.left_bumper)
                     aextendo.articulateUp();
                 else

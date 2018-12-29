@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
 
@@ -11,36 +12,27 @@ public class AExtendotm {
     public DcMotor extendo;
     public Servo marker, leftArticulator, rightArticulator;
     public ArticulationState articulationState;
-
+    public TouchSensor backSwitch, frontSwitch;
     public final double EXTENSION_OFFSET = 0, MARKER_OFFSET = 0;
     public double maxSpeed = 1;
     //TODO: find these values
     public boolean isAutonomous = false;
-    private final double MARKER_CLOSED_POSITION = 0,
-                        MARKER_OPEN_POSITION = 1,
-                        MAX_EXTENSION_LENGTH = 36,
-                        ENC_PER_RADIAN = 10,
-                        TICKS_PER_INCH = 210/Math.PI*25.4,
+    private final double MAX_EXTENSION_LENGTH = 36,
+                        GEAR_RATIO = 7.5,
+                        TICKS_PER_REVOLUTION = 7,
+                        TICKS_PER_INCH = (210/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)*25.4,
                         LEFT_ARTICULATOR_UPRIGHT_POSITION = 0,
-                        RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0,
-                        ARTICULATOR_LENGTH = 0;
+                        RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0;
 
     public void init(HardwareMap hardwareMap, boolean isAutonomous) {
-        leftArticulator = hardwareMap.servo.get("lart");
-        rightArticulator = hardwareMap.servo.get("rart");
+        //leftArticulator = hardwareMap.servo.get("lart");
+        //rightArticulator = hardwareMap.servo.get("rart");
         extendo = hardwareMap.dcMotor.get("aetm");
-        marker = hardwareMap.servo.get("mrkr");
-
-        marker.setPosition(MARKER_CLOSED_POSITION);
+        backSwitch.init(hardwareMap, "HESb");
+        frontSwitch.init(hardwareMap, "HESf");
         extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(isAutonomous ? DcMotor.RunMode.RUN_TO_POSITION : DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-    public int angleToEnc(double ang){
-        return (int) (ang * ENC_PER_RADIAN);
-    }
-    public void dropMarker(){
-        marker.setPosition(MARKER_OPEN_POSITION);
     }
     public void aextendTM(double value) {
         if(getExtensionLength() > 0 && getExtensionLength() < MAX_EXTENSION_LENGTH) {
@@ -54,14 +46,6 @@ public class AExtendotm {
         }
     }
 
-    public double getTotalExtensionLength() {
-        return TICKS_PER_INCH * extendo.getCurrentPosition() + ARTICULATOR_LENGTH * Math.sin(getArticulatorAngle());
-    }
-
-    public double getArticulatorLength() {
-        return ARTICULATOR_LENGTH * Math.sin(getArticulatorAngle());
-    }
-
     public double getExtensionLength() {
         return TICKS_PER_INCH * extendo.getCurrentPosition();
     }
@@ -71,11 +55,11 @@ public class AExtendotm {
     }
 
     public boolean isRetracted() {
-        return getExtensionLength() < 5;
+        return backSwitch.isPressed();
     }
 
     public boolean willBeRetracted() {
-        return getDesiredExtensionLength() < 5;
+        return getDesiredExtensionLength() < 1.0;
     }
 
     public void articulateDown() {
@@ -141,7 +125,6 @@ public class AExtendotm {
     }
 
     public String toString(){
-        String markerTerm  = marker.getPosition() == MARKER_OPEN_POSITION ? "marker is deployed" : "marker is not deployed";
-        return getExtensionLength() + " inches extended, articulator is " + articulationState + ", " + markerTerm;
+        return getExtensionLength() + " inches extended, articulator is " + articulationState;
     }
 }
