@@ -41,9 +41,15 @@ public class RoverRuckusTeleOp extends WestBot15 {
             drivetrain.leftPow *= drivetrain.maxSpeed;
             drivetrain.rightPow *= drivetrain.maxSpeed;
         } else if (!aextendo.isRetracted()) {
-            if (aextendo.getExtensionLength() / 10 < drivetrain.maxSpeed) {
-                drivetrain.leftPow *= aextendo.getExtensionLength() / 10;
-            } // else { something went terribly wrong! }
+            // This button is temporary.
+            if (!gamepad2.right_bumper) {
+                if (aextendo.getExtensionLength() / 10 < drivetrain.maxSpeed) {
+                    drivetrain.leftPow *= aextendo.getExtensionLength() / 10;
+                }
+            } else {
+                drivetrain.leftPow *= drivetrain.maxSpeed;
+                drivetrain.rightPow *= drivetrain.maxSpeed;
+            }
         }
 
         drivetrain.setLeftPow();
