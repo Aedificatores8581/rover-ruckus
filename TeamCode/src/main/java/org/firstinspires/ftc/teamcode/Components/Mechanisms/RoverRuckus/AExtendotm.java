@@ -15,6 +15,7 @@ public class AExtendotm {
     public TouchSensor backSwitch = new TouchSensor(), frontSwitch = new TouchSensor();
     public final double EXTENSION_OFFSET = 0, MARKER_OFFSET = 0;
     public double maxSpeed = 1;
+
     //TODO: find these values
     public boolean isAutonomous = false;
     private final double MAX_EXTENSION_LENGTH = 29,
@@ -34,6 +35,7 @@ public class AExtendotm {
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(isAutonomous ? DcMotor.RunMode.RUN_TO_POSITION : DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     //TODO:add limit switch code
     public void aextendTM(double value) {
         extendo.setPower(value*maxSpeed);

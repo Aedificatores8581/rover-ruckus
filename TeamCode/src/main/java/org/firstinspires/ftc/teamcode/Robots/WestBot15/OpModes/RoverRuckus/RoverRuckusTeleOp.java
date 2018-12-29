@@ -8,68 +8,51 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
 @TeleOp (name = "teleop2")
 public class RoverRuckusTeleOp extends WestBot15 {
+    private double minLength;
+
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
-    public void init(){
+
+    public void init() {
         isAutonomous = false;
         usingIMU = false;
+
         super.init();
+
+        if (aextendo.isRetracted()) {
+            minLength = aextendo.getExtensionLength();
+        }
+
         activateGamepad1();
         activateGamepad2();
     }
+
     public void start(){
         super.start();
     }
+
     public void loop(){
         updateGamepad1();
         updateGamepad2();
 
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x;
         drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x;
-        drivetrain.leftPow*= 0.7;
-        drivetrain.rightPow*= 0.7;
+
+        if (aextendo.isRetracted()) {
+            drivetrain.leftPow *= drivetrain.maxSpeed;
+            drivetrain.rightPow *= drivetrain.maxSpeed;
+        } else {
+            drivetrain.leftPow *= aextendo.getExtensionLength() / 10;
+        }
+
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
-        if(!gamepad1.right_stick_button)
-            aextendo.aextendTM(rightStick1.y);
-        else
-            aextendo.aextendTM(-rightStick1.y);
-        /*
-        if(gamepad1.a)
-            extensionState = ExtensionState.RESETTING;
-        switch (extensionState) {
-            case NON_RESETTING:
-                aextendo.aextendTM(rightStick1.y);
-                if (gamepad1.left_bumper)
-                    aextendo.articulateUp();
-                else
-                    aextendo.articulateDown();
-                break;
-            case RESETTING:
-                aextendo.aextendTM(-1);
-                aextendo.articulateUp();
-                if (aextendo.isRetracted())
-                    extensionState = ExtensionState.NON_RESETTING;
-        }
-        if(leftStick2.magnitude() > UniversalConstants.Triggered.STICK)
-            lift2_0.lift(leftStick2.y);
 
-        else if(gamepad2.dpad_up) {
-            lift2_0.lift(1);
-            mineralContainer.articulateUp();
-        }
-        else if(gamepad2.dpad_down) {
-            lift2_0.lift(-1);
-            mineralContainer.articulateDown();
-        }
-        if(gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER)
-            intaek.dispense();
-        if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
-            mineralContainer.openCage();
-        else
-            mineralContainer.closeCage();*/
+        aextendo.aextendTM(rightStick1.y);
+
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
 
     }
+
     enum ExtensionState{
         RESETTING,
         NON_RESETTING
