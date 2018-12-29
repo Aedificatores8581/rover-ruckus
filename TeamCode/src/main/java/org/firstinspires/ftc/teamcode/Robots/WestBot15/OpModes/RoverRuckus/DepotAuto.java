@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Map.AttractionField;
-import org.firstinspires.ftc.teamcode.Universal.Math.GyroAngles;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
@@ -138,16 +136,16 @@ public class DepotAuto extends WestBot15 {
         autoState = AutoState.SAMPLE;
     }
 
-    public void loop(){
-        switch (autoState) {
-            case LOWER:
-                lift.ratchetState = Lift.RatchetState.UP;
-                lift.switchRatchetState();
-                lift.liftMotor.setPower(0.3);
+                public void loop(){
+                switch (autoState) {
+                    case LOWER:
+                        lift.ratchetState = Lift.RatchetState.UP;
+                        lift.switchRatchetState();
+                        lift.liftMotor.setPower(0.3);
                 if(top.isPressed()) {
                     lift.liftMotor.setPower(0);
-                    autoState = AutoState.SAMPLE;
-                    startTime = UniversalFunctions.getTimeInSeconds();
+                    if(UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay)
+                        autoState = AutoState.SAMPLE;
                 }
                 break;
             case SAMPLE:
@@ -161,8 +159,6 @@ public class DepotAuto extends WestBot15 {
                 drivetrain.maxSpeed = 0.6;
                 if(UniversalFunctions.getTimeInSeconds() - startTime > 2)
                     speedMult = 1;
-
-
                 Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
                 temp.x += 640/ 2;
                 temp.y -= 480 / 2;
@@ -196,7 +192,8 @@ public class DepotAuto extends WestBot15 {
                     drivetrain.setRightPow();
 
                     if (newVect.magnitude() < 0.6666666) {
-                        autoState = AutoState.CLAIM;
+                        if(UniversalFunctions.getTimeInSeconds() - startTime > claimDelay)
+                            autoState = AutoState.CLAIM;
                     }
                 }
 
@@ -232,10 +229,12 @@ public class DepotAuto extends WestBot15 {
                     drivetrain.setRightPow(0);
                     drivetrain.setLeftPow(0);
                     //claim
-                    autoState = AutoState.PARK;
+                    if(UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay)
+                        autoState = AutoState.PARK;
                 }
                 if(UniversalFunctions.getTimeInSeconds() - startTime > 15){
-                    autoState = AutoState.PARK;
+                    if(UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay)
+                        autoState = AutoState.PARK;
                 }
                 break;
             case PARK:
@@ -252,7 +251,7 @@ public class DepotAuto extends WestBot15 {
                 if(drivetrain.position.y < 38) {
                     if (doubleSample = false)
                         drivetrain.maxSpeed = 0.7;
-                    else
+                    else if(UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay)
                         autoState = AutoState.DOUBLE_SAMPLE;
                 }
                 if(USING_VECTOR_FIELDS){
