@@ -20,19 +20,15 @@ public class RoverRuckusTeleOp extends WestBot15 {
         super.start();
     }
     public void loop(){
+        drivetrain.maxSpeed = 0.7;
         updateGamepad1();
         updateGamepad2();
 
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x;
         drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x;
-        drivetrain.leftPow*= 0.7;
-        drivetrain.rightPow*= 0.7;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
-        if(!gamepad1.right_stick_button)
-            aextendo.aextendTM(rightStick1.y);
-        else
-            aextendo.aextendTM(-rightStick1.y);
+        aextendo.aextendTM(rightStick1.y);
         /*
         if(gamepad1.a)
             extensionState = ExtensionState.RESETTING;
@@ -68,6 +64,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         else
             mineralContainer.closeCage();*/
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
+        telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
 
     }
     enum ExtensionState{
