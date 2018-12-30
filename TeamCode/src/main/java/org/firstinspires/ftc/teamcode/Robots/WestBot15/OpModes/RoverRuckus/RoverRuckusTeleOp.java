@@ -23,9 +23,11 @@ public class RoverRuckusTeleOp extends WestBot15 {
         drivetrain.maxSpeed = 0.7;
         updateGamepad1();
         updateGamepad2();
-
-        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x;
-        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x;
+        drivetrain.turnMult = 1;
+        if(!gamepad1.right_stick_button)
+            drivetrain.turnMult = (1.0-0.75*aextendo.getExtensionLength()/29.0);
+        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         aextendo.aextendTM(rightStick1.y);

@@ -23,7 +23,7 @@ public class AExtendotm {
     private final double MAX_EXTENSION_LENGTH = 29.3,
                         GEAR_RATIO = 7.5,
                         TICKS_PER_REVOLUTION = 7,
-                        TICKS_PER_INCH = (210/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)*25.4,
+                        TICKS_PER_INCH = (210/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4,
                         LEFT_ARTICULATOR_UPRIGHT_POSITION = 0,
                         RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0;
 
@@ -44,6 +44,8 @@ public class AExtendotm {
     public void aextendTM(double value) {
         encoder.updateEncoder();
         extendo.setPower(value*maxSpeed);
+        if(getExtensionLength() < 0)
+            encoder.resetEncoder();
     }
 
     public double getExtensionLength() {
