@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
 @TeleOp (name = "teleop2")
 public class RoverRuckusTeleOp extends WestBot15 {
-    private double minLength;
+    private static final double MAX_EXTENSION = 29.34;
 
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
 
@@ -17,10 +17,6 @@ public class RoverRuckusTeleOp extends WestBot15 {
         usingIMU = false;
 
         super.init();
-
-        if (aextendo.isRetracted()) {
-            minLength = aextendo.getExtensionLength();
-        }
 
         activateGamepad1();
         activateGamepad2();
@@ -34,28 +30,22 @@ public class RoverRuckusTeleOp extends WestBot15 {
         updateGamepad1();
         updateGamepad2();
 
-        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x;
-        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x;
+        // drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x;
+        //  drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x;
 
-        if (aextendo.isRetracted()) {
-            drivetrain.leftPow *= drivetrain.maxSpeed;
-            drivetrain.rightPow *= drivetrain.maxSpeed;
-        } else if (!aextendo.isRetracted()) {
-            // This button is temporary.
-            if (!gamepad2.right_bumper) {
-                if (aextendo.getExtensionLength() / 10 < drivetrain.maxSpeed) {
-                    drivetrain.leftPow *= aextendo.getExtensionLength() / 10;
-                }
-            } else {
-                drivetrain.leftPow *= drivetrain.maxSpeed;
-                drivetrain.rightPow *= drivetrain.maxSpeed;
-            }
+        // This button is temporary.
+        if (!gamepad2.right_bumper) {
+            drivetrain.leftPow = leftStick1.y - Math.abs(1 - (MAX_EXTENSION / aextendo.getExtensionLength()) * 0.1);
+            drivetrain.rightPow = rightStick1.y - Math.abs(1 - (MAX_EXTENSION / aextendo.getExtensionLength()) * 0.1);
+        } else {
+            drivetrain.leftPow = leftStick1.y;
+            drivetrain.rightPow = rightStick1.y;
         }
 
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
 
-        aextendo.aextendTM(rightStick1.y);
+        aextendo.aextendTM(rightStick1.x);
 
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
 
