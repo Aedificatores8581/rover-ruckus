@@ -23,7 +23,7 @@ public class AExtendotm {
     private final double MAX_EXTENSION_LENGTH = 29.3,
                         GEAR_RATIO = 7.5,
                         TICKS_PER_REVOLUTION = 7,
-                        TICKS_PER_INCH = (210/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4,
+                        TICKS_PER_INCH = (70*(2+124.6/(276+1.0/3))/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4,
                         LEFT_ARTICULATOR_UPRIGHT_POSITION = 0,
                         RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0;
 

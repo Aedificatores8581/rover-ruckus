@@ -3,18 +3,21 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
+import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
-@TeleOp (name = "teleop2")
+@TeleOp (name = "Comp Tele Op")
 public class RoverRuckusTeleOp extends WestBot15 {
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
+    TouchSensor s = new TouchSensor();
     public void init(){
         isAutonomous = false;
         usingIMU = false;
         super.init();
         activateGamepad1();
         activateGamepad2();
+        s.init(hardwareMap, "lim");
     }
     public void start(){
         super.start();
@@ -31,6 +34,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         aextendo.aextendTM(rightStick1.y);
+        telemetry.addData("sensor reading", s.toString());
         /*
         if(gamepad1.a)
             extensionState = ExtensionState.RESETTING;
