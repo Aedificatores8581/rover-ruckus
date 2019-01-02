@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
-
+@TeleOp(name = "Hang Lift Enc Per Inch")
 public class HangLeftEncPerInchTest extends WestBot15 {
     private static final double STICK_MULT = 1;
 

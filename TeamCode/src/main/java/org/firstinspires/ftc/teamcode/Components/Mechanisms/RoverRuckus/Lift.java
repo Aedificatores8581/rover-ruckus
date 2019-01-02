@@ -13,7 +13,7 @@ public class Lift {
     private boolean hasInit;
 
     // TODO: Find value for constant
-    private static final double ENC_PER_INCH = 0;
+    private static final double ENC_PER_INCH = 432;
 
     public void init(HardwareMap hardwareMap) {
         liftMotor = hardwareMap.dcMotor.get("hangLift");
@@ -26,7 +26,7 @@ public class Lift {
     }
 
     public void setPower(double pow) {
-        if((pow > 0 && topPressed()) || (pow < 0 && bottomPressed()))
+        if((pow < 0 && topPressed()) || (pow > 0 && bottomPressed()))
             this.liftMotor.setPower(0);
         else
             this.liftMotor.setPower(pow);
@@ -44,13 +44,13 @@ public class Lift {
             return Double.NaN;
         }
 
-        return liftMotor.getCurrentPosition() * ENC_PER_INCH;
+        return liftMotor.getCurrentPosition() / ENC_PER_INCH;
     }
 
     public String toString(){
         return this.getHeight() + " inches upwards\n" +
                 this.liftMotor.getCurrentPosition() + " encoder ticks\n" +
                 "Top Sense: " + this.topTouchSensor.toString() +
-                "Bot Sense: " + this.bottomTouchSensor.toString();
+                "\nBot Sense: " + this.bottomTouchSensor.toString();
     }
 }
