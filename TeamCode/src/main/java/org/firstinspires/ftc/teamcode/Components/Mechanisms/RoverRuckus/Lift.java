@@ -4,121 +4,53 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
+
 public class Lift {
     public DcMotor liftMotor;
-    public Servo topRatchetServo, sideRatchetServo;
-    //TODO: find these values
-    public final double  TOP_RATCHET_NOT_ENGAGED  = 0.7,
-                         TOP_RATCHET_ENGAGED   = 0.92 ,
-                         SIDE_RATCHET_NOT_ENGAGED = 0.38 ,
-                         SIDE_RATCHET_ENGAGED  = 0.08 ;
-    private final double TIME_TO_SWITCH_MS          = 20,
-                         TICKS_PER_INCH             = 0,
-                         MAX_LIFT_DISTANCE          = 30;
+    public TouchSensor topTouchSensor = new TouchSensor(), bottomTouchSensor = new TouchSensor();
 
-    private double height;
-    private double timer;
+    private boolean hasInit;
 
-    public RatchetState ratchetState;
-
-    public Lift() {
-        height = 0;
-    }
-
-    public Lift(RatchetState ratchetState) {
-        this.ratchetState = ratchetState;
-        switchRatchetState();
-        height = 0;
-    }
+    // TODO: Find value for constant
+    private static final double ENC_PER_INCH = 0;
 
     public void init(HardwareMap hardwareMap) {
-        liftMotor = hardwareMap.dcMotor.get("lift");
-
-        topRatchetServo = hardwareMap.servo.get("trat");
-        sideRatchetServo = hardwareMap.servo.get("srat");
-
+        liftMotor = hardwareMap.dcMotor.get("hangLift");
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        topTouchSensor.init(hardwareMap, "top");
+        bottomTouchSensor.init(hardwareMap, "bot");
+        hasInit = true;
     }
 
-    public void switchRatchetState(){
-        resetTimer();
-        switch (ratchetState){
-            case DISENGAGED: break;
-            case DOWN:
-                topRatchetServo.setPosition(TOP_RATCHET_ENGAGED);
-                sideRatchetServo.setPosition(SIDE_RATCHET_NOT_ENGAGED);
-                break;
+    public void setPower(double pow) {
+        if((pow > 0 && topPressed()) || (pow < 0 && bottomPressed()))
+            this.liftMotor.setPower(0);
+        else
+            this.liftMotor.setPower(pow);
 
-            case UP:
-                topRatchetServo.setPosition(TOP_RATCHET_NOT_ENGAGED);
-                sideRatchetServo.setPosition(SIDE_RATCHET_ENGAGED);
-                break;
-
-            case STOPPED:
-                topRatchetServo.setPosition(TOP_RATCHET_NOT_ENGAGED);
-                sideRatchetServo.setPosition(SIDE_RATCHET_NOT_ENGAGED);
-                break;
-        }
     }
 
 
-    public void setPower(double power) {
-        if(hasSwitched()) {
-            switch (ratchetState) {
-                case UP:
-                    if (power > 0 || getHeight() < MAX_LIFT_DISTANCE)
-                        liftMotor.setPower(power);
-                    break;
+    public boolean topPressed() { return this.topTouchSensor.isPressed();}
 
-                case DOWN:
-                    if (power < 0 || getHeight() > 0) liftMotor.setPower(power);
-                    break;
+    public boolean bottomPressed() { return this.bottomTouchSensor.isPressed();}
 
-                case DISENGAGED:
-                    liftMotor.setPower(power);
-                    break;
 
-                case STOPPED:
-                    liftMotor.setPower(0);
-                    break;
-            }
-        } else {
-            liftMotor.setPower(0);
-        }
-    }
-
-    public void setPowerOverride(double power) {
-        if (power != 0) {
-            if (ratchetState != RatchetState.DISENGAGED) {
-                ratchetState = power > 0 ? RatchetState.UP : RatchetState.DOWN;
-            }
+    public double getHeight() {
+        if (!this.hasInit) {
+            return Double.NaN;
         }
 
-        setPower(power);
+        return liftMotor.getCurrentPosition() * ENC_PER_INCH;
     }
-
-    public void  stop() {
-        ratchetState = RatchetState.STOPPED;
-        switchRatchetState();
-    }
-
-    public double getHeight(){
-        return liftMotor.getCurrentPosition() * TICKS_PER_INCH;
-    }
-
-    private void resetTimer(){
-        timer = System.nanoTime() * 10E6;
-    }
-
-    private boolean hasSwitched(){
-        return System.currentTimeMillis() - timer > TIME_TO_SWITCH_MS;
-    }
-
-    public enum RatchetState { UP, DOWN, DISENGAGED, STOPPED }
 
     public String toString(){
-        return ratchetState + ", " + height + " inches upwards";
+        return this.getHeight() + " inches upwards\n" +
+                this.liftMotor.getCurrentPosition() + " encoder ticks\n" +
+                "Top Sense: " + this.topTouchSensor.toString() +
+                "Bot Sense: " + this.bottomTouchSensor.toString();
     }
 }

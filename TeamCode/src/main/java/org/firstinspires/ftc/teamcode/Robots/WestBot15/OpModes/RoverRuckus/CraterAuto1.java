@@ -85,9 +85,7 @@ public class CraterAuto1 extends WestBot15 {
     public void loop(){
         switch (autoState) {
             case LOWER:
-                lift.ratchetState = Lift.RatchetState.UP;
-                lift.switchRatchetState();
-                lift.liftMotor.setPower(0.3);
+                lift.setPower(1);
                 if(top.isPressed()) {
                     lift.liftMotor.setPower(0);
                     autoState = AutoState.SAMPLE;

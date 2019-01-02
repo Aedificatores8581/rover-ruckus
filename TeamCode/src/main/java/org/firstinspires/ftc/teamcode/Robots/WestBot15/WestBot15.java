@@ -52,6 +52,7 @@ public abstract class WestBot15 extends Robot {
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(-2.12598425, 1.57480315, 9.17322835), new Point3(0, 0, 0));
         aextendo.init(hardwareMap, false);
+        lift.init(hardwareMap);
         if(hadleyOnSchedule){
             //init things here
         }

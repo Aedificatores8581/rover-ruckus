@@ -1,40 +1,44 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
+import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 @TeleOp (name = "Comp Tele Op")
 public class RoverRuckusTeleOp extends WestBot15 {
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
-    TouchSensor s = new TouchSensor();
+    double prevTime = 0;
     public void init(){
         isAutonomous = false;
         usingIMU = false;
         super.init();
         activateGamepad1();
         activateGamepad2();
-        s.init(hardwareMap, "lim");
     }
     public void start(){
         super.start();
+        prevTime = UniversalFunctions.getTimeInSeconds();
     }
     public void loop(){
         drivetrain.maxSpeed = 0.7;
         updateGamepad1();
         updateGamepad2();
         drivetrain.turnMult = 1;
-        if(!gamepad1.right_stick_button)
-            drivetrain.turnMult = (1.0-0.75*aextendo.getExtensionLength()/29.0);
+        if(!gamepad1.left_stick_button&&aextendo.getExtensionLength() > 10 ) {
+            drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
+        }
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
         drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         aextendo.aextendTM(rightStick1.y);
-        telemetry.addData("sensor reading", s.toString());
+        lift.setPower(gamepad2.left_stick_y);
         /*
         if(gamepad1.a)
             extensionState = ExtensionState.RESETTING;
@@ -71,10 +75,21 @@ public class RoverRuckusTeleOp extends WestBot15 {
             mineralContainer.closeCage();*/
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
-
+        telemetry.addData("top", lift.topPressed());
+        telemetry.addData("bottom", lift.bottomPressed());
+        prevTime = UniversalFunctions.getTimeInSeconds();
     }
     enum ExtensionState{
         RESETTING,
         NON_RESETTING
+    }
+    enum state1{
+        MIN,
+        MAX
+    }
+    enum state2{
+        DISP,
+        THING1,
+        THING2
     }
 }

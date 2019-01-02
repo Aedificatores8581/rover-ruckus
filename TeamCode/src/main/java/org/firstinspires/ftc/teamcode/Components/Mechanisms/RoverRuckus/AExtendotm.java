@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
+import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 public class AExtendotm {
     public DcMotor extendo;
@@ -20,16 +21,13 @@ public class AExtendotm {
     public MotorEncoder encoder;
     //TODO: find these values
     public boolean isAutonomous = false;
-    private final double MAX_EXTENSION_LENGTH = 29.3,
+    public final double MAX_EXTENSION_LENGTH = 29.34,
+                        MIN_EXTENSION_LENGTH = 0,
                         GEAR_RATIO = 7.5,
                         TICKS_PER_REVOLUTION = 7,
-                        TICKS_PER_INCH = (70*(2+124.6/(276+1.0/3))/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4,
-                        LEFT_ARTICULATOR_UPRIGHT_POSITION = 0,
-                        RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0;
+                        TICKS_PER_INCH = (70*(2+124.6/(276+1.0/3))/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4;
 
     public void init(HardwareMap hardwareMap, boolean isAutonomous) {
-        //leftArticulator = hardwareMap.servo.get("lart");
-        //rightArticulator = hardwareMap.servo.get("rart");
         extendo = hardwareMap.dcMotor.get("aetm");
         backSwitch.init(hardwareMap, "HESb");
         frontSwitch.init(hardwareMap, "HESf");
@@ -39,11 +37,17 @@ public class AExtendotm {
         extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         encoder = new MotorEncoder(extendo);
         encoder.initEncoder();
+        this.isAutonomous = isAutonomous;
     }
     //TODO:add limit switch code
     public void aextendTM(double value) {
         encoder.updateEncoder();
-        extendo.setPower(value*maxSpeed);
+        if(isAutonomous && UniversalFunctions.withinTolerance(value - 0.25, getExtensionLength(), value + 0.25))
+            extendo.setPower(maxSpeed);
+        else if(isAutonomous)
+            extendo.setPower(getExtensionLength() > value ? - maxSpeed : maxSpeed);
+        else
+            extendo.setPower(value);
         if(getExtensionLength() < 0)
             encoder.resetEncoder();
     }
@@ -99,29 +103,8 @@ public class AExtendotm {
                 break;
         }
     }
-    private double getArticulatorAngle(){
-        double output = 0;
-        switch (articulationState){
-            case RAISED:
-                output = 0;
-                break;
-            case LOWERED:
-                output = 0;
-                break;
-        }
 
-        return output;
-    }
-
-    public Pose getExtensionLocation(Pose location) {
-        return new Pose(location.x + getExtensionLength() * Math.cos(location.angle), location.y + EXTENSION_OFFSET + getExtensionLength() * Math.sin(location.angle), location.angle);
-    }
-
-    public Pose getMarkerLocation(Pose location) {
-        return new Pose(location.x + getExtensionLength() * Math.cos(location.angle), location.y + MARKER_OFFSET + getExtensionLength() * Math.sin(location.angle), location.angle);
-    }
-
-    enum ArticulationState{
+        enum ArticulationState{
         LOWERED,
         RAISED,
         RETRACTED
