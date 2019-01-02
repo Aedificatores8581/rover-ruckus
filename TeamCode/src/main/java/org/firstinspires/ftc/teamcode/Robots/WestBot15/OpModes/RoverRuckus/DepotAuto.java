@@ -29,15 +29,15 @@ public class DepotAuto extends WestBot15 {
     double d = 63;
     double startTime = 0;
     double speedMult = 1;
-    TouchSensor top, bottom;
     final boolean USING_VECTOR_FIELDS= false;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
-    AutoState autoState = AutoState.SAMPLE;
+    AutoState autoState = AutoState.LOWER;
     Crater crater = Crater.LEFT;
     boolean doubleSample = false;
     double prevTime = 0;
     boolean canSwitchTimer = true;
     double sampleDelay = 0, claimDelay = 0, parkingDelay = 0, doubleSampleDelay = 0;
+    boolean obtainedSampleLocation = false;
     public void init(){
         activateGamepad1();
         updateGamepad1();
@@ -102,10 +102,6 @@ public class DepotAuto extends WestBot15 {
         msStuckDetectInit = 500000;
         super.init();
 
-        top = new TouchSensor();
-        bottom = new TouchSensor();
-        top.init(hardwareMap, "tts");
-        bottom.init(hardwareMap, "bts");
         activateGamepad1();
         //TODO: remove from init
         startAngleY = getGyroAngleY();
@@ -133,16 +129,13 @@ public class DepotAuto extends WestBot15 {
         startTime = UniversalFunctions.getTimeInSeconds();
         if(gamepad1.left_trigger > 0.2)
             d = 62.5;
-        autoState = AutoState.SAMPLE;
+        autoState = AutoState.LOWER;
     }
-
-                public void loop(){
-                switch (autoState) {
-                    case LOWER:
-                        lift.ratchetState = Lift.RatchetState.UP;
-                        lift.switchRatchetState();
-                        lift.liftMotor.setPower(0.3);
-                if(top.isPressed()) {
+    public void loop(){
+        switch (autoState) {
+            case LOWER:
+                lift.setPower(1);
+                if(!lift.topPressed()) {
                     lift.liftMotor.setPower(0);
                     if(UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay)
                         autoState = AutoState.SAMPLE;
@@ -175,30 +168,25 @@ public class DepotAuto extends WestBot15 {
                         sampleVect.x -= 4;
                     }
                 }
-                if (UniversalFunctions.getTimeInSeconds() - startTime > 1) {
-                    hasDrove = true;
-                    Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
-                    newVect.x -= drivetrain.position.x;
-                    newVect.y -= drivetrain.position.y;
-                    Vector2 temp2 = new Vector2(newVect.x, newVect.y);
-
-                    if (newVect.magnitude() > 12)
-                        newVect.setFromPolar(speedMult, newVect.angle());
-                    else
-                        newVect.scalarMultiply(6 / 12);
-
-                    drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                    drivetrain.setLeftPow();
-                    drivetrain.setRightPow();
-
-                    if (newVect.magnitude() < 0.6666666) {
-                        if(UniversalFunctions.getTimeInSeconds() - startTime > claimDelay)
-                            autoState = AutoState.CLAIM;
-                    }
+                if(!obtainedSampleLocation){
+                    drivetrain.position.y += 37.97 - newY;
                 }
+                hasDrove = true;
+                Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
+                newVect.x -= drivetrain.position.x;
+                newVect.y -= drivetrain.position.y;
+                Vector2 temp2 = new Vector2(newVect.x, newVect.y);
+                if (newVect.magnitude() > 12)
+                    newVect.setFromPolar(speedMult, newVect.angle());
+                else
+                    newVect.scalarMultiply(6 / 12);
+                drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
+                drivetrain.setLeftPow();
+                drivetrain.setRightPow();
 
-                if(drivetrain.position.y > sampleVect.y - 2) {
-                    //autoState = AutoState.CLAIM;
+                if (newVect.magnitude() < 0.6666666) {
+                    if(UniversalFunctions.getTimeInSeconds() - startTime > claimDelay)
+                        autoState = AutoState.CLAIM;
                 }
                         break;
 
@@ -213,7 +201,7 @@ public class DepotAuto extends WestBot15 {
                 setRobotAngle();
                 drivetrain.maxSpeed = 0.5;
 
-                Vector2 newVect = new Vector2(0, d);
+                newVect = new Vector2(0, d);
                 newVect.x -= drivetrain.position.x;
                 newVect.y -= drivetrain.position.y;
                 if (newVect.magnitude() > 12)
@@ -238,7 +226,6 @@ public class DepotAuto extends WestBot15 {
                 }
                 break;
             case PARK:
-
                 drivetrain.direction = Drivetrain.Direction.FOR;
                 drivetrain.updateEncoders();
                 double leftChange2 = drivetrain.averageLeftEncoders() - prevLeft;
@@ -248,29 +235,24 @@ public class DepotAuto extends WestBot15 {
                 prevRight = drivetrain.averageRightEncoders();
                 setRobotAngle();
                 drivetrain.maxSpeed = 0.5;
-                if(drivetrain.position.y < 38) {
-                    if (doubleSample = false)
-                        drivetrain.maxSpeed = 0.7;
-                    else if(UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay)
-                        autoState = AutoState.DOUBLE_SAMPLE;
-                }
-                if(USING_VECTOR_FIELDS){
-                    AttractionField leftSample = new AttractionField();
-                }
-                onCrater = Math.abs(normalizeGyroAngle()) > ON_CRATER_RIM_THRESHOLD;
-                if(drivetrain.position.y < 0) {
-                    drivetrain.setLeftPow(0);
-                    drivetrain.setRightPow(0);
-                }
-                if (!onCrater && UniversalFunctions.getTimeInSeconds() - startTime < 12 ) {
+
+                if(onCrater == false) {
                     int i = crater == Crater.RIGHT ? 1 : -1;
-                    Vector2 tempV = new Vector2(i * Math.sqrt(2)/2, -Math.sqrt(2) / 2);
+                    Vector2 tempV = new Vector2(i * Math.sqrt(2) / 2, -Math.sqrt(2) / 2);
                     tempV.setFromPolar(tempV.magnitude(), tempV.angle() - i * Math.toRadians(5));
                     drivetrain.teleOpLoop(tempV, new Vector2(), robotAngle);
                     drivetrain.setLeftPow();
                     drivetrain.setRightPow();
-                } else
+                    if(drivetrain.position.y < 30)
+                        /*aextendo.aextendTM(1);
+                    if(drivetrain.position.y - aextendo.getExtensionLength() * Math.sqrt(2) / 2 < 0)
+                        onCrater = true;
+                }
+                else {*/
                     drivetrain.stop();
+                    aextendo.aextendTM(0);
+                }
+
                 break;
             case DOUBLE_SAMPLE:
 

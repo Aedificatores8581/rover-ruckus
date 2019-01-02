@@ -36,5 +36,4 @@ public class MotorEncoder {
         currentPosition = 0;
         resetPosition = 0;
     }
-
 }

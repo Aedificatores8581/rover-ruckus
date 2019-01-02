@@ -10,7 +10,7 @@ public class TouchSensor {
     private DigitalChannel touchSensor;
     //initializes the motors
     public void init(HardwareMap hardwareMap, String name){
-        touchSensor = hardwareMap.digitalChannel.get(name);
+        touchSensor = hardwareMap.get(DigitalChannel.class, name);
         touchSensor.setMode(DigitalChannel.Mode.INPUT);
     }
     //returns whether the sensor is pressed

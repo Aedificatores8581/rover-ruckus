@@ -74,33 +74,40 @@ public class WestCoast15 extends TankDT {
         rightRear.setDirection(REVERSE);
         leftFore.setDirection(FORWARD);
         leftRear.setDirection(FORWARD);
+
         leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         leftFore.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFore.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lfEncoder = new MotorEncoder(leftFore);
         lrEncoder = new MotorEncoder(leftRear);
         rfEncoder = new MotorEncoder(rightFore);
         rrEncoder = new MotorEncoder(rightRear);
+
         lfEncoder.initEncoder();
         lrEncoder.initEncoder();
         rfEncoder.initEncoder();
         rrEncoder.initEncoder();
     }
+
     public void hardResetEncoders(){
         lfEncoder.hardResetEncoder();
         rfEncoder.hardResetEncoder();
         lrEncoder.hardResetEncoder();
         rrEncoder.hardResetEncoder();
     }
+
     public void normalizeMotors() {}
 
     @Override
@@ -116,9 +123,11 @@ public class WestCoast15 extends TankDT {
     public double averageLeftEncoders(){
         return (lfEncoder.currentPosition + lrEncoder.currentPosition) / 2;
     }
+
     public double averageRightEncoders(){
         return (rfEncoder.currentPosition + rrEncoder.currentPosition) / 2;
     }
+
     public void draev(Vector2 stick, double leftTrigger, double rightTrigger){
         double velocity = rightTrigger - leftTrigger;
         leftPow = rightTrigger - leftTrigger - stick.x;

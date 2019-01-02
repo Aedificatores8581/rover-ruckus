@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
+import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 public class AExtendotm {
     public DcMotor extendo;
@@ -14,33 +17,44 @@ public class AExtendotm {
     public ArticulationState articulationState;
     public TouchSensor backSwitch = new TouchSensor(), frontSwitch = new TouchSensor();
     public final double EXTENSION_OFFSET = 0, MARKER_OFFSET = 0;
-    public double maxSpeed = 1;
+    public double maxSpeed = 1.0;
+    public MotorEncoder encoder;
     //TODO: find these values
     public boolean isAutonomous = false;
-    private final double MAX_EXTENSION_LENGTH = 29,
+    public final double MAX_EXTENSION_LENGTH = 29.34,
+                        MIN_EXTENSION_LENGTH = 0,
                         GEAR_RATIO = 7.5,
                         TICKS_PER_REVOLUTION = 7,
-                        TICKS_PER_INCH = (210/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)*25.4,
-                        LEFT_ARTICULATOR_UPRIGHT_POSITION = 0,
-                        RIGHT_ARTICULATOR_UPRIGHT_POSITION = 0;
+                        TICKS_PER_INCH = (70*(2+124.6/(276+1.0/3))/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4;
 
     public void init(HardwareMap hardwareMap, boolean isAutonomous) {
-        //leftArticulator = hardwareMap.servo.get("lart");
-        //rightArticulator = hardwareMap.servo.get("rart");
         extendo = hardwareMap.dcMotor.get("aetm");
         backSwitch.init(hardwareMap, "HESb");
         frontSwitch.init(hardwareMap, "HESf");
-        extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extendo.setDirection(DcMotorSimple.Direction.FORWARD);
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendo.setMode(isAutonomous ? DcMotor.RunMode.RUN_TO_POSITION : DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        encoder = new MotorEncoder(extendo);
+        encoder.initEncoder();
+        this.isAutonomous = isAutonomous;
     }
     //TODO:add limit switch code
     public void aextendTM(double value) {
-        extendo.setPower(value*maxSpeed);
+        encoder.updateEncoder();
+        if(isAutonomous && UniversalFunctions.withinTolerance(value - 0.25, getExtensionLength(), value + 0.25))
+            extendo.setPower(maxSpeed);
+        else if(isAutonomous)
+            extendo.setPower(getExtensionLength() > value ? - maxSpeed : maxSpeed);
+        else
+            extendo.setPower(value);
+        if(getExtensionLength() < 0)
+            encoder.resetEncoder();
     }
 
     public double getExtensionLength() {
-        return TICKS_PER_INCH * extendo.getCurrentPosition();
+        encoder.updateEncoder();
+        return TICKS_PER_INCH * encoder.currentPosition;
     }
 
     public double getDesiredExtensionLength() {
@@ -89,29 +103,8 @@ public class AExtendotm {
                 break;
         }
     }
-    private double getArticulatorAngle(){
-        double output = 0;
-        switch (articulationState){
-            case RAISED:
-                output = 0;
-                break;
-            case LOWERED:
-                output = 0;
-                break;
-        }
 
-        return output;
-    }
-
-    public Pose getExtensionLocation(Pose location) {
-        return new Pose(location.x + getExtensionLength() * Math.cos(location.angle), location.y + EXTENSION_OFFSET + getExtensionLength() * Math.sin(location.angle), location.angle);
-    }
-
-    public Pose getMarkerLocation(Pose location) {
-        return new Pose(location.x + getExtensionLength() * Math.cos(location.angle), location.y + MARKER_OFFSET + getExtensionLength() * Math.sin(location.angle), location.angle);
-    }
-
-    enum ArticulationState{
+        enum ArticulationState{
         LOWERED,
         RAISED,
         RETRACTED
