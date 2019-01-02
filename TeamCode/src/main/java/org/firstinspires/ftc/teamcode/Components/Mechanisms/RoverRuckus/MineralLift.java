@@ -17,9 +17,9 @@ public class MineralLift {
     private MotorEncoder leftEncoder, rightEncoder;
     private TouchSensor limitSwitch;
 
-    private final double MAX_SPEED = 1;
+    private static final double MAX_SPEED = 1;
     // TODO: This value needs to be tuned. {tuning}
-    private final double DUMP_BUCKET_THRESHHOLD = 0;
+    private static final double DUMP_BUCKET_THRESHHOLD = 0;
 
     public void init(HardwareMap hardwareMap, boolean isAutonomous) {
         leftMotor = hardwareMap.dcMotor.get(UniversalConfig.MINERAL_LIFT_LEFT_MOTOR);
