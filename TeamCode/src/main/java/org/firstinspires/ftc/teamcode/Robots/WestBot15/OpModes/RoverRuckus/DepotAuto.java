@@ -147,6 +147,7 @@ public class DepotAuto extends WestBot15 {
                     }
                     break;
                 case SAMPLE:
+                    //TODO: add dropping intaek
                     if(UniversalFunctions.getTimeInSeconds() - time > 1)
                         lift.setPower(0.5);
                     drivetrain.updateEncoders();
@@ -203,7 +204,7 @@ public class DepotAuto extends WestBot15 {
                     break;
 
                 case CLAIM:
-
+                    //TODO: add lifting intaek
                     drivetrain.updateEncoders();
                     double leftChange1 = drivetrain.averageLeftEncoders() - prevLeft;
                     double rightChange1 = drivetrain.averageRightEncoders() - prevRight;
@@ -269,7 +270,8 @@ public class DepotAuto extends WestBot15 {
                             onCrater = true;
                     } else {
                         aextendo.extendo.setPower(0);
-                        //intake
+
+                        //TODO: intaek
                     }
 
                     break;
