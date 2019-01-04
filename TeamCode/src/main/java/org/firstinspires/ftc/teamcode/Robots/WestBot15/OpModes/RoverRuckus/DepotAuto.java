@@ -22,7 +22,7 @@ import ftc.vision.Detector;
 @Autonomous (name = "Depot auto", group = "competition autonomous   ")
 public class DepotAuto extends WestBot15 {
 
-    final boolean IS_AEXTENDINGTM = false;
+    boolean IS_AEXTENDINGTM = false;
 
     BlockDetector detector;
     boolean hasDrove;
@@ -47,11 +47,6 @@ public class DepotAuto extends WestBot15 {
     boolean thing = false;
     boolean thing2 = false;
     public void init(){
-        telemetry.addData("Active Timer: ", autoState);
-        telemetry.addData("sample dealy: ", sampleDelay);
-        telemetry.addData("claim delay: ", claimDelay);
-        telemetry.addData("parking delay: ", parkingDelay);
-        telemetry.addData("double-sample delay ", doubleSampleDelay);
         prevTime = UniversalFunctions.getTimeInSeconds();
         drivetrain.position = new Pose();
         msStuckDetectInit = 500000;
@@ -72,18 +67,17 @@ public class DepotAuto extends WestBot15 {
         drivetrain.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void initLoop(){
+    public void init_loop() {
         activateGamepad1();
         updateGamepad1();
         double increment = rightStick1.y * UniversalFunctions.getTimeInSeconds() - prevTime;
-        switch (autoState){
+        switch (autoState) {
             case SAMPLE:
                 sampleDelay += increment;
-                if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.CLAIM;
                     canSwitchTimer = false;
-                }
-                else if(gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.DOUBLE_SAMPLE;
                     canSwitchTimer = false;
                 }
@@ -91,11 +85,10 @@ public class DepotAuto extends WestBot15 {
                 break;
             case CLAIM:
                 claimDelay += increment;
-                if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.PARK;
                     canSwitchTimer = false;
-                }
-                else if(gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.SAMPLE;
                     canSwitchTimer = false;
                 }
@@ -103,11 +96,10 @@ public class DepotAuto extends WestBot15 {
                 break;
             case PARK:
                 parkingDelay += increment;
-                if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.DOUBLE_SAMPLE;
                     canSwitchTimer = false;
-                }
-                else if(gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.CLAIM;
                     canSwitchTimer = false;
                 }
@@ -115,17 +107,31 @@ public class DepotAuto extends WestBot15 {
                 break;
             case DOUBLE_SAMPLE:
                 doubleSampleDelay += increment;
-                if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.SAMPLE;
                     canSwitchTimer = false;
-                }
-                else if(gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
+                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.PARK;
                     canSwitchTimer = false;
                 }
                 canSwitchTimer = gamepad1.left_trigger < UniversalConstants.Triggered.TRIGGER && gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER;
                 break;
         }
+        if (gamepad1.dpad_left)
+            crater = Crater.LEFT;
+        if(gamepad1.dpad_right)
+            crater = Crater.RIGHT;
+        if(gamepad1.dpad_up)
+            IS_AEXTENDINGTM = true;
+        if(gamepad1.dpad_down)
+            IS_AEXTENDINGTM = false;
+        telemetry.addData("Active Timer: ", autoState);
+        telemetry.addData("sample dealy: ", sampleDelay);
+        telemetry.addData("claim delay: ", claimDelay);
+        telemetry.addData("parking delay: ", parkingDelay);
+        telemetry.addData("double-sample delay ", doubleSampleDelay);
+        telemetry.addData("IS_AEXTENDINGTM", IS_AEXTENDINGTM);
+        telemetry.addData("Crater", crater);
     }
     @Override
     public void start(){
@@ -301,22 +307,24 @@ public class DepotAuto extends WestBot15 {
                         if(thing){
                             double angleBetween = UniversalFunctions.normalizeAngleRadians(tempV.angle(), robotAngle.angle());
                             if (Math.sin(angleBetween) < 0) {
-                                drivetrain.setLeftPow(1);
-                                drivetrain.setRightPow(-1);
+                                drivetrain.setLeftPow(-i);
+                                drivetrain.setRightPow(i);
                             }
                             else {
                                 double cos = Math.cos(angleBetween);
                                 double turnMult = Math.abs(cos) + 1;
-                                drivetrain.setLeftPow(-turnMult * cos);
-                                drivetrain.setRightPow(turnMult * cos);
+                                drivetrain.setLeftPow(i*turnMult * cos);
+                                drivetrain.setRightPow(-i*turnMult * cos);
                             }
                             if(Math.abs(drivetrain.leftPow) < 0.9)
                                 thing = false;
                         }
                         else{
-                            drivetrain.teleOpLoop(tempV, new Vector2(), robotAngle);
-                            drivetrain.setLeftPow();
-                            drivetrain.setRightPow();
+                            if(UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay) {
+                                drivetrain.teleOpLoop(tempV, new Vector2(), robotAngle);
+                                drivetrain.setLeftPow();
+                                drivetrain.setRightPow();
+                            }
                         }
 
                         if (drivetrain.position.y < 37.5) {
