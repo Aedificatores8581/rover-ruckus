@@ -62,7 +62,7 @@ public class AExtendotm {
     }
 
     public boolean isRetracted() {
-        return backSwitch.isPressed();
+        return this.encoder.currentPosition < 20;
     }
 
     public boolean willBeRetracted() {

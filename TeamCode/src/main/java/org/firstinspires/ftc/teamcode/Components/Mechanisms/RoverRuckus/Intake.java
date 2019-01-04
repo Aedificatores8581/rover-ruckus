@@ -10,16 +10,21 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 public class Intake {
     public Servo dispensor;
     public DcMotor motor;
+    public Servo articulator;
 
     public double maxSpeed = 1;
     //TODO: find these values
-    public final double CLOSED_DISPENSOR_POSITION = 0, OPEN_DISPENSOR_POSITION = 1;
+    public static final double CLOSED_DISPENSOR_POSITION = 0, OPEN_DISPENSOR_POSITION = 1;
+
+    public static final double INTAKE_ARTICULATOR_DOWN_POSITION = 0,
+            INTAKE_ARTICULATOR_UP_POSITION = 1;
 
     public Intake() { }
 
     public void init(HardwareMap hardwareMap){
         motor = hardwareMap.dcMotor.get("int");
         dispensor = hardwareMap.servo.get("idis");
+        articulator = hardwareMap.servo.get("iart");
     }
 
     public double getPower(){
@@ -34,6 +39,13 @@ public class Intake {
         dispensor.setPosition(getPower() == 0 ? OPEN_DISPENSOR_POSITION : CLOSED_DISPENSOR_POSITION);
     }
 
+    public void articulateUp() {
+        articulator.setPosition(INTAKE_ARTICULATOR_UP_POSITION);
+    }
+
+    public void articulateDown() {
+        articulator.setPosition(INTAKE_ARTICULATOR_DOWN_POSITION);
+    }
 
     public String toString(){
         String dispensorState = "closed";
@@ -41,6 +53,8 @@ public class Intake {
             dispensorState = "open";
         }
 
-        return getPower() + ", " + "dispensor " + dispensorState;
+        return "Pow: " + String.valueOf(getPower()) +
+                "\nDispensor: " + dispensorState +
+                "\nArticulator: " + String.valueOf(articulator.getPosition());
     }
 }

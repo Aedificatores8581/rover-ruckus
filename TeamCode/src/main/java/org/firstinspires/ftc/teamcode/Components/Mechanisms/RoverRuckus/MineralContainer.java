@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 

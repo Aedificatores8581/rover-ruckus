@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
@@ -20,12 +23,25 @@ public class RoverRuckusTeleOp extends WestBot15 {
     Gamepad prev1;
 
     ExtensionSafety extensionSafety;
+    boolean canSwitchExtensionSafetyState;
+
+    IntakeDoorState intakeDoorState;
+    boolean canSwitchIntakeDoorState;
 
     public void init(){
+        prev1 = new Gamepad();
+        canSwitchExtensionSafetyState = true;
+        try {
+            prev1.copy(gamepad1);
+        } catch (RobotCoreException e) {
+            e.printStackTrace();
+        }
+
         isAutonomous = false;
         usingIMU = false;
 
-        extensionSafety = ExtensionSafety.ENABLED;
+        extensionSafety = ExtensionSafety.DISABLED;
+        intakeDoorState = IntakeDoorState.CLOSED;
 
         super.init();
         activateGamepad1();
@@ -41,50 +57,40 @@ public class RoverRuckusTeleOp extends WestBot15 {
         updateGamepad2();
         drivetrain.turnMult = 1;
 
-        // Determines Whether to slow down the intake
-        switch (extensionSafety) {
-            case ENABLED:
-                drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
-
-                if (gamepad1.left_stick_button && !prev1.left_stick_button) extensionSafety = ExtensionSafety.DISABLED;
-                break;
-            case DISABLED:
-                if (gamepad1.left_stick_button && !prev1.left_stick_button) extensionSafety = ExtensionSafety.DISABLED;
-                break;
-
-        }
-
-
         if(!gamepad1.left_stick_button&&aextendo.getExtensionLength() > 10 ) {
             drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
         }
 
-        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
+        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - rightStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + rightStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
-        aextendo.aextendTM(rightStick1.y);
         lift.setPower(gamepad2.left_stick_y);
 
-        if(gamepad1.a)
+        if (gamepad1.x) {
             extensionState = ExtensionState.RESETTING;
+        }
+
         switch (extensionState) {
             case NON_RESETTING:
-                aextendo.aextendTM(rightStick1.y);
-                if (gamepad1.left_bumper)
-                    aextendo.articulateUp();
-                else
-                    aextendo.articulateDown();
+                aextendo.aextendTM(leftStick1.y);
+                if (gamepad1.left_bumper) {
+                    intaek.articulateUp();
+                } else {
+                    intaek.articulateDown();
+                }
                 break;
             case RESETTING:
                 aextendo.aextendTM(-1);
-                aextendo.articulateUp();
+                intaek.articulateUp();
                 if (aextendo.isRetracted())
                     extensionState = ExtensionState.NON_RESETTING;
         }
-        if(leftStick2.magnitude() > UniversalConstants.Triggered.STICK)
-            lift2_0.lift(leftStick2.y);
 
+
+        /*if(leftStick2.magnitude() > UniversalConstants.Triggered.STICK) {
+            lift2_0.lift(leftStick2.y);
+        }
         else if(gamepad2.dpad_up) {
             lift2_0.lift(1);
             mineralContainer.articulateUp();
@@ -92,18 +98,70 @@ public class RoverRuckusTeleOp extends WestBot15 {
         else if(gamepad2.dpad_down) {
             lift2_0.lift(-1);
             mineralContainer.articulateDown();
+        }*/
+
+
+        if (gamepad1.dpad_up) intaek.dispense();
+
+        if (gamepad1.right_bumper) {
+            intaek.setPower(intaek.maxSpeed);
+        } else {
+            intaek.setPower(0.0);
         }
-        if(gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER)
-            intaek.dispense();
-        if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
+
+        /*if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
             mineralContainer.openCage();
         else
-            mineralContainer.closeCage();
+            mineralContainer.closeCage();*/
+
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
-        telemetry.addData("top", lift.topPressed());
-        telemetry.addData("bottom", lift.bottomPressed());
+        telemetry.addLine(lift.toString());
         prevTime = UniversalFunctions.getTimeInSeconds();
+
+        // Determines Whether to slow down the intake
+        switch (extensionSafety) {
+            case ENABLED:
+                drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
+
+                if (gamepad1.y && canSwitchExtensionSafetyState) {
+                    extensionSafety = ExtensionSafety.DISABLED;
+                    canSwitchExtensionSafetyState = false;
+                } else if (!gamepad1.y) {
+                    canSwitchExtensionSafetyState = true;
+                }
+                break;
+            case DISABLED:
+                if (gamepad1.y && canSwitchExtensionSafetyState) {
+                    extensionSafety = ExtensionSafety.ENABLED;
+                    canSwitchExtensionSafetyState = false;
+                }  else if (!gamepad1.y) {
+                    canSwitchExtensionSafetyState = true;
+                }
+                break;
+        }
+
+        switch (intakeDoorState) {
+            case OPEN:
+                intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
+
+                if (gamepad1.dpad_down && canSwitchIntakeDoorState) {
+                    intakeDoorState = IntakeDoorState.CLOSED;
+                    canSwitchIntakeDoorState = false;
+                } else if (!gamepad1.dpad_down) {
+                    canSwitchIntakeDoorState = true;
+                }
+                break;
+            case CLOSED:
+                intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
+                if (gamepad1.dpad_up && canSwitchIntakeDoorState) {
+                    intakeDoorState = IntakeDoorState.OPEN;
+                    canSwitchIntakeDoorState = false;
+                }  else if (!gamepad1.dpad_up) {
+                    canSwitchIntakeDoorState = true;
+                }
+                break;
+        }
 
         try {
             prev1.copy(gamepad1);
@@ -120,5 +178,10 @@ public class RoverRuckusTeleOp extends WestBot15 {
     enum ExtensionSafety {
         ENABLED,
         DISABLED
+    }
+
+    enum IntakeDoorState {
+        OPEN,
+        CLOSED
     }
 }

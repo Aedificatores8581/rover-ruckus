@@ -51,8 +51,8 @@ public class CraterAuto1 extends WestBot15 {
 
         top = new TouchSensor();
         bottom = new TouchSensor();
-        top.init(hardwareMap, "tts");
-        bottom.init(hardwareMap, "bts");
+        top.init(hardwareMap, "top");
+        bottom.init(hardwareMap, "bot");
         activateGamepad1();
         //TODO: remove from init
         startAngleY = getGyroAngleY();
