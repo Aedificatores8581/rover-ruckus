@@ -21,6 +21,9 @@ import ftc.vision.Detector;
 
 @Autonomous (name = "Depot auto", group = "competition autonomous   ")
 public class DepotAuto extends WestBot15 {
+
+    final boolean IS_AEXTENDINGTM = true;
+
     BlockDetector detector;
     boolean hasDrove;
     double prevLeft, prevRight = 0;
@@ -240,14 +243,28 @@ public class DepotAuto extends WestBot15 {
                     else
                         newVect.scalarMultiply(1.0 / 12);
                     if(Math.abs(sampleVect.x) < -8) {
-                        if(robotAngle.angle() < -(Math.PI / 2 - Math.atan2(72
-                                -37.97*1.2, sampleVect.x))){
+                        if(robotAngle.angle() < -(Math.PI / 2 - Math.atan2(72 - 37.97 * 1.2, sampleVect.x))){
                             drivetrain.setLeftPow(1);
                             drivetrain.setRightPow(1);
                         }
                         else
                             drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                        d = 66;
+                        d = 71;
+                    }
+                    else if(sampleVect.x > 8){
+                        double angleBetween = UniversalFunctions.normalizeAngleRadians(newVect.angle(), robotAngle.angle());
+                        if (Math.sin(angleBetween) < 0) {
+                            drivetrain.setLeftPow(1);
+                            drivetrain.setRightPow(-1);
+                        }
+                        else {
+                            drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
+                            drivetrain.setLeftPow();
+                            drivetrain.setRightPow();
+                        }
+                    }
+                    else if(sampleVect.x < -8){
+                        d = 68;
                     }
                     else
                         drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
@@ -302,16 +319,23 @@ public class DepotAuto extends WestBot15 {
                             drivetrain.setLeftPow();
                             drivetrain.setRightPow();
                         }
-                        if (drivetrain.position.y < 35) {
-                            aextendo.aextendTM(1);
-                            drivetrain.stop();
+                        if(IS_AEXTENDINGTM) {
+                            if (drivetrain.position.y < 37.5) {
+                                aextendo.aextendTM(1);
+                                drivetrain.stop();
+                            }
+                            if (drivetrain.position.y - (aextendo.getExtensionLength() + 6) * Math.sqrt(2) / 2 < 0 || aextendo.getExtensionLength() > 25)
+                                onCrater = true;
                         }
-                        if (drivetrain.position.y - (aextendo.getExtensionLength() + 6)* Math.sqrt(2) / 2 < 0 || aextendo.getExtensionLength() > 25)
-                            onCrater = true;
+                        else{
+                            onCrater = Math.abs(normalizeGyroAngle()) > ON_CRATER_RIM_THRESHOLD;
+                        }
                     } else {
+                        drivetrain.stop();
                         aextendo.extendo.setPower(0);
-
-                        //TODO: intaek
+                        if(IS_AEXTENDINGTM) {
+                            //TODO: intaek
+                        }
                     }
 
                     break;
