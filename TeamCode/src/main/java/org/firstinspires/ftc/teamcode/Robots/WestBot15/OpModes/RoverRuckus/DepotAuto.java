@@ -22,7 +22,7 @@ import ftc.vision.Detector;
 @Autonomous (name = "Depot auto", group = "competition autonomous   ")
 public class DepotAuto extends WestBot15 {
 
-    final boolean IS_AEXTENDINGTM = true;
+    final boolean IS_AEXTENDINGTM = false;
 
     BlockDetector detector;
     boolean hasDrove;
