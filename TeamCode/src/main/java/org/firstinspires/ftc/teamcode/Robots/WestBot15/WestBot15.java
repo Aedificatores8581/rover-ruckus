@@ -75,6 +75,7 @@ public abstract class WestBot15 extends Robot {
         DOUBLE_SAMPLE,
         CYCLE,
         CLAIM,
-        PARK
+        PARK,
+        FORWARD
     }
 }
