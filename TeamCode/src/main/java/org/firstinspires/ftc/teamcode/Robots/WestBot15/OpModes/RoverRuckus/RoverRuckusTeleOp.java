@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
@@ -14,9 +16,17 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 public class RoverRuckusTeleOp extends WestBot15 {
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
     double prevTime = 0;
+
+    Gamepad prev1;
+
+    ExtensionSafety extensionSafety;
+
     public void init(){
         isAutonomous = false;
         usingIMU = false;
+
+        extensionSafety = ExtensionSafety.ENABLED;
+
         super.init();
         activateGamepad1();
         activateGamepad2();
@@ -30,16 +40,32 @@ public class RoverRuckusTeleOp extends WestBot15 {
         updateGamepad1();
         updateGamepad2();
         drivetrain.turnMult = 1;
+
+        // Determines Whether to slow down the intake
+        switch (extensionSafety) {
+            case ENABLED:
+                drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
+
+                if (gamepad1.left_stick_button && !prev1.left_stick_button) extensionSafety = ExtensionSafety.DISABLED;
+                break;
+            case DISABLED:
+                if (gamepad1.left_stick_button && !prev1.left_stick_button) extensionSafety = ExtensionSafety.DISABLED;
+                break;
+
+        }
+
+
         if(!gamepad1.left_stick_button&&aextendo.getExtensionLength() > 10 ) {
             drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
         }
+
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
         drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         aextendo.aextendTM(rightStick1.y);
         lift.setPower(gamepad2.left_stick_y);
-        /*
+
         if(gamepad1.a)
             extensionState = ExtensionState.RESETTING;
         switch (extensionState) {
@@ -72,24 +98,27 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
             mineralContainer.openCage();
         else
-            mineralContainer.closeCage();*/
+            mineralContainer.closeCage();
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
         telemetry.addData("top", lift.topPressed());
         telemetry.addData("bottom", lift.bottomPressed());
         prevTime = UniversalFunctions.getTimeInSeconds();
+
+        try {
+            prev1.copy(gamepad1);
+        } catch (RobotCoreException e) {
+            telemetry.addLine(e.getMessage());
+        }
     }
+
     enum ExtensionState{
         RESETTING,
         NON_RESETTING
     }
-    enum state1{
-        MIN,
-        MAX
-    }
-    enum state2{
-        DISP,
-        THING1,
-        THING2
+
+    enum ExtensionSafety {
+        ENABLED,
+        DISABLED
     }
 }
