@@ -58,8 +58,6 @@ public class DepotAuto extends WestBot15 {
         super.init();
 
         activateGamepad1();
-        //TODO: remove from init
-        startAngleY = getGyroAngleY();
         detector = new BlockDetector();
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
@@ -146,6 +144,7 @@ public class DepotAuto extends WestBot15 {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay) {
                             autoState = AutoState.FORWARD;
                             time = UniversalFunctions.getTimeInSeconds();
+                            startAngleY = getGyroAngleY();
                         }
                     }
                     break;
@@ -159,7 +158,7 @@ public class DepotAuto extends WestBot15 {
                     setRobotAngle();
                     drivetrain.maxSpeed = 0.6;
 
-                    if(drivetrain.position.y < 0+6.0) {
+                    if(drivetrain.position.y < 6.0) {
                         drivetrain.setLeftPow(1);
                         drivetrain.setRightPow(1);
                     }
@@ -194,6 +193,7 @@ public class DepotAuto extends WestBot15 {
                         sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
                         if (sampleVect.x > 10) {
                             sampleVect.x += 4;
+                            d=70;
                         }
                         if(Math.abs(sampleVect.x) < 5)
                             d = 72;
@@ -328,7 +328,8 @@ public class DepotAuto extends WestBot15 {
                                 onCrater = true;
                         }
                         else{
-                            onCrater = Math.abs(normalizeGyroAngle()) > ON_CRATER_RIM_THRESHOLD;
+                            if(thing = false)
+                                onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
                         }
                     } else {
                         drivetrain.stop();
