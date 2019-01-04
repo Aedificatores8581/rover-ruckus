@@ -293,7 +293,6 @@ public class DepotAuto extends WestBot15 {
                     prevLeft = drivetrain.averageLeftEncoders();
                     prevRight = drivetrain.averageRightEncoders();
                     setRobotAngle();
-                    drivetrain.maxSpeed = 0.5;
 
                     if (onCrater == false) {
                         int i = crater == Crater.RIGHT ? 1 : -1;
@@ -319,11 +318,21 @@ public class DepotAuto extends WestBot15 {
                             drivetrain.setLeftPow();
                             drivetrain.setRightPow();
                         }
-                        if(IS_AEXTENDINGTM) {
-                            if (drivetrain.position.y < 37.5) {
+
+                        if (drivetrain.position.y < 37.5) {
+                            if(IS_AEXTENDINGTM) {
+
+                                drivetrain.maxSpeed = 0.5;
                                 aextendo.aextendTM(1);
                                 drivetrain.stop();
                             }
+                            else{
+                                drivetrain.maxSpeed=0.8;
+                            }
+                        }
+                        else
+                            drivetrain.maxSpeed = 0.5;
+                        if(IS_AEXTENDINGTM) {
                             if (drivetrain.position.y - (aextendo.getExtensionLength() + 6) * Math.sqrt(2) / 2 < 0 || aextendo.getExtensionLength() > 25)
                                 onCrater = true;
                         }
