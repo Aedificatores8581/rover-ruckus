@@ -13,8 +13,8 @@ public class MineralContainer {
                         CAGE_CLOSED_POSITION = 0;
 
     public void init(HardwareMap hardwareMap){
-        articulator = hardwareMap.servo.get("cart");
-        cage = hardwareMap.servo.get("cage");
+        articulator = hardwareMap.servo.get("con1");
+        cage = hardwareMap.servo.get("con2");
         articulator.setPosition(ARTICULATOR_DOWN_POSITION);
         cage.setPosition(CAGE_CLOSED_POSITION);
     }

@@ -19,7 +19,7 @@ public class Lift {
         liftMotor = hardwareMap.dcMotor.get("hangLift");
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         topTouchSensor.init(hardwareMap, "top");
         bottomTouchSensor.init(hardwareMap, "bot");
         hasInit = true;

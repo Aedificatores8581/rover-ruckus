@@ -56,6 +56,7 @@ public abstract class WestBot15 extends Robot {
         intaek.init(hardwareMap);
 
         lift.init(hardwareMap);
+        mineralContainer.init(hardwareMap);
         if(hadleyOnSchedule){
             //init things here
         }
