@@ -27,7 +27,7 @@ public class DepotAuto extends WestBot15 {
     boolean IS_AEXTENDINGTM = false;
     final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
     BlockDetector detector;
-    boolean hasDrove;
+    boolean hasDrove = false;
     double prevLeft, prevRight = 0;
     Vector2 sampleVect = new Vector2();
     boolean onCrater = false;
@@ -40,6 +40,7 @@ public class DepotAuto extends WestBot15 {
     double initialPosition = 0;
     Crater crater = Crater.LEFT;
     boolean doubleSample = false;
+    boolean singleVect = false;
     double prevTime = 0;
     boolean canSwitchTimer = true;
 
@@ -154,12 +155,12 @@ public class DepotAuto extends WestBot15 {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay) {
                             autoState = AutoState.FORWARD;
                             time = UniversalFunctions.getTimeInSeconds();
-                            startAngleY = getGyroAngleY();
+                            //startAngleY = getGyroAngleY();
                         }
                     }
                     break;
                 case FORWARD:
-                    startAngleY = getGyroAngleY();
+                    //startAngleY = getGyroAngleY();
                     drivetrain.updateEncoders();
                     double leftChange3 = drivetrain.averageLeftEncoders() - prevLeft;
                     double rightChange3 = drivetrain.averageRightEncoders() - prevRight;
@@ -178,6 +179,11 @@ public class DepotAuto extends WestBot15 {
                     }
                     break;
                 case SAMPLE:
+                    drivetrain.leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    drivetrain.leftFore.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    drivetrain.rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    drivetrain.rightFore.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
                     intaek.setPower(1);
                     intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
                     lift.setPower(1);
@@ -188,7 +194,7 @@ public class DepotAuto extends WestBot15 {
                     prevLeft = drivetrain.averageLeftEncoders();
                     prevRight = drivetrain.averageRightEncoders();
                     setRobotAngle();
-                    drivetrain.maxSpeed = 0.25;
+                    drivetrain.maxSpeed = 0.45;
                     if (UniversalFunctions.getTimeInSeconds() - startTime > 2)
                         speedMult = 1;
                     Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
@@ -207,6 +213,7 @@ public class DepotAuto extends WestBot15 {
                             sampleVect.x += 4;
                             d=70;
                         }
+                        hasDrove = true;
                         if(Math.abs(sampleVect.x) < 5)
                             d = 72;
                     }
@@ -214,28 +221,31 @@ public class DepotAuto extends WestBot15 {
                         drivetrain.position.y += 37.97 - newY;
                         obtainedSampleLocation = true;
                         sampleVect.y = 37.97;
-                        sampleVect.scalarMultiply(1.2);
                         initialPosition = drivetrain.position.y;
                     }
-                    hasDrove = true;
                     Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
                     newVect.x -= drivetrain.position.x;
                     newVect.y -= drivetrain.position.y;
+                    newVect.scalarMultiply(1.2);
                     Vector2 temp2 = new Vector2(newVect.x, newVect.y);
                     if (newVect.magnitude() > 12)
                         newVect.setFromPolar(speedMult, newVect.angle());
                     else
                         newVect.scalarMultiply(6 / 12);
-                    drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                    drivetrain.setLeftPow();
-                    drivetrain.setRightPow();
-                    if (sampleVect.x < -8){
-                        if(drivetrain.leftPow > drivetrain.rightPow){
-                            drivetrain.setRightPow(1);
-                            drivetrain.setLeftPow(1);
-                        }
+
+                    if (Math.abs(sampleVect.x) < 5) {
+                        drivetrain.leftPow = 1;
+                        drivetrain.rightPow = 1;
+                        drivetrain.setLeftPow();
+                        drivetrain.setRightPow();
                     }
-                    if (newVect.magnitude() < 0.3333333 || (drivetrain.position.y*1.3 - sampleVect.y > 0)) {
+                    else{
+     //                   if(singleVect == false){
+                        drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
+   //                     singleVect = true;
+ //                       }
+                    }
+                    if (newVect.magnitude() < 0.5 || (-drivetrain.position.y + sampleVect.y < 0)) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay)
                             autoState = AutoState.CLAIM;
                     }
@@ -370,10 +380,8 @@ public class DepotAuto extends WestBot15 {
             telemetry.addData("sampleVect, ", sampleVect);
             telemetry.addData("element position", detector.element);
             telemetry.addData("position", drivetrain.position.toString());
-            telemetry.addData("turnVector", drivetrain.turnVector);
             telemetry.addData("onCrater", onCrater);
             telemetry.addData("state", autoState);
-            telemetry.addData("topPressed", lift.topPressed());
         }
     }
 

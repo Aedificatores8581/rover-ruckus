@@ -61,8 +61,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
             drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
         }
 
-        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - rightStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + rightStick1.x * drivetrain.turnMult;
+        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         lift.setPower(gamepad2.left_stick_y);
@@ -80,6 +80,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
             mineralContainer.openCage();
             mineralContainer.articulateUp();
         }
+        aextendo.aextendTM(rightStick1.y);
+        /*
         switch (extensionState) {
             case NON_RESETTING:
                 aextendo.aextendTM(leftStick1.y);
@@ -105,21 +107,22 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
         if(rightStick2.magnitude() > UniversalConstants.Triggered.STICK) {
             lift2_0.lift(rightStick2.y);
-        }
+        }*/
+        if(gamepad1.left_bumper)
+            intaek.setPower(1);
+        else if (gamepad1.right_bumper)
+            intaek.setPower(-1);
+        else
+            intaek.setPower(0);
+        intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
+        /*
         if(gamepad2.right_trigger > 0.2)
             lift2_0.articulate(-1);
         else if(gamepad2.right_bumper)
-            lift2_0.articulate(1);
-        if (gamepad1.dpad_up)
-            intaek.dispense();
-        if (gamepad1.right_bumper) {
-            intaek.setPower(intaek.maxSpeed);
-        } else {
-            intaek.setPower(0.0);
-        }
-        if(gamepad1.left_bumper)
+            lift2_0.articulate(1);*/
+        if(gamepad1.dpad_up)
             intaek.articulateUp();
-        else
+        if(gamepad1.dpad_down)
             intaek.articulateDown();
 
         /*if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
@@ -153,7 +156,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
                 }
                 break;
         }
-
+/*
         switch (intakeDoorState) {
             case OPEN:
                 intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
@@ -175,7 +178,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
                 }
                 break;
         }
-
+*/
         try {
             prev1.copy(gamepad1);
         } catch (RobotCoreException e) {
