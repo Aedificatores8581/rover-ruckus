@@ -226,7 +226,7 @@ public class DepotAuto extends WestBot15 {
                     Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
                     newVect.x -= drivetrain.position.x;
                     newVect.y -= drivetrain.position.y;
-                    newVect.scalarMultiply(1.2);
+                    //newVect.scalarMultiply(1.2);
                     Vector2 temp2 = new Vector2(newVect.x, newVect.y);
                     if (newVect.magnitude() > 12)
                         newVect.setFromPolar(speedMult, newVect.angle());
@@ -280,6 +280,9 @@ public class DepotAuto extends WestBot15 {
                             drivetrain.setRightPow(1);
                             drivetrain.setLeftPow(1);
                         }
+                    }
+                    if(sampleVect.x > 8){
+                        d=70;
                     }
                     if (newVect.magnitude() < 0.2) {
                         drivetrain.setRightPow(0);
