@@ -139,35 +139,21 @@ public abstract class TankDT extends Drivetrain {
     }
 
     public void driveToPoint(double x, double y, Direction dir){
-        direction = dir;
-        destination = new Vector2(x - position.x, y - position.y);
+        destination = new Vector2(x, y);
         angleBetween = UniversalFunctions.normalizeAngleRadians(destination.angle(), position.angle);
-            switch (direction) {
-                case FOR:
-                    directionMult = 1;
-                    break;
-                case BACK:
-                    directionMult = -1;
-                    break;
+        if(Math.sin(angleBetween) * (dir == Direction.FOR ? 1: -1) < 1){
+            if(Math.sin(angleBetween - Math.PI / 2) > 0){
+                setLeftPow(-1);
+                setRightPow(1);
             }
-            double sin = Math.sin(angleBetween);
-            turnMult = Math.abs(sin) + 1;
-            leftPow = directionMult * (UniversalFunctions.clamp(0, destination.magnitude(), 1) + turnMult * sin);
-            rightPow = directionMult * (UniversalFunctions.clamp(0, destination.magnitude(), 1) - turnMult * sin);
-        switch (direction) {
-            case FOR:
-                if (Math.sin(angleBetween) < 0) {
-                    rightPow = rightPow > leftPow ? 1 : -1;
-                    leftPow = -rightPow;
-                }
-                break;
-            case BACK:
-                directionMult = -1;
-                if (Math.sin(angleBetween) > 0) {
-                    rightPow = rightPow < leftPow ? 1 : -1;
-                    leftPow = -rightPow;
-                }
-                break;
+            else{
+                setLeftPow(1);
+                setRightPow(-1);
+            }
+        }
+        else{
+            controlState = ControlState.FIELD_CENTRIC;
+            teleOpLoop(destination, new Vector2(), position.angle);
         }
     }
 

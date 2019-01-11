@@ -18,7 +18,7 @@ public class WestCoast15 extends TankDT {
     public MotorEncoder rfEncoder, lfEncoder, lrEncoder, rrEncoder;
     public DcMotor.ZeroPowerBehavior zeroPowerBehavior;
     private final double UNIQUE_ENC_PER_INCH = 70 / Math.PI;
-    //TODO: Find this value
+    double prevLeftEcvVal = 0, prevRightEncVal = 0;
 
     public WestCoast15() {
         ENC_PER_INCH = UNIQUE_ENC_PER_INCH;
@@ -119,7 +119,13 @@ public class WestCoast15 extends TankDT {
         rrEncoder.updateEncoder();
         lrEncoder.updateEncoder();
     }
-
+    public void updateLocation(){
+        updateEncoders();
+        double leftVal = averageLeftEncoders(), rightVal = averageRightEncoders();
+        updateLocation(leftVal - prevLeftEcvVal, rightVal - prevRightEncVal);
+        prevLeftEcvVal = leftVal;
+        prevRightEncVal = rightVal;
+    }
     public double averageLeftEncoders(){
         return (lfEncoder.currentPosition + lrEncoder.currentPosition) / 2;
     }
