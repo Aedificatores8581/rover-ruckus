@@ -6,17 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.GenericDetector;
+import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
-import org.opencv.core.Size;
 
 import ftc.vision.Detector;
 
 @Autonomous(name = "Block Detector Test", group = "none")
 public class VisionTest extends OpMode {
-    BlockDetector detector;
+    GoldDetector detector;
     Point sampleLocation;
     MotoG4 motoG4;
 
@@ -26,7 +24,7 @@ public class VisionTest extends OpMode {
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(0, 0, 12), new Point3(0, 0, 0));
 
-        detector = new BlockDetector();
+        detector = new GoldDetector();
         detector.opState = Detector.OperatingState.TUNING;
 
         FtcRobotControllerActivity.frameGrabber.detector = this.detector;

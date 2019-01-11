@@ -11,16 +11,14 @@ import org.firstinspires.ftc.teamcode.Universal.Math.GyroAngles;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
-import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
 @Autonomous(name = "sampling test", group = "none")
 public class SamplingTest extends WestBot15 {
-    BlockDetector detector;
+    GoldDetector detector;
     boolean hasDrove;
     double prevLeft, prevRight = 0;
     double hardNewY;
@@ -44,7 +42,7 @@ public class SamplingTest extends WestBot15 {
         usingIMU = true;
         super.init();
         activateGamepad1();
-        detector = new BlockDetector();
+        detector = new GoldDetector();
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
         angle = new Orientation();

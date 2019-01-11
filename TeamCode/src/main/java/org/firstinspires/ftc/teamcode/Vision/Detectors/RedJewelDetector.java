@@ -124,7 +124,7 @@ public class RedJewelDetector extends Detector {
     public void tune(Mat image){
         Mat i2 = new Mat();
         image.copyTo(i2);
-        BlockDetector bl = new BlockDetector();
+        GoldDetector bl = new GoldDetector();
         bl.G_MIN = 122;
         bl.R_MAX = 255;
         bl.tune(image);

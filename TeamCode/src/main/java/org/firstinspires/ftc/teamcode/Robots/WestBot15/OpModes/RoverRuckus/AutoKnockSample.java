@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
-import org.firstinspires.ftc.teamcode.Vision.TennisBallDetector;
+import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
 
@@ -25,7 +22,7 @@ import ftc.vision.Detector;
 
 @Autonomous(name = "KnockSample", group = "Auto Testing")
 public class AutoKnockSample extends WestBot15 {
-    BlockDetector detector;
+    GoldDetector detector;
     Point sampleLocation;
     MotoG4 motoG4;
     Pose desiredPose;
@@ -37,7 +34,7 @@ public class AutoKnockSample extends WestBot15 {
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(0, 0, 12), new Point3(0, 0, 0));
 
-        detector = new BlockDetector();
+        detector = new GoldDetector();
         detector.isInitialized = true;
         detector.opState = Detector.OperatingState.DETECTING;
 

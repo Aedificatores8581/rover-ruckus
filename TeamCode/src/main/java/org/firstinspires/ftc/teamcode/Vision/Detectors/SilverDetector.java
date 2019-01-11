@@ -14,9 +14,7 @@ import java.util.List;
 
 import ftc.vision.Detector;
 
-public class
-
-BlockDetector extends Detector {
+public class SilverDetector extends Detector {
 
     public ArrayList<Point> elements = new ArrayList<Point>(1);
     public Point element = new Point();
@@ -34,11 +32,11 @@ BlockDetector extends Detector {
             S_MAX = 255,
             V_MAX = 255;
     public int R_MIN = 164,
-    G_MIN = 76,
-    B_MIN = 0,
-    R_MAX = 243,
-    G_MAX = 237,
-    B_MAX = 176;
+            G_MIN = 76,
+            B_MIN = 0,
+            R_MAX = 243,
+            G_MAX = 237,
+            B_MAX = 176;
     //0 69 62 87 255 255
 
     public Mat workingImage = new Mat();
@@ -53,7 +51,7 @@ BlockDetector extends Detector {
     public Mat b = new Mat();
     public OperatingState opState = OperatingState.TUNING;
 
-    public BlockDetector(){
+    public SilverDetector(){
         super();
     }
 
@@ -109,10 +107,7 @@ BlockDetector extends Detector {
         Core.bitwise_and(thresh, threshold2, threshold);
 */
         Imgproc.cvtColor(image, invert, Imgproc.COLOR_RGB2YUV);
-        Core.inRange(invert, new Scalar(0, 0, 0), new Scalar(255, 70, 255), threshold);
-
-        //Imgproc.threshold(invert.col(1), threshold, 70, 255, Imgproc.THRESH_BINARY);
-
+        Core.inRange(invert, new Scalar(90, 0, 0), new Scalar(255, 90, 255), threshold);
         Mat erosionFactor = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
 
         Imgproc.erode(threshold, threshold, erosionFactor);
@@ -154,7 +149,7 @@ BlockDetector extends Detector {
 
         Imgproc.drawContours(workingImage, contours,-1, new Scalar(255,0,0),2);
         Imgproc.circle(workingImage, center, (int) radius[0], new Scalar(0, 0, 255), 5);
-       // Imgproc.distanceTransform();
+        // Imgproc.distanceTransform();
         //Mat dilationFactor = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 1));
         //Imgproc.dilate(thresh, thresh, dilationFactor);
         //Imgproc.GaussianBlur(i, i, new Size(9, 9), 2, 2);
@@ -170,5 +165,39 @@ BlockDetector extends Detector {
         invert.release();
 
         threshold2.release();
+    }
+    public List<MatOfPoint> detectContours(Mat image) {
+        Mat threshold2 = new Mat(image.size(), 0);
+        threshold = new Mat(image.size(), 0);
+        thresh = new Mat(image.size(), 0);
+        i = new Mat(image.size(), 0);
+        invert = new Mat(image.size(), 0);
+
+        Imgproc.cvtColor(image, invert, Imgproc.COLOR_RGB2YUV);
+        Core.inRange(invert, new Scalar(90, 0, 0), new Scalar(255, 90, 255), threshold);
+
+        Mat erosionFactor = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+
+        Imgproc.erode(threshold, threshold, erosionFactor);
+        Imgproc.dilate(threshold, threshold, erosionFactor);
+
+        Mat mask = new Mat(image.size(), 0);
+        threshold.copyTo(mask);
+        image.copyTo(i, mask);
+
+        Imgproc.GaussianBlur(i, i, new Size(9, 9), 2, 2);
+
+        //Imgproc.HoughCircles(i, i, Imgproc.CV_HOUGH_GRADIENT, 1, i.rows()/8, 100, 20, 0, 0);
+
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Imgproc.findContours(threshold, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        threshold.release();
+        thresh.release();
+        i.release();
+        invert.release();
+        threshold2.release();
+
+        return contours;
     }
 }

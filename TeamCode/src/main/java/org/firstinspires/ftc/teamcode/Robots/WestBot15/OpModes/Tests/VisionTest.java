@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
@@ -9,13 +8,13 @@ import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
+import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 @Autonomous(name = "block detector test", group = "none")
 public class VisionTest extends WestBot15 {
-    BlockDetector detector;
+    GoldDetector detector;
     boolean hasDrove;
     double prevLeft, prevRight = 0;
     Point newNewPoint = new Point();
@@ -26,7 +25,7 @@ public class VisionTest extends WestBot15 {
         msStuckDetectInit = 500000;
         super.init();
         activateGamepad1();
-        detector = new BlockDetector();
+        detector = new GoldDetector();
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
 

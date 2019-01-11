@@ -33,7 +33,7 @@ public abstract class Robot extends OpMode {
                    leftStick2,
                    rightStick2;
     public Vector2 robotAngle;
-
+    public double opModeStartTime = 0;
     Module   module      = Module.REV;
 
     public Robot(Module mod, boolean isUsingIMU){
@@ -74,6 +74,7 @@ public abstract class Robot extends OpMode {
     //sets the start angle of the robot
     public void start(){
         if(isUsingIMU()) { startAngle = getGyroAngle() - zeroDegreeAngle; }
+        opModeStartTime = UniversalFunctions.getTimeInSeconds();
     }
 
     //returns the Z value of the gyro sensor
@@ -169,6 +170,10 @@ public abstract class Robot extends OpMode {
     //Returns true if and only if the robot is using the imu and a REV module
     private boolean isUsingIMU(){
         return module.equals(Module.REV) && usingIMU;
+    }
+
+    public double getCurrentTime(){
+        return UniversalFunctions.getTimeInSeconds() - opModeStartTime;
     }
 
 }

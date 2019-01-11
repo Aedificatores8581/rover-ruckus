@@ -28,6 +28,7 @@ import org.opencv.core.Point3;
  */
 
 public abstract class WestBot15 extends Robot {
+    public Servo maerkr;
     public boolean isAutonomous = false;
     //IMPORTANT: phone locations should be taken in relation to the robot, not the field
     public Intake intaek = new Intake();
@@ -36,10 +37,10 @@ public abstract class WestBot15 extends Robot {
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
     public Lift2_0 lift2_0 = new Lift2_0();
     public Map2 robotMap, fieldMap;
-    public boolean hadleyOnSchedule = false;
+    public final boolean hadleyOnSchedule = true;
     public MotoG4 motoG4 = new MotoG4();
-    protected double currentAngle = 0;
     public MineralContainer mineralContainer = new MineralContainer();
+    public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
     @Override
     public void init(){
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
@@ -52,13 +53,13 @@ public abstract class WestBot15 extends Robot {
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(0, 6, 13.5), new Point3(0, 0, 0));
 
-        aextendo.init(hardwareMap, false);
-        intaek.init(hardwareMap);
-
-        lift.init(hardwareMap);
-        mineralContainer.init(hardwareMap);
         if(hadleyOnSchedule){
-            //init things here
+            aextendo.init(hardwareMap, false);
+            intaek.init(hardwareMap);
+            maerkr = hardwareMap.servo.get("mrkr");
+            maerkr.setPosition(MARKER_CLOSED_POSITION);
+            lift.init(hardwareMap);
+            mineralContainer.init(hardwareMap);
         }
     }
 
@@ -82,4 +83,5 @@ public abstract class WestBot15 extends Robot {
         PARK,
         FORWARD
     }
+
 }
