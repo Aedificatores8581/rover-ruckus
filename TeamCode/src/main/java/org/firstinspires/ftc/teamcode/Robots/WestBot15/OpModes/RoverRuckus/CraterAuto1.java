@@ -4,26 +4,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Map.AttractionField;
-import org.firstinspires.ftc.teamcode.Universal.Math.GyroAngles;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
-import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
+import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
 @Autonomous (name = "Crater auto", group = "competition autonomous   ")
 public class CraterAuto1 extends WestBot15 {
-    BlockDetector detector;
+    GoldDetector detector;
 
     boolean hasDrove;
 
@@ -43,7 +39,7 @@ public class CraterAuto1 extends WestBot15 {
 
     final boolean USING_VECTOR_FIELDS= false;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
-    AutoState autoState = AutoState.SAMPLE;
+    AutoState autoState = AutoState.LOWER;
     public void init(){
         drivetrain.position = new Pose();
         msStuckDetectInit = 500000;
@@ -56,7 +52,7 @@ public class CraterAuto1 extends WestBot15 {
         activateGamepad1();
         //TODO: remove from init
         startAngleY = getGyroAngleY();
-        detector = new BlockDetector();
+        detector = new GoldDetector();
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
         drivetrain.controlState = TankDT.ControlState.FIELD_CENTRIC;
@@ -85,8 +81,8 @@ public class CraterAuto1 extends WestBot15 {
     public void loop(){
         switch (autoState) {
             case LOWER:
-                lift.setPower(1);
-                if(top.isPressed()) {
+                lift.setPower(-1);
+                if(lift.topPressed()) {
                     lift.liftMotor.setPower(0);
                     autoState = AutoState.SAMPLE;
                     startTime = UniversalFunctions.getTimeInSeconds();
@@ -100,7 +96,7 @@ public class CraterAuto1 extends WestBot15 {
                 prevLeft = drivetrain.averageLeftEncoders();
                 prevRight = drivetrain.averageRightEncoders();
                 setRobotAngle();
-                drivetrain.maxSpeed = 0.6;
+                drivetrain.maxSpeed = 0.7;
                 if(UniversalFunctions.getTimeInSeconds() - startTime > 2)
                     speedMult = 1;
 

@@ -8,16 +8,12 @@ import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
-import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
-import org.firstinspires.ftc.teamcode.Universal.Map.AttractionField;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
-import org.firstinspires.ftc.teamcode.Vision.Detectors.BlockDetector;
-import org.opencv.core.Point;
+import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 
 import ftc.vision.Detector;
 
@@ -26,7 +22,7 @@ public class DepotAuto extends WestBot15 {
     Servo maerkr;
     boolean IS_AEXTENDINGTM = false;
     final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
-    BlockDetector detector;
+    GoldDetector detector;
     boolean hasDrove = false;
     double prevLeft, prevRight = 0;
     Vector2 sampleVect = new Vector2();
@@ -57,7 +53,7 @@ public class DepotAuto extends WestBot15 {
         maerkr = hardwareMap.servo.get("mrkr");
         maerkr.setPosition(MARKER_CLOSED_POSITION);
         activateGamepad1();
-        detector = new BlockDetector();
+        detector = new GoldDetector();
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
         drivetrain.controlState = TankDT.ControlState.FIELD_CENTRIC;
@@ -226,7 +222,7 @@ public class DepotAuto extends WestBot15 {
                     Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
                     newVect.x -= drivetrain.position.x;
                     newVect.y -= drivetrain.position.y;
-                    //newVect.scalarMultiply(1.2);
+                    newVect.scalarMultiply(1.2);
                     Vector2 temp2 = new Vector2(newVect.x, newVect.y);
                     if (newVect.magnitude() > 12)
                         newVect.setFromPolar(speedMult, newVect.angle());
@@ -240,10 +236,10 @@ public class DepotAuto extends WestBot15 {
                         drivetrain.setRightPow();
                     }
                     else{
-     //                   if(singleVect == false){
+                        //                   if(singleVect == false){
                         drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-   //                     singleVect = true;
- //                       }
+                        //                     singleVect = true;
+                        //                       }
                     }
                     if (newVect.magnitude() < 0.5 || (-drivetrain.position.y + sampleVect.y < 0)) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay)
@@ -281,9 +277,6 @@ public class DepotAuto extends WestBot15 {
                             drivetrain.setLeftPow(1);
                         }
                     }
-                    if(sampleVect.x > 8){
-                        d=70;
-                    }
                     if (newVect.magnitude() < 0.2) {
                         drivetrain.setRightPow(0);
                         drivetrain.setLeftPow(0);
@@ -309,7 +302,7 @@ public class DepotAuto extends WestBot15 {
                     if (onCrater == false) {
                         int i = crater == Crater.RIGHT ? 1 : -1;
                         Vector2 tempV = new Vector2(i * Math.sqrt(2) / 2, -Math.sqrt(2) / 2);
-                        tempV.setFromPolar(tempV.magnitude(), tempV.angle() + i * Math.toRadians(5));
+                        tempV.setFromPolar(tempV.magnitude(), tempV.angle());
                         if(thing){
                             double angleBetween = UniversalFunctions.normalizeAngleRadians(tempV.angle(), robotAngle.angle());
                             if (Math.sin(angleBetween) < 0) {
