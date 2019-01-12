@@ -55,7 +55,30 @@ public abstract class TankDT extends Drivetrain {
         SMOOTH,
         FAST
     }
-
+    public void newFieldCentric(Vector2 destinationVect, Vector2 angle, double threshold) {
+        if(destinationVect.magnitude() > threshold)
+            destinationVect.setFromPolar(1, destinationVect.angle());
+        else
+            destinationVect.scalarMultiply(1.0 / threshold);
+        angleBetween = UniversalFunctions.normalizeAngleRadians(destinationVect.angle(), angle.angle());
+        switch (direction) {
+            case FOR:
+                directionMult = 1;
+                angleBetween = UniversalFunctions.normalizeAngle180Radians(angleBetween);
+                angleBetween = UniversalFunctions.clamp(-Math.PI / 2, angleBetween, Math.PI / 2);
+                break;
+            case BACK:
+                directionMult = -1;
+                angleBetween = UniversalFunctions.clamp(Math.PI / 2, angleBetween, 3 * Math.PI / 2);
+                break;
+        }
+        double sin = Math.sin(angleBetween);
+        turnMult = Math.abs(sin) + 1;
+        leftPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
+        rightPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+        setLeftPow();
+        setRightPow();
+    }
     //Basic Tele-Op driving functionality
     public void teleOpLoop(Vector2 leftVect, Vector2 rightVect, Vector2 angle){
         switch(controlState) {
@@ -231,12 +254,30 @@ public abstract class TankDT extends Drivetrain {
     }
 
     //turns the front of the robot to the specified direction
-    public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle, double tolerance, double turnSpeed){
-        angleBetween = currentAngle.angleBetween(desiredAngle);
-        if(!isFacing(currentAngle, desiredAngle, tolerance)){
-            leftPow = angleBetween > 0 ? -turnSpeed : turnSpeed;
-            rightPow = angleBetween > 0 ? turnSpeed : -turnSpeed;
+    public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle){
+        angleBetween = UniversalFunctions.normalizeAngleRadians(desiredAngle.angle(), currentAngle.angle());
+        switch (direction) {
+            case FOR:
+                directionMult = 1;
+                angleBetween = UniversalFunctions.normalizeAngle180Radians(angleBetween);
+                angleBetween = UniversalFunctions.clamp(-Math.PI / 2, angleBetween, Math.PI / 2);
+                break;
+            case BACK:
+                directionMult = -1;
+                angleBetween = UniversalFunctions.clamp(Math.PI / 2, angleBetween, 3 * Math.PI / 2);
+                break;
         }
+        double sin = Math.sin(angleBetween);
+        turnMult = Math.abs(sin) + 1;
+        leftPow = directionMult * -turnMult * sin;
+        rightPow = directionMult * turnMult * sin;
+        setLeftPow();
+        setRightPow();
+    }
+    public void turnToFace(Vector2 currentAngle, double desiredAngle){
+        Vector2 desiredAng = new Vector2();
+        desiredAng.setFromPolar(1, desiredAngle);
+        turnToFace(currentAngle, desiredAng);
     }
 
     //returns a boolean representing whether the drivetrain is facing a given direction
@@ -247,14 +288,6 @@ public abstract class TankDT extends Drivetrain {
     //returns a boolean representing whether the drivetrain is facing a given direction
     public boolean isFacingBack(Vector2 currentAngle, Vector2 desiredAngle, double tolerance){
         return UniversalFunctions.withinTolerance(-tolerance, UniversalFunctions.normalizeAngleRadians(currentAngle.angleBetween(desiredAngle) + Math.PI), tolerance);
-    }
-
-    //turns the front of the robot to the specified direction
-    public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle, double turnSpeed){
-        angleBetween = currentAngle.angleBetween(desiredAngle);
-        turnSpeed *= Math.sin(angleBetween);
-        leftPow = -turnSpeed;
-        rightPow = turnSpeed;
     }
 
     //Turns the back of the robot to the specified direction
