@@ -172,4 +172,8 @@ public class UniversalFunctions {
     public static Point3 add(Point3 point1, Point3 point2){
         return new Point3(point1.x + point2.x, point1.y + point2.y, point1.z + point2.z);
     }
+    public static double[] convertToArray(double x){
+        double[] output = {x};
+        return output;
+    }
 }

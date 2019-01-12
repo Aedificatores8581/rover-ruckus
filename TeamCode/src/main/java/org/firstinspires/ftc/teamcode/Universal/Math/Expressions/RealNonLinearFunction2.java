@@ -8,7 +8,10 @@ public abstract class RealNonLinearFunction2 implements RealNonLinearExpression2
         return f(x)[0];
     }
     public double derivativeAt(double x){
-        return derivative(new Point(x, evaluateAt(x)))[0];
+        return derivative(x)[0];
     }
-    public double
+    public double integralAt(double x1, double x2){
+        return integral(x1, x2)[0];
+    }
+    public abstract double integralAt(double x);
 }

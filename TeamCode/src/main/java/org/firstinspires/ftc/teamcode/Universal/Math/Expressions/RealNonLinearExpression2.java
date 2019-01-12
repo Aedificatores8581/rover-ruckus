@@ -4,7 +4,8 @@ import org.opencv.core.Point;
 
 interface RealNonLinearExpression2 {
     double[] f(double x);
-    double[] derivative(Point point);
-    double integral(Point point);
+    double[] derivative(double x);
+    double[] integral(double x1, double x2);
+    double[] integral(double x);
     boolean insideFunction(Point point);
 }
