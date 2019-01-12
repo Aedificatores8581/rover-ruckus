@@ -8,12 +8,16 @@ import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
+import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
+import org.firstinspires.ftc.teamcode.Universal.Map.AttractionField;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
+import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
@@ -302,7 +306,7 @@ public class DepotAuto extends WestBot15 {
                     if (onCrater == false) {
                         int i = crater == Crater.RIGHT ? 1 : -1;
                         Vector2 tempV = new Vector2(i * Math.sqrt(2) / 2, -Math.sqrt(2) / 2);
-                        tempV.setFromPolar(tempV.magnitude(), tempV.angle());
+                        tempV.setFromPolar(tempV.magnitude(), tempV.angle() + i * Math.toRadians(5));
                         if(thing){
                             double angleBetween = UniversalFunctions.normalizeAngleRadians(tempV.angle(), robotAngle.angle());
                             if (Math.sin(angleBetween) < 0) {

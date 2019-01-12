@@ -18,7 +18,7 @@ public class
 
 GoldDetector extends Detector {
 
-    public ArrayList<Point> elements = new ArrayList<Point>(1);
+    public List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
     public Point element = new Point();
     /*public int H_MIN = 21,
             S_MIN = 185,
@@ -128,21 +128,20 @@ GoldDetector extends Detector {
 
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         Imgproc.findContours(threshold, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
         float[] radius = new float[1];
 
         Point center = new Point();
 
-        double maxCenterY = -999;
+        double minCenterY = 999;
         element = new Point();
 
         for (int i = 0; i < contours.size(); i++) {
             MatOfPoint c = contours.get(i);
             MatOfPoint2f c2f = new MatOfPoint2f(c.toArray());
             Imgproc.minEnclosingCircle(c2f, center, radius);
-            if(center.y > maxCenterY) {
+            if(center.y < minCenterY) {
                 element = center.clone();
-                maxCenterY = center.y;
+                minCenterY = center.y;
             }
         }
         //element = center;
