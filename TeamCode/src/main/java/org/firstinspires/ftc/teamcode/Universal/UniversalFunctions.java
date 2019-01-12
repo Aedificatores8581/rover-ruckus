@@ -72,7 +72,7 @@ public class UniversalFunctions {
     public static double normalizeAngle180(double angle) {
         double ang = normalizeAngleDegrees(angle);
         if(ang > 180){
-            ang = -180 + ang % 360;
+            ang = -360 + ang;
         }
         return ang;
     }
