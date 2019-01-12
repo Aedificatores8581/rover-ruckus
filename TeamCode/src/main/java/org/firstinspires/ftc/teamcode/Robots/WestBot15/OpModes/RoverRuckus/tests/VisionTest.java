@@ -30,8 +30,6 @@ public class VisionTest extends OpMode {
         FtcRobotControllerActivity.frameGrabber.detector = this.detector;
     }
     public void initLoop() {
-        telemetry.addData("location 1", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
-        telemetry.addData("location 2", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
     }
 
     @Override
