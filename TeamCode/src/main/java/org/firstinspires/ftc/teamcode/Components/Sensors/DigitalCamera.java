@@ -78,17 +78,19 @@ public class DigitalCamera {
     }
 
     public Point getObjectLocation(Point pointOnImage, Size imageSize, double objectHeight){
-        Vector2 temp = new Vector2(pointOnImage.y, -pointOnImage.x);
-        temp.x -= imageSize.height/ 2;
-        temp.y += imageSize.width / 2;
-        temp.rotate(yAng);
-        double vertAng = temp.y / imageSize.width * verticalAngleOfView() + xAng;
-        double horiAng = temp.x / imageSize.height * horizontalAngleOfView() + zAng;
 
-        double newY = (z - objectHeight / 2) / Math.tan(-vertAng);
-        double newX = newY * Math.tan(horiAng) + x;
-        newY += y;
+        Vector2 temp = new Vector2(-pointOnImage.x, pointOnImage.y);
+        double width = Math.max(imageSize.height, imageSize.width);
+        double height = Math.min(imageSize.height, imageSize.width);
+        temp.x += width / 2;
+        temp.y -= height / 2;
 
+        double vertAng = temp.y / height * horizontalAngleOfView();
+        double horiAng = temp.x / width * verticalAngleOfView();
+
+        double newY = (z - objectHeight/ 2) / Math.tan(-vertAng + xAng);
+        double newX = newY * Math.tan(horiAng);
+        newY *= -1;
         return new Point(newX, newY);
     }
 
