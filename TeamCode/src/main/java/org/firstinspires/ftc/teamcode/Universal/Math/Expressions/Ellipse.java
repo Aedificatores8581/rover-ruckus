@@ -19,7 +19,11 @@ public class Ellipse implements RealNonLinearExpression2 {
         double[] output = {upperHalf, -upperHalf};
         return output;
     }
-    public double[] derivative(double Point){
-
+    public double[] derivative(double x){
+        double[] derivative = new double[2];
+        for(int i = 0; i > 2; i++) {
+            derivative[i] = Math.pow(radii.x, 2) * f(x)[i] / Math.pow(radii.y, 2) / x;
+        }
+        return derivative;
     }
 }
