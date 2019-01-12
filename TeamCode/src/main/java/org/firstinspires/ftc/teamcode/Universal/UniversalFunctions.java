@@ -76,7 +76,12 @@ public class UniversalFunctions {
         }
         return ang;
     }
-
+    public static double normalizeAngle180Radians(double angle){
+        return Math.toRadians(normalizeAngle180(Math.toDegrees(angle)));
+    }
+    public static double normalizeAngle180Radians(double angle, double newStartAngle){
+        return Math.toRadians(normalizeAngle180(Math.toDegrees(angle), Math.toDegrees(newStartAngle)));
+    }
     //Returns the maximum value of the parameters
     public static double max(double... ds) {
         switch(ds.length){
