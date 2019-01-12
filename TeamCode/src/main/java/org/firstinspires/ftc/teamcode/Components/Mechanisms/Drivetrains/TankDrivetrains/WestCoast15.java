@@ -111,7 +111,12 @@ public class WestCoast15 extends TankDT {
     public void normalizeMotors() {}
 
     @Override
-    public void resetEncoders() {}
+    public void resetEncoders() {
+        lfEncoder.resetEncoder();
+        rfEncoder.resetEncoder();
+        rrEncoder.resetEncoder();
+        lrEncoder.resetEncoder();
+    }
 
     public void updateEncoders(){
         lfEncoder.updateEncoder();
