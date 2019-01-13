@@ -26,11 +26,13 @@ public class RoverRuckusTeleOp extends WestBot15 {
     boolean canSwitchExtensionSafetyState;
 
     IntakeDoorState intakeDoorState;
-    boolean canSwitchIntakeDoorState;
     IntakeResetState intakeResetState = IntakeResetState.RETRACT;
+    boolean canSwitchIntakeDoorState;
+
     public void init(){
         prev1 = new Gamepad();
         canSwitchExtensionSafetyState = true;
+
         try {
             prev1.copy(gamepad1);
         } catch (RobotCoreException e) {
@@ -47,18 +49,22 @@ public class RoverRuckusTeleOp extends WestBot15 {
         activateGamepad1();
         activateGamepad2();
     }
+
     public void start(){
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
     }
+
     public void loop(){
         drivetrain.maxSpeed = 0.7;
-        updateGamepad1();
-        updateGamepad2();
         drivetrain.turnMult = 1;
 
-        if(!gamepad1.left_stick_button&&aextendo.getExtensionLength() > 10 ) {
-            drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
+        updateGamepad1();
+        updateGamepad2();
+
+        // TODO: Wait, do we need this?
+        if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
+            drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
         }
 
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
@@ -71,83 +77,56 @@ public class RoverRuckusTeleOp extends WestBot15 {
             extensionState = ExtensionState.RESETTING;
             intakeResetState = IntakeResetState.RETRACT;
         }
+
         if(leftStick1.magnitude() > 0.2) {
             extensionState = ExtensionState.NON_RESETTING;
             mineralContainer.articulateDown();
             mineralContainer.closeCage();
         }
+
         if(gamepad2.left_trigger > 0.2){
             mineralContainer.openCage();
             mineralContainer.articulateUp();
         }
         aextendo.aextendTM(rightStick1.y);
-        /*
-        switch (extensionState) {
-            case NON_RESETTING:
-                aextendo.aextendTM(leftStick1.y);
-                break;
-            case RESETTING:
-                mineralContainer.openCage();
-                mineralContainer.articulateUp();
-                switch (intakeResetState){
-                    case RETRACT:
-                        aextendo.aextendTM(-1);
-                        if (aextendo.backSwitch.isPressed() || aextendo.getExtensionLength() < 1)
-                            intakeResetState = intakeResetState.AIM;
-                        break;
-                    case AIM:
-                        intaek.articulateDown();
-                        intaek.dispensor.setPosition(intaek.OPEN_DISPENSOR_POSITION);
-                        intakeResetState = intakeResetState.OUTTAKE;
-                        break;
-                    case OUTTAKE:
-                        intaek.motor.setPower(gamepad1.left_bumper ? -1 : 0);
-                }
-                break;
-        }
-        if(rightStick2.magnitude() > UniversalConstants.Triggered.STICK) {
-            lift2_0.lift(rightStick2.y);
-        }*/
-        if(gamepad1.left_bumper)
+
+        if (gamepad1.left_bumper) {
             intaek.setPower(1);
-        else if (gamepad1.right_bumper)
+        } else if (gamepad1.right_bumper) {
             intaek.setPower(-1);
-        else
+        } else {
             intaek.setPower(0);
-        intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        /*
-        if(gamepad2.right_trigger > 0.2)
-            lift2_0.articulate(-1);
-        else if(gamepad2.right_bumper)
-            lift2_0.articulate(1);*/
-        if(gamepad1.dpad_up)
-            intaek.articulateUp();
-        if(gamepad1.dpad_down)
-            intaek.articulateDown();
+        }
         intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
 
-        /*if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
-            mineralContainer.openCage();
-        else
-            mineralContainer.closeCage();*/
+        if (gamepad1.dpad_up) {
+            intaek.articulateUp();
+        }
+
+        if (gamepad1.dpad_down) {
+            intaek.articulateDown();
+        }
+
+        intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
 
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
         telemetry.addLine(lift.toString());
+
         prevTime = UniversalFunctions.getTimeInSeconds();
 
-        // Determines Whether to slow down the intake
         switch (extensionSafety) {
             case ENABLED:
-                drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
+                drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
 
                 if (gamepad1.y && canSwitchExtensionSafetyState) {
                     extensionSafety = ExtensionSafety.DISABLED;
                     canSwitchExtensionSafetyState = false;
-                } else if (!gamepad1.y) {
+                } else if (!gamepad1.y && aextendo.getExtensionLength() == 0) {
                     canSwitchExtensionSafetyState = true;
                 }
                 break;
+
             case DISABLED:
                 if (gamepad1.y && canSwitchExtensionSafetyState) {
                     extensionSafety = ExtensionSafety.ENABLED;
@@ -157,29 +136,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
                 }
                 break;
         }
-/*
-        switch (intakeDoorState) {
-            case OPEN:
-                intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
 
-                if (gamepad1.dpad_down && canSwitchIntakeDoorState) {
-                    intakeDoorState = IntakeDoorState.CLOSED;
-                    canSwitchIntakeDoorState = false;
-                } else if (!gamepad1.dpad_down) {
-                    canSwitchIntakeDoorState = true;
-                }
-                break;
-            case CLOSED:
-                intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-                if (gamepad1.dpad_up && canSwitchIntakeDoorState) {
-                    intakeDoorState = IntakeDoorState.OPEN;
-                    canSwitchIntakeDoorState = false;
-                }  else if (!gamepad1.dpad_up) {
-                    canSwitchIntakeDoorState = true;
-                }
-                break;
-        }
-*/
         try {
             prev1.copy(gamepad1);
         } catch (RobotCoreException e) {
@@ -201,6 +158,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         OPEN,
         CLOSED
     }
+
     enum IntakeResetState{
         RETRACT,
         AIM,

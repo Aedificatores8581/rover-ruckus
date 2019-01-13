@@ -31,16 +31,20 @@ public abstract class WestBot15 extends Robot {
     public Servo maerkr;
     public boolean isAutonomous = false;
     //IMPORTANT: phone locations should be taken in relation to the robot, not the field
+
     public Intake intaek = new Intake();
     public Lift lift = new Lift();
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
+
     public Lift2_0 lift2_0 = new Lift2_0();
     public Map2 robotMap, fieldMap;
-    public final boolean hadleyOnSchedule = true;
+
+    public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
+
     @Override
     public void init(){
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
@@ -48,17 +52,19 @@ public abstract class WestBot15 extends Robot {
 
         drivetrain.maxSpeed = 1.0;
         drivetrain.initMotors(hardwareMap);
-
         drivetrain.position = new Pose();
+
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(0, 6, 13.5), new Point3(0, 0, 0));
 
-        if(hadleyOnSchedule){
+        if (HADLEY_ON_SCHEDULE) {
             aextendo.init(hardwareMap, false);
             intaek.init(hardwareMap);
+            lift.init(hardwareMap);
+
             maerkr = hardwareMap.servo.get("mrkr");
             maerkr.setPosition(MARKER_CLOSED_POSITION);
-            lift.init(hardwareMap);
+
             mineralContainer.init(hardwareMap);
         }
     }
@@ -67,12 +73,16 @@ public abstract class WestBot15 extends Robot {
     public void start(){
         super.start();
     }
+
     @Override
     public double getGyroAngle(){
-        if(!usingIMU)
-            return startAngle + (drivetrain.averageRightEncoders() -  drivetrain.averageLeftEncoders()) / drivetrain.ENC_PER_INCH / drivetrain.DISTANCE_BETWEEN_WHEELS;
+        if (!usingIMU) {
+            return startAngle + (drivetrain.averageRightEncoders() - drivetrain.averageLeftEncoders()) / drivetrain.ENC_PER_INCH / drivetrain.DISTANCE_BETWEEN_WHEELS;
+        }
+
         return super.getGyroAngle();
     }
+
     public enum AutoState{
         HANG,
         LOWER,
@@ -83,5 +93,4 @@ public abstract class WestBot15 extends Robot {
         PARK,
         FORWARD
     }
-
 }

@@ -19,11 +19,11 @@ import ftc.vision.Detector;
 
 @Autonomous (name = "Crater auto", group = "competition autonomous   ")
 public class CraterAuto1 extends WestBot15 {
-    GoldDetector detector;
+    private GoldDetector detector;
 
-    boolean hasDrove;
+    private boolean hasDrove;
 
-    double prevLeft, prevRight = 0;
+    private double prevLeft, prevRight = 0;
     double hardNewY;
 
     boolean hasDriven = false;
@@ -31,13 +31,13 @@ public class CraterAuto1 extends WestBot15 {
 
     Point newNewPoint = new Point();
     double rightEncPosition, leftEncPosition;
-    Vector2 sampleVect = new Vector2();
+    private Vector2 sampleVect = new Vector2();
     double d = 63;
-    double startTime = 0;
-    double speedMult = 1;
-    TouchSensor top, bottom;
+    private double startTime = 0;
+    private double speedMult = 1;
+    private TouchSensor top, bottom;
 
-    final boolean USING_VECTOR_FIELDS= false;
+    private final static boolean USING_VECTOR_FIELDS = false;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
     AutoState autoState = AutoState.LOWER;
     public void init(){
@@ -213,17 +213,6 @@ public class CraterAuto1 extends WestBot15 {
                     drivetrain.setLeftPow(0.0);
                 }
                 break;
-        /*if(hasDrove) {
-            drivetrain.updateLocation(drivetrain.averageLeftEncoders() - prevLeft0, drivetrain.averageRightEncoders() - prevRight);
-            prevLeft0 = drivetrain.averageLeftEncoders();
-            prevRight = drivetrain.averageRightEncoders();
-            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, TankDT.Direction.FOR);
-            if(gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER) {
-                hasDrove = false;
-                drivetrain.setLeftPow(0);
-                drivetrain.setRightPow(0);
-            }
-        }*/
         }telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
         telemetry.addData("sampleVect, ", sampleVect);
         telemetry.addData("element position", detector.element);
