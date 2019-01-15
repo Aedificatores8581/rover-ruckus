@@ -28,6 +28,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
     IntakeDoorState intakeDoorState;
     boolean canSwitchIntakeDoorState;
     IntakeResetState intakeResetState = IntakeResetState.RETRACT;
+    double time = 0;
+    boolean canSwitchTime = true;
     public void init(){
         prev1 = new Gamepad();
         canSwitchExtensionSafetyState = true;
@@ -51,14 +53,14 @@ public class RoverRuckusTeleOp extends WestBot15 {
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
     }
-    public void loop(){
+    public void loop() {
         drivetrain.maxSpeed = 0.7;
         updateGamepad1();
         updateGamepad2();
         drivetrain.turnMult = 1;
 
-        if(!gamepad1.left_stick_button&&aextendo.getExtensionLength() > 10 ) {
-            drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
+        if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
+            drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
         }
 
         drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
@@ -71,14 +73,20 @@ public class RoverRuckusTeleOp extends WestBot15 {
             extensionState = ExtensionState.RESETTING;
             intakeResetState = IntakeResetState.RETRACT;
         }
-        if(leftStick1.magnitude() > 0.2) {
+        if (leftStick1.magnitude() > 0.2) {
             extensionState = ExtensionState.NON_RESETTING;
             mineralContainer.articulateDown();
             mineralContainer.closeCage();
         }
-        if(gamepad2.left_trigger > 0.2){
+        if (gamepad2.left_trigger > 0.2) {
             mineralContainer.openCage();
             mineralContainer.articulateUp();
+        }
+        if (gamepad1.dpad_left) {
+            intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
+        }
+        if (gamepad1.dpad_right) {
+            intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
         }
         aextendo.aextendTM(rightStick1.y);
         /*
@@ -108,23 +116,36 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if(rightStick2.magnitude() > UniversalConstants.Triggered.STICK) {
             lift2_0.lift(rightStick2.y);
         }*/
-        if(gamepad1.left_bumper)
+        if (gamepad1.left_bumper) {
             intaek.setPower(1);
-        else if (gamepad1.right_bumper)
-            intaek.setPower(-1);
-        else
+            canSwitchTime = true;
+            time = UniversalFunctions.getTimeInSeconds();
+        }
+        else if (gamepad1.right_bumper) {
+            if(UniversalFunctions.getTimeInSeconds() - time < 0.08){
+                intaek.setPower(-1);
+            }
+            else{
+                intaek.setPower(1);
+            }
+        }
+        else {
             intaek.setPower(0);
-        intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
+            canSwitchTime = true;
+            time = UniversalFunctions.getTimeInSeconds();
+        }
         /*
         if(gamepad2.right_trigger > 0.2)
             lift2_0.articulate(-1);
         else if(gamepad2.right_bumper)
             lift2_0.articulate(1);*/
-        if(gamepad1.dpad_up)
+
+
+       /* if(gamepad1.dpad_up)
             intaek.articulateUp();
         if(gamepad1.dpad_down)
             intaek.articulateDown();
-        intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
+*/
 
         /*if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
             mineralContainer.openCage();

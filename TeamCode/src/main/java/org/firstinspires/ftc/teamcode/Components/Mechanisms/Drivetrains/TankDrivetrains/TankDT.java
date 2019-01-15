@@ -64,20 +64,34 @@ public abstract class TankDT extends Drivetrain {
         switch (direction) {
             case FOR:
                 directionMult = 1;
-                angleBetween = UniversalFunctions.normalizeAngle180Radians(angleBetween);
-                angleBetween = UniversalFunctions.clamp(-Math.PI / 2, angleBetween, Math.PI / 2);
+                if(Math.sin(angleBetween) < 0) {
+                    setLeftPow(Math.cos(angleBetween) < 0 ? -1 : 1);
+                    setRightPow(Math.cos(angleBetween) > 0 ? -1 : 1);
+                }
+                else{
+                    double sin = Math.cos(angleBetween);
+                    turnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
+                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+                    setLeftPow();
+                    setRightPow();
+                }
                 break;
             case BACK:
-                directionMult = -1;
-                angleBetween = UniversalFunctions.clamp(Math.PI / 2, angleBetween, 3 * Math.PI / 2);
+                if(Math.sin(angleBetween) > 0) {
+                    setLeftPow(Math.cos(angleBetween) > 0 ? 1 : -1);
+                    setRightPow(Math.cos(angleBetween) < 0 ? 1 : -1);
+                }
+                else{
+                    double sin = Math.cos(angleBetween);
+                    turnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+                    leftPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
+                    setRightPow();
+                    setLeftPow();
+                }
                 break;
         }
-        double sin = Math.sin(angleBetween);
-        turnMult = Math.abs(sin) + 1;
-        leftPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
-        rightPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
-        setLeftPow();
-        setRightPow();
     }
     //Basic Tele-Op driving functionality
     public void teleOpLoop(Vector2 leftVect, Vector2 rightVect, Vector2 angle){

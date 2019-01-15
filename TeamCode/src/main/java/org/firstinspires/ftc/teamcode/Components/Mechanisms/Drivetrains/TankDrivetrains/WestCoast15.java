@@ -70,10 +70,10 @@ public class WestCoast15 extends TankDT {
         //rightFore.setZeroPowerBehavior(zeroPowerBehavior);
         //rightRear.setZeroPowerBehavior(zeroPowerBehavior);
 
-        rightFore.setDirection(REVERSE);
-        rightRear.setDirection(REVERSE);
-        leftFore.setDirection(FORWARD);
-        leftRear.setDirection(FORWARD);
+        rightFore.setDirection(FORWARD);
+        rightRear.setDirection(FORWARD);
+        leftFore.setDirection(REVERSE);
+        leftRear.setDirection(REVERSE);
 
         leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
