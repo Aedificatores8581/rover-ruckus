@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.WestCoast15;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
@@ -36,10 +37,7 @@ public abstract class WestBot15 extends Robot {
     public Lift lift = new Lift();
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
-
     public Lift2_0 lift2_0 = new Lift2_0();
-    public Map2 robotMap, fieldMap;
-
     public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
