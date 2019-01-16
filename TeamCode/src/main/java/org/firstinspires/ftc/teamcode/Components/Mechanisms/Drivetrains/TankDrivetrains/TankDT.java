@@ -60,6 +60,7 @@ public abstract class TankDT extends Drivetrain {
             destinationVect.setFromPolar(1, destinationVect.angle());
         else
             destinationVect.scalarMultiply(1.0 / threshold);
+        double tempTurnMult;
         angleBetween = UniversalFunctions.normalizeAngleRadians(destinationVect.angle(), angle.angle());
         switch (direction) {
             case FOR:
@@ -70,9 +71,9 @@ public abstract class TankDT extends Drivetrain {
                 }
                 else{
                     double sin = Math.cos(angleBetween);
-                    turnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+                    tempTurnMult = Math.abs(sin) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * tempTurnMult * sin);
+                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * tempTurnMult * sin);
                     setLeftPow();
                     setRightPow();
                 }
@@ -85,9 +86,9 @@ public abstract class TankDT extends Drivetrain {
                 }
                 else{
                     double sin = Math.cos(angleBetween);
-                    turnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+                    tempTurnMult = Math.abs(sin) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - tempTurnMult * turnMult * sin);
+                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * tempTurnMult * sin);
                     setRightPow();
                     setLeftPow();
                 }
@@ -177,22 +178,8 @@ public abstract class TankDT extends Drivetrain {
     }
 
     public void driveToPoint(double x, double y, Direction dir){
-        destination = new Vector2(x, y);
-        angleBetween = UniversalFunctions.normalizeAngleRadians(destination.angle(), position.angle);
-        if(Math.sin(angleBetween) * (dir == Direction.FOR ? 1: -1) < 1){
-            if(Math.sin(angleBetween - Math.PI / 2) > 0){
-                setLeftPow(-1);
-                setRightPow(1);
-            }
-            else{
-                setLeftPow(1);
-                setRightPow(-1);
-            }
-        }
-        else{
-            controlState = ControlState.FIELD_CENTRIC;
-            teleOpLoop(destination, new Vector2(), position.angle);
-        }
+        Vector2 destinationVect = new Vector2(x, y);
+        direction = dir;
     }
 
     //x and y must be in inches
