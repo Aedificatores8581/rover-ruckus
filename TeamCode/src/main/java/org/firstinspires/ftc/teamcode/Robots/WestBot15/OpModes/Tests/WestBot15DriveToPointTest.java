@@ -29,7 +29,7 @@ public class WestBot15DriveToPointTest extends WestBot15 {
     }
 
     public void loop(){
-        updateGamepad1();
+        /*updateGamepad1();
         if (System.currentTimeMillis() - prevTime > 0.125){
             desiredPose.y += leftStick1.y;
             desiredPose.x += rightStick1.x;
@@ -47,7 +47,7 @@ public class WestBot15DriveToPointTest extends WestBot15 {
 
         telemetry.addData("desired Position", desiredPose);
         telemetry.addData("driving to point: ", gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER || gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER);
-        telemetry.addData("driving circular: ", gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER);
+        telemetry.addData("driving circular: ", gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER);*/
     }
 
 }

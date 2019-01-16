@@ -59,112 +59,50 @@ public class SamplingTest extends WestBot15 {
         drivetrain.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void initLoop(){
-        //telemetry.addData("location 1", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
-    }
-    @Override
-    public void start(){
-        super.start();
-        drivetrain.position = new Pose(0, 0, Math.PI / 2);
-    }
-
-    public void loop(){
-        drivetrain.updateEncoders();
-        double leftChange = drivetrain.averageLeftEncoders() - prevLeft;
-        double rightChange = drivetrain.averageRightEncoders() - prevRight;
-        drivetrain.updateLocation(leftChange, rightChange);
-        prevLeft = drivetrain.averageLeftEncoders();
-        prevRight = drivetrain.averageRightEncoders();
-        setRobotAngle();
-
-        drivetrain.maxSpeed = 0.2;
-        if(gamepad1.left_trigger > 0.2){
-            drivetrain.maxSpeed = 0.4;
-        }
+    public void init_loop(){
+        super.init_loop();
 
         Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
-        temp.x += 640/ 2;
+        temp.x += 640 / 2;
         temp.y -= 480 / 2;
 
         double vertAng = temp.y / 480 * motoG4.rearCamera.horizontalAngleOfView();
         double horiAng = temp.x / 640 * motoG4.rearCamera.verticalAngleOfView();
 
-        double newY = (motoG4.getLocation().z - 2 / 2) / Math.tan(-vertAng - 0.364773814);
+        double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - Math.toRadians(37));
         double newX = newY * Math.tan(horiAng);
         newY *= -1;
-        if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && !hasDrove) {
-            hasDrove = true;
-            sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
-        }
-        if(gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER && hasDrove) {
-            hasDrove = false;
-            drivetrain.setLeftPow(0);
-            drivetrain.setRightPow(0);
-        }
-        if(hasDrove) {
-            if (gamepad1.right_stick_button && !hasDriven) {
-                hasDriven = true;
-            } else
-                hasDriven = false;
-            if (hasDriven) {
-                newVect = new Vector2(sampleVect.x, sampleVect.y);
-                    newVect.x -= drivetrain.position.x;
-                    newVect.y -= drivetrain.position.y;
-                    Vector2 temp2 = new Vector2(newVect.x, newVect.y);
-                      if (newVect.magnitude() > 12)
-                        newVect.setFromPolar(1, newVect.angle());
-                    else
-                        newVect.scalarMultiply(1.0 / 12);
-                    drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                    drivetrain.setLeftPow();
-                    drivetrain.setRightPow();
-                telemetry.addData("temp2 radius", temp2.magnitude());
-                    telemetry.addData("temp2", (int) temp2.x + ", " + (int)temp2.y);
-                /*
+        sampleVect = new Vector2(newX - motoG4.getLocation().x, newY - motoG4.getLocation().y);
+        telemetry.addData("location of sample", sampleVect);
+    }
+    @Override
+    public void start(){
+        super.start();
+        drivetrain.position = new Pose(0, 0, 0);
+    }
 
-                if(!parking && newVect.magnitude() < 4) {
-                    parking = true;
-                    newVect.setFromPolar(sampleVect.magnitude(), Math.PI - sampleVect.angle());
-                }
-                if(parking){
-                    if(!onCrater) {
-                        drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
-                        drivetrain.setLeftPow();
-                        drivetrain.setRightPow();
-                    }
-                    else{
-                        drivetrain.setRightPow(0);
-                        drivetrain.setLeftPow(0);
-                    }
-                    if (Math.abs(gyroAngles.getY()) > ON_CRATER_RIM_THRESHOLD) {
-                        onCrater = true;
-                    } else {
-                        onCrater = false;
-                    }*/
+    public void loop(){
+        drivetrain.updateLocation();
+        setRobotAngle();
 
-            }
+        Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
+        temp.x += 640 / 2;
+        temp.y -= 480 / 2;
+
+        double vertAng = temp.y / 480 * motoG4.rearCamera.horizontalAngleOfView();
+        double horiAng = temp.x / 640 * motoG4.rearCamera.verticalAngleOfView();
+
+        double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - Math.toRadians(37));
+        double newX = newY * Math.tan(horiAng);
+        newY *= -1;
+        sampleVect = new Vector2(newX, newY);
+
+        if(!gamepad1.left_bumper){
+            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 12);
         }
-        /*if(hasDrove) {
-            drivetrain.updateLocation(drivetrain.averageLeftEncoders() - prevLeft0, drivetrain.averageRightEncoders() - prevRight);
-            prevLeft0 = drivetrain.averageLeftEncoders();
-            prevRight = drivetrain.averageRightEncoders();
-            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, TankDT.Direction.FOR);
-            if(gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER) {
-                hasDrove = false;
-                drivetrain.setLeftPow(0);
-                drivetrain.setRightPow(0);
-            }
-        }*/
-        telemetry.addData("sampleVect, ", sampleVect);
-        telemetry.addData("element position", detector.element);
-        telemetry.addData("position", drivetrain.position.toString());
-        telemetry.addData("leftposition", drivetrain.averageLeftEncoders());
-        telemetry.addData("rightposition", drivetrain.averageRightEncoders());
-        telemetry.addData("leftChange", prevLeft);
-        telemetry.addData("rightChange", prevRight);
-        telemetry.addData("turnVector", drivetrain.turnVector);
-        telemetry.addData("newVect", newVect);
-        telemetry.addData("newVect magnitude", newVect.magnitude());
+        else
+            drivetrain.stop();
+        telemetry.addData("location of sample", sampleVect);
     }
 
     public void stop(){

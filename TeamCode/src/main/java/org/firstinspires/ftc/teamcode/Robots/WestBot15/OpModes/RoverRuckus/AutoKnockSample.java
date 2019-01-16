@@ -52,7 +52,7 @@ public class AutoKnockSample extends WestBot15 {
     @Override
     public void loop() {
         // updateGamepad1();
-
+/*
         Vector2 _elementVector = new Vector2(detector.element.y + 320, -detector.element.x - 240);
 
         double adjustedVerticalAngle = _elementVector.y / 640 * motoG4.rearCamera.verticalAngleOfView();
@@ -69,7 +69,7 @@ public class AutoKnockSample extends WestBot15 {
         // At the moment, just detect the floor, and if red or blue is detected,
         // then the task is complete.
 
-        telemetry.addData("Image Size", detector.workingImage.size());
+        telemetry.addData("Image Size", detector.workingImage.size());*/
     }
 
     public void stop() {
