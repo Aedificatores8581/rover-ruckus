@@ -26,7 +26,7 @@ public class DriveBotFieldCentricTest extends WestBot15 {
         activateGamepad1();
         drivetrain.controlState = TankDT.ControlState.TANK;
         drivetrain.turnState = TankDT.FCTurnState.FAST;
-        drivetrain.direction = TankDT.Direction.BACK;
+        drivetrain.direction = TankDT.Direction.FOR;
         drivetrain.directionMult = 1;
     }
 
@@ -47,6 +47,12 @@ public class DriveBotFieldCentricTest extends WestBot15 {
         }
         else
             drivetrain.stop();
+        if(gamepad1.dpad_up){
+            drivetrain.direction = Drivetrain.Direction.FOR;
+        }
+        if(gamepad1.dpad_down){
+            drivetrain.direction = Drivetrain.Direction.BACK;
+        }
         telemetry.addData("position", drivetrain.position);
         telemetry.addData("gyro angle", robotAngle.angle());
         telemetry.addData("stick", leftStick1);
