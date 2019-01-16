@@ -19,18 +19,7 @@ import ftc.vision.Detector;
 @Autonomous(name = "sampling test", group = "none")
 public class SamplingTest extends WestBot15 {
     GoldDetector detector;
-    boolean hasDrove;
-    double prevLeft, prevRight = 0;
-    double hardNewY;
-    boolean hasDriven = false;
-    boolean parking= false, onCrater = false;
-    Vector2 newVect = new Vector2();
-    Point newNewPoint = new Point();
-    double rightEncPosition, leftEncPosition;
     Vector2 sampleVect = new Vector2();
-    Pose robotPose = new Pose();
-    double xAng = 0;
-
     GyroAngles gyroAngles;
     Orientation angle;
 
@@ -49,7 +38,6 @@ public class SamplingTest extends WestBot15 {
         gyroAngles = new GyroAngles(angle);
         normalizeGyroAngle();
         drivetrain.controlState = TankDT.ControlState.FIELD_CENTRIC;
-        drivetrain.direction = TankDT.Direction.BACK;
         drivetrain.leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.leftFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drivetrain.leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -72,16 +60,15 @@ public class SamplingTest extends WestBot15 {
         double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - Math.toRadians(37));
         double newX = newY * Math.tan(horiAng);
         newY *= -1;
-        sampleVect = new Vector2(newX - motoG4.getLocation().x, newY - motoG4.getLocation().y);
+        sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
         telemetry.addData("location of sample", sampleVect);
+        telemetry.addData("location of robot", drivetrain.position.x + ", " + drivetrain.position.y);
     }
     @Override
     public void start(){
         super.start();
         drivetrain.position = new Pose(0, 0, 0);
-    }
-
-    public void loop(){
+        drivetrain.maxSpeed = 0.5;
         drivetrain.updateLocation();
         setRobotAngle();
 
@@ -95,14 +82,21 @@ public class SamplingTest extends WestBot15 {
         double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - Math.toRadians(37));
         double newX = newY * Math.tan(horiAng);
         newY *= -1;
-        sampleVect = new Vector2(newX, newY);
+        sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
+        setStartAngle();
+    }
+
+    public void loop(){
+        drivetrain.updateLocation();
+        setRobotAngle();
 
         if(!gamepad1.left_bumper){
-            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 12);
+            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 2);
         }
         else
             drivetrain.stop();
         telemetry.addData("location of sample", sampleVect);
+        telemetry.addData("drivetrain location", drivetrain.position);
     }
 
     public void stop(){

@@ -15,7 +15,8 @@ import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 public abstract class TankDT extends Drivetrain {
     public double       ENC_PER_INCH;
     public double       DISTANCE_BETWEEN_WHEELS;
-    public double       turnMult,
+    public double       turnMult = 1
+            ,
                         angleBetween,
                         directionMult = 1,
                         cos,
@@ -60,8 +61,8 @@ public abstract class TankDT extends Drivetrain {
             destinationVect.setFromPolar(1, destinationVect.angle());
         else
             destinationVect.scalarMultiply(1.0 / threshold);
-        double tempTurnMult;
         angleBetween = UniversalFunctions.normalizeAngleRadians(destinationVect.angle(), angle.angle());
+        double tempTurnMult = 0;
         switch (direction) {
             case FOR:
                 directionMult = 1;
@@ -70,10 +71,10 @@ public abstract class TankDT extends Drivetrain {
                     setRightPow(Math.cos(angleBetween) > 0 ? -1 : 1);
                 }
                 else{
-                    double sin = Math.cos(angleBetween);
-                    tempTurnMult = Math.abs(sin) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * tempTurnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * tempTurnMult * sin);
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (destinationVect.magnitude() + tempTurnMult * turnMult * cos);
                     setLeftPow();
                     setRightPow();
                 }
@@ -85,10 +86,10 @@ public abstract class TankDT extends Drivetrain {
                     setRightPow(Math.cos(angleBetween) > 0 ? 1 : -1);
                 }
                 else{
-                    double sin = Math.cos(angleBetween);
-                    tempTurnMult = Math.abs(sin) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() - tempTurnMult * turnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * tempTurnMult * sin);
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (destinationVect.magnitude() + tempTurnMult * turnMult * cos);
                     setRightPow();
                     setLeftPow();
                 }

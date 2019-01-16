@@ -27,7 +27,7 @@ public class DriveToPointTest extends WestBot15 {
         super.start();
     }
 
-    public void loop(){
+    public void loop(){/*
         double rightEnc = drivetrain.averageRightEncoders();
         double leftEnc = drivetrain.averageLeftEncoders();
 
@@ -43,6 +43,6 @@ public class DriveToPointTest extends WestBot15 {
 		Vector2 temp = new Vector2();
 
 		drivetrain.destination.x -= fieldVect.x;
-		drivetrain.destination.y -= fieldVect.y;
+		drivetrain.destination.y -= fieldVect.y;*/
 	}
 }
