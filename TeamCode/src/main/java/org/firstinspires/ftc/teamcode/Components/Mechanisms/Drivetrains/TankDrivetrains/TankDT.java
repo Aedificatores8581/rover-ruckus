@@ -177,9 +177,12 @@ public abstract class TankDT extends Drivetrain {
         setRightPow();
     }
 
-    public void driveToPoint(double x, double y, Direction dir){
+    public void driveToPoint(double x, double y, Vector2 angle, Direction dir, double threshold){
         Vector2 destinationVect = new Vector2(x, y);
+        destinationVect.x -= position.x;
+        destinationVect.y -= position.y;
         direction = dir;
+        newFieldCentric(destinationVect, angle, threshold);
     }
 
     //x and y must be in inches
@@ -298,23 +301,6 @@ public abstract class TankDT extends Drivetrain {
         turnSpeed *= Math.sin(angleBetween);
         leftPow = -turnSpeed;
         rightPow = turnSpeed;
-    }
-
-    //assumes that the robot is at 0,0
-    //TODO: Implement variability in the units of length that the destination Pose uses
-    //TODO: Determine which implementation to use
-    public void driveToPose2(Pose destination, Direction dir){
-        double theta = Math.atan2(-destination.y, -destination.x) - Math.signum(Math.cos(destination.angleOfVector())) * Math.PI / 2;
-        Vector2 temp = new Vector2();
-        temp.setFromPolar(1, theta);
-        driveToPoint(destination.x, destination.y, dir);
-        double lp = leftPow;
-        double rp = rightPow;
-        driveToPoint(temp.x, temp.y, dir);
-        lp += (leftPow / destination.radius());
-        rp += (rightPow / destination.radius());
-        leftPow = lp;
-        rightPow = rp;
     }
     public void stop(){
         setLeftPow(0);
