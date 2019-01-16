@@ -78,15 +78,16 @@ public abstract class TankDT extends Drivetrain {
                 }
                 break;
             case BACK:
+                directionMult = -1;
                 if(Math.sin(angleBetween) > 0) {
-                    setLeftPow(Math.cos(angleBetween) > 0 ? 1 : -1);
-                    setRightPow(Math.cos(angleBetween) < 0 ? 1 : -1);
+                    setLeftPow(Math.cos(angleBetween)< 0 ? 1 : -1);
+                    setRightPow(Math.cos(angleBetween) > 0 ? 1 : -1);
                 }
                 else{
                     double sin = Math.cos(angleBetween);
                     turnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
+                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
+                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
                     setRightPow();
                     setLeftPow();
                 }
@@ -238,7 +239,7 @@ public abstract class TankDT extends Drivetrain {
             //if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
             //drivetrain.turnVector.x *= -1;
         }
-        turnVector.rotate(position.angle - Math.PI / 2);
+        turnVector.rotate(position.angle);
         position.x += turnVector.x;
         position.y += turnVector.y;
         position.angle -= angle;
