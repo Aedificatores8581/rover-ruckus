@@ -30,7 +30,7 @@ public class AttractionField {
     /** Finds the distance between an object and the attraction field and returns a vector based
     * on the strength of the attraction field on the object and the angle of the object
     * */
-    public Vector2 interact(Pose obj){
+    public Vector2 getVector(Pose obj){
         Pose object = new Pose(obj);
         object.x -= location.x;
         object.y -= location.y;
@@ -39,12 +39,11 @@ public class AttractionField {
         temp.rotate(location.angle);
         return temp;
     }
-
     /** Finds the distance between an object and the attraction field and returns a vector based
      * on the strength of the attraction field on the object and the angle of the object
      * */
-    protected Vector2 interact(Vector2 object){
-        return interact(new Pose(object.x, object.y, 0));
+    protected Vector2 getVector(Vector2 object){
+        return getVector(new Pose(object.x, object.y, 0));
     }
 
     /** Returns the strength of an attraction field on an object based on the distance between the
@@ -56,7 +55,7 @@ public class AttractionField {
 
 
     public Vector2 interactWithSlowdown(Pose object, double maxSpeed){
-        Vector2 v2 = interact(object);
+        Vector2 v2 = getVector(object);
         if(v2.magnitude() > 1)
             v2.setFromPolar(new Vector2(object.x, object.y).magnitude() / strength, v2.angle());
         return v2;

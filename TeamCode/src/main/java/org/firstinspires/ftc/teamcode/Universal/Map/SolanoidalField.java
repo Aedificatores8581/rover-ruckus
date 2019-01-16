@@ -15,7 +15,7 @@ public class SolanoidalField extends AttractionField{
         super(pose, strength);
     }
     @Override
-    public Vector2 interact(Pose object){
+    public Vector2 getVector(Pose object){
         Vector2 temp = new Vector2(object.x, object.y);
         temp.x -= location.x;
         temp.y -= location.y;
@@ -23,7 +23,7 @@ public class SolanoidalField extends AttractionField{
         double radius = (temp.y * temp.y - temp.x * temp.x) / (2 * temp.x);
         double theta = Math.signum(Math.cos(temp.angle())) * Math.PI / 2;
         AttractionField attractionField = new AttractionField(new Pose(-radius, 0, theta), strength);
-        temp = attractionField.interact(temp);
+        temp = attractionField.getVector(temp);
         temp.rotate(Math.PI / 2 - location.angle);
         return temp;
     }
