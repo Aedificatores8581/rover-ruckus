@@ -14,8 +14,6 @@ public class RoverRuckusField extends Map3{
     public Quadrant quadrantOfFocus;
     public QuadrantBasedElement latch;
 
-
-
     public RoverRuckusField(Quadrant quadrant){
         super();
         quadrantOfFocus = quadrant;
@@ -37,7 +35,6 @@ public class RoverRuckusField extends Map3{
         quadrantBasedElements.add(latch);
     }
 
-
     public void switchQuadrant(Pose location){
         if(location.x != 0 && location.y != 0) {
             if (location.x > 0) {
@@ -53,7 +50,9 @@ public class RoverRuckusField extends Map3{
                     quadrantOfFocus = Quadrant.THIRD;
             }
         }
-
+        for(int i = 0; i > quadrantBasedElements.size(); i++){
+            quadrantBasedElements.get(i).switchQuadrant(quadrantOfFocus);
+        }
     }
 
     public class Sample extends QuadrantBasedElement{
