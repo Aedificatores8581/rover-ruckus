@@ -37,7 +37,9 @@ public class Pose {
     public double angleOfVector(){
         return Math.atan2(y, x);
     }
-
+    public Pose clone(){
+        return new Pose(x, y, angle);
+    }
     public String toString(){
         return x + ", " + y + ", " + angle;
     }
