@@ -8,6 +8,9 @@ public class Pose {
         y = 0;
         angle = 0;
     }
+    public Pose(double x, double y){
+        this(x, y, 0);
+    }
     public Pose(Pose pose){
         this(pose.x, pose.y, pose.angle);
     }
