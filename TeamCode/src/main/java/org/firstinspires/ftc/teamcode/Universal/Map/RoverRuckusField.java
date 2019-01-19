@@ -3,17 +3,20 @@ package org.firstinspires.ftc.teamcode.Universal.Map;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 
 import java.util.ArrayList;
 
 public class RoverRuckusField extends Map3{
-    //Samples are named by
+
     public Sample leftSample, rightSample, centerSample;
     public ArrayList<Sample> samples = new ArrayList<>();
     public ArrayList<QuadrantBasedElement> quadrantBasedElements = new ArrayList<>();
+    public ArrayList<ComponentLimitingField> componentLimitingFields = new ArrayList<>();
+    public ArrayList<ComponentLimitingField> walls = new ArrayList<>();
     public Quadrant quadrantOfFocus;
     public QuadrantBasedElement latch;
-
+    public LinearField rightWall, topWall, leftWall, bottomWall;
     public RoverRuckusField(Quadrant quadrant){
         super();
         quadrantOfFocus = quadrant;
@@ -33,6 +36,20 @@ public class RoverRuckusField extends Map3{
         for(Sample s : samples)
             quadrantBasedElements.add(s);
         quadrantBasedElements.add(latch);
+
+        topWall = new LinearField(new Pose(0, 72 - UniversalConstants.RoverRuckus.robotAvoidanceThreshold, 0));
+        leftWall = new LinearField(new Pose(UniversalConstants.RoverRuckus.robotAvoidanceThreshold - 72, 0, Math.PI / 2));
+        bottomWall = new LinearField(new Pose(0, UniversalConstants.RoverRuckus.robotAvoidanceThreshold - 72, Math.PI));
+        rightWall = new LinearField(new Pose(72 - UniversalConstants.RoverRuckus.robotAvoidanceThreshold, 0, 3 * Math.PI / 2));
+
+        walls.add(topWall);
+        walls.add(leftWall);
+        walls.add(rightWall);
+        walls.add(bottomWall);
+
+        for(ComponentLimitingField field : walls){
+            componentLimitingFields.add(field);
+        }
     }
 
     public void switchQuadrant(Pose location){
@@ -52,6 +69,12 @@ public class RoverRuckusField extends Map3{
         }
         for(int i = 0; i > quadrantBasedElements.size(); i++){
             quadrantBasedElements.get(i).switchQuadrant(quadrantOfFocus);
+        }
+    }
+
+    public void limitVector(Pose pose, Vector2 vector2){
+        for(ComponentLimitingField field : componentLimitingFields){
+            field.interact(vector2, pose);
         }
     }
 
