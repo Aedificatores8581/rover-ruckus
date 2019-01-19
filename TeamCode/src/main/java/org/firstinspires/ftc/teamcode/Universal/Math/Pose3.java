@@ -31,5 +31,8 @@ public class Pose3 {
         yAngle += pose.yAngle;
         zAngle += pose.zAngle;
     }
+    public void rotateAlongZ(double degrees){
+
+    }
 
 }

@@ -28,6 +28,9 @@ public class Pose {
         y += p.y;
         angle += p.angle;
     }
+    public Vector2 toVector(){
+        return new Vector2(x, y);
+    }
     public double radius(){
         return Math.hypot(x, y);
     }
