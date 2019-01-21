@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
-
 public class Lift2_0 {
     public DcMotor liftMotor;
     public CRServo vaex1, vaex2;
@@ -15,13 +13,16 @@ public class Lift2_0 {
     public void init(HardwareMap hardwareMap, boolean isAutonomous){
         liftMotor = hardwareMap.dcMotor.get("lift");
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
         vaex1 = hardwareMap.crservo.get("vex1");
         vaex2 = hardwareMap.crservo.get("vex2");
     }
+
     public void lift(double value){
         liftMotor.setPower(value * maxSpeed);
     }
-    public void articulate(double value){
+
+    public void articulate(double value) {
         vaex1.setPower(value * 0.99);
         vaex2.setPower(value * 0.99);
     }
