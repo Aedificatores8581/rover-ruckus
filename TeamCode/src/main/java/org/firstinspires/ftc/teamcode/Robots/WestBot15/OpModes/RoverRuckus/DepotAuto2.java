@@ -178,7 +178,7 @@ public class DepotAuto2 extends WestBot15 {
     }
 
     public void loop() {
-        if (!(gamepad1.left_trigger > 0.2)) {
+        if (!(gamepad1.left_trigger > 0.2) && HADLEY_ON_SCHEDULE) {
             switch (autoState) {
                 case LAND:
                     lift.setPower(-1);

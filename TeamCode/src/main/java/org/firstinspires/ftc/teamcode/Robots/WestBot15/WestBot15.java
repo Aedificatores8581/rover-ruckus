@@ -59,11 +59,11 @@ public abstract class WestBot15 extends Robot {
             aextendo.init(hardwareMap, false);
             intaek.init(hardwareMap);
             lift.init(hardwareMap);
-
+            lift2_0.init(hardwareMap);
             maerkr = hardwareMap.servo.get("mrkr");
             maerkr.setPosition(MARKER_CLOSED_POSITION);
 
-            mineralContainer.init(hardwareMap);
+            //mineralContainer.init(hardwareMap);
         }
     }
 
