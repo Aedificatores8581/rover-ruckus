@@ -11,38 +11,42 @@ import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Map.AttractionField;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
+import static org.firstinspires.ftc.teamcode.Universal.UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
+
 @Autonomous (name = "Crater auto", group = "competition autonomous   ")
 public class CraterAuto1 extends WestBot15 {
+    // double hardNewY;
+    // boolean hasDriven = false;
+    // boolean parking, onCrater = false;
+    // Point newNewPoint = new Point();
+    // double rightEncPosition, leftEncPosition;
+
+    private final static boolean USING_VECTOR_FIELDS = false;
+    private final static int ON_CRATER_RIM_THRESHOLD = 15;
+
     private GoldDetector detector;
 
-    private boolean hasDrove;
+    private static boolean hasDrove;
+    private static boolean onCrater = false;
 
     private double prevLeft, prevRight = 0;
-    double hardNewY;
-
-    boolean hasDriven = false;
-    boolean parking, onCrater = false;
-
-    Point newNewPoint = new Point();
-    double rightEncPosition, leftEncPosition;
     private Vector2 sampleVect = new Vector2();
-    double d = 63;
+    double distance = 63;
     private double startTime = 0;
     private double speedMult = 1;
     private TouchSensor top, bottom;
 
-    private final static boolean USING_VECTOR_FIELDS = false;
-    private final static int ON_CRATER_RIM_THRESHOLD = 15;
     AutoState autoState = AutoState.LOWER;
+
     public void init(){
-        drivetrain.position = new Pose();
-        msStuckDetectInit = 500000;
+        msStuckDetectInit = MS_STUCK_DETECT_INIT_DEFAULT;
         super.init();
 
         top = new TouchSensor();
@@ -55,8 +59,11 @@ public class CraterAuto1 extends WestBot15 {
         detector = new GoldDetector();
         detector.opState = Detector.OperatingState.TUNING;
         FtcRobotControllerActivity.frameGrabber.detector = detector;
+
+        drivetrain.position = new Pose();
         drivetrain.controlState = TankDT.ControlState.FIELD_CENTRIC;
         drivetrain.direction = TankDT.Direction.BACK;
+
         drivetrain.leftFore.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.leftFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drivetrain.leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -66,29 +73,31 @@ public class CraterAuto1 extends WestBot15 {
         drivetrain.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void initLoop(){
-        //telemetry.addData("location 1", motoG4.rearCamera.getObjectLocation(detector.elements.get(0), detector.result().size(), 2));
-    }
+
     @Override
     public void start(){
         super.start();
         drivetrain.position = new Pose(0, 0, Math.PI / 2);
         startTime = UniversalFunctions.getTimeInSeconds();
-        if(gamepad1.left_trigger > 0.2)
-            d = 62.5;
+        if (gamepad1.left_trigger > 0.2) {
+            distance = 62.5;
+        }
     }
 
     public void loop(){
         switch (autoState) {
             case LOWER:
+                // Lower until the touch sensor is activated, then gather the start time.
                 lift.setPower(-1);
-                if(lift.topPressed()) {
+                if (lift.topPressed()) {
                     lift.liftMotor.setPower(0);
                     autoState = AutoState.SAMPLE;
                     startTime = UniversalFunctions.getTimeInSeconds();
                 }
                 break;
+
             case SAMPLE:
+                // Update the drivetrain's position.
                 drivetrain.updateEncoders();
                 double leftChange = drivetrain.averageLeftEncoders() - prevLeft;
                 double rightChange = drivetrain.averageRightEncoders() - prevRight;
@@ -96,55 +105,61 @@ public class CraterAuto1 extends WestBot15 {
                 prevLeft = drivetrain.averageLeftEncoders();
                 prevRight = drivetrain.averageRightEncoders();
                 setRobotAngle();
+
                 drivetrain.maxSpeed = 0.7;
-                if(UniversalFunctions.getTimeInSeconds() - startTime > 2)
+
+                if (UniversalFunctions.getTimeInSeconds() - startTime > 2) {
                     speedMult = 1;
+                }
 
-
+                // Gather position of the gold mineral.
                 Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
-                temp.x += 640/ 2;
+                temp.x += 640 / 2;
                 temp.y -= 480 / 2;
 
                 double vertAng = temp.y / 480 * motoG4.rearCamera.horizontalAngleOfView();
                 double horiAng = temp.x / 640 * motoG4.rearCamera.verticalAngleOfView();
 
-                double newY = (motoG4.getLocation().z - 2 / 2) / Math.tan(-vertAng - 0.364773814);
+                double newY = (motoG4.getLocation().z - 1) / Math.tan(-vertAng - 0.364773814);
                 double newX = newY * Math.tan(horiAng);
                 newY *= -1;
-                if(!hasDrove) {
+
+                if (!hasDrove) {
                     sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
-                    if(sampleVect.x < -10){
+
+                    if (sampleVect.x < -10) {
                         sampleVect.x -= 4;
                     }
                 }
+
                 if (UniversalFunctions.getTimeInSeconds() - startTime > 1) {
                     hasDrove = true;
-                    Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
-                    newVect.x -= drivetrain.position.x;
-                    newVect.y -= drivetrain.position.y;
-                    Vector2 temp2 = new Vector2(newVect.x, newVect.y);
+                    Vector2 newSampleVect = new Vector2(sampleVect.x, sampleVect.y);
+                    newSampleVect.x -= drivetrain.position.x;
+                    newSampleVect.y -= drivetrain.position.y;
+                    Vector2 temp2 = new Vector2(newSampleVect.x, newSampleVect.y);
 
-                    if (newVect.magnitude() > 12)
-                        newVect.setFromPolar(speedMult, newVect.angle());
-                    else
-                        newVect.scalarMultiply(6 / 12);
+                    if (newSampleVect.magnitude() > 12) {
+                        newSampleVect.setFromPolar(speedMult, newSampleVect.angle());
+                    } else {
+                        newSampleVect.scalarMultiply(6 / 12);
+                    }
 
-                    drivetrain.teleOpLoop(newVect, new Vector2(), robotAngle);
+                    drivetrain.teleOpLoop(newSampleVect, new Vector2(), robotAngle);
                     drivetrain.setLeftPow();
                     drivetrain.setRightPow();
 
-                    if (newVect.magnitude() < 0.6666666) {
+                    if (newSampleVect.magnitude() < 0.6666666) {
                         autoState = AutoState.CLAIM;
                     }
                 }
 
-                if(drivetrain.position.y > sampleVect.y - 2) {
+                if (drivetrain.position.y > sampleVect.y - 2) {
                     //autoState = AutoState.CLAIM;
                 }
                 break;
 
             case CLAIM:
-
                 drivetrain.updateEncoders();
                 double leftChange1 = drivetrain.averageLeftEncoders() - prevLeft;
                 double rightChange1 = drivetrain.averageRightEncoders() - prevRight;
@@ -154,7 +169,7 @@ public class CraterAuto1 extends WestBot15 {
                 setRobotAngle();
                 drivetrain.maxSpeed = 0.9;
 
-                Vector2 newVect = new Vector2(0, d);
+                Vector2 newVect = new Vector2(0, distance);
                 newVect.x -= drivetrain.position.x;
                 newVect.y -= drivetrain.position.y;
                 if (newVect.magnitude() > 12)
@@ -186,15 +201,19 @@ public class CraterAuto1 extends WestBot15 {
                     //autoState = AutoState.PARK;
                 }
                 break;
+
             case PARK:
                 drivetrain.direction = Drivetrain.Direction.FOR;
+
                 setRobotAngle();
                 drivetrain.maxSpeed = 0.5;
+
                 if(drivetrain.position.y < 38)
                     drivetrain.maxSpeed = 0.8;
                 if(USING_VECTOR_FIELDS){
                     AttractionField leftSample = new AttractionField();
                 }
+
                 if (Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD) {
                     onCrater = true;
                 } else {
@@ -204,16 +223,19 @@ public class CraterAuto1 extends WestBot15 {
                 if (!onCrater && UniversalFunctions.getTimeInSeconds() - startTime < 17) {
                     Vector2 tempV = new Vector2(-1 * Math.sqrt(2)/2, -Math.sqrt(2) / 2);
                     tempV.setFromPolar(tempV.magnitude(), tempV.angle() + Math.toRadians(10));
+
                     drivetrain.teleOpLoop(tempV, new Vector2(), robotAngle);
                     drivetrain.setLeftPow();
                     drivetrain.setRightPow();
                 } else {
                     // Stopped
-                    drivetrain.setRightPow(0.0);
-                    drivetrain.setLeftPow(0.0);
+                    drivetrain.setLeftPow(0.);
+                    drivetrain.setRightPow(0.);
                 }
                 break;
-        }telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
+        }
+
+        telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
         telemetry.addData("sampleVect, ", sampleVect);
         telemetry.addData("element position", detector.element);
         telemetry.addData("position", drivetrain.position.toString());
