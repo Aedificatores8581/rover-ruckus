@@ -76,7 +76,9 @@ public class Autonomous extends WestBot15 {
 		// startTime is literally the time from start.
 		startTime = UniversalFunctions.getTimeInSeconds();
 	}
+	public void loop(){
 
+	}
 	public void displayToDrivers() {
 		detector.opState = Detector.OperatingState.TUNING;
 		FtcRobotControllerActivity.frameGrabber.detector = detector;
