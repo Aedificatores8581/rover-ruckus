@@ -89,9 +89,9 @@ public class SamplingTest extends WestBot15 {
     public void loop(){
         drivetrain.updateLocation();
         setRobotAngle();
-
+        drivetrain.position.angle = normalizeGyroAngle();
         if(!gamepad1.left_bumper){
-            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 2);
+            drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 12);
         }
         else
             drivetrain.stop();
