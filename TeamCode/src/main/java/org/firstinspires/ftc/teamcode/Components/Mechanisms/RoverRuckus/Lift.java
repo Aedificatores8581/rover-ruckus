@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -17,6 +18,7 @@ public class Lift {
 
     public void init(HardwareMap hardwareMap) {
         liftMotor = hardwareMap.dcMotor.get("hangLift");
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

@@ -26,7 +26,7 @@ public class SamplingTest extends WestBot15 {
     private final static int ON_CRATER_RIM_THRESHOLD = 60;
 
     public void init(){
-        drivetrain.position = new Pose(0, 0, Math.PI / 2);
+        //drivetrain.position = new Pose(0, 0, Math.PI / 2);
         msStuckDetectInit = 500000;
         usingIMU = true;
         super.init();
@@ -49,7 +49,7 @@ public class SamplingTest extends WestBot15 {
     }
     public void init_loop(){
         super.init_loop();
-
+        drivetrain.updateLocation();
         Vector2 temp = new Vector2(-detector.element.x, detector.element.y);
         temp.x += 640 / 2;
         temp.y -= 480 / 2;
@@ -62,12 +62,12 @@ public class SamplingTest extends WestBot15 {
         newY *= -1;
         sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
         telemetry.addData("location of sample", sampleVect);
-        telemetry.addData("location of robot", drivetrain.position.x + ", " + drivetrain.position.y);
+        telemetry.addData("location of robot", drivetrain.position);
     }
     @Override
     public void start(){
         super.start();
-        drivetrain.position = new Pose(0, 0, 0);
+        //drivetrain.position = new Pose(0, 0, 0);
         drivetrain.maxSpeed = 0.5;
         drivetrain.updateLocation();
         setRobotAngle();
@@ -87,16 +87,17 @@ public class SamplingTest extends WestBot15 {
     }
 
     public void loop(){
+        //drivetrain.position.angle = normalizeGyroAngle();
         drivetrain.updateLocation();
         setRobotAngle();
-        drivetrain.position.angle = normalizeGyroAngle();
         if(!gamepad1.left_bumper){
+            drivetrain.turnMult = 1.75;
             drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 12);
         }
         else
             drivetrain.stop();
         telemetry.addData("location of sample", sampleVect);
-        telemetry.addData("drivetrain location", drivetrain.position);
+        telemetry.addData("drivetrain location Y", drivetrain.position.y);
     }
 
     public void stop(){

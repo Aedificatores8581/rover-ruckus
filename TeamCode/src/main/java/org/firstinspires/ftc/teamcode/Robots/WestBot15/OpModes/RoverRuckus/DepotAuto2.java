@@ -75,11 +75,10 @@ public class DepotAuto2 extends WestBot15 {
         drivetrain.rightFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        lift.setPower(1);
     }
 
     public void init_loop() {
+        lift.setPower(1);
         activateGamepad1();
         updateGamepad1();
 
@@ -246,7 +245,7 @@ public class DepotAuto2 extends WestBot15 {
                     Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
                     newVect.x -= drivetrain.position.x;
                     newVect.y -= drivetrain.position.y;
-                    newVect.scalarMultiply(1.2);
+                    //newVect.scalarMultiply(1.2);
 
                     drivetrain.newFieldCentric(newVect, robotAngle, 12);
 
@@ -350,6 +349,7 @@ public class DepotAuto2 extends WestBot15 {
             telemetry.addData("position", drivetrain.position.toString());
             telemetry.addData("onCrater", onCrater);
             telemetry.addData("state", autoState);
+            telemetry.addData("topPressed", lift.topPressed());
         }
     }
 

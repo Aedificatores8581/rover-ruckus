@@ -231,9 +231,9 @@ public abstract class TankDT extends Drivetrain {
             //drivetrain.turnVector.x *= -1;
         }
         turnVector.rotate(position.angle);
-        position.x += turnVector.x;
-        position.y += turnVector.y;
-        position.angle += angle;
+        position.x += turnVector.x / 2;
+        position.y += turnVector.y / 2;
+        position.angle += angle / 2;
     }
     
     //Sets the power of the left motor(s)
