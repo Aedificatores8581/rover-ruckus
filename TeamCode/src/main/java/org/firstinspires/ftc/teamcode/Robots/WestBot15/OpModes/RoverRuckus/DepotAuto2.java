@@ -166,6 +166,7 @@ public class DepotAuto2 extends WestBot15 {
         telemetry.addData("double-sample delay ", doubleSampleDelay);
         telemetry.addData("is extending?", is_aextending);
         telemetry.addData("Crater", crater);
+        telemetry.addData("robotAngle", robotAngle.angle());
     }
 
     @Override
@@ -246,7 +247,7 @@ public class DepotAuto2 extends WestBot15 {
                     Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
                     newVect.x -= drivetrain.position.x;
                     newVect.y -= drivetrain.position.y;
-                    newVect.scalarMultiply(1.2);
+                    newVect.scalarMultiply(1.4);
                     drivetrain.newFieldCentric(newVect, robotAngle, 6);
 
                     if (newVect.magnitude() < 0.5) {
@@ -289,17 +290,18 @@ public class DepotAuto2 extends WestBot15 {
                 case FACE_THE_CRATER:
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.turnToFace(robotAngle, 3 * Math.PI / 4);
+                    drivetrain.turnToFace(robotAngle, -3 * Math.PI / 4);
 
-                    if (Math.abs(UniversalFunctions.normalizeAngleRadians(robotAngle.angle(), 3 * Math.PI / 4)) < Math.toDegrees(5)) {
+                    if (Math.abs(UniversalFunctions.normalizeAngleRadians(robotAngle.angle(), -3 * Math.PI / 4)) < Math.toRadians(20)) {
                         autoState = AutoState.CLAIM;
+                        drivetrain.stop();
                     }
                     break;
                 case CLAIM:
                     maerkr.setPosition(MARKER_OPEN_POSITION);
                     autoState = AutoState.PARK;
                     craterVect = new Vector2();
-                    craterVect.setFromPolar(1, 3*Math.PI / 4);
+                    craterVect.setFromPolar(1, -3*Math.PI / 4);
                     break;
 
                 case PARK:
@@ -341,10 +343,10 @@ public class DepotAuto2 extends WestBot15 {
                     break;
             }
 
+            telemetry.addData("position", drivetrain.position.toString());
             telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
             telemetry.addData("sampleVect, ", sampleVect);
             telemetry.addData("element position", detector.element);
-            telemetry.addData("position", drivetrain.position.toString());
             telemetry.addData("onCrater", onCrater);
             telemetry.addData("state", autoState);
             telemetry.addData("topPressed", lift.topPressed());
