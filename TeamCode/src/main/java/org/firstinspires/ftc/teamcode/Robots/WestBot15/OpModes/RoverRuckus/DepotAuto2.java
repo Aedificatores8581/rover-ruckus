@@ -47,7 +47,8 @@ public class DepotAuto2 extends WestBot15 {
     private double d = 72; // oof
     boolean obtainedSampleLocation = false;
     double time = 0;
-
+    Vector2 craterVect = new Vector2();
+    public double prevTimeInit = 0;
     public void init() {
         prevTime = UniversalFunctions.getTimeInSeconds();
         drivetrain.position = new Pose();
@@ -75,10 +76,10 @@ public class DepotAuto2 extends WestBot15 {
         drivetrain.rightFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        prevTimeInit = UniversalFunctions.getTimeInSeconds();
     }
-
     public void init_loop() {
-        lift.setPower(1);
+        lift.setPower(-1);
         activateGamepad1();
         updateGamepad1();
 
@@ -171,17 +172,19 @@ public class DepotAuto2 extends WestBot15 {
     public void start() {
         super.start();
 
-        drivetrain.position = new Pose(0, 0, Math.PI / 2);
+        //drivetrain.position = new Pose(0, 0, Math.PI / 2);
         startTime = UniversalFunctions.getTimeInSeconds();
         autoState = AutoState.LAND;
     }
 
     public void loop() {
+        setRobotAngle();
+        drivetrain.turnMult = 1.75;
         if (!(gamepad1.left_trigger > 0.2) && HADLEY_ON_SCHEDULE) {
             switch (autoState) {
                 case LAND:
-                    lift.setPower(-1);
-                    if (lift.topPressed()) {
+                    lift.setPower(1);
+                    if (lift.bottomPressed()) {
                         lift.liftMotor.setPower(0);
                         if (UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay) {
                             drivetrain.resetEncoders();
@@ -205,7 +208,7 @@ public class DepotAuto2 extends WestBot15 {
                     newY *= -1;
 
                     sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
-                    if (Math.abs(sampleVect.x) < 5) { d = 72; }
+                    if (Math.abs(sampleVect.x) < 5) { d = 70; }
 
                     drivetrain.position.y += 37.97 - newY;
                     obtainedSampleLocation = true;
@@ -215,15 +218,14 @@ public class DepotAuto2 extends WestBot15 {
                     break;
 
                 case FORWARD:
-                    //startAngleY = getGyroAngleY();
-                    setRobotAngle();
 
                     drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.6;
 
                     intaek.articulateDown();
 
-                    if (drivetrain.position.y < 2.0) {
+                    if (drivetrain.position.y - initialPosition < 2.0) {
                         drivetrain.setLeftPow(1);
                         drivetrain.setRightPow(1);
                     } else{
@@ -232,22 +234,20 @@ public class DepotAuto2 extends WestBot15 {
                     break;
 
                 case SAMPLE:
-                    intaek.setPower(1);
+                    intaek.setPower(-1);
                     intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
 
-                    lift.setPower(1);
+                    lift.setPower(-1);
 
                     drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.45;
-
-                    setRobotAngle();
 
                     Vector2 newVect = new Vector2(sampleVect.x, sampleVect.y);
                     newVect.x -= drivetrain.position.x;
                     newVect.y -= drivetrain.position.y;
-                    //newVect.scalarMultiply(1.2);
-
-                    drivetrain.newFieldCentric(newVect, robotAngle, 12);
+                    newVect.scalarMultiply(1.2);
+                    drivetrain.newFieldCentric(newVect, robotAngle, 6);
 
                     if (newVect.magnitude() < 0.5) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
@@ -261,9 +261,8 @@ public class DepotAuto2 extends WestBot15 {
                     intaek.articulateUp();
 
                     drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.5;
-
-                    setRobotAngle();
 
                     newVect = new Vector2(0, d);
                     newVect.x -= drivetrain.position.x;
@@ -289,25 +288,23 @@ public class DepotAuto2 extends WestBot15 {
 
                 case FACE_THE_CRATER:
                     drivetrain.updateLocation();
-                    drivetrain.turnToFace(robotAngle, 5 * Math.PI / 4);
+                    drivetrain.position.angle = robotAngle.angle();
+                    drivetrain.turnToFace(robotAngle, 3 * Math.PI / 4);
 
-                    setRobotAngle();
-
-                    if (Math.abs(UniversalFunctions.normalizeAngleRadians(robotAngle.angle(), 5 * Math.PI / 4)) < Math.toDegrees(5)) {
+                    if (Math.abs(UniversalFunctions.normalizeAngleRadians(robotAngle.angle(), 3 * Math.PI / 4)) < Math.toDegrees(5)) {
                         autoState = AutoState.CLAIM;
                     }
                     break;
                 case CLAIM:
                     maerkr.setPosition(MARKER_OPEN_POSITION);
                     autoState = AutoState.PARK;
-                    Vector2 craterVect = new Vector2();
-                    craterVect.setFromPolar(1, 5*Math.PI / 4);
-                    drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
+                    craterVect = new Vector2();
+                    craterVect.setFromPolar(1, 3*Math.PI / 4);
                     break;
 
                 case PARK:
-                    setRobotAngle();
                     drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
 
                     if (!onCrater) {
                         if (drivetrain.position.y < 37.5) {
@@ -318,6 +315,7 @@ public class DepotAuto2 extends WestBot15 {
                             } else {
                                 drivetrain.maxSpeed=0.8;
                                 onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
+                                drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
                             }
                         } else {
                             drivetrain.maxSpeed = 0.5;
