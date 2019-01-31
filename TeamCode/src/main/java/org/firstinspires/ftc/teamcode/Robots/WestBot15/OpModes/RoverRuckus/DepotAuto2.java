@@ -8,16 +8,12 @@ import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
-import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
-import org.firstinspires.ftc.teamcode.Universal.Map.AttractionField;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
-import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 /*
@@ -33,8 +29,8 @@ public class DepotAuto2 extends WestBot15 {
     private GoldDetector detector;
 
     private Vector2 sampleVect = new Vector2();
-    private AutoState autoState = AutoState.LAND;
-    private Crater crater = Crater.LEFT;
+    private AutoState autoState;
+    private Crater crater = Crater.RIGHT;
 
     private double startTime = 0;
     double initialPosition = 0;
@@ -44,7 +40,7 @@ public class DepotAuto2 extends WestBot15 {
     private boolean onCrater = false;
     private double prevTime = 0;
     private boolean canSwitchTimer = true;
-    private double d = 60; // oof
+    private double depotYLocation = 60; // oof
     boolean obtainedSampleLocation = false;
     double time = 0;
     Vector2 craterVect = new Vector2();
@@ -212,7 +208,7 @@ public class DepotAuto2 extends WestBot15 {
                     newY *= -1;
 
                     sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
-                    if (Math.abs(sampleVect.x) < 5) { d = 63; }
+                    if (Math.abs(sampleVect.x) < 5) { depotYLocation = 57; }
 
                     initialPosition = drivetrain.position.y;
                     autoState = autoState.FORWARD;
@@ -261,7 +257,9 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.5;
 
-                    Vector2 newVect = new Vector2(6, d);
+                    Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 6, depotYLocation);
+                    if(sampleVect.x > 8)
+                        newVect.y = 58;
                     drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 4);
                     if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower())< 0.2) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay) {
@@ -279,7 +277,8 @@ public class DepotAuto2 extends WestBot15 {
                 case FACE_THE_CRATER:
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.turnToFace(robotAngle, -3 * Math.PI / 4);
+                    drivetrain.maxSpeed = 0.65;
+                    drivetrain.turnToFace(robotAngle, Math.PI / 2 - (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
 
                     if (Math.abs(drivetrain.leftFore.getPower() / drivetrain.maxSpeed) < 0.9) {
                         autoState = AutoState.CLAIM;
@@ -298,7 +297,7 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.position.angle = robotAngle.angle();
 
                     if (!onCrater) {
-                        if (drivetrain.position.y < 37.5) {
+                        if (drivetrain.position.y < 45) {
                             if (is_aextending) {
                                 drivetrain.maxSpeed = 0.5;
                                 aextendo.aextendTM(1);
