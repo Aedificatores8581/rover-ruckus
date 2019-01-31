@@ -29,7 +29,7 @@ public class DepotAuto2 extends WestBot15 {
     private GoldDetector detector;
 
     private Vector2 sampleVect = new Vector2();
-    private AutoState autoState;
+    private AutoState autoState = AutoState.LAND;
     private Crater crater = Crater.RIGHT;
 
     private double startTime = 0;
@@ -218,7 +218,7 @@ public class DepotAuto2 extends WestBot15 {
 
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.maxSpeed = 0.65;
+                    drivetrain.maxSpeed = 0.6;
 
                     intaek.articulateDown();
 
@@ -249,10 +249,9 @@ public class DepotAuto2 extends WestBot15 {
                     break;
 
                 case TO_THE_DEPOT:
-                    drivetrain.maxSpeed = 0.6;
+                    drivetrain.maxSpeed = 0.5;
                     intaek.setPower(0);
                     intaek.articulateUp();
-
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.5;
@@ -260,6 +259,9 @@ public class DepotAuto2 extends WestBot15 {
                     Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 6, depotYLocation);
                     if(sampleVect.x > 8)
                         newVect.y = 58;
+                    else if(sampleVect.x < -8){
+                        newVect.y = 58;
+                    }
                     drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 4);
                     if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower())< 0.2) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay) {
@@ -278,7 +280,7 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.65;
-                    drivetrain.turnToFace(robotAngle, Math.PI / 2 - (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
+                    drivetrain.turnToFace(robotAngle, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
 
                     if (Math.abs(drivetrain.leftFore.getPower() / drivetrain.maxSpeed) < 0.9) {
                         autoState = AutoState.CLAIM;
@@ -288,16 +290,18 @@ public class DepotAuto2 extends WestBot15 {
                     maerkr.setPosition(MARKER_OPEN_POSITION);
                     autoState = AutoState.PARK;
                     craterVect = new Vector2();
-                    craterVect.setFromPolar(1, Math.PI / 2- 3*Math.PI / 4);
+                    craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
                     break;
 
                 case PARK:
                     telemetry.addData("gyroAngle", robotAngle.angle());
+                    telemetry.addData("onCrater", onCrater);
+                    telemetry.addData("y angle", normalizeGyroAngleY());
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-
+                    drivetrain.turnMult = 2;
                     if (!onCrater) {
-                        if (drivetrain.position.y < 45) {
+                        if (drivetrain.position.y < 37) {
                             if (is_aextending) {
                                 drivetrain.maxSpeed = 0.5;
                                 aextendo.aextendTM(1);
@@ -307,7 +311,7 @@ public class DepotAuto2 extends WestBot15 {
                                 onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
                             }
                         } else {
-                            drivetrain.maxSpeed = 0.5;
+                            drivetrain.maxSpeed = 0.6;
                             drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
                         }
 
