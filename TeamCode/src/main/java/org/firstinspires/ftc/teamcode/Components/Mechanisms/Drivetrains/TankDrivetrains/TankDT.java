@@ -260,23 +260,39 @@ public abstract class TankDT extends Drivetrain {
     //turns the front of the robot to the specified direction
     public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle){
         angleBetween = UniversalFunctions.normalizeAngleRadians(desiredAngle.angle(), currentAngle.angle());
+        double tempTurnMult = 0;
         switch (direction) {
             case FOR:
                 directionMult = 1;
-                angleBetween = UniversalFunctions.normalizeAngle180Radians(angleBetween);
-                angleBetween = UniversalFunctions.clamp(-Math.PI / 2, angleBetween, Math.PI / 2);
+                if(Math.sin(angleBetween) < 0) {
+                    setLeftPow(Math.cos(angleBetween) < 0 ? -1 : 1);
+                    setRightPow(Math.cos(angleBetween) > 0 ? -1 : 1);
+                }
+                else{
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (-tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (tempTurnMult * turnMult * cos);
+                    setLeftPow();
+                    setRightPow();
+                }
                 break;
             case BACK:
                 directionMult = -1;
-                angleBetween = UniversalFunctions.clamp(Math.PI / 2, angleBetween, 3 * Math.PI / 2);
+                if(Math.sin(angleBetween) > 0) {
+                    setLeftPow(Math.cos(angleBetween)< 0 ? 1 : -1);
+                    setRightPow(Math.cos(angleBetween) > 0 ? 1 : -1);
+                }
+                else{
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (-tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (tempTurnMult * turnMult * cos);
+                    setRightPow();
+                    setLeftPow();
+                }
                 break;
         }
-        double sin = Math.sin(angleBetween);
-        turnMult = Math.abs(sin) + 1;
-        leftPow = directionMult * -turnMult * sin;
-        rightPow = directionMult * turnMult * sin;
-        setLeftPow();
-        setRightPow();
     }
     public void turnToFace(Vector2 currentAngle, double desiredAngle){
         Vector2 desiredAng = new Vector2();
