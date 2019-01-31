@@ -36,7 +36,7 @@ public class DepotAuto2 extends WestBot15 {
     double initialPosition = 0;
     private double sampleDelay = 0, claimDelay = 0, parkingDelay = 0, doubleSampleDelay = 0;
 
-    private boolean is_aextending = false;
+    private boolean is_aextending = true;
     private boolean onCrater = false;
     private double prevTime = 0;
     private boolean canSwitchTimer = true;
@@ -257,10 +257,11 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.maxSpeed = 0.5;
 
                     Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 6, depotYLocation);
-                    if(sampleVect.x > 8)
-                        newVect.y = 58;
+                    if(sampleVect.x > 8) {
+                        newVect.y = crater == Crater.RIGHT ? 58 : 57;
+                    }
                     else if(sampleVect.x < -8){
-                        newVect.y = 58;
+                        newVect.y = crater == Crater.RIGHT ? 57 : 58;
                     }
                     drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 4);
                     if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower())< 0.2) {
@@ -301,12 +302,16 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.turnMult = 2;
                     if (!onCrater) {
-                        if (drivetrain.position.y < 37) {
-                            if (is_aextending) {
+                        if (drivetrain.position.y < 25) {
+                            if (is_aextending && aextendo.getExtensionLength() < 25) {
                                 drivetrain.maxSpeed = 0.5;
                                 aextendo.aextendTM(1);
                                 drivetrain.stop();
-                            } else {
+                            }
+                            else if(aextendo.getExtensionLength() < 25){
+                                aextendo.aextendTM(0);
+                            }
+                            else {
                                 drivetrain.maxSpeed=0.8;
                                 onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
                             }
@@ -315,11 +320,6 @@ public class DepotAuto2 extends WestBot15 {
                             drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
                         }
 
-                        if (is_aextending) {
-                            if (drivetrain.position.y - (aextendo.getExtensionLength() + 6) * Math.sqrt(2) / 2 < 0 || aextendo.getExtensionLength() > 25) {
-                                onCrater = true;
-                            }
-                        }
                     } else {
                         drivetrain.stop();
                         aextendo.extendo.setPower(0);
