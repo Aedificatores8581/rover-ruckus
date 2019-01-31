@@ -25,6 +25,8 @@ public class DepotAuto2 extends WestBot15 {
     private static final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
 
+    private boolean isDoubleSampling = false;
+
     private Servo maerkr;
     private GoldDetector detector;
 
@@ -81,7 +83,10 @@ public class DepotAuto2 extends WestBot15 {
         updateGamepad1();
 
         double increment = rightStick1.y * UniversalFunctions.getTimeInSeconds() - prevTime;
-
+        if(gamepad1.a)
+            isDoubleSampling = true;
+        if(gamepad1.b)
+            isDoubleSampling = false;
         switch (autoState) {
             case SAMPLE:
                 sampleDelay += increment;
@@ -303,17 +308,19 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.turnMult = 2;
                     if (!onCrater) {
                         if (drivetrain.position.y < 25) {
-                            if (is_aextending && aextendo.getExtensionLength() < 25) {
-                                drivetrain.maxSpeed = 0.5;
-                                aextendo.aextendTM(1);
-                                drivetrain.stop();
-                            }
-                            else if(aextendo.getExtensionLength() < 25){
-                                aextendo.aextendTM(0);
-                            }
+                            if(isDoubleSampling)
+                                autoState = AutoState.DOUBLE_SAMPLE;
                             else {
-                                drivetrain.maxSpeed=0.8;
-                                onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
+                                if (is_aextending && aextendo.getExtensionLength() < 25) {
+                                    drivetrain.maxSpeed = 0.5;
+                                    aextendo.aextendTM(1);
+                                    drivetrain.stop();
+                                } else if (aextendo.getExtensionLength() < 25) {
+                                    aextendo.aextendTM(0);
+                                } else {
+                                    drivetrain.maxSpeed = 0.8;
+                                    onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
+                                }
                             }
                         } else {
                             drivetrain.maxSpeed = 0.6;
