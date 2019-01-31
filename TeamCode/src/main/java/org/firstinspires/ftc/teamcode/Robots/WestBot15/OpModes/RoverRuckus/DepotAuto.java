@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,6 +22,7 @@ import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
+@Disabled
 @Autonomous (name = "Depot auto", group = "competition autonomous   ")
 public class DepotAuto extends WestBot15 {
     Servo maerkr;
@@ -70,6 +72,7 @@ public class DepotAuto extends WestBot15 {
         drivetrain.rightFore.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        zeroDegreeAngle = getGyroAngle();
         lift.setPower(1);
     }
     public void init_loop() {
@@ -146,6 +149,7 @@ public class DepotAuto extends WestBot15 {
         autoState = AutoState.LOWER;
     }
     public void loop(){
+
         if(! (gamepad1.left_trigger > 0.2)) {
             switch (autoState) {
                 case LOWER:
