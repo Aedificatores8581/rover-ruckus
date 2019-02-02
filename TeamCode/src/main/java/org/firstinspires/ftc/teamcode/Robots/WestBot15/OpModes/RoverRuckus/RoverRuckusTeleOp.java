@@ -66,8 +66,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
         double fitemetheo = Math.signum(gamepad1.right_trigger - gamepad1.left_trigger);
         if(fitemetheo == 0)
             fitemetheo = 1;
-        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + Math.signum(gamepad1.right_trigger - gamepad1.left_trigger) * leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - Math.signum(gamepad1.right_trigger - gamepad1.left_trigger) * leftStick1.x * drivetrain.turnMult;
+        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         if(!gamepad2.right_stick_button){
