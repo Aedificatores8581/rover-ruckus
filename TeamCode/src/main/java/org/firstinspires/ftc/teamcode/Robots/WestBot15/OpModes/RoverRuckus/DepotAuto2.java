@@ -24,7 +24,7 @@ public class DepotAuto2 extends WestBot15 {
     private final static boolean USING_VECTOR_FIELDS = false;
     private static final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
-
+    boolean isTIMED = false;
     private boolean isDoubleSampling = false;
 
     private Servo maerkr;
@@ -38,7 +38,7 @@ public class DepotAuto2 extends WestBot15 {
     double initialPosition = 0;
     private double sampleDelay = 0, claimDelay = 0, parkingDelay = 0, doubleSampleDelay = 0;
 
-    private boolean is_aextending = true;
+    private boolean is_aextending = false;
     private boolean onCrater = false;
     private double prevTime = 0;
     private boolean canSwitchTimer = true;
@@ -309,7 +309,7 @@ public class DepotAuto2 extends WestBot15 {
                     if (!onCrater) {
                         if (drivetrain.position.y < 25) {
                             if(isDoubleSampling)
-                                autoState = AutoState.DOUBLE_SAMPLE;
+                            autoState = AutoState.DOUBLE_SAMPLE;
                             else {
                                 if (is_aextending && aextendo.getExtensionLength() < 25) {
                                     drivetrain.maxSpeed = 0.5;
@@ -319,7 +319,16 @@ public class DepotAuto2 extends WestBot15 {
                                     aextendo.aextendTM(0);
                                 } else {
                                     drivetrain.maxSpeed = 0.8;
-                                    onCrater = Math.abs(normalizeGyroAngleY()) > ON_CRATER_RIM_THRESHOLD;
+                                    if(!isTIMED) {
+                                        prevTime = UniversalFunctions.getTimeInSeconds();
+                                        isTIMED = true;
+                                    }
+                                    if(isTIMED){
+                                        if(UniversalFunctions.getTimeInSeconds() - prevTime > 1)
+                                            drivetrain.stop();
+                                        else
+                                            drivetrain.newFieldCentric(craterVect, robotAngle, 0.0000000000000000000000001);
+                                    }
                                 }
                             }
                         } else {
@@ -338,7 +347,7 @@ public class DepotAuto2 extends WestBot15 {
                     break;
 
                 case DOUBLE_SAMPLE:
-                    // Coming soon to a FTC team near you...
+
                     break;
             }
 

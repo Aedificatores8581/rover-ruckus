@@ -46,11 +46,11 @@ public class RoverRuckusTeleOp extends WestBot15 {
         super.init();
         extensionSafety = ExtensionSafety.DISABLED;
         intakeDoorState = IntakeDoorState.CLOSED;
-
         activateGamepad1();
         activateGamepad2();
     }
     public void start(){
+        aextendo.isAutonomous = false;
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
     }
@@ -64,8 +64,9 @@ public class RoverRuckusTeleOp extends WestBot15 {
             drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
         }
 
-        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
+
+        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + Math.signum(gamepad1.right_trigger - gamepad1.left_trigger) * leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - Math.signum(gamepad1.right_trigger - gamepad1.left_trigger) * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         if(!gamepad2.right_stick_button){
