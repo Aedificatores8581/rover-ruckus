@@ -225,7 +225,7 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.6;
 
-                    intaek.articulateDown();
+                    //intaek.articulateDown();
 
                     if (drivetrain.position.y - initialPosition < 2) {
                         drivetrain.setLeftPow(1);
@@ -255,8 +255,8 @@ public class DepotAuto2 extends WestBot15 {
 
                 case TO_THE_DEPOT:
                     drivetrain.maxSpeed = 0.5;
-                    intaek.setPower(0);
-                    intaek.articulateUp();
+                    //intaek.setPower(0);
+                    //intaek.articulateUp();
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.5;
@@ -340,8 +340,8 @@ public class DepotAuto2 extends WestBot15 {
                         drivetrain.stop();
                         aextendo.extendo.setPower(0);
                         if(is_aextending) {
-                            intaek.articulateDown();
-                            intaek.setPower(1);
+                            //intaek.articulateDown();
+                            //intaek.setPower(1);
                         }
                     }
                     break;
