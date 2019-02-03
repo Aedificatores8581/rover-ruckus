@@ -42,18 +42,18 @@ public class AExtendotm {
     //TODO:add limit switch code
     public void aextendTM(double value) {
         encoder.updateEncoder();
-        if(isAutonomous && UniversalFunctions.withinTolerance(value - 0.25, getExtensionLength(), value + 0.25))
+        if (isAutonomous && UniversalFunctions.withinTolerance(value - 0.25, getExtensionLength(), value + 0.25))
             extendo.setPower(maxSpeed);
-        else if(isAutonomous)
-            extendo.setPower(getExtensionLength() > value ? - maxSpeed : maxSpeed);
+        else if (isAutonomous)
+            extendo.setPower(getExtensionLength() > value ? -maxSpeed : maxSpeed);
         else {
-            if(backSwitch.isPressed())
+            if (backSwitch.isPressed())
                 value = UniversalFunctions.clamp(0, value, 1);
-            if(frontSwitch.isPressed())
+            if (frontSwitch.isPressed())
                 value = UniversalFunctions.clamp(-1, value, 0);
             extendo.setPower(value);
         }
-        if(getExtensionLength() < 0)
+        if (getExtensionLength() < 0)
             encoder.resetEncoder();
     }
 

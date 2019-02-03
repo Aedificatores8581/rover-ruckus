@@ -76,6 +76,7 @@ public class DepotAuto2 extends WestBot15 {
         drivetrain.rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         prevTimeInit = UniversalFunctions.getTimeInSeconds();
         zeroDegreeAngle = getGyroAngle();
+        intaek.articulateUp();
     }
     public void init_loop() {
         lift.setPower(-1);
@@ -184,7 +185,7 @@ public class DepotAuto2 extends WestBot15 {
     public void loop() {
 
         setRobotAngle();
-        drivetrain.turnMult = 1.75;
+        drivetrain.turnMult = 1.85;
         if (!(gamepad1.left_trigger > 0.2) && HADLEY_ON_SCHEDULE) {
             switch (autoState) {
                 case LAND:
@@ -225,7 +226,7 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.6;
 
-                    //intaek.articulateDown();
+                    intaek.articulateDown();
 
                     if (drivetrain.position.y - initialPosition < 2) {
                         drivetrain.setLeftPow(1);
@@ -243,8 +244,18 @@ public class DepotAuto2 extends WestBot15 {
 
                     drivetrain.updateLocation();
                     drivetrain.maxSpeed = 0.5;
+                    Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
+                    nearDrivingVect .subtract(drivetrain.position.toVector());
+                    /*if(nearDrivingVect.magnitude() < 8){
+                        nearDrivingVect.setFromPolar(nearDrivingVect.magnitude(), UniversalFunctions.clamp);
+                    }
+                    else {*/
+                        drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 8);
+  //                  }
 
-                    drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 8);
+                    if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4){
+                        intaek.articulateUp();
+                    }
 
                     if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.2) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
@@ -255,8 +266,8 @@ public class DepotAuto2 extends WestBot15 {
 
                 case TO_THE_DEPOT:
                     drivetrain.maxSpeed = 0.5;
-                    //intaek.setPower(0);
-                    //intaek.articulateUp();
+                    intaek.setPower(0);
+                    intaek.articulateUp();
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.5;
@@ -311,7 +322,7 @@ public class DepotAuto2 extends WestBot15 {
                             if(isDoubleSampling)
                             autoState = AutoState.DOUBLE_SAMPLE;
                             else {
-                                if (is_aextending && aextendo.getExtensionLength() < 25) {
+                                if (is_aextending && aextendo.getExtensionLength() < 30) {
                                     drivetrain.maxSpeed = 0.5;
                                     aextendo.aextendTM(1);
                                     drivetrain.stop();
