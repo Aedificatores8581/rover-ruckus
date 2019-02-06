@@ -7,8 +7,12 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Universal.Map.Map2;
+import org.firstinspires.ftc.teamcode.Universal.Map.Map3;
 import org.firstinspires.ftc.teamcode.Universal.Math.GyroAngles;
 
+import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
+import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 
@@ -19,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 public abstract class Robot extends OpMode {
     GyroAngles     gyroangles;
     Orientation    angles;
-
+    public Map3 componentMap;
     public BNO055IMU      imu;
     public double  startAngle;
     public double startAngleY;
@@ -174,6 +178,10 @@ public abstract class Robot extends OpMode {
 
     public double getCurrentTime(){
         return UniversalFunctions.getTimeInSeconds() - opModeStartTime;
+    }
+
+    public void updateComponentLocations(Pose robotPose){
+
     }
 
 }

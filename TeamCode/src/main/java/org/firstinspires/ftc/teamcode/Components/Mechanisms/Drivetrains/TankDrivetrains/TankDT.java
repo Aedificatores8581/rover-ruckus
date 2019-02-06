@@ -15,7 +15,8 @@ import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 public abstract class TankDT extends Drivetrain {
     public double       ENC_PER_INCH;
     public double       DISTANCE_BETWEEN_WHEELS;
-    public double       turnMult,
+    public double       turnMult = 1
+            ,
                         angleBetween,
                         directionMult = 1,
                         cos,
@@ -61,6 +62,7 @@ public abstract class TankDT extends Drivetrain {
         else
             destinationVect.scalarMultiply(1.0 / threshold);
         angleBetween = UniversalFunctions.normalizeAngleRadians(destinationVect.angle(), angle.angle());
+        double tempTurnMult = 0;
         switch (direction) {
             case FOR:
                 directionMult = 1;
@@ -69,10 +71,10 @@ public abstract class TankDT extends Drivetrain {
                     setRightPow(Math.cos(angleBetween) > 0 ? -1 : 1);
                 }
                 else{
-                    double sin = Math.cos(angleBetween);
-                    turnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (destinationVect.magnitude() + tempTurnMult * turnMult * cos);
                     setLeftPow();
                     setRightPow();
                 }
@@ -84,10 +86,10 @@ public abstract class TankDT extends Drivetrain {
                     setRightPow(Math.cos(angleBetween) > 0 ? 1 : -1);
                 }
                 else{
-                    double sin = Math.cos(angleBetween);
-                    turnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (destinationVect.magnitude() - turnMult * sin);
-                    leftPow = directionMult * (destinationVect.magnitude() + turnMult * sin);
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (destinationVect.magnitude() - tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (destinationVect.magnitude() + tempTurnMult * turnMult * cos);
                     setRightPow();
                     setLeftPow();
                 }
@@ -176,23 +178,12 @@ public abstract class TankDT extends Drivetrain {
         setRightPow();
     }
 
-    public void driveToPoint(double x, double y, Direction dir){
-        destination = new Vector2(x, y);
-        angleBetween = UniversalFunctions.normalizeAngleRadians(destination.angle(), position.angle);
-        if(Math.sin(angleBetween) * (dir == Direction.FOR ? 1: -1) < 1){
-            if(Math.sin(angleBetween - Math.PI / 2) > 0){
-                setLeftPow(-1);
-                setRightPow(1);
-            }
-            else{
-                setLeftPow(1);
-                setRightPow(-1);
-            }
-        }
-        else{
-            controlState = ControlState.FIELD_CENTRIC;
-            teleOpLoop(destination, new Vector2(), position.angle);
-        }
+    public void driveToPoint(double x, double y, Vector2 angle, Direction dir, double threshold){
+        Vector2 destinationVect = new Vector2(x, y);
+        destinationVect.x -= position.x;
+        destinationVect.y -= position.y;
+        direction = dir;
+        newFieldCentric(destinationVect, angle, threshold);
     }
 
     //x and y must be in inches
@@ -240,11 +231,9 @@ public abstract class TankDT extends Drivetrain {
             //drivetrain.turnVector.x *= -1;
         }
         turnVector.rotate(position.angle);
-        position.x += turnVector.x;
-        position.y += turnVector.y;
-        position.angle -= angle;
-
-
+        position.x += turnVector.x / 2;
+        position.y += turnVector.y / 2;
+        position.angle += angle / 2;
     }
     
     //Sets the power of the left motor(s)
@@ -271,23 +260,39 @@ public abstract class TankDT extends Drivetrain {
     //turns the front of the robot to the specified direction
     public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle){
         angleBetween = UniversalFunctions.normalizeAngleRadians(desiredAngle.angle(), currentAngle.angle());
+        double tempTurnMult = 0;
         switch (direction) {
             case FOR:
                 directionMult = 1;
-                angleBetween = UniversalFunctions.normalizeAngle180Radians(angleBetween);
-                angleBetween = UniversalFunctions.clamp(-Math.PI / 2, angleBetween, Math.PI / 2);
+                if(Math.sin(angleBetween) < 0) {
+                    setLeftPow(Math.cos(angleBetween) < 0 ? -1 : 1);
+                    setRightPow(Math.cos(angleBetween) > 0 ? -1 : 1);
+                }
+                else{
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (-tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (tempTurnMult * turnMult * cos);
+                    setLeftPow();
+                    setRightPow();
+                }
                 break;
             case BACK:
                 directionMult = -1;
-                angleBetween = UniversalFunctions.clamp(Math.PI / 2, angleBetween, 3 * Math.PI / 2);
+                if(Math.sin(angleBetween) > 0) {
+                    setLeftPow(Math.cos(angleBetween)< 0 ? 1 : -1);
+                    setRightPow(Math.cos(angleBetween) > 0 ? 1 : -1);
+                }
+                else{
+                    double cos = Math.cos(angleBetween);
+                    tempTurnMult = Math.abs(cos) + 1;
+                    rightPow = directionMult * (-tempTurnMult * turnMult * cos);
+                    leftPow = directionMult * (tempTurnMult * turnMult * cos);
+                    setRightPow();
+                    setLeftPow();
+                }
                 break;
         }
-        double sin = Math.sin(angleBetween);
-        turnMult = Math.abs(sin) + 1;
-        leftPow = directionMult * -turnMult * sin;
-        rightPow = directionMult * turnMult * sin;
-        setLeftPow();
-        setRightPow();
     }
     public void turnToFace(Vector2 currentAngle, double desiredAngle){
         Vector2 desiredAng = new Vector2();
@@ -311,23 +316,6 @@ public abstract class TankDT extends Drivetrain {
         turnSpeed *= Math.sin(angleBetween);
         leftPow = -turnSpeed;
         rightPow = turnSpeed;
-    }
-
-    //assumes that the robot is at 0,0
-    //TODO: Implement variability in the units of length that the destination Pose uses
-    //TODO: Determine which implementation to use
-    public void driveToPose2(Pose destination, Direction dir){
-        double theta = Math.atan2(-destination.y, -destination.x) - Math.signum(Math.cos(destination.angleOfVector())) * Math.PI / 2;
-        Vector2 temp = new Vector2();
-        temp.setFromPolar(1, theta);
-        driveToPoint(destination.x, destination.y, dir);
-        double lp = leftPow;
-        double rp = rightPow;
-        driveToPoint(temp.x, temp.y, dir);
-        lp += (leftPow / destination.radius());
-        rp += (rightPow / destination.radius());
-        leftPow = lp;
-        rightPow = rp;
     }
     public void stop(){
         setLeftPow(0);

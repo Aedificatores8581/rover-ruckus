@@ -12,6 +12,9 @@ public class Pose3 {
         this.yAngle = yAngle;
         this.zAngle = zAngle;
     }
+    public Pose3(Pose pose){
+        this(pose.x, pose.y, 0, 0, 0, 0);
+    }
     public Pose3(){
         x = 0;
         y = 0;
@@ -27,6 +30,9 @@ public class Pose3 {
         xAngle += pose.xAngle;
         yAngle += pose.yAngle;
         zAngle += pose.zAngle;
+    }
+    public void rotateAlongZ(double degrees){
+
     }
 
 }

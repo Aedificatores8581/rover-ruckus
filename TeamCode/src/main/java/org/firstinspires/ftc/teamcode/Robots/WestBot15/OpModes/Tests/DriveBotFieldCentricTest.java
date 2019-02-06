@@ -55,6 +55,10 @@ public class DriveBotFieldCentricTest extends WestBot15 {
         }
         telemetry.addData("position", drivetrain.position);
         telemetry.addData("gyro angle", robotAngle.angle());
+        telemetry.addData("left front enc", drivetrain.leftFore.getCurrentPosition());
+        telemetry.addData("left rear enc", drivetrain.leftRear.getCurrentPosition());
+        telemetry.addData("right front enc", drivetrain.rightFore.getCurrentPosition());
+        telemetry.addData("right rear enc", drivetrain.rightRear.getCurrentPosition());
         telemetry.addData("stick", leftStick1);
         telemetry.addData("leftPow", drivetrain.leftPow);
         telemetry.addData("rightPow", drivetrain.rightPow);

@@ -30,6 +30,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
     IntakeResetState intakeResetState = IntakeResetState.RETRACT;
     double time = 0;
     boolean canSwitchTime = true;
+    @Override
     public void init(){
         prev1 = new Gamepad();
         canSwitchExtensionSafetyState = true;
@@ -42,14 +43,14 @@ public class RoverRuckusTeleOp extends WestBot15 {
         isAutonomous = false;
         usingIMU = false;
 
+        super.init();
         extensionSafety = ExtensionSafety.DISABLED;
         intakeDoorState = IntakeDoorState.CLOSED;
-
-        super.init();
         activateGamepad1();
         activateGamepad2();
     }
     public void start(){
+        aextendo.isAutonomous = false;
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
     }
@@ -62,12 +63,16 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
             drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
         }
-
-        drivetrain.leftPow = gamepad1.right_trigger - gamepad1.left_trigger - leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = gamepad1.right_trigger - gamepad1.left_trigger + leftStick1.x * drivetrain.turnMult;
+        double fitemetheo = Math.signum(gamepad1.right_trigger - gamepad1.left_trigger);
+        if(fitemetheo == 0)
+            fitemetheo = 1;
+        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
-        lift.setPower(gamepad2.left_stick_y);
+        if(!gamepad2.right_stick_button){
+            lift.setPower(rightStick2.y);
+        }
 
         if (gamepad1.a) {
             extensionState = ExtensionState.RESETTING;
@@ -75,9 +80,9 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
         if (leftStick1.magnitude() > 0.2) {
             extensionState = ExtensionState.NON_RESETTING;
-            mineralContainer.articulateDown();
-            mineralContainer.closeCage();
-        }
+            //amineralContainer.articulateDown();
+            //mineralContainer.closeCage();
+        }/*
         if (gamepad2.left_trigger > 0.2) {
             mineralContainer.openCage();
             mineralContainer.articulateUp();
@@ -87,8 +92,24 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
         if (gamepad1.dpad_right) {
             intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        }
+        }*/
         aextendo.aextendTM(rightStick1.y);
+        if(!gamepad2.left_stick_button){
+            lift2_0.lift(leftStick2.y);
+        }
+        double articulationValue = 0;
+        if(gamepad2.left_trigger > 0.2){
+            articulationValue = 1;
+        }
+        else if(gamepad2.left_bumper)
+            articulationValue = -1;
+        lift2_0.articulate(articulationValue);
+        if(gamepad2.left_stick_button){
+            lift2_0.maxSpeed1 += leftStick2.y * 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
+        }
+        if(gamepad2.right_stick_button){
+            lift2_0.maxSpeed2 += rightStick2.y * 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
+        }
         /*
         switch (extensionState) {
             case NON_RESETTING:
@@ -154,7 +175,11 @@ public class RoverRuckusTeleOp extends WestBot15 {
 
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
+        telemetry.addData("topSensor", lift.topPressed());
+        telemetry.addData("bottomSensor", lift.bottomPressed());
         telemetry.addLine(lift.toString());
+        telemetry.addData("vex1limit", lift2_0.maxSpeed2);
+        telemetry.addData("vex2limit", lift2_0.maxSpeed1);
         prevTime = UniversalFunctions.getTimeInSeconds();
 
         // Determines Whether to slow down the intake

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.WestCoast15;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
@@ -36,10 +37,7 @@ public abstract class WestBot15 extends Robot {
     public Lift lift = new Lift();
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
-
     public Lift2_0 lift2_0 = new Lift2_0();
-    public Map2 robotMap, fieldMap;
-
     public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
@@ -55,17 +53,16 @@ public abstract class WestBot15 extends Robot {
         drivetrain.position = new Pose();
 
         motoG4 = new MotoG4();
-        motoG4.setLocationAndOrientation(new Point3(0, 6, 13.5), new Point3(0, 0, 0));
+        motoG4.setLocationAndOrientation(new Point3(0, 3.715263697 + 5.275000000 / 2 + Math.sin(Math.toDegrees(37)) * 3.02 + 7.5/25.4, 14.92590572034875), new Point3(-Math.toRadians(37), -Math.PI/2, 0));
 
         if (HADLEY_ON_SCHEDULE) {
             aextendo.init(hardwareMap, false);
             intaek.init(hardwareMap);
             lift.init(hardwareMap);
-
+            lift2_0.init(hardwareMap);
             maerkr = hardwareMap.servo.get("mrkr");
             maerkr.setPosition(MARKER_CLOSED_POSITION);
-
-            mineralContainer.init(hardwareMap);
+            //mineralContainer.init(hardwareMap);
         }
     }
 
