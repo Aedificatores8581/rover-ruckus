@@ -60,9 +60,10 @@ public class RoverRuckusTeleOp extends WestBot15 {
         updateGamepad2();
         drivetrain.turnMult = 1;
 
-        if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
+        /*if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
             drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
-        }
+        }*/
+
         double fitemetheo = Math.signum(gamepad1.right_trigger - gamepad1.left_trigger);
         if(fitemetheo == 0)
             fitemetheo = 1;

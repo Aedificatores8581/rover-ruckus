@@ -231,9 +231,9 @@ public abstract class TankDT extends Drivetrain {
             //drivetrain.turnVector.x *= -1;
         }
         turnVector.rotate(position.angle);
-        position.x += turnVector.x / 2;
-        position.y += turnVector.y / 2;
-        position.angle += angle / 2;
+        position.x += turnVector.x;
+        position.y += turnVector.y;
+        position.angle += angle;
     }
     
     //Sets the power of the left motor(s)
@@ -258,8 +258,8 @@ public abstract class TankDT extends Drivetrain {
     }
 
     //turns the front of the robot to the specified direction
-    public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle){
-        angleBetween = UniversalFunctions.normalizeAngleRadians(desiredAngle.angle(), currentAngle.angle());
+    public void turnToFace(Vector2 currentAngle, Vector2 desiredAngle){;
+        angleBetween = UniversalFunctions.normalizeAngleRadians(desiredAngle.angle() + Math.PI / 2, currentAngle.angle());
         double tempTurnMult = 0;
         switch (direction) {
             case FOR:
@@ -271,8 +271,8 @@ public abstract class TankDT extends Drivetrain {
                 else{
                     double cos = Math.cos(angleBetween);
                     tempTurnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (-tempTurnMult * turnMult * cos);
-                    leftPow = directionMult * (tempTurnMult * turnMult * cos);
+                    rightPow = directionMult * -tempTurnMult * turnMult * cos;
+                    leftPow = directionMult * tempTurnMult * turnMult * cos;
                     setLeftPow();
                     setRightPow();
                 }
@@ -286,8 +286,8 @@ public abstract class TankDT extends Drivetrain {
                 else{
                     double cos = Math.cos(angleBetween);
                     tempTurnMult = Math.abs(cos) + 1;
-                    rightPow = directionMult * (-tempTurnMult * turnMult * cos);
-                    leftPow = directionMult * (tempTurnMult * turnMult * cos);
+                    rightPow = directionMult * -tempTurnMult * turnMult * cos;
+                    leftPow = directionMult * tempTurnMult * turnMult * cos;
                     setRightPow();
                     setLeftPow();
                 }
