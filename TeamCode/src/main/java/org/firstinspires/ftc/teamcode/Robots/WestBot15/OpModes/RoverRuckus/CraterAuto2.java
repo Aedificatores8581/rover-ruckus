@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
@@ -16,23 +15,23 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 
 import ftc.vision.Detector;
-/*
-cleaner version of DepotAuto
- */
-@Autonomous (name = "Depot auto 2", group = "competition autonomous   ")
-public class DepotAuto2 extends WestBot15 {
-    private final static boolean USING_VECTOR_FIELDS = false;
-    private static final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
-    private final static int ON_CRATER_RIM_THRESHOLD = 15;
-    boolean isTIMED = false;
-    private boolean isDoubleSampling = false;
 
-    private Servo maerkr;
+@Autonomous(name = "CraterAuto2", group = "autonomous")
+public class CraterAuto2 extends WestBot15 {
+
+    private final static boolean USING_VECTOR_FIELDS = false;
+    private final static int ON_CRATER_RIM_THRESHOLD = 15;
+    private boolean isDoubleSampling = false;
+    boolean canDriveForwardIntermediate = false;
     private GoldDetector detector;
+    //TODO: find samplePosition
+    final Pose intermediatePoint = new Pose(-22,28), samplePosition = new Pose();
+    Pose temporaryPose = new Pose();
+
+    Pose depotLocation = new Pose();
 
     private Vector2 sampleVect = new Vector2();
-    private AutoState autoState = AutoState.LAND;
-    private Crater crater = Crater.RIGHT;
+    private CraterAuto2.AutoState autoState = CraterAuto2.AutoState.LAND;
 
     private double startTime = 0;
     double initialPosition = 0;
@@ -42,7 +41,6 @@ public class DepotAuto2 extends WestBot15 {
     private boolean onCrater = false;
     private double prevTime = 0;
     private boolean canSwitchTimer = true;
-    private double depotYLocation = 60; // oof
     boolean obtainedSampleLocation = false;
     double time = 0;
     Vector2 craterVect = new Vector2();
@@ -53,9 +51,6 @@ public class DepotAuto2 extends WestBot15 {
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
 
         super.init();
-
-        maerkr = hardwareMap.servo.get("mrkr");
-        maerkr.setPosition(MARKER_CLOSED_POSITION);
 
         activateGamepad1();
 
@@ -93,10 +88,10 @@ public class DepotAuto2 extends WestBot15 {
                 sampleDelay += increment;
 
                 if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.CLAIM;
+                    autoState = CraterAuto2.AutoState.CLAIM;
                     canSwitchTimer = false;
                 } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.DOUBLE_SAMPLE;
+                    autoState = CraterAuto2.AutoState.DOUBLE_SAMPLE;
                     canSwitchTimer = false;
                 }
 
@@ -107,10 +102,10 @@ public class DepotAuto2 extends WestBot15 {
                 claimDelay += increment;
 
                 if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.PARK;
+                    autoState = CraterAuto2.AutoState.PARK;
                     canSwitchTimer = false;
                 } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.SAMPLE;
+                    autoState = CraterAuto2.AutoState.SAMPLE;
                     canSwitchTimer = false;
                 }
 
@@ -121,10 +116,10 @@ public class DepotAuto2 extends WestBot15 {
                 parkingDelay += increment;
 
                 if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.DOUBLE_SAMPLE;
+                    autoState = CraterAuto2.AutoState.DOUBLE_SAMPLE;
                     canSwitchTimer = false;
                 } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.CLAIM;
+                    autoState = CraterAuto2.AutoState.CLAIM;
                     canSwitchTimer = false;
                 }
 
@@ -135,10 +130,10 @@ public class DepotAuto2 extends WestBot15 {
                 doubleSampleDelay += increment;
 
                 if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.SAMPLE;
+                    autoState = CraterAuto2.AutoState.SAMPLE;
                     canSwitchTimer = false;
                 } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.PARK;
+                    autoState = CraterAuto2.AutoState.PARK;
                     canSwitchTimer = false;
                 }
 
@@ -147,11 +142,9 @@ public class DepotAuto2 extends WestBot15 {
         }
 
         if (gamepad1.dpad_left) {
-            crater = Crater.LEFT;
         }
 
         if (gamepad1.dpad_right) {
-            crater = Crater.RIGHT;
         }
 
         if (gamepad1.dpad_up) {
@@ -168,7 +161,6 @@ public class DepotAuto2 extends WestBot15 {
         telemetry.addData("parking delay: ", parkingDelay);
         telemetry.addData("double-sample delay ", doubleSampleDelay);
         telemetry.addData("is extending?", is_aextending);
-        telemetry.addData("Crater", crater);
         telemetry.addData("robotAngle", robotAngle.angle());
     }
 
@@ -178,12 +170,10 @@ public class DepotAuto2 extends WestBot15 {
 
         //drivetrain.position = new Pose(0, 0, Math.PI / 2);
         startTime = UniversalFunctions.getTimeInSeconds();
-        autoState = AutoState.LAND;
+        autoState = CraterAuto2.AutoState.LAND;
         startAngle = zeroDegreeAngle;
     }
-
     public void loop() {
-
         setRobotAngle();
         drivetrain.turnMult = 1.85;
         if (!(gamepad1.left_trigger > 0.2) && HADLEY_ON_SCHEDULE) {
@@ -194,7 +184,7 @@ public class DepotAuto2 extends WestBot15 {
                         lift.liftMotor.setPower(0);
                         if (UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay) {
                             drivetrain.resetEncoders();
-                            autoState = AutoState.VISION;
+                            autoState = CraterAuto2.AutoState.VISION;
                             time = UniversalFunctions.getTimeInSeconds();
                             startAngleY = getGyroAngleY();
                         }
@@ -214,7 +204,6 @@ public class DepotAuto2 extends WestBot15 {
                     newY *= -1;
 
                     sampleVect = new Vector2(newX + motoG4.getLocation().x, newY + motoG4.getLocation().y);
-                    if (Math.abs(sampleVect.x) < 5) { depotYLocation = 57; }
 
                     initialPosition = drivetrain.position.y;
                     autoState = autoState.FORWARD;
@@ -224,163 +213,146 @@ public class DepotAuto2 extends WestBot15 {
 
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.maxSpeed = 0.6;
+                    drivetrain.maxSpeed = 0.7;
 
                     intaek.articulateDown();
 
                     if (drivetrain.position.y - initialPosition < 2) {
                         drivetrain.setLeftPow(1);
                         drivetrain.setRightPow(1);
-                    } else{
-                        autoState = AutoState.SAMPLE;
+                    } else {
+                        autoState = AutoState.TO_THE_DEPOT;
                     }
                     break;
-
-                case SAMPLE:
-                    intaek.setPower(-1);
-                    intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-
-                    lift.setPower(-1);
-
-                    drivetrain.updateLocation();
-                    drivetrain.maxSpeed = 0.5;
-                    Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
-                    nearDrivingVect .subtract(drivetrain.position.toVector());
-                    /*if(nearDrivingVect.magnitude() < 8){
-                        nearDrivingVect.setFromPolar(nearDrivingVect.magnitude(), UniversalFunctions.clamp);
-                    }
-                    else {*/
-                        drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 8);
-  //                  }
-
-                    if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4){
-                        intaek.articulateUp();
-                    }
-
-                    if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.2) {
-                        if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
-                            autoState = AutoState.TO_THE_DEPOT;
-                        }
-                    }
-                    break;
-
                 case TO_THE_DEPOT:
-                    drivetrain.maxSpeed = 0.5;
-                    intaek.setPower(0);
-                    intaek.articulateUp();
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.maxSpeed = 0.5;
-
-                    Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 6, depotYLocation);
-                    if(sampleVect.x > 8) {
-                        newVect.y = crater == Crater.RIGHT ? 58 : 57;
+                    drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 6);
+                    Vector2 temp2 = new Vector2(intermediatePoint.x, intermediatePoint.y);
+                    temp2.x -= drivetrain.position.x;
+                    temp2.y -= drivetrain.position.y;
+                    if(temp2.magnitude() > 6 && !canDriveForwardIntermediate){
+                        drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 6);
                     }
-                    else if(sampleVect.x < -8){
-                        newVect.y = crater == Crater.RIGHT ? 57 : 58;
+                    else{
+                        canDriveForwardIntermediate = true;
+                        Pose relativeDTPosition = new Pose(drivetrain.position);
+                        relativeDTPosition.x -= temporaryPose.x;
+                        relativeDTPosition.y -= temporaryPose.y;
+                        if(relativeDTPosition.toVector().magnitude() > 10)
+                            autoState = AutoState.TO_THE_DEPOT2;
                     }
-                    drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 4);
-                    if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower())< 0.2) {
-                        if (UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay) {
-                            autoState = AutoState.FACE_THE_CRATER;
-                        }
-                    }
-
-                    if (UniversalFunctions.getTimeInSeconds() - startTime > 15) {
-                        if (UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay) {
-                            autoState = AutoState.FACE_THE_CRATER;
-                        }
+                    if(!canDriveForwardIntermediate) {
+                        temporaryPose = new Pose(drivetrain.position);
                     }
                     break;
-
-                case FACE_THE_CRATER:
+                case TO_THE_DEPOT2:
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.maxSpeed = 0.65;
-                    drivetrain.turnToFace(robotAngle, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
-
-                    if (Math.abs(drivetrain.leftFore.getPower() / drivetrain.maxSpeed) < 0.9) {
+                    drivetrain.driveToPoint(depotLocation.x, depotLocation.y, robotAngle, Drivetrain.Direction.FOR, 3);
+                    if(UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) > 0.5)
+                        autoState = AutoState.FACE_THE_DEPOT;
+                    break;
+                case FACE_THE_DEPOT:
+                    drivetrain.updateLocation();
+                    Vector2 temp3 = new Vector2();
+                    temp3.setFromPolar(1, Math.PI * 3 / 4 + 0.1);
+                    drivetrain.turnToFace(robotAngle, temp3);
+                    if(Math.abs(drivetrain.leftFore.getPower()) < 0.075){
+                        drivetrain.stop();
                         autoState = AutoState.CLAIM;
                     }
                     break;
                 case CLAIM:
-                    maerkr.setPosition(MARKER_OPEN_POSITION);
-                    autoState = AutoState.PARK;
-                    craterVect = new Vector2();
-                    craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
+                    if(aextendo.getExtensionLength() < 25)
+                        aextendo.aextendTM(1);
+                    else{
+                        intaek.articulateDown();
+                        intaek.setPower(-1);
+                        //TODO: Add claiming condition
+                    }
                     break;
-
-                case PARK:
-                    telemetry.addData("gyroAngle", robotAngle.angle());
-                    telemetry.addData("onCrater", onCrater);
-                    telemetry.addData("y angle", normalizeGyroAngleY());
+                case TO_THE_CRATER:
+                    intaek.setPower(0);
+                    intaek.articulateDown();
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.turnMult = 2;
-                    if (!onCrater) {
-                        if (drivetrain.position.y < 25) {
-                            if(isDoubleSampling)
-                            autoState = AutoState.DOUBLE_SAMPLE;
-                            else {
-                                if (is_aextending && aextendo.getExtensionLength() < 30) {
-                                    drivetrain.maxSpeed = 0.5;
-                                    aextendo.aextendTM(1);
-                                    drivetrain.stop();
-                                } else if (aextendo.getExtensionLength() < 25) {
-                                    aextendo.aextendTM(0);
-                                } else {
-                                    drivetrain.maxSpeed = 0.8;
-                                    if(!isTIMED) {
-                                        prevTime = UniversalFunctions.getTimeInSeconds();
-                                        isTIMED = true;
-                                    }
-                                    if(isTIMED){
-                                        if(UniversalFunctions.getTimeInSeconds() - prevTime > 1)
-                                            drivetrain.stop();
-                                        else
-                                            drivetrain.newFieldCentric(craterVect, robotAngle, 0.0000000000000000000000001);
-                                    }
-                                }
-                            }
-                        } else {
-                            drivetrain.maxSpeed = 0.6;
-                            drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
-                        }
-
-                    } else {
-                        drivetrain.stop();
-                        aextendo.extendo.setPower(0);
-                        if(is_aextending) {
-                            //intaek.articulateDown();
-                            //intaek.setPower(1);
+                    if(!aextendo.isRetracted()){
+                        intaek.articulateUp();
+                        aextendo.aextendTM(-1);
+                    }
+                    else {
+                        drivetrain.position.angle = robotAngle.angle();
+                        drivetrain.driveToPoint(samplePosition.x, samplePosition.y, robotAngle, Drivetrain.Direction.BACK, 5);
+                        if (Math.abs(drivetrain.leftFore.getPower()) < 0.3){
+                            autoState = AutoState.SAMPLE;
+                            intaek.articulateDown();
                         }
                     }
                     break;
-
-                case DOUBLE_SAMPLE:
-
+                case SAMPLE:
+                    intaek.setPower(1);
+                    drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
+                    drivetrain.maxSpeed = 0.5;
+                    if(Math.abs(drivetrain.leftFore.getPower()) < 0.1){
+                        if(aextendo.getExtensionLength() + 9 + 5 < sampleVect.magnitude()){
+                            aextendo.aextendTM(1 - 0.4*aextendo.getExtensionLength() / (sampleVect.magnitude()+9+5));
+                        }
+                        else {
+                            aextendo.aextendTM(-1);
+                            intaek.articulateUp();
+                            if(aextendo.getExtensionLength() +9 +5 < sampleVect.magnitude()-5) {
+                                aextendo.aextendTM(0);
+                                autoState = AutoState.FACE_THE_CRATER;
+                            }
+                        }
+                    }
+                    else{
+                        Vector2 intakeSampleVect = new Vector2(sampleVect.x, sampleVect.y);
+                        intakeSampleVect.setFromPolar(sampleVect.magnitude(), Math.PI / 2);
+                        intakeSampleVect.x -= 0.455;
+                        intakeSampleVect.rotate(sampleVect.angle() - Math.PI / 2);
+                        drivetrain.turnToFace(robotAngle, intakeSampleVect);
+                    }
+                    break;
+                case FACE_THE_CRATER:
+                    drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
+                    intaek.setPower(0);
+                    drivetrain.updateLocation();
+                    drivetrain.position.angle = robotAngle.angle();
+                    drivetrain.turnToFace(robotAngle, 0);
+                    if(Math.abs(drivetrain.leftFore.getPower()) < 0.1)
+                        autoState = AutoState.PARK;
+                    break;
+                case PARK:
+                    if(aextendo.getExtensionLength() < 17) {
+                        aextendo.aextendTM(0.7);
+                        intaek.articulateDown();
+                        intaek.setPower(1);
+                    }
+                    else{
+                        aextendo.aextendTM(1);
+                    }
+                    if(aextendo.getExtensionLength() < 24){
+                        if(isDoubleSampling){
+                            ///TODO:add transfer
+                        }
+                        else{
+                            aextendo.aextendTM(0);
+                        }
+                    }
                     break;
             }
-
-            telemetry.addData("position", drivetrain.position.toString());
-            telemetry.addData("robot ang: ", Math.toDegrees(robotAngle.angle()));
-            telemetry.addData("sampleVect, ", sampleVect);
-            telemetry.addData("element position", detector.element);
-            telemetry.addData("onCrater", onCrater);
-            telemetry.addData("state", autoState);
-            telemetry.addData("topPressed", lift.topPressed());
         }
     }
-
     public void stop(){
         super.stop();
         detector.isInitialized = false;
     }
 
-    enum Crater{
-        LEFT,
-        RIGHT
-    }
+
 
     public enum AutoState{
         LAND,
@@ -395,6 +367,9 @@ public class DepotAuto2 extends WestBot15 {
         TO_THE_LANDER,
         DISPENSE,
         TO_THE_CRATER,
-        FACE_THE_CRATER
+        FACE_THE_CRATER,
+        TO_THE_DEPOT2,
+        FACE_THE_DEPOT,
+        FACE_SAMPLE
     }
 }

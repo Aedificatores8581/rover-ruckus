@@ -60,9 +60,10 @@ public class RoverRuckusTeleOp extends WestBot15 {
         updateGamepad2();
         drivetrain.turnMult = 1;
 
-        if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
+        /*if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
             drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
-        }
+        }*/
+
         double fitemetheo = Math.signum(gamepad1.right_trigger - gamepad1.left_trigger);
         if(fitemetheo == 0)
             fitemetheo = 1;
@@ -82,17 +83,17 @@ public class RoverRuckusTeleOp extends WestBot15 {
             extensionState = ExtensionState.NON_RESETTING;
             //amineralContainer.articulateDown();
             //mineralContainer.closeCage();
-        }/*
-        if (gamepad2.left_trigger > 0.2) {
+        }
+        /*if (gamepad2.left_trigger > 0.2) {
             mineralContainer.openCage();
             mineralContainer.articulateUp();
-        }
+        }*/
         if (gamepad1.dpad_left) {
             intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
         }
         if (gamepad1.dpad_right) {
             intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        }*/
+        }
         aextendo.aextendTM(rightStick1.y);
         if(!gamepad2.left_stick_button){
             lift2_0.lift(leftStick2.y);
@@ -138,13 +139,13 @@ public class RoverRuckusTeleOp extends WestBot15 {
             lift2_0.lift(rightStick2.y);
         }*/
         if (gamepad1.left_bumper) {
-            intaek.setPower(1);
+            intaek.setPower(-1);
             canSwitchTime = true;
             time = UniversalFunctions.getTimeInSeconds();
         }
         else if (gamepad1.right_bumper) {
             if(UniversalFunctions.getTimeInSeconds() - time < 0.08){
-                intaek.setPower(-1);
+                intaek.setPower(1);
             }
             else{
                 intaek.setPower(1);
@@ -162,11 +163,11 @@ public class RoverRuckusTeleOp extends WestBot15 {
             lift2_0.articulate(1);*/
 
 
-       /* if(gamepad1.dpad_up)
+       if(gamepad1.dpad_up)
             intaek.articulateUp();
         if(gamepad1.dpad_down)
             intaek.articulateDown();
-*/
+
 
         /*if(gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER)
             mineralContainer.openCage();
