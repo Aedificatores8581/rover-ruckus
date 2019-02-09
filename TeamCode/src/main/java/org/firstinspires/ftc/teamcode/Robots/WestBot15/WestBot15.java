@@ -29,7 +29,9 @@ import org.opencv.core.Point3;
  */
 
 public abstract class WestBot15 extends Robot {
-    public Servo maerkr;
+    public Servo maerkrLeft;
+    public Servo maerkrRight;
+
     public boolean isAutonomous = false;
     //IMPORTANT: phone locations should be taken in relation to the robot, not the field
 
@@ -38,7 +40,7 @@ public abstract class WestBot15 extends Robot {
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
     public Lift2_0 lift2_0 = new Lift2_0();
-    public final static boolean HADLEY_ON_SCHEDULE = true;
+    public final static boolean HADLEY_ON_SCHEDULE = false;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
@@ -48,6 +50,12 @@ public abstract class WestBot15 extends Robot {
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
         super.init();
 
+        maerkrLeft = hardwareMap.servo.get("lmrkr");
+        maerkrRight = hardwareMap.servo.get("rmrkr");
+
+        maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_CLOSED.getPos());
+        maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_CLOSED.getPos());
+
         drivetrain.maxSpeed = 1.0;
         drivetrain.initMotors(hardwareMap);
         drivetrain.position = new Pose();
@@ -55,13 +63,15 @@ public abstract class WestBot15 extends Robot {
         motoG4 = new MotoG4();
         motoG4.setLocationAndOrientation(new Point3(0, 3.715263697 + 5.275000000 / 2 + Math.sin(Math.toDegrees(37)) * 3.02 + 7.5/25.4, 14.92590572034875), new Point3(-Math.toRadians(37), -Math.PI/2, 0));
 
+
+        intaek.init(hardwareMap);
+        lift.init(hardwareMap);
+        lift2_0.init(hardwareMap);
+        maerkrLeft = hardwareMap.servo.get("mrkr");
+        maerkrLeft.setPosition(MARKER_CLOSED_POSITION);
+
         if (HADLEY_ON_SCHEDULE) {
             aextendo.init(hardwareMap, false);
-            intaek.init(hardwareMap);
-            lift.init(hardwareMap);
-            lift2_0.init(hardwareMap);
-            maerkr = hardwareMap.servo.get("mrkr");
-            maerkr.setPosition(MARKER_CLOSED_POSITION);
             //mineralContainer.init(hardwareMap);
         }
     }
@@ -90,4 +100,11 @@ public abstract class WestBot15 extends Robot {
         PARK,
         FORWARD
     }
+}
+
+class MaerkrConstants {
+    public static double LEFT_SERVO_ENGAGED    = 1.0;
+    public static double LEFT_SERVO_DISENGAGED = -1.0;
+    public static double RIGHT_SERVO_ENGAGED   = -1.0;
+    public static double RIGHT_SERVO_DISENGAGED= 1.0;
 }

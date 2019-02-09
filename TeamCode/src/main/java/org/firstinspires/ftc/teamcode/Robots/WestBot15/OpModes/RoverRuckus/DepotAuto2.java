@@ -27,7 +27,7 @@ public class DepotAuto2 extends WestBot15 {
     boolean isTIMED = false;
     private boolean isDoubleSampling = false;
 
-    private Servo maerkr;
+    // private Servo maerkr;
     private GoldDetector detector;
 
     private Vector2 sampleVect = new Vector2();
@@ -54,8 +54,8 @@ public class DepotAuto2 extends WestBot15 {
 
         super.init();
 
-        maerkr = hardwareMap.servo.get("mrkr");
-        maerkr.setPosition(MARKER_CLOSED_POSITION);
+        // maerkr = hardwareMap.servo.get("mrkr");
+        // maerkr.setPosition(MARKER_CLOSED_POSITION);
 
         activateGamepad1();
 
@@ -246,12 +246,11 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.maxSpeed = 0.5;
                     Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
                     nearDrivingVect .subtract(drivetrain.position.toVector());
-                    /*if(nearDrivingVect.magnitude() < 8){
-                        nearDrivingVect.setFromPolar(nearDrivingVect.magnitude(), UniversalFunctions.clamp);
-                    }
-                    else {*/
-                        drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 8);
-  //                  }
+
+                    Vector2 drivingVect = new Vector2(sampleVect.x, sampleVect.y);
+                    drivingVect.x += 0.455*Math.sin(sampleVect.angle());
+                    drivingVect.y -= 0.455*Math.cos(sampleVect.angle());
+                    drivetrain.driveToPoint(drivingVect.x, drivingVect.y, robotAngle, drivetrain.direction.FOR, 8);
 
                     if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4){
                         intaek.articulateUp();
@@ -304,7 +303,10 @@ public class DepotAuto2 extends WestBot15 {
                     }
                     break;
                 case CLAIM:
-                    maerkr.setPosition(MARKER_OPEN_POSITION);
+                    // maerkr.setPosition(MARKER_OPEN_POSITION);
+                    maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
+                    maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
+
                     autoState = AutoState.PARK;
                     craterVect = new Vector2();
                     craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
@@ -320,7 +322,7 @@ public class DepotAuto2 extends WestBot15 {
                     if (!onCrater) {
                         if (drivetrain.position.y < 25) {
                             if(isDoubleSampling)
-                            autoState = AutoState.DOUBLE_SAMPLE;
+                                autoState = AutoState.DOUBLE_SAMPLE;
                             else {
                                 if (is_aextending && aextendo.getExtensionLength() < 30) {
                                     drivetrain.maxSpeed = 0.5;

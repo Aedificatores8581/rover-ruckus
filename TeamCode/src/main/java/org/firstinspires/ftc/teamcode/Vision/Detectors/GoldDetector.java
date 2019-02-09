@@ -132,16 +132,16 @@ GoldDetector extends Detector {
 
         Point center = new Point();
 
-        double minCenterY = 999;
+        double maxCenterY = -9999;
         element = new Point();
 
         for (int i = 0; i < contours.size(); i++) {
             MatOfPoint c = contours.get(i);
             MatOfPoint2f c2f = new MatOfPoint2f(c.toArray());
             Imgproc.minEnclosingCircle(c2f, center, radius);
-            if(center.y < minCenterY) {
+            if(center.y > maxCenterY) {
                 element = center.clone();
-                minCenterY = center.y;
+                maxCenterY = center.y;
             }
         }
         //element = center;
@@ -152,7 +152,7 @@ GoldDetector extends Detector {
         i.copyTo(workingImage);
 
         Imgproc.drawContours(workingImage, contours,-1, new Scalar(255,0,0),2);
-        Imgproc.circle(workingImage, center, (int) radius[0], new Scalar(0, 0, 255), 5);
+        Imgproc.circle(workingImage, element, (int) radius[0], new Scalar(0, 0, 255), 5);
        // Imgproc.distanceTransform();
         //Mat dilationFactor = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 1));
         //Imgproc.dilate(thresh, thresh, dilationFactor);
