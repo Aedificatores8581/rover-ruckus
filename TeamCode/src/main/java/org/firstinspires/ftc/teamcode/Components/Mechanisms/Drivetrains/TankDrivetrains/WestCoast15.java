@@ -17,7 +17,7 @@ public class WestCoast15 extends TankDT {
     public DcMotor rightFore, leftFore, leftRear, rightRear;
     public MotorEncoder rfEncoder, lfEncoder, lrEncoder, rrEncoder;
     public DcMotor.ZeroPowerBehavior zeroPowerBehavior;
-    private final double UNIQUE_ENC_PER_INCH = 35 / Math.PI;
+    private final double UNIQUE_ENC_PER_INCH = 70 / Math.PI;
     double prevLeftEcvVal = 0, prevRightEncVal = 0;
 
     public WestCoast15() {

@@ -244,18 +244,10 @@ public class DepotAuto2 extends WestBot15 {
 
                     drivetrain.updateLocation();
                     drivetrain.maxSpeed = 0.5;
-                    Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
-                    nearDrivingVect .subtract(drivetrain.position.toVector());
-                    /*if(nearDrivingVect.magnitude() < 8){
-                        nearDrivingVect.setFromPolar(nearDrivingVect.magnitude(), UniversalFunctions.clamp);
-                    }
-                    else {*/
-                        drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 8);
-  //                  }
-
-                    if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4){
-                        intaek.articulateUp();
-                    }
+                    Vector2 drivingVect = new Vector2(sampleVect.x, sampleVect.y);
+                    drivingVect.x += 0.455*Math.sin(sampleVect.angle());
+                    drivingVect.y -= 0.455*Math.cos(sampleVect.angle());
+                    drivetrain.driveToPoint(drivingVect.x, drivingVect.y, robotAngle, drivetrain.direction.FOR, 8);
 
                     if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.2) {
                         if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
@@ -266,8 +258,8 @@ public class DepotAuto2 extends WestBot15 {
 
                 case TO_THE_DEPOT:
                     drivetrain.maxSpeed = 0.5;
-                    intaek.setPower(0);
-                    intaek.articulateUp();
+                    //intaek.setPower(0);
+                    //intaek.articulateUp();
                     drivetrain.updateLocation();
                     drivetrain.position.angle = robotAngle.angle();
                     drivetrain.maxSpeed = 0.5;
@@ -320,9 +312,9 @@ public class DepotAuto2 extends WestBot15 {
                     if (!onCrater) {
                         if (drivetrain.position.y < 25) {
                             if(isDoubleSampling)
-                            autoState = AutoState.DOUBLE_SAMPLE;
+                                autoState = AutoState.DOUBLE_SAMPLE;
                             else {
-                                if (is_aextending && aextendo.getExtensionLength() < 30) {
+                                if (is_aextending && aextendo.getExtensionLength() < 25) {
                                     drivetrain.maxSpeed = 0.5;
                                     aextendo.aextendTM(1);
                                     drivetrain.stop();
