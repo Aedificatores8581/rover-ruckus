@@ -40,7 +40,7 @@ public abstract class WestBot15 extends Robot {
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
     public Lift2_0 lift2_0 = new Lift2_0();
-    public final static boolean HADLEY_ON_SCHEDULE = false;
+    public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
