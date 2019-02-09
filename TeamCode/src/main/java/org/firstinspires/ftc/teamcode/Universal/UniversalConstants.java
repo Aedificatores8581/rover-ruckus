@@ -16,4 +16,21 @@ public final class UniversalConstants {
     public static final class RoverRuckus{
         public static double robotAvoidanceThreshold = Math.hypot(9, 9);
     }
+
+    public enum MarkerServoConstants {
+        LEFT_CLOSED(.3),
+        RIGHT_CLOSED(1.0),
+        LEFT_OPEN(1.0),
+        RIGHT_OPEN(0.0);
+
+        double pos;
+
+        MarkerServoConstants(double pos) {
+            this.pos = pos;
+        }
+
+        public double getPos() {
+            return pos;
+        }
+    }
 }

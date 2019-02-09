@@ -6,11 +6,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * OpMode to test Different Servo sides
  */
-
+// .3 closed left
+// 1.0 closed right
 @Autonomous(name = "Marker Test")
 public class MaerkrServoTester extends OpMode {
 
     Servo maerkrLeft, maerkrRight;
+
+    double leftPos, rightPos;
 
     @Override
     public void init() {
@@ -25,7 +28,14 @@ public class MaerkrServoTester extends OpMode {
 // Maerkr Right Close: .1
     @Override
     public void loop() {
-        maerkrRight.setPosition(0.1);
+        leftPos = 0.9;
+        rightPos = 0.9;
+
+        maerkrRight.setPosition(rightPos);
+        maerkrLeft.setPosition(leftPos);
+
+        /*
+        maerkrRight.setPosition(maerkrLeft.getPosition() + 0.001*gamepad1.left_stick_y);
         if (gamepad1.a && getRuntime() > 0.25) {
             resetStartTime();
             maerkrLeft.setPosition(maerkrLeft.getPosition() > .5 ? 0.0 : 1.0);
@@ -33,6 +43,6 @@ public class MaerkrServoTester extends OpMode {
         if (gamepad1.b && getRuntime() > 0.25) {
             resetStartTime();
             maerkrRight.setPosition(maerkrRight.getPosition() > .5 ? 0.0 : 1.0);
-        }
+        }*/
     }
 }

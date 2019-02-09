@@ -50,6 +50,12 @@ public abstract class WestBot15 extends Robot {
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
         super.init();
 
+        maerkrLeft = hardwareMap.servo.get("lmrkr");
+        maerkrRight = hardwareMap.servo.get("rmrkr");
+
+        maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_CLOSED.getPos());
+        maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_CLOSED.getPos());
+
         drivetrain.maxSpeed = 1.0;
         drivetrain.initMotors(hardwareMap);
         drivetrain.position = new Pose();

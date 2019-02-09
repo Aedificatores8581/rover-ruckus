@@ -27,7 +27,7 @@ public class DepotAuto2 extends WestBot15 {
     boolean isTIMED = false;
     private boolean isDoubleSampling = false;
 
-    private Servo maerkr;
+    // private Servo maerkr;
     private GoldDetector detector;
 
     private Vector2 sampleVect = new Vector2();
@@ -54,8 +54,8 @@ public class DepotAuto2 extends WestBot15 {
 
         super.init();
 
-        maerkr = hardwareMap.servo.get("mrkr");
-        maerkr.setPosition(MARKER_CLOSED_POSITION);
+        // maerkr = hardwareMap.servo.get("mrkr");
+        // maerkr.setPosition(MARKER_CLOSED_POSITION);
 
         activateGamepad1();
 
@@ -304,7 +304,10 @@ public class DepotAuto2 extends WestBot15 {
                     }
                     break;
                 case CLAIM:
-                    maerkr.setPosition(MARKER_OPEN_POSITION);
+                    // maerkr.setPosition(MARKER_OPEN_POSITION);
+                    maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
+                    maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
+
                     autoState = AutoState.PARK;
                     craterVect = new Vector2();
                     craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
