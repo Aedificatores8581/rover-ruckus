@@ -16,8 +16,8 @@ public class Intake {
     //TODO: find these values
     public static final double CLOSED_DISPENSOR_POSITION = 0, OPEN_DISPENSOR_POSITION = 1;
 
-    public static final double INTAKE_ARTICULATOR_DOWN_POSITION = 0,
-            INTAKE_ARTICULATOR_UP_POSITION = 1;
+    public static final double INTAKE_ARTICULATOR_DOWN_POSITION = 1,
+            INTAKE_ARTICULATOR_UP_POSITION = 0;
 
     public Intake() { }
 

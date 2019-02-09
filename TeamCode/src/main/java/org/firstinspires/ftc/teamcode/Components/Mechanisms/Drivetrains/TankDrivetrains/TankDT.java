@@ -223,17 +223,17 @@ public abstract class TankDT extends Drivetrain {
             angle = (rightChange - leftChange) / (DISTANCE_BETWEEN_WHEELS);
             turnVector.x = radius * Math.cos(angle) - radius;
             turnVector.y = radius * Math.sin(angle);
+        }
             /*radius = Math.abs(radius);
             drivetrain.turnVector.setFromPolar(radius, angle);
             drivetrain.turnVector.setFromPolar(radius - drivetrain.turnVector.x, angle);
             */
-            //if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
-            //drivetrain.turnVector.x *= -1;
-        }
+        //if (Math.min(leftChange, rightChange) == -UniversalFunctions.maxAbs(leftChange, rightChange))
+        //drivetrain.turnVector.x *= -1;
         turnVector.rotate(position.angle);
-        position.x += turnVector.x;
-        position.y += turnVector.y;
-        position.angle += angle;
+        position.x += turnVector.x / 2;
+        position.y += turnVector.y / 2;
+        position.angle += angle / 2;
     }
     
     //Sets the power of the left motor(s)

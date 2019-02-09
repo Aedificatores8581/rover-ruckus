@@ -246,12 +246,11 @@ public class DepotAuto2 extends WestBot15 {
                     drivetrain.maxSpeed = 0.5;
                     Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
                     nearDrivingVect .subtract(drivetrain.position.toVector());
-                    /*if(nearDrivingVect.magnitude() < 8){
-                        nearDrivingVect.setFromPolar(nearDrivingVect.magnitude(), UniversalFunctions.clamp);
-                    }
-                    else {*/
-                        drivetrain.driveToPoint(sampleVect.x, sampleVect.y, robotAngle, drivetrain.direction.FOR, 8);
-  //                  }
+
+                    Vector2 drivingVect = new Vector2(sampleVect.x, sampleVect.y);
+                    drivingVect.x += 0.455*Math.sin(sampleVect.angle());
+                    drivingVect.y -= 0.455*Math.cos(sampleVect.angle());
+                    drivetrain.driveToPoint(drivingVect.x, drivingVect.y, robotAngle, drivetrain.direction.FOR, 8);
 
                     if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4){
                         intaek.articulateUp();
@@ -323,7 +322,7 @@ public class DepotAuto2 extends WestBot15 {
                     if (!onCrater) {
                         if (drivetrain.position.y < 25) {
                             if(isDoubleSampling)
-                            autoState = AutoState.DOUBLE_SAMPLE;
+                                autoState = AutoState.DOUBLE_SAMPLE;
                             else {
                                 if (is_aextending && aextendo.getExtensionLength() < 30) {
                                     drivetrain.maxSpeed = 0.5;
