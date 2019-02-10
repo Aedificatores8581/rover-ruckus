@@ -26,7 +26,7 @@ public class DepotAuto2 extends WestBot15 {
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
     boolean isTIMED = false;
     private boolean isDoubleSampling = false;
-
+    Pose poseAfterSample = new Pose();
     // private Servo maerkr;
     private GoldDetector detector;
 
@@ -243,7 +243,7 @@ public class DepotAuto2 extends WestBot15 {
                 lift.setPower(-1);
 
                 drivetrain.updateLocation();
-                drivetrain.maxSpeed = 0.5;
+                drivetrain.maxSpeed = 0.55;
                 Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
                 nearDrivingVect.subtract(drivetrain.position.toVector());
 
@@ -254,22 +254,29 @@ public class DepotAuto2 extends WestBot15 {
 
                 if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4) {
                     intaek.articulateUp();
-                }
 
-                if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.2) {
                     if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
-                        autoState = AutoState.TO_THE_DEPOT;
+                        autoState = AutoState.FORWARD_AFTER_SAMPLPE;
+                        poseAfterSample = drivetrain.position.clone();
                     }
+                }
+                break;
+            case FORWARD_AFTER_SAMPLPE:
+                drivetrain.updateLocation();
+                Vector2 temp2 = new Vector2(drivetrain.position.x, drivetrain.position.y);
+                temp2.subtract(poseAfterSample.clone().toVector());
+                drivetrain.newFieldCentric(sampleVect, robotAngle, 2);
+                if(temp2.magnitude() > (sampleVect.x < -8 ? 5 : 3)) {
+                    autoState = AutoState.TO_THE_DEPOT;
                 }
                 break;
 
             case TO_THE_DEPOT:
-                drivetrain.maxSpeed = 0.5;
                 intaek.setPower(0);
                 intaek.articulateUp();
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.maxSpeed = 0.5;
+                drivetrain.maxSpeed = 0.6;
 
                 Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 6, depotYLocation);
                 if (sampleVect.x > 8) {
@@ -280,13 +287,13 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 4);
                 if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower()) < 0.2) {
                     if (UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay) {
-                        autoState = AutoState.FACE_THE_CRATER;
+                        autoState = AutoState.CLAIM;
                     }
                 }
 
                 if (UniversalFunctions.getTimeInSeconds() - startTime > 15) {
                     if (UniversalFunctions.getTimeInSeconds() - startTime > sampleDelay) {
-                        autoState = AutoState.FACE_THE_CRATER;
+                        autoState = AutoState.CLAIM;
                     }
                 }
                 break;
@@ -295,7 +302,7 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.65;
-                drivetrain.turnToFace(robotAngle, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
+                drivetrain.turnToFace(robotAngle, (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4);
 
                 if (Math.abs(drivetrain.leftFore.getPower() / drivetrain.maxSpeed) < 0.9) {
                     autoState = AutoState.CLAIM;
@@ -344,6 +351,9 @@ public class DepotAuto2 extends WestBot15 {
                             }
                         }
                     } else {
+                        if(!onCrater){
+                            onCrater = Math.abs(UniversalFunctions.normalizeAngle180(normalizeGyroAngleY())) > ON_CRATER_RIM_THRESHOLD;
+                        }
                         drivetrain.maxSpeed = 0.6;
                         drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
                     }
@@ -387,6 +397,7 @@ public class DepotAuto2 extends WestBot15 {
         VISION,
         FORWARD,
         SAMPLE,
+        FORWARD_AFTER_SAMPLPE,
         TO_THE_DEPOT,
         CLAIM,
         PARK,

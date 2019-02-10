@@ -67,9 +67,6 @@ public abstract class WestBot15 extends Robot {
         intaek.init(hardwareMap);
         lift.init(hardwareMap);
         lift2_0.init(hardwareMap);
-        maerkrLeft = hardwareMap.servo.get("mrkr");
-        maerkrLeft.setPosition(MARKER_CLOSED_POSITION);
-
         if (HADLEY_ON_SCHEDULE) {
             aextendo.init(hardwareMap, false);
             //mineralContainer.init(hardwareMap);

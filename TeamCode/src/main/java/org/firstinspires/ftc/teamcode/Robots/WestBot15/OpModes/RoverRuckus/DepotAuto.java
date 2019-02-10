@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -19,7 +20,8 @@ import ftc.vision.Detector;
 /*
 cleaner version of DepotAuto
  */
-@Autonomous (name = "Depot auto 2", group = "competition autonomous   ")
+@Disabled
+@Autonomous (name = "Depot auto 1", group = "competition autonomous   ")
 public class DepotAuto extends WestBot15 {
     private final static boolean USING_VECTOR_FIELDS = false;
     private static final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
