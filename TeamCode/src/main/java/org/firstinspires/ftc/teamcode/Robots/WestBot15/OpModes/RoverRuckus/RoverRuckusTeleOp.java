@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendo
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
@@ -19,6 +21,13 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 public class RoverRuckusTeleOp extends WestBot15 {
     ExtensionState extensionState = ExtensionState.NON_RESETTING;
     double prevTime = 0;
+
+    // TODO: Mineral Lift should be an object, not a set of components in an opmode
+    DcMotor mineralLift;
+    Servo pivot[];
+    // TODO: To become constants (not constants here because adb doesn't allow you to change constants during runtime)
+    double topPivotPos = 0.855;
+    double botPivotPos = 0.0027;
 
     Gamepad prev1;
 
@@ -48,6 +57,14 @@ public class RoverRuckusTeleOp extends WestBot15 {
         intakeDoorState = IntakeDoorState.CLOSED;
         activateGamepad1();
         activateGamepad2();
+
+        mineralLift = hardwareMap.dcMotor.get("lift");
+        pivot = new Servo[2];
+        pivot[0] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[0]);
+        pivot[1] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[1]);
+
+        pivot[0].setPosition(topPivotPos);
+        pivot[1].setPosition(topPivotPos);
     }
     public void start(){
         aextendo.isAutonomous = false;
@@ -75,6 +92,14 @@ public class RoverRuckusTeleOp extends WestBot15 {
             lift.setPower(rightStick2.y);
         }
 
+        if(gamepad2.dpad_up){
+            pivot[0].setPosition(topPivotPos);
+            pivot[1].setPosition(topPivotPos);
+        } else if(gamepad2.dpad_down){
+            pivot[0].setPosition(botPivotPos);
+            pivot[1].setPosition(botPivotPos);
+        }
+
         if (gamepad1.a) {
             extensionState = ExtensionState.RESETTING;
             intakeResetState = IntakeResetState.RETRACT;
@@ -96,8 +121,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
         aextendo.aextendTM(rightStick1.y);
         if(!gamepad2.left_stick_button){
-            lift2_0.lift(leftStick2.y);
-        }
+            mineralLift.setPower(leftStick2.y);
+        }/*
         double articulationValue = 0;
         if(gamepad2.left_trigger > 0.2){
             articulationValue = 1;
@@ -110,7 +135,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
         if(gamepad2.right_stick_button){
             lift2_0.maxSpeed2 += rightStick2.y * 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
-        }
+        }*/
         /*
         switch (extensionState) {
             case NON_RESETTING:
@@ -179,8 +204,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
         telemetry.addData("topSensor", lift.topPressed());
         telemetry.addData("bottomSensor", lift.bottomPressed());
         telemetry.addLine(lift.toString());
-        telemetry.addData("vex1limit", lift2_0.maxSpeed2);
-        telemetry.addData("vex2limit", lift2_0.maxSpeed1);
+/*        telemetry.addData("vex1limit", lift2_0.maxSpeed2);
+        telemetry.addData("vex2limit", lift2_0.maxSpeed1);*/
         prevTime = UniversalFunctions.getTimeInSeconds();
 
         // Determines Whether to slow down the intake

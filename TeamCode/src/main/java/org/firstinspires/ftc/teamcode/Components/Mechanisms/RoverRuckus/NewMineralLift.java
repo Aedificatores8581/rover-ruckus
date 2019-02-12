@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
 
-public class Lift2_0 {
+public class NewMineralLift {
     public DcMotor liftMotor;
     public CRServo vaex1, vaex2;
     public Servo raev1, raev2;
