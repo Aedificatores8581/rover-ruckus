@@ -251,8 +251,9 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 Vector2 temp2 = new Vector2(drivetrain.position.x, drivetrain.position.y);
                 temp2.subtract(poseAfterSample.clone().toVector());
-                drivetrain.newFieldCentric(temp2, robotAngle, 2);
-                if(temp2.magnitude() > (sampleVect.x < -8 ? 5 : 3)) {
+                drivetrain.setLeftPow(1);
+                drivetrain.setRightPow(1);
+                if(temp2.magnitude() > (sampleVect.x < -8 ? 3 : 3)) {
                     autoState = AutoState.TO_THE_DEPOT;
                 }
                 break;
