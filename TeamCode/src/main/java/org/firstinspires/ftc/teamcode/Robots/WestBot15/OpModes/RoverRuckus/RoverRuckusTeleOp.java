@@ -109,33 +109,6 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if(gamepad2.right_stick_button){
             lift2_0.maxSpeed2 += rightStick2.y * 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
         }
-        /*
-        switch (extensionState) {
-            case NON_RESETTING:
-                aextendo.aextendTM(leftStick1.y);
-                break;
-            case RESETTING:
-                mineralContainer.openCage();
-                mineralContainer.articulateUp();
-                switch (intakeResetState){
-                    case RETRACT:
-                        aextendo.aextendTM(-1);
-                        if (aextendo.backSwitch.isPressed() || aextendo.getExtensionLength() < 1)
-                            intakeResetState = intakeResetState.AIM;
-                        break;
-                    case AIM:
-                        intaek.articulateDown();
-                        intaek.dispensor.setPosition(intaek.OPEN_DISPENSOR_POSITION);
-                        intakeResetState = intakeResetState.OUTTAKE;
-                        break;
-                    case OUTTAKE:
-                        intaek.motor.setPower(gamepad1.left_bumper ? -1 : 0);
-                }
-                break;
-        }
-        if(rightStick2.magnitude() > UniversalConstants.Triggered.STICK) {
-            lift2_0.lift(rightStick2.y);
-        }*/
         if (gamepad1.left_bumper) {
             intaek.setPower(-1);
             canSwitchTime = true;
@@ -182,7 +155,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         prevTime = UniversalFunctions.getTimeInSeconds();
 
         // Determines Whether to slow down the intake
-        switch (extensionSafety) {
+       /* switch (extensionSafety) {
             case ENABLED:
                 drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
 
@@ -201,30 +174,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
                     canSwitchExtensionSafetyState = true;
                 }
                 break;
-        }
-/*
-        switch (intakeDoorState) {
-            case OPEN:
-                intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
-
-                if (gamepad1.dpad_down && canSwitchIntakeDoorState) {
-                    intakeDoorState = IntakeDoorState.CLOSED;
-                    canSwitchIntakeDoorState = false;
-                } else if (!gamepad1.dpad_down) {
-                    canSwitchIntakeDoorState = true;
-                }
-                break;
-            case CLOSED:
-                intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-                if (gamepad1.dpad_up && canSwitchIntakeDoorState) {
-                    intakeDoorState = IntakeDoorState.OPEN;
-                    canSwitchIntakeDoorState = false;
-                }  else if (!gamepad1.dpad_up) {
-                    canSwitchIntakeDoorState = true;
-                }
-                break;
-        }
-*/
+        }*/
         try {
             prev1.copy(gamepad1);
         } catch (RobotCoreException e) {

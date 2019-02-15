@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
@@ -22,7 +21,6 @@ cleaner version of DepotAuto
 @Autonomous (name = "Depot auto 2", group = "competition autonomous   ")
 public class DepotAuto2 extends WestBot15 {
     private final static boolean USING_VECTOR_FIELDS = false;
-    private static final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
     boolean isTIMED = false;
     private boolean isDoubleSampling = false;

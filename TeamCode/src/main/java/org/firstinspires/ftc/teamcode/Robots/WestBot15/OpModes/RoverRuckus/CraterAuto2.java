@@ -25,7 +25,8 @@ public class CraterAuto2 extends WestBot15 {
     boolean canDriveForwardIntermediate = false;
     private GoldDetector detector;
     //TODO: find samplePosition
-    final Pose intermediatePoint = new Pose(-22,22), samplePosition = new Pose(3, 0);
+    Pose intermediatePoint = new Pose(-22,22), samplePosition = new Pose(3, 0);
+    Vector2 intermediateVector = new Vector2();
     Pose temporaryPose = new Pose();
 
     Pose depotLocation = new Pose();
@@ -246,51 +247,53 @@ public class CraterAuto2 extends WestBot15 {
                 }
                 break;
             case TO_THE_DEPOT2:
+                drivetrain.maxSpeed = 0.65;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.driveToPoint(depotLocation.x, depotLocation.y, robotAngle, Drivetrain.Direction.FOR, 3);
-                if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) > 0.5)
-                    autoState = AutoState.FACE_THE_DEPOT;
+                drivetrain.driveToPoint(intermediateVector.x, intermediateVector.y, robotAngle, Drivetrain.Direction.BACK, 6);
+                if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) > 0.4)
+                    autoState = AutoState.CLAIM;
                 break;
             case FACE_THE_DEPOT:
                 drivetrain.updateLocation();
                 drivetrain.maxSpeed = 0.5;
                 Vector2 temp3 = new Vector2();
-                temp3.setFromPolar(1, Math.PI * 3 / 4);
+                temp3.setFromPolar(1, Math.PI / 4);
                 drivetrain.turnToFace(robotAngle, temp3);
                 if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.075) {
-                    drivetrain.stop();
-                    autoState = AutoState.TO_THE_CRATER;
+                    //TODO: find R
+                    intermediateVector.setFromPolar(50, Math.PI * 3 / 4);
+                    intermediateVector.add(drivetrain.position.toVector());
+                    autoState = AutoState.TO_THE_DEPOT2;
+                    intermediatePoint = drivetrain.position.clone();
                 }
                 break;
             case CLAIM:
-                if (aextendo.getExtensionLength() < 25)
-                    aextendo.aextendTM(1);
-                else {
-                    aextendo.aextendTM(0);
-                    intaek.articulateDown();
-                    intaek.setPower(-1);
+                drivetrain.updateLocation();
+                drivetrain.position.angle = robotAngle.angle();
                     //TODO: Add claiming condition
-                }
+                drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 4);
+                //if()
+                autoState = AutoState.TO_THE_CRATER;
                 break;
             case TO_THE_CRATER:
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                intaek.setPower(0);
-                intaek.articulateUp();
+                drivetrain.driveToPoint(samplePosition.x, samplePosition.y, robotAngle, Drivetrain.Direction.BACK, 5);
+                if (Math.abs(drivetrain.leftFore.getPower()) < 0.3) {
+                    autoState = AutoState.SAMPLE;
+                    intaek.articulateDown();
+                }
+
+                break;
+            case FACE_SAMPLE:
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                if (!aextendo.isRetracted()) {
-                    intaek.articulateUp();
-                    aextendo.aextendTM(-1);
-                } else {
-                    drivetrain.position.angle = robotAngle.angle();
-                    drivetrain.driveToPoint(samplePosition.x, samplePosition.y, robotAngle, Drivetrain.Direction.BACK, 5);
-                    if (Math.abs(drivetrain.leftFore.getPower()) < 0.3) {
-                        autoState = AutoState.SAMPLE;
-                        //intaek.articulateDown();
-                    }
-                }
+                Vector2 drivingVect = new Vector2(sampleVect.x, sampleVect.y);
+                drivingVect.x += 0.455 * Math.sin(sampleVect.angle());
+                drivingVect.y -= 0.455 * Math.cos(sampleVect.angle());
+                drivetrain.turnToFace(drivingVect, robotAngle);
+                //if(drivetrain.)
                 break;
             case SAMPLE:
                 intaek.setPower(1);
