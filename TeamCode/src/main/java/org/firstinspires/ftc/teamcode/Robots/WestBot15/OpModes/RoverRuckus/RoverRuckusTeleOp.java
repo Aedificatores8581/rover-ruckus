@@ -10,8 +10,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.NewMineralLift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
+import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
@@ -73,6 +75,12 @@ public class RoverRuckusTeleOp extends WestBot15 {
             lift.setPower(rightStick2.y);
         }
 
+        if(gamepad2.dpad_up){
+            mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
+        } else if(gamepad2.dpad_down){
+            mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
+        }
+
         if (gamepad1.a) {
             extensionState = ExtensionState.RESETTING;
             intakeResetState = IntakeResetState.RETRACT;
@@ -92,22 +100,11 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if (gamepad1.dpad_right) {
             intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
         }
+
         aextendo.aextendTM(rightStick1.y);
+
         if(!gamepad2.left_stick_button){
-            lift2_0.lift(leftStick2.y);
-        }
-        double articulationValue = 0;
-        if(gamepad2.left_trigger > 0.2){
-            articulationValue = 1;
-        }
-        else if(gamepad2.left_bumper)
-            articulationValue = -1;
-        lift2_0.articulate(articulationValue);
-        if(gamepad2.left_stick_button){
-            lift2_0.maxSpeed1 += leftStick2.y * 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
-        }
-        if(gamepad2.right_stick_button){
-            lift2_0.maxSpeed2 += rightStick2.y * 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
+            mineralLift.lift(leftStick2.y);
         }
         if (gamepad1.left_bumper) {
             intaek.setPower(-1);
@@ -149,6 +146,9 @@ public class RoverRuckusTeleOp extends WestBot15 {
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
         telemetry.addData("topSensor", lift.topPressed());
         telemetry.addData("bottomSensor", lift.bottomPressed());
+        telemetry.addLine(lift.toString());
+        telemetry.addData("Lift Enc", mineralLift.getLiftEncoder());
+
         telemetry.addData("backSensor", aextendo.backSwitch);
         telemetry.addData("frontSensor", aextendo.frontSwitch);
         prevTime = UniversalFunctions.getTimeInSeconds();

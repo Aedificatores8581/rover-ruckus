@@ -1,28 +1,18 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15;
 
-import android.provider.ContactsContract;
-
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.WestCoast15;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift2_0;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.MineralContainer;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.NewMineralLift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
-import org.firstinspires.ftc.teamcode.Components.Sensors.REVToFSensor;
 import org.firstinspires.ftc.teamcode.Robots.Robot;
-import org.firstinspires.ftc.teamcode.Universal.Map.Map2;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
-import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
-import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
-import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.opencv.core.Point3;
 
 /**
@@ -40,7 +30,7 @@ public abstract class WestBot15 extends Robot {
     public Lift lift = new Lift();
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
-    public Lift2_0 lift2_0 = new Lift2_0();
+    public NewMineralLift mineralLift = new NewMineralLift();
     public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
@@ -67,7 +57,12 @@ public abstract class WestBot15 extends Robot {
 
         intaek.init(hardwareMap);
         lift.init(hardwareMap);
-        lift2_0.init(hardwareMap);
+        maerkrLeft = hardwareMap.servo.get("mrkr");
+        maerkrLeft.setPosition(MARKER_CLOSED_POSITION);
+
+        aextendo.init(hardwareMap, false);
+        //mineralContainer.init(hardwareMap);
+        mineralLift.init(hardwareMap);
         if (HADLEY_ON_SCHEDULE) {
             aextendo.init(hardwareMap, false);
             //mineralContainer.init(hardwareMap);
