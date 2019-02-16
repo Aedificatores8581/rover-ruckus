@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendo
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Lift;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.MineralContainer;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.NewMineralLift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
 import org.firstinspires.ftc.teamcode.Robots.Robot;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
@@ -29,7 +30,8 @@ public abstract class WestBot15 extends Robot {
     public Lift lift = new Lift();
     public AExtendotm aextendo = new AExtendotm();
     protected WestCoast15 drivetrain = new WestCoast15(DcMotor.ZeroPowerBehavior.FLOAT, 1.0);
-    public final static boolean HADLEY_ON_SCHEDULE = false;
+    public NewMineralLift mineralLift = new NewMineralLift();
+    public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public MineralContainer mineralContainer = new MineralContainer();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
@@ -60,6 +62,11 @@ public abstract class WestBot15 extends Robot {
 
         aextendo.init(hardwareMap, false);
         //mineralContainer.init(hardwareMap);
+        mineralLift.init(hardwareMap);
+        if (HADLEY_ON_SCHEDULE) {
+            aextendo.init(hardwareMap, false);
+            //mineralContainer.init(hardwareMap);
+        }
     }
 
     @Override

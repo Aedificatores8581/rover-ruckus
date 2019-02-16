@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.NewMineralLift;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
@@ -23,8 +24,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
     double prevTime = 0;
 
     // TODO: Mineral Lift should be an object, not a set of components in an opmode
-    DcMotor mineralLift;
-    Servo pivot[];
+
     // TODO: To become constants (not constants here because adb doesn't allow you to change constants during runtime)
     double topPivotPos = 0.855;
     double botPivotPos = 0.0027;
@@ -58,13 +58,13 @@ public class RoverRuckusTeleOp extends WestBot15 {
         activateGamepad1();
         activateGamepad2();
 
-        mineralLift = hardwareMap.dcMotor.get("lift");
+        /*mineralLift = hardwareMap.dcMotor.get("lift");
         pivot = new Servo[2];
         pivot[0] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[0]);
         pivot[1] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[1]);
 
         pivot[0].setPosition(topPivotPos);
-        pivot[1].setPosition(topPivotPos);
+        pivot[1].setPosition(topPivotPos);*/
     }
     public void start(){
         aextendo.isAutonomous = false;
@@ -93,11 +93,9 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
 
         if(gamepad2.dpad_up){
-            pivot[0].setPosition(topPivotPos);
-            pivot[1].setPosition(topPivotPos);
+            mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
         } else if(gamepad2.dpad_down){
-            pivot[0].setPosition(botPivotPos);
-            pivot[1].setPosition(botPivotPos);
+            mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
         }
 
         if (gamepad1.a) {
@@ -119,10 +117,15 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if (gamepad1.dpad_right) {
             intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
         }
+
         aextendo.aextendTM(rightStick1.y);
+
         if(!gamepad2.left_stick_button){
-            mineralLift.setPower(leftStick2.y);
-        }/*
+            mineralLift.lift(leftStick2.y);
+        }
+
+
+        /*
         double articulationValue = 0;
         if(gamepad2.left_trigger > 0.2){
             articulationValue = 1;
