@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
@@ -22,12 +21,10 @@ cleaner version of DepotAuto
 @Autonomous (name = "Depot auto 2", group = "competition autonomous   ")
 public class DepotAuto2 extends WestBot15 {
     private final static boolean USING_VECTOR_FIELDS = false;
-    private static final double MARKER_CLOSED_POSITION = 1, MARKER_OPEN_POSITION = 0.5;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
     boolean isTIMED = false;
     private boolean isDoubleSampling = false;
     Pose poseAfterSample = new Pose();
-    // private Servo maerkr;
     private GoldDetector detector;
 
     private Vector2 sampleVect = new Vector2();
@@ -42,8 +39,7 @@ public class DepotAuto2 extends WestBot15 {
     private boolean onCrater = false;
     private double prevTime = 0;
     private boolean canSwitchTimer = true;
-    private double depotYLocation = 60; // oof
-    boolean obtainedSampleLocation = false;
+    private double depotYLocation = 60;
     double time = 0;
     Vector2 craterVect = new Vector2();
     public double prevTimeInit = 0;
@@ -53,9 +49,6 @@ public class DepotAuto2 extends WestBot15 {
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
 
         super.init();
-
-        // maerkr = hardwareMap.servo.get("mrkr");
-        // maerkr.setPosition(MARKER_CLOSED_POSITION);
 
         activateGamepad1();
 
@@ -96,7 +89,7 @@ public class DepotAuto2 extends WestBot15 {
                     autoState = AutoState.CLAIM;
                     canSwitchTimer = false;
                 } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.DOUBLE_SAMPLE;
+                    autoState = AutoState.PARK;
                     canSwitchTimer = false;
                 }
 
@@ -121,7 +114,7 @@ public class DepotAuto2 extends WestBot15 {
                 parkingDelay += increment;
 
                 if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.DOUBLE_SAMPLE;
+                    autoState = AutoState.SAMPLE;
                     canSwitchTimer = false;
                 } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
                     autoState = AutoState.CLAIM;
@@ -131,19 +124,6 @@ public class DepotAuto2 extends WestBot15 {
                 canSwitchTimer = gamepad1.left_trigger < UniversalConstants.Triggered.TRIGGER && gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER;
                 break;
 
-            case DOUBLE_SAMPLE:
-                doubleSampleDelay += increment;
-
-                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.SAMPLE;
-                    canSwitchTimer = false;
-                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.PARK;
-                    canSwitchTimer = false;
-                }
-
-                canSwitchTimer = gamepad1.left_trigger < UniversalConstants.Triggered.TRIGGER && gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER;
-                break;
         }
 
         if (gamepad1.dpad_left) {
@@ -162,6 +142,8 @@ public class DepotAuto2 extends WestBot15 {
             is_aextending = false;
         }
 
+        sampleDelay = UniversalFunctions.clamp(2, sampleDelay, 20);
+
         telemetry.addData("Active Timer: ", autoState);
         telemetry.addData("sample dealy: ", sampleDelay);
         telemetry.addData("claim delay: ", claimDelay);
@@ -176,7 +158,6 @@ public class DepotAuto2 extends WestBot15 {
     public void start() {
         super.start();
 
-        //drivetrain.position = new Pose(0, 0, Math.PI / 2);
         startTime = UniversalFunctions.getTimeInSeconds();
         autoState = AutoState.LAND;
         startAngle = zeroDegreeAngle;
@@ -255,6 +236,9 @@ public class DepotAuto2 extends WestBot15 {
                 if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.4) {
                     intaek.articulateUp();
 
+                    autoState = AutoState.FORWARD_AFTER_SAMPLPE;
+                    poseAfterSample = drivetrain.position.clone();
+
                     if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
                         autoState = AutoState.FORWARD_AFTER_SAMPLPE;
                         poseAfterSample = drivetrain.position.clone();
@@ -265,8 +249,9 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 Vector2 temp2 = new Vector2(drivetrain.position.x, drivetrain.position.y);
                 temp2.subtract(poseAfterSample.clone().toVector());
-                drivetrain.newFieldCentric(sampleVect, robotAngle, 2);
-                if(temp2.magnitude() > (sampleVect.x < -8 ? 5 : 3)) {
+                drivetrain.setLeftPow(1);
+                drivetrain.setRightPow(1);
+                if(temp2.magnitude() > (sampleVect.x < -8 ? 3 : 3)) {
                     autoState = AutoState.TO_THE_DEPOT;
                 }
                 break;
@@ -278,14 +263,14 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.6;
 
-                Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 6, depotYLocation);
+                Vector2 newVect = new Vector2((crater == Crater.RIGHT ? 1 : -1) * 5.5, depotYLocation);
                 if (sampleVect.x > 8) {
                     newVect.y = crater == Crater.RIGHT ? 58 : 57;
                 } else if (sampleVect.x < -8) {
                     newVect.y = crater == Crater.RIGHT ? 57 : 58;
                 }
-                drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 4);
-                if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower()) < 0.2) {
+                drivetrain.driveToPoint(newVect.x, newVect.y, robotAngle, Drivetrain.Direction.FOR, 1.5);
+                if (UniversalFunctions.maxAbs(drivetrain.rightFore.getPower(), drivetrain.leftFore.getPower()) < 0.25 || (drivetrain.position.y > 50 && Math.signum(drivetrain.leftFore.getPower()) != Math.signum(drivetrain.rightFore.getPower()))) {
                     if (UniversalFunctions.getTimeInSeconds() - startTime > parkingDelay) {
                         autoState = AutoState.CLAIM;
                     }
