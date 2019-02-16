@@ -247,39 +247,42 @@ public class CraterAuto2 extends WestBot15 {
                 }
                 break;
             case TO_THE_DEPOT2:
-                drivetrain.maxSpeed = 0.65;
+                drivetrain.maxSpeed = 0.8;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.driveToPoint(intermediateVector.x, intermediateVector.y, robotAngle, Drivetrain.Direction.BACK, 6);
-                if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) > 0.4)
+                if (drivetrain.position.y < intermediateVector.y + 5) {
                     autoState = AutoState.CLAIM;
+                    drivetrain.stop();
+                }
                 break;
             case FACE_THE_DEPOT:
                 drivetrain.updateLocation();
-                drivetrain.maxSpeed = 0.5;
+                drivetrain.maxSpeed = 0.65;
                 Vector2 temp3 = new Vector2();
-                temp3.setFromPolar(1, Math.PI / 4);
+                temp3.setFromPolar(1, Math.PI / 4 - Math.PI / 2);
                 drivetrain.turnToFace(robotAngle, temp3);
                 if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.075) {
                     //TODO: find R
-                    intermediateVector.setFromPolar(50, Math.PI * 3 / 4);
+                    intermediateVector.setFromPolar(50, -Math.PI * 3 / 4);
                     intermediateVector.add(drivetrain.position.toVector());
                     autoState = AutoState.TO_THE_DEPOT2;
                     intermediatePoint = drivetrain.position.clone();
                 }
                 break;
             case CLAIM:
+
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                     //TODO: Add claiming condition
                 drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 4);
-                //if()
-                autoState = AutoState.TO_THE_CRATER;
+                if(drivetrain.position.y > intermediatePoint.y - 2)
+                    autoState = AutoState.TO_THE_CRATER;
                 break;
             case TO_THE_CRATER:
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.driveToPoint(samplePosition.x, samplePosition.y, robotAngle, Drivetrain.Direction.BACK, 5);
+                drivetrain.driveToPoint(samplePosition.x, samplePosition.y, robotAngle, Drivetrain.Direction.FOR, 5);
                 if (Math.abs(drivetrain.leftFore.getPower()) < 0.3) {
                     autoState = AutoState.SAMPLE;
                     intaek.articulateDown();
@@ -292,8 +295,9 @@ public class CraterAuto2 extends WestBot15 {
                 Vector2 drivingVect = new Vector2(sampleVect.x, sampleVect.y);
                 drivingVect.x += 0.455 * Math.sin(sampleVect.angle());
                 drivingVect.y -= 0.455 * Math.cos(sampleVect.angle());
+                drivingVect.rotate(Math.PI / 2);
                 drivetrain.turnToFace(drivingVect, robotAngle);
-                //if(drivetrain.)
+                //if()
                 break;
             case SAMPLE:
                 intaek.setPower(1);

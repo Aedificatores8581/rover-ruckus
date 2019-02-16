@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Robots.Robot;
 import org.firstinspires.ftc.teamcode.Universal.Map.Map2;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
+import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.opencv.core.Point3;
@@ -86,7 +87,14 @@ public abstract class WestBot15 extends Robot {
 
         return super.getGyroAngle();
     }
-
+/*
+    public void aextendIntake(double x, double y, Vector2 angle, Drivetrain.Direction dir, double threshold){
+        Vector2 destinationVect = new Vector2(x, y);
+        destinationVect.x -= drivetrain.position.x;
+        destinationVect.y -= drivetrain.position.y;
+        direction = dir;
+        newFieldCentric(destinationVect, angle, threshold);
+    }*/
     public enum AutoState{
         HANG,
         LOWER,

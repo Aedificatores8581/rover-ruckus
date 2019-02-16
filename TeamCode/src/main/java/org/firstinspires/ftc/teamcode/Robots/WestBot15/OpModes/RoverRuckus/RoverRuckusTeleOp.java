@@ -149,9 +149,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
         telemetry.addData("topSensor", lift.topPressed());
         telemetry.addData("bottomSensor", lift.bottomPressed());
-        telemetry.addLine(lift.toString());
-        telemetry.addData("vex1limit", lift2_0.maxSpeed2);
-        telemetry.addData("vex2limit", lift2_0.maxSpeed1);
+        telemetry.addData("backSensor", aextendo.backSwitch);
+        telemetry.addData("frontSensor", aextendo.frontSwitch);
         prevTime = UniversalFunctions.getTimeInSeconds();
 
         // Determines Whether to slow down the intake
