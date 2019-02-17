@@ -23,7 +23,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
     double prevTime = 0;
 
     Gamepad prev1;
-
+    double liftSpeed = 0.5;
     ExtensionSafety extensionSafety;
     boolean canSwitchExtensionSafetyState;
 
@@ -104,8 +104,17 @@ public class RoverRuckusTeleOp extends WestBot15 {
         aextendo.aextendTM(rightStick1.y);
 
         if(!gamepad2.left_stick_button){
-            mineralLift.lift(leftStick2.y);
+            mineralLift.lift(liftSpeed * leftStick2.y);
         }
+        if(false) {
+            if (gamepad2.dpad_right)
+                liftSpeed += 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
+            if (gamepad2.dpad_left)
+                liftSpeed -= 0.3 * (UniversalFunctions.getTimeInSeconds() - prevTime);
+            liftSpeed = UniversalFunctions.clamp(0, liftSpeed, 1);
+        }
+        else
+            liftSpeed = 0.75;
         if (gamepad1.left_bumper) {
             intaek.setPower(-1);
             canSwitchTime = true;
@@ -149,8 +158,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         telemetry.addLine(lift.toString());
         telemetry.addData("Lift Enc", mineralLift.getLiftEncoder());
 
-        telemetry.addData("backSensor", aextendo.backSwitch);
-        telemetry.addData("frontSensor", aextendo.frontSwitch);
+        telemetry.addData("lift max speed", liftSpeed);
         prevTime = UniversalFunctions.getTimeInSeconds();
 
         // Determines Whether to slow down the intake
