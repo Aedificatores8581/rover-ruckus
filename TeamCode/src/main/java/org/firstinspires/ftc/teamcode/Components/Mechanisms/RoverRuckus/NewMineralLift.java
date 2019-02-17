@@ -49,7 +49,7 @@ public class NewMineralLift {
         liftEncoder.resetEncoder();
     }
 
-    public void harResetLiftEncoer() {
+    public void hardResetLiftEncoer() {
         liftEncoder.hardResetEncoder();
     }
 
