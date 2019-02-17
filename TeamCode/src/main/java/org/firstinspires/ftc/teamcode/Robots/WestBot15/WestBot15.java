@@ -82,7 +82,14 @@ public abstract class WestBot15 extends Robot {
 
         return super.getGyroAngle();
     }
-
+/*
+    public void aextendIntake(double x, double y, Vector2 angle, Drivetrain.Direction dir, double threshold){
+        Vector2 destinationVect = new Vector2(x, y);
+        destinationVect.x -= drivetrain.position.x;
+        destinationVect.y -= drivetrain.position.y;
+        direction = dir;
+        newFieldCentric(destinationVect, angle, threshold);
+    }*/
     public enum AutoState{
         HANG,
         LOWER,
