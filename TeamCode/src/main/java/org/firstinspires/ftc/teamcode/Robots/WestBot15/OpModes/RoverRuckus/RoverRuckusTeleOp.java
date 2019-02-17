@@ -90,10 +90,8 @@ public class RoverRuckusTeleOp extends WestBot15 {
             //amineralContainer.articulateDown();
             //mineralContainer.closeCage();
         }
-        /*if (gamepad2.left_trigger > 0.2) {
-            mineralContainer.openCage();
-            mineralContainer.articulateUp();
-        }*/
+
+
         if (gamepad1.dpad_left) {
             intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
         }

@@ -1,39 +1,37 @@
 package org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
+
 public class MineralContainer {
-    public Servo articulator, cage;
-    public final double ARTICULATOR_DOWN_POSITION = 0,
-                        ARTICULATOR_UP_POSITION = 1,
-                        CAGE_OPEN_POSITION = 1,
-                        CAGE_CLOSED_POSITION = 0;
+    private Servo front, back;
+    public final double FRONT_DOWN_POSITION = 0,
+                        FRONT_UP_POSITION = 1,
+                        BACK_OPEN_POSITION = 1,
+                        BACK_CLOSED_POSITION = 0;
 
     public void init(HardwareMap hardwareMap){
-        articulator = hardwareMap.servo.get("con1");
-        cage = hardwareMap.servo.get("con2");
-        articulator.setPosition(ARTICULATOR_DOWN_POSITION);
-        cage.setPosition(CAGE_CLOSED_POSITION);
+        front = hardwareMap.servo.get(UniversalConfig.MINERAL_CONTAINER_FRONT_SERVO);
+        back = hardwareMap.servo.get(UniversalConfig.MINERAL_CONTAINER_BACK_SERVO);
+        front.setPosition(FRONT_DOWN_POSITION);
+        back.setPosition(BACK_CLOSED_POSITION);
     }
 
-    public void openCage() {
-        if(articulator.getPosition() == ARTICULATOR_DOWN_POSITION) {
-            cage.setPosition(CAGE_CLOSED_POSITION);
-        }
+    public void articulateFront(double pos) {
+        front.setPosition(pos);
     }
 
-    public void closeCage() {
-        cage.setPosition(CAGE_CLOSED_POSITION);
+    public double getFrontPos() {
+        return front.getPosition();
     }
 
-    public void articulateUp() {
-        articulator.setPosition(ARTICULATOR_UP_POSITION);
+    public void articulateBack(double pos) {
+        front.setPosition(pos);
     }
 
-    public void articulateDown() {
-        articulator.setPosition(ARTICULATOR_DOWN_POSITION);
+    public double getBackPos() {
+        return back.getPosition();
     }
 }
