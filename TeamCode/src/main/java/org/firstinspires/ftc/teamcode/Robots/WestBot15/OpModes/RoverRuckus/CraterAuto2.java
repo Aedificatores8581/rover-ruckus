@@ -223,7 +223,8 @@ public class CraterAuto2 extends WestBot15 {
                 }
                 break;
             case TO_THE_DEPOT:
-
+                intaek.articulateUp();
+                aextendo.aextendTM(-1);
                 lift.setPower(-1);
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
@@ -288,6 +289,7 @@ public class CraterAuto2 extends WestBot15 {
                 //TODO:INSERT PARKING CODE
                 break;
             case SAMPLE:
+                lift.setPower(-1);
                 intaek.setPower(1);
                 intaek.articulateDown();
                 drivetrain.updateLocation();
