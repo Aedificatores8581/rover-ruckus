@@ -13,6 +13,8 @@ public class NewMineralLift {
     private DcMotor liftMotor;
     private MotorEncoder liftEncoder;
 
+    private MineralContainer mineralContainer;
+
     private Servo pivots[];
 
     public static final double PIVOT_AUTO_INIT_POS = 1.0;
@@ -20,17 +22,17 @@ public class NewMineralLift {
     public static final double PIVOT_TELE_UP_POS = 0.855;
 
     public void init(HardwareMap hardwareMap){
-        liftMotor = hardwareMap.dcMotor.get("lift");
+        liftMotor = hardwareMap.dcMotor.get(UniversalConfig.MINERAL_LIFT_MOTOR);
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         liftEncoder = new MotorEncoder(liftMotor);
 
         pivots = new Servo[2];
-
         pivots[0] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[0]);
         pivots[1] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[1]);
 
+        mineralContainer.init(hardwareMap);
     }
     public void lift(double value){
         liftMotor.setPower(value);
@@ -48,6 +50,8 @@ public class NewMineralLift {
     public void resetLiftEncoder() {
         liftEncoder.resetEncoder();
     }
+
+    
 
     public void hardResetLiftEncoer() {
         liftEncoder.hardResetEncoder();

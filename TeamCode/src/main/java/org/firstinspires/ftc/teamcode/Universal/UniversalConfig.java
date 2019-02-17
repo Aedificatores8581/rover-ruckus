@@ -11,9 +11,14 @@ public interface UniversalConfig {
     String LIFT_TOP_RATCHET = "lrat";
     String LIFT_SIDE_RATCHET = "srat";
 
+    String MINERAL_LIFT_MOTOR = "lift";
+
     String MINERAL_LIFT_LEFT_MOTOR = "vmll";
     String MINERAL_LIFT_RIGHT_MOTOR = "vmlr";
     String MINERAL_LIFT_LIMIT_SWITCH = "mlts";
 
     String MINERAL_LIFT_PIVOT[] = {"p1", "p2"};
+
+    String MINERAL_CONTAINER_FRONT_SERVO = "fmc";
+    String MINERAL_CONTAINER_BACK_SERVO = "bmc";
 }
