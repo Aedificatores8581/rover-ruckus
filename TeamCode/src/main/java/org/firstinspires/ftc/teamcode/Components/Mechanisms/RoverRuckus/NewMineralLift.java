@@ -26,6 +26,8 @@ public class NewMineralLift {
 
         liftEncoder = new MotorEncoder(liftMotor);
 
+        pivots = new Servo[2];
+
         pivots[0] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[0]);
         pivots[1] = hardwareMap.servo.get(UniversalConfig.MINERAL_LIFT_PIVOT[1]);
 
