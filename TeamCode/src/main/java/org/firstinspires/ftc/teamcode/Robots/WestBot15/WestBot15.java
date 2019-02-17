@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.WestCoast15;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
@@ -12,7 +13,9 @@ import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.NewMiner
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
 import org.firstinspires.ftc.teamcode.Robots.Robot;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
+import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
+import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.opencv.core.Point3;
 
 /**
@@ -82,14 +85,36 @@ public abstract class WestBot15 extends Robot {
 
         return super.getGyroAngle();
     }
-/*
-    public void aextendIntake(double x, double y, Vector2 angle, Drivetrain.Direction dir, double threshold){
-        Vector2 destinationVect = new Vector2(x, y);
-        destinationVect.x -= drivetrain.position.x;
-        destinationVect.y -= drivetrain.position.y;
-        direction = dir;
-        newFieldCentric(destinationVect, angle, threshold);
-    }*/
+
+    public void aextendIntake(Vector2 destination, Vector2 angle, double threshold) {
+        drivetrain.updateLocation();
+        double extensionDistance = aextendo.getExtensionLength() + 14;
+        Vector2 position = new Vector2();
+        position.setFromPolar(extensionDistance, robotAngle.angle() + Math.PI / 2);
+
+        position.x -= 0.455 * Math.sin(position.angle());
+        position.y += 0.455 * Math.cos(position.angle());
+        Vector2 vector = new Vector2(destination.x - position.x, destination.y - position.y);
+        if (vector.magnitude() > threshold)
+            vector.setFromPolar(1, vector.angle());
+        else
+            vector.scalarMultiply(1.0 / threshold);
+        double angleBetween = UniversalFunctions.normalizeAngleRadians(vector.angle(), angle.angle());
+        double tempTurnMult = 0;
+        double directionMult = 1;
+        if (Math.sin(angleBetween) < 0) {
+            drivetrain.setLeftPow(Math.cos(angleBetween) < 0 ? -1 : 1);
+            drivetrain.setRightPow(Math.cos(angleBetween) > 0 ? -1 : 1);
+        } else {
+            double cos = Math.cos(angleBetween);
+            tempTurnMult = Math.abs(cos) + 1;
+            drivetrain.rightPow = directionMult * (-tempTurnMult * drivetrain.turnMult * cos);
+            drivetrain.leftPow = directionMult * (tempTurnMult * drivetrain.turnMult * cos);
+            aextendo.aextendTM(vector.magnitude() * Math.signum(UniversalFunctions.normalizeAngle180Radians(vector.angle())));
+            drivetrain.setLeftPow();
+            drivetrain.setRightPow();
+        }
+    }
     public enum AutoState{
         HANG,
         LOWER,
