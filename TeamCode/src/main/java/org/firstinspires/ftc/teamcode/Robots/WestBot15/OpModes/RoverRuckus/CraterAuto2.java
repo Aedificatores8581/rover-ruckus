@@ -276,6 +276,8 @@ public class CraterAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                     //TODO: Add claiming condition
+                maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
+                maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
                 drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 4);
                 if(drivetrain.position.y > intermediatePoint.y - 6)
                     autoState = AutoState.TO_THE_CRATER;
