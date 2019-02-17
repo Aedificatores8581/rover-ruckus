@@ -87,7 +87,7 @@ public abstract class WestBot15 extends Robot {
     }
 
     public void aextendIntake(Vector2 destination, Vector2 angle, double threshold) {
-        drivetrain.updateLocation();
+
         double extensionDistance = aextendo.getExtensionLength() + 14;
         Vector2 position = new Vector2();
         position.setFromPolar(extensionDistance, robotAngle.angle() + Math.PI / 2);
@@ -95,6 +95,7 @@ public abstract class WestBot15 extends Robot {
         position.x -= 0.455 * Math.sin(position.angle());
         position.y += 0.455 * Math.cos(position.angle());
         Vector2 vector = new Vector2(destination.x - position.x, destination.y - position.y);
+
         if (vector.magnitude() > threshold)
             vector.setFromPolar(1, vector.angle());
         else
@@ -108,8 +109,8 @@ public abstract class WestBot15 extends Robot {
         } else {
             double cos = Math.cos(angleBetween);
             tempTurnMult = Math.abs(cos) + 1;
-            drivetrain.rightPow = directionMult * (-tempTurnMult * drivetrain.turnMult * cos);
-            drivetrain.leftPow = directionMult * (tempTurnMult * drivetrain.turnMult * cos);
+            drivetrain.rightPow = directionMult * (0.5 * vector.magnitude() - tempTurnMult * drivetrain.turnMult * cos);
+            drivetrain.leftPow = directionMult * (0.5 * vector.magnitude() + tempTurnMult * drivetrain.turnMult * cos);
             aextendo.aextendTM(vector.magnitude() * Math.signum(UniversalFunctions.normalizeAngle180Radians(vector.angle())));
             drivetrain.setLeftPow();
             drivetrain.setRightPow();

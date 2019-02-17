@@ -219,7 +219,7 @@ public class CraterAuto2 extends WestBot15 {
                     drivetrain.setLeftPow(1);
                     drivetrain.setRightPow(1);
                 } else {
-                    autoState = AutoState.TO_THE_DEPOT;
+                    autoState = AutoState.SAMPLE;
                 }
                 break;
             case TO_THE_DEPOT:
@@ -276,62 +276,26 @@ public class CraterAuto2 extends WestBot15 {
                 drivetrain.position.angle = robotAngle.angle();
                     //TODO: Add claiming condition
                 drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 4);
-                if(drivetrain.position.y > intermediatePoint.y - 2)
+                if(drivetrain.position.y > intermediatePoint.y - 6)
                     autoState = AutoState.TO_THE_CRATER;
                 break;
             case TO_THE_CRATER:
+                drivetrain.maxSpeed = 0.8;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.driveToPoint(samplePosition.x, samplePosition.y, robotAngle, Drivetrain.Direction.FOR, 5);
-                if (Math.abs(drivetrain.leftFore.getPower()) < 0.3) {
-                    autoState = AutoState.SAMPLE;
-                    intaek.articulateDown();
-                }
-
-                break;
-            case FACE_SAMPLE:
-                drivetrain.updateLocation();
-                drivetrain.position.angle = robotAngle.angle();
-                Vector2 drivingVect = new Vector2(sampleVect.x, sampleVect.y);
-                drivingVect.x += 0.455 * Math.sin(sampleVect.angle());
-                drivingVect.y -= 0.455 * Math.cos(sampleVect.angle());
-                drivingVect.rotate(Math.PI / 2);
-                drivetrain.turnToFace(drivingVect, robotAngle);
-                //if()
+                drivetrain.setRightPow(1);
+                drivetrain.setRightPow(1);
+                //TODO:INSERT PARKING CODE
                 break;
             case SAMPLE:
                 intaek.setPower(1);
+                intaek.articulateDown();
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.maxSpeed = 0.5;
-                if (Math.abs(drivetrain.leftFore.getPower()) < 0.1) {
-                    if (aextendo.getExtensionLength() + 9 + 5 < sampleVect.magnitude()) {
-                        aextendo.aextendTM(1 - 0.4 * aextendo.getExtensionLength() / (sampleVect.magnitude() + 9 + 5));
-                    } else {
-                        aextendo.aextendTM(-1);
-                        intaek.articulateUp();
-                        if (aextendo.getExtensionLength() + 9 + 5 < sampleVect.magnitude() - 5) {
-                            aextendo.aextendTM(0);
-                            autoState = AutoState.FACE_THE_CRATER;
-                        }
-                    }
-                } else {
-                    Vector2 intakeSampleVect = new Vector2(sampleVect.x, sampleVect.y);
-                    intakeSampleVect.setFromPolar(sampleVect.magnitude(), Math.PI / 2);
-                    intakeSampleVect.x -= 0.455;
-                    intakeSampleVect.rotate(sampleVect.angle() - Math.PI / 2);
-                    drivetrain.turnToFace(robotAngle, intakeSampleVect);
-                }
-                break;
-            case FACE_THE_CRATER:
-                drivetrain.updateLocation();
-                drivetrain.position.angle = robotAngle.angle();
-                intaek.setPower(0);
-                drivetrain.updateLocation();
-                drivetrain.position.angle = robotAngle.angle();
-                drivetrain.turnToFace(robotAngle, 0);
-                if (Math.abs(drivetrain.leftFore.getPower()) < 0.1)
-                    autoState = AutoState.PARK;
+                drivetrain.maxSpeed = 0.65;
+                aextendIntake(sampleVect, robotAngle, 6);
+                if(aextendo.extendo.getPower() < 0.4)
+                    autoState = AutoState.TO_THE_DEPOT;
                 break;
             case PARK:
                 if (aextendo.getExtensionLength() < 17) {
