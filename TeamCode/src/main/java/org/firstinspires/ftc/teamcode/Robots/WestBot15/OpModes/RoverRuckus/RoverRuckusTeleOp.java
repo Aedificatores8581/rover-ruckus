@@ -32,6 +32,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
     IntakeResetState intakeResetState = IntakeResetState.RETRACT;
     double time = 0;
     boolean canSwitchTime = true;
+    boolean canSwitchSlowdown = true, slowdown = true;
     @Override
     public void init(){
         prev1 = new Gamepad();
@@ -57,14 +58,20 @@ public class RoverRuckusTeleOp extends WestBot15 {
         prevTime = UniversalFunctions.getTimeInSeconds();
     }
     public void loop() {
+        if(gamepad1.left_stick_button && gamepad1.right_stick_button && canSwitchSlowdown){
+            slowdown = !slowdown;
+            canSwitchSlowdown = false;
+        }
+        else if(!(gamepad1.left_stick_button && gamepad1.right_stick_button))
+            canSwitchSlowdown = true;
         drivetrain.maxSpeed = 0.7;
         updateGamepad1();
         updateGamepad2();
         drivetrain.turnMult = 1;
 
-        /*if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
+        if ( !gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
             drivetrain.turnMult = (1.0 - 2.0 / 3.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
-        }*/
+        }
 
         double fitemetheo = 1;
         drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
@@ -151,6 +158,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         else
             mineralContainer.closeCage();*/
 
+        telemetry.addData("slow turning when extended: ", slowdown);
         telemetry.addData("extensionLength", aextendo.getExtensionLength());
         telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
         telemetry.addData("topSensor", lift.topPressed());

@@ -35,6 +35,7 @@ public class CraterAuto2 extends WestBot15 {
     private CraterAuto2.AutoState autoState = CraterAuto2.AutoState.LAND;
 
     private double startTime = 0;
+    double sampleTime = 0;
     double initialPosition = 0;
     private double sampleDelay = 0, claimDelay = 0, parkingDelay = 0, doubleSampleDelay = 0;
 
@@ -259,6 +260,7 @@ public class CraterAuto2 extends WestBot15 {
                 break;
             case FACE_THE_DEPOT:
                 drivetrain.updateLocation();
+                drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.65;
                 Vector2 temp3 = new Vector2();
                 temp3.setFromPolar(1, Math.PI / 4 - Math.PI / 2);
@@ -279,7 +281,7 @@ public class CraterAuto2 extends WestBot15 {
                 maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
                 maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
                 drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 4);
-                if(drivetrain.position.y > intermediatePoint.y - 6)
+                if(drivetrain.position.y > intermediatePoint.y - 6 / Math.sqrt(2))
                     autoState = AutoState.TO_THE_CRATER;
                 break;
             case TO_THE_CRATER:
@@ -298,10 +300,20 @@ public class CraterAuto2 extends WestBot15 {
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.65;
                 aextendIntake(sampleVect, robotAngle, 6);
-                if(aextendo.extendo.getPower() < 0.4)
+                if(aextendo.extendo.getPower() < 0.4) {
+                    drivetrain.stop();
+                    autoState = AutoState.RETRAECT;
+                    sampleTime = UniversalFunctions.getTimeInSeconds();
+                }
+                break;
+            case RETRAECT:
+                intaek.articulateUp();
+                aextendo.aextendTM(-1);
+                if(UniversalFunctions.getTimeInSeconds() - sampleTime > 1.2)
                     autoState = AutoState.TO_THE_DEPOT;
                 break;
             case PARK:
+                drivetrain.updateLocation();
                 if (aextendo.getExtensionLength() < 17) {
                     aextendo.aextendTM(0.7);
                     intaek.articulateDown();
@@ -334,6 +346,7 @@ public class CraterAuto2 extends WestBot15 {
         VISION,
         FORWARD,
         SAMPLE,
+        RETRAECT,
         TO_THE_DEPOT,
         CLAIM,
         PARK,
