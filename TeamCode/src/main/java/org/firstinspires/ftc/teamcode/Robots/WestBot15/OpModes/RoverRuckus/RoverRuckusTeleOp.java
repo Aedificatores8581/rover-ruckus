@@ -78,7 +78,7 @@ public class RoverRuckusTeleOp extends WestBot15 {
         if(gamepad2.dpad_up){
             mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
         } else if(gamepad2.dpad_down){
-            mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
+            mineralLift.articulate(NewMineralLift.PIVOT_TELE_UP_POS);
         }
 
         if (gamepad1.a) {
