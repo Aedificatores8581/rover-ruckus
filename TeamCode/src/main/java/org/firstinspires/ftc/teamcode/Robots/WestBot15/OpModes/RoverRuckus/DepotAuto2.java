@@ -29,7 +29,7 @@ public class DepotAuto2 extends WestBot15 {
 
     private Vector2 sampleVect = new Vector2();
     private AutoState autoState = AutoState.LAND;
-    private Crater crater = Crater.RIGHT;
+    private Crater crater = Crater.LEFT;
 
     private double startTime = 0;
     double initialPosition = 0;
