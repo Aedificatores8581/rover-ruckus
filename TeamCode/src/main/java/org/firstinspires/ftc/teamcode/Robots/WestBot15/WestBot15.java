@@ -36,7 +36,6 @@ public abstract class WestBot15 extends Robot {
     public NewMineralLift mineralLift = new NewMineralLift();
     public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
-    public MineralContainer mineralContainer = new MineralContainer();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
 
     @Override
@@ -116,6 +115,13 @@ public abstract class WestBot15 extends Robot {
             drivetrain.setRightPow();
         }
     }
+
+    @Override
+    public void stop() {
+        super.stop();
+        mineralLift.allowAutomation(false);
+    }
+
     public enum AutoState{
         HANG,
         LOWER,
