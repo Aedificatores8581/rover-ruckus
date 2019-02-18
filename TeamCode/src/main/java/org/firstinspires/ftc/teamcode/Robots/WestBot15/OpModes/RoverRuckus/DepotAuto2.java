@@ -29,7 +29,7 @@ public class DepotAuto2 extends WestBot15 {
 
     private Vector2 sampleVect = new Vector2();
     private AutoState autoState = AutoState.LAND;
-    private Crater crater = Crater.RIGHT;
+    private Crater crater = Crater.LEFT;
 
     private double startTime = 0;
     double initialPosition = 0;
@@ -295,8 +295,6 @@ public class DepotAuto2 extends WestBot15 {
                 break;
             case CLAIM:
                 // maerkr.setPosition(MARKER_OPEN_POSITION);
-                maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
-                maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
 
                 autoState = AutoState.PARK;
                 craterVect = new Vector2();
@@ -310,6 +308,11 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.turnMult = 2;
+                if(drivetrain.leftFore.getPower() - drivetrain.rightFore.getPower() < 0.2){
+                    maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
+                    maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
+
+                }
                 if (!onCrater) {
                     if (drivetrain.position.y < 25) {
                         if (isDoubleSampling)
