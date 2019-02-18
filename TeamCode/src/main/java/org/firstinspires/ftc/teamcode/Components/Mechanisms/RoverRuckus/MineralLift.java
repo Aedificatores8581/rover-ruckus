@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
  */
 
 public class MineralLift {
-    private MineralContainer mineralContainer;
+    private MineralContainer mineralContainer = new MineralContainer();
     private DcMotor leftMotor, rightMotor;
     private MotorEncoder leftEncoder, rightEncoder;
-    private TouchSensor limitSwitch;
+    private TouchSensor limitSwitch = new TouchSensor();
 
     private static final double MAX_SPEED = 1;
     // TODO: This value needs to be tuned. {tuning}
@@ -33,8 +33,8 @@ public class MineralLift {
         leftEncoder.initEncoder();
         rightEncoder.initEncoder();
 
-        mineralContainer.closeCage();
-        mineralContainer.articulateDown();
+        //mineralContainer.closeCage();
+        //mineralContainer.articulateDown();
     }
 
     public void raise(double pow) {
@@ -47,9 +47,9 @@ public class MineralLift {
         }
 
         if (leftEncoder.updateEncoder() > DUMP_BUCKET_THRESHHOLD) {
-            mineralContainer.openCage();
+            //mineralContainer.openCage();
         } else if (leftEncoder.updateEncoder() > DUMP_BUCKET_THRESHHOLD) {
-            mineralContainer.closeCage();
+            //mineralContainer.closeCage();
         }
     }
 }

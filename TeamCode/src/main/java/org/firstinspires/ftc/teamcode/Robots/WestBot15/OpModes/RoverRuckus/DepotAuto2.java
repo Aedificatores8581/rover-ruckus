@@ -218,7 +218,7 @@ public class DepotAuto2 extends WestBot15 {
                 break;
 
             case SAMPLE:
-                intaek.setPower(-1);
+                intaek.setPower(1);
                 intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
 
                 lift.setPower(-1);
