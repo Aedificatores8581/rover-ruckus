@@ -211,6 +211,7 @@ public class CraterAuto2 extends WestBot15 {
                 break;
 
             case FORWARD:
+                intaek.articulateDown();
                 lift.setPower(-1);
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
@@ -233,6 +234,7 @@ public class CraterAuto2 extends WestBot15 {
                 Vector2 temp2 = new Vector2(intermediatePoint.x, intermediatePoint.y);
                 temp2.x -= drivetrain.position.x;
                 temp2.y -= drivetrain.position.y;
+                drivetrain.turnMult = 1.4;
                 if (temp2.magnitude() > 6 && !canDriveForwardIntermediate) {
                     drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 6);
                 } else {
@@ -241,7 +243,7 @@ public class CraterAuto2 extends WestBot15 {
                     Pose relativeDTPosition = new Pose(drivetrain.position.clone());
                     relativeDTPosition.x -= temporaryPose.x;
                     relativeDTPosition.y -= temporaryPose.y;
-                    if (relativeDTPosition.toVector().magnitude() > 20)
+                    if (relativeDTPosition.toVector().magnitude() > 8)
                         autoState = AutoState.FACE_THE_DEPOT;
                 }
                 if (!canDriveForwardIntermediate) {
@@ -249,7 +251,7 @@ public class CraterAuto2 extends WestBot15 {
                 }
                 break;
             case TO_THE_DEPOT2:
-                drivetrain.maxSpeed = 0.8;
+                drivetrain.maxSpeed = 0.75;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.driveToPoint(intermediateVector.x, intermediateVector.y, robotAngle, Drivetrain.Direction.BACK, 6);
@@ -294,16 +296,19 @@ public class CraterAuto2 extends WestBot15 {
                 break;
             case SAMPLE:
                 lift.setPower(-1);
-                intaek.setPower(1);
+                if(aextendo.getExtensionLength() > 5)
+                    intaek.setPower(-1);
                 intaek.articulateDown();
+                drivetrain.turnMult = 1.3;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.65;
                 aextendIntake(sampleVect, robotAngle, 6);
-                if(aextendo.extendo.getPower() < 0.4) {
+                if(intakePosition.y > sampleVect.y) {
                     drivetrain.stop();
                     autoState = AutoState.RETRAECT;
                     sampleTime = UniversalFunctions.getTimeInSeconds();
+                    intaek.setPower(0);
                 }
                 break;
             case RETRAECT:

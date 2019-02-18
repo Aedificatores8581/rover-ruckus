@@ -38,6 +38,8 @@ public abstract class WestBot15 extends Robot {
     public MotoG4 motoG4 = new MotoG4();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
 
+
+    public Vector2 intakePosition = new Vector2();
     @Override
     public void init(){
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
@@ -87,13 +89,13 @@ public abstract class WestBot15 extends Robot {
 
     public void aextendIntake(Vector2 destination, Vector2 angle, double threshold) {
 
-        double extensionDistance = aextendo.getExtensionLength() + 14;
-        Vector2 position = new Vector2();
-        position.setFromPolar(extensionDistance, robotAngle.angle() + Math.PI / 2);
+        double extensionDistance = aextendo.getExtensionLength() + 16;
+        intakePosition = new Vector2();
+        intakePosition.setFromPolar(extensionDistance, robotAngle.angle() + Math.PI / 2);
 
-        position.x -= 0.455 * Math.sin(position.angle());
-        position.y += 0.455 * Math.cos(position.angle());
-        Vector2 vector = new Vector2(destination.x - position.x, destination.y - position.y);
+        intakePosition.x -= 0.455 * Math.sin(intakePosition.angle());
+        intakePosition.y += 0.455 * Math.cos(intakePosition.angle());
+        Vector2 vector = new Vector2(destination.x - drivetrain.position.x + 0.455 * Math.sin(intakePosition.angle()), destination.y - drivetrain.position.y - 0.455 * Math.cos(intakePosition.angle()));
 
         if (vector.magnitude() > threshold)
             vector.setFromPolar(1, vector.angle());
@@ -108,8 +110,8 @@ public abstract class WestBot15 extends Robot {
         } else {
             double cos = Math.cos(angleBetween);
             tempTurnMult = Math.abs(cos) + 1;
-            drivetrain.rightPow = directionMult * (0.5 * vector.magnitude() - tempTurnMult * drivetrain.turnMult * cos);
-            drivetrain.leftPow = directionMult * (0.5 * vector.magnitude() + tempTurnMult * drivetrain.turnMult * cos);
+            drivetrain.rightPow = directionMult * (0.0 * vector.magnitude() - tempTurnMult * drivetrain.turnMult * cos);
+            drivetrain.leftPow = directionMult * (0.0 * vector.magnitude() + tempTurnMult * drivetrain.turnMult * cos);
             aextendo.aextendTM(vector.magnitude() * Math.signum(UniversalFunctions.normalizeAngle180Radians(vector.angle())));
             drivetrain.setLeftPow();
             drivetrain.setRightPow();

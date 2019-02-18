@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
-import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
-import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 public class AExtendotm {
@@ -25,7 +23,7 @@ public class AExtendotm {
                         MIN_EXTENSION_LENGTH = 0,
                         GEAR_RATIO = 7.5,
                         TICKS_PER_REVOLUTION = 7,
-                        TICKS_PER_INCH = (70*(2+124.6/(276+1.0/3))/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4;
+                        INCH_PER_TICK = /*(70*(2+124.6/(276+1.0/3))/Math.PI)/(GEAR_RATIO*TICKS_PER_REVOLUTION)/25.4*/ 29.5/2320;
 
     public void init(HardwareMap hardwareMap, boolean isAutonomous) {
         extendo = hardwareMap.dcMotor.get("aetm");
@@ -59,11 +57,11 @@ public class AExtendotm {
 
     public double getExtensionLength() {
         encoder.updateEncoder();
-        return TICKS_PER_INCH * encoder.currentPosition;
+        return INCH_PER_TICK * encoder.currentPosition;
     }
 
     public double getDesiredExtensionLength() {
-        return TICKS_PER_INCH * extendo.getTargetPosition();
+        return INCH_PER_TICK * extendo.getTargetPosition();
     }
 
     public boolean isRetracted() {

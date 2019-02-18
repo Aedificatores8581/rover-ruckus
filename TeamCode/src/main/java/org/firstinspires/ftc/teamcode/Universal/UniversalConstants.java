@@ -18,9 +18,9 @@ public final class UniversalConstants {
     }
 
     public enum MarkerServoConstants {
-        LEFT_CLOSED(.3),
+        LEFT_CLOSED(.5),
         RIGHT_CLOSED(0.9),
-        LEFT_OPEN(0.9),
+        LEFT_OPEN(0.1),
         RIGHT_OPEN(0.0);
 
         double pos;

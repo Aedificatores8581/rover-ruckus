@@ -19,7 +19,7 @@ public class NewMineralLift {
 
     // No point in implementing methods in this class for the sake of making this field private
     // Even though that is exactly what I do with MotorEncoder
-    public MineralContainer mineralContainer;
+    public MineralContainer mineralContainer = new MineralContainer();
 
     private Servo pivots[];
 
