@@ -24,6 +24,8 @@ public class NewMineralLift {
     private Servo pivots[];
 
     private TouchSensor topLimitSwitch, botLimitSwitch;
+
+    private boolean automationAllowed;
     // endregion
 
     // region Constants
@@ -52,6 +54,8 @@ public class NewMineralLift {
         botLimitSwitch.init(hardwareMap, UniversalConfig.MINERAL_LIFT_BOT_LIMIT);
 
         mineralLiftState = MineralLiftState.EXTEND_LIFT;
+
+        allowAutomation(true);
     }
 
     // region Lift Motor
@@ -101,7 +105,7 @@ public class NewMineralLift {
 
     public synchronized void automatedRaise() {
         new Thread(() -> {
-            while(mineralLiftState != MineralLiftState.DONE_RAISING) {
+            while(mineralLiftState != MineralLiftState.DONE_RAISING && isAutomationAllowed()) {
                 switch (mineralLiftState) {
 
                     case EXTEND_LIFT:
@@ -126,7 +130,7 @@ public class NewMineralLift {
 
     public synchronized void automatedLower() {
         new Thread(() -> {
-            while(mineralLiftState != MineralLiftState.DONE_LOWERING) {
+            while(mineralLiftState != MineralLiftState.DONE_LOWERING && isAutomationAllowed()) {
                 switch (mineralLiftState) {
 
                     // Incrementally sets servo position to prevent the lift from retracting while the servo moves
@@ -152,6 +156,14 @@ public class NewMineralLift {
                 }
             }
         });
+    }
+
+    public synchronized void allowAutomation(boolean val) {
+        this.automationAllowed = val;
+    }
+
+    public boolean isAutomationAllowed() {
+        return this.automationAllowed;
     }
 
 }

@@ -117,6 +117,13 @@ public abstract class WestBot15 extends Robot {
             drivetrain.setRightPow();
         }
     }
+
+    @Override
+    public void stop() {
+        super.stop();
+        mineralLift.allowAutomation(false);
+    }
+
     public enum AutoState{
         HANG,
         LOWER,
