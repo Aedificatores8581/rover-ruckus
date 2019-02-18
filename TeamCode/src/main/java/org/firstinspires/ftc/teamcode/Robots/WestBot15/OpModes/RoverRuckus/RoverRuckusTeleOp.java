@@ -1,20 +1,13 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
-import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.AExtendotm;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.MineralLiftState;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.NewMineralLift;
-import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
-import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
-import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 @TeleOp (name = "Comp Tele Op")
@@ -76,9 +69,9 @@ public class RoverRuckusTeleOp extends WestBot15 {
         }
 
         if(gamepad2.dpad_up){
-            mineralLift.articulate(NewMineralLift.PIVOT_TELE_DOWN_POS);
+            mineralLift.articulatePivots(NewMineralLift.PIVOT_TELE_DOWN_POS);
         } else if(gamepad2.dpad_down){
-            mineralLift.articulate(NewMineralLift.PIVOT_TELE_UP_POS);
+            mineralLift.articulatePivots(NewMineralLift.PIVOT_TELE_UP_POS);
         }
 
         if (gamepad1.a) {
@@ -102,8 +95,15 @@ public class RoverRuckusTeleOp extends WestBot15 {
         aextendo.aextendTM(rightStick1.y);
 
         if(!gamepad2.left_stick_button){
-            mineralLift.lift(leftStick2.y);
+            mineralLift.setLiftPower(leftStick2.y);
         }
+
+        if(gamepad2.dpad_up && !mineralLift.isMovingLift()) {
+            mineralLift.automatedRaise();
+        } else if(gamepad2.dpad_down && !mineralLift.isMovingLift()){
+            mineralLift.automatedLower();
+        }
+
         if (gamepad1.left_bumper) {
             intaek.setPower(-1);
             canSwitchTime = true;

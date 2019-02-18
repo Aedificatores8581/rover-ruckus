@@ -21,4 +21,7 @@ public interface UniversalConfig {
 
     String MINERAL_CONTAINER_FRONT_SERVO = "fmc";
     String MINERAL_CONTAINER_BACK_SERVO = "bmc";
+
+    String MINERAL_LIFT_TOP_LIMIT = "topml";
+    String MINERAL_LIFT_BOT_LIMIT = "botml";
 }
