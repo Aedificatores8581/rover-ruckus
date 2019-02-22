@@ -14,7 +14,8 @@ public class Intake {
 
     public double maxSpeed = 1;
     //TODO: find these values
-    public static final double CLOSED_DISPENSOR_POSITION = 1, OPEN_DISPENSOR_POSITION = 0;
+    public static final double CLOSED_DISPENSOR_POSITION = 0.85, OPEN_DISPENSOR_POSITION = 0;
+    public double INTAKE_ARTICULATOR_MIDDLE_POSITION = 0.455;
 
     public static final double INTAKE_ARTICULATOR_DOWN_POSITION = 1,
             INTAKE_ARTICULATOR_UP_POSITION = 0;
@@ -25,7 +26,6 @@ public class Intake {
         motor = hardwareMap.dcMotor.get("int");
         dispensor = hardwareMap.servo.get("idis");
         articulator = hardwareMap.servo.get("iart");
-        dispensor.setPosition(CLOSED_DISPENSOR_POSITION);
     }
 
     public double getPower(){

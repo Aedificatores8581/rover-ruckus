@@ -17,11 +17,8 @@ public class MaerkrServoTester extends OpMode {
 
     @Override
     public void init() {
-        maerkrLeft  = hardwareMap.servo.get("lmrkr");
-        maerkrLeft.setPosition(0.0);
-
-        maerkrRight = hardwareMap.servo.get("rmrkr");
-        maerkrRight.setPosition(0.0);
+        maerkrLeft  = hardwareMap.servo.get("mrkr");
+        maerkrLeft.setPosition(0.4);
 
     }
 // Maerkr Left Close: .1
@@ -31,7 +28,6 @@ public class MaerkrServoTester extends OpMode {
         leftPos = 0.9;
         rightPos = 0.9;
 
-        maerkrRight.setPosition(rightPos);
         maerkrLeft.setPosition(leftPos);
 
         /*

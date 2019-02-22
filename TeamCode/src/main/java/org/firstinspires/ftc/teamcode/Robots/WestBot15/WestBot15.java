@@ -24,7 +24,6 @@ import org.opencv.core.Point3;
 
 public abstract class WestBot15 extends Robot {
     public Servo maerkrLeft;
-    public Servo maerkrRight;
 
     public boolean isAutonomous = false;
     //IMPORTANT: phone locations should be taken in relation to the robot, not the field
@@ -37,7 +36,7 @@ public abstract class WestBot15 extends Robot {
     public final static boolean HADLEY_ON_SCHEDULE = true;
     public MotoG4 motoG4 = new MotoG4();
     public final double MARKER_OPEN_POSITION = 0.5, MARKER_CLOSED_POSITION = 1;
-
+    public MineralContainer mineralContainer = new MineralContainer();
 
     public Vector2 intakePosition = new Vector2();
     @Override
@@ -45,12 +44,8 @@ public abstract class WestBot15 extends Robot {
         msStuckDetectInit = UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
         super.init();
 
-        maerkrLeft = hardwareMap.servo.get("lmrkr");
-        maerkrRight = hardwareMap.servo.get("rmrkr");
 
-        maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_CLOSED.getPos());
-        maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_CLOSED.getPos());
-
+        mineralContainer.init(hardwareMap);
         drivetrain.maxSpeed = 1.0;
         drivetrain.initMotors(hardwareMap);
         drivetrain.position = new Pose();
@@ -62,8 +57,6 @@ public abstract class WestBot15 extends Robot {
         intaek.init(hardwareMap);
         lift.init(hardwareMap);
         maerkrLeft = hardwareMap.servo.get("mrkr");
-        maerkrLeft.setPosition(MARKER_CLOSED_POSITION);
-
         aextendo.init(hardwareMap, false);
         //mineralContainer.init(hardwareMap);
         mineralLift.init(hardwareMap);
@@ -71,6 +64,8 @@ public abstract class WestBot15 extends Robot {
             aextendo.init(hardwareMap, false);
             //mineralContainer.init(hardwareMap);
         }
+        maerkrLeft.setPosition(0.9);
+        mineralContainer.articulateBack(mineralContainer.BACK_CLOSED_POSITION);
     }
 
     @Override
