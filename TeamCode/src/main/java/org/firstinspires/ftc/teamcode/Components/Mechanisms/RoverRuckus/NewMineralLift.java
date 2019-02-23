@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Components.Sensors.MotorEncoder;
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
+import org.firstinspires.ftc.teamcode.Vision.UniversalVision;
 
 public class NewMineralLift {
 
@@ -64,6 +65,9 @@ public class NewMineralLift {
     // region Lift Motor
     public synchronized void setLiftPower(double value){
         if(UniversalFunctions.getTimeInSeconds() - prevTime > 0.7) {
+            if(botLimitSwitch.isPressed())
+                value = UniversalFunctions.clamp(0, value, 1);
+
             if (value < 0) {
                 if(!canSetPowerPositive) {
                     prevTime = UniversalFunctions.getTimeInSeconds();
@@ -85,9 +89,13 @@ public class NewMineralLift {
             if (!canSetPowerPositive)
                 value = UniversalFunctions.clamp(-1, value, 0);
             liftMotor.setPower(value);
-            if(value > 0){
+            if(value > 0 && !botLimitSwitch.isPressed()){
                 pivot1.setPosition(PIVOT_TELE_DOWN_POS);
                 pivot2.setPosition(PIVOT_TELE_DOWN_POS);
+            }
+            else if(botLimitSwitch.isPressed()){
+                pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
             }
         }
         else

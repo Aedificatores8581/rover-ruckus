@@ -66,6 +66,7 @@ public abstract class WestBot15 extends Robot {
         }
         maerkrLeft.setPosition(0.9);
         mineralContainer.articulateBack(mineralContainer.BACK_CLOSED_POSITION);
+
     }
 
     @Override
