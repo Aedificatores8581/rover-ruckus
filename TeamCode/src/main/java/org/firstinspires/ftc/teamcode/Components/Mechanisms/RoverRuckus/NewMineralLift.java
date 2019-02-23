@@ -35,9 +35,9 @@ public class NewMineralLift {
     public static final double LIFT_MOTOR_UP = 0.75;
     public static final double LIFT_MOTOR_DOWN = -0.75;
 
-    public static final double PIVOT_TELE_FORWARD_POS = 0.885;
+    public static final double PIVOT_TELE_FORWARD_POS = 0.85;
     public static final double PIVOT_TELE_UP_POS = 0.15;
-    public static final double PIVOT_TELE_DOWN_POS = 0.905;
+    public static final double PIVOT_TELE_DOWN_POS = 0.895;
     // endregion
 
     public void init(HardwareMap hardwareMap){

@@ -296,7 +296,7 @@ public class DepotAuto2 extends WestBot15 {
 
                 autoState = AutoState.PARK;
                 craterVect = new Vector2();
-                craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4 - (crater == Crater.RIGHT ? -1 : 1) * Math.toRadians(7.5));
+                craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4 - (crater == Crater.RIGHT ? -1 : 1) * Math.toRadians(3));
                 break;
 
             case PARK:
@@ -310,10 +310,22 @@ public class DepotAuto2 extends WestBot15 {
                     maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
                 }
                 if (!onCrater) {
-                    if (!onCrater)
-                        onCrater = Math.abs(UniversalFunctions.normalizeAngle180(normalizeGyroAngleY())) > ON_CRATER_RIM_THRESHOLD;
-                    drivetrain.maxSpeed = 0.75;
-                    drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
+                    if(!is_aextending){
+                        if (!onCrater)
+                            onCrater = Math.abs(UniversalFunctions.normalizeAngle180(normalizeGyroAngleY())) > ON_CRATER_RIM_THRESHOLD;
+                        drivetrain.maxSpeed = 0.75;
+                        drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
+                    }
+                    else {
+                        if(drivetrain.position.y < 35){
+                            drivetrain.stop();
+                            aextendo.aextendTM(1);
+                        }
+                        else{
+                            drivetrain.maxSpeed = 0.75;
+                            drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
+                        }
+                    }
                 } else {
                     drivetrain.stop();
                     aextendo.extendo.setPower(0);

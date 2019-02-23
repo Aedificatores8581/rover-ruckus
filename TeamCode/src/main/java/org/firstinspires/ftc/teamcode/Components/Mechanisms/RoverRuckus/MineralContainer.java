@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 public class MineralContainer {
     private Servo front, back;
     public final double FRONT_DOWN_POSITION = 0,
-                        FRONT_UP_POSITION = 0.32,
+                        FRONT_UP_POSITION = 0.38,
                         BACK_OPEN_POSITION = 0,
                         BACK_CLOSED_POSITION = 1;
 
