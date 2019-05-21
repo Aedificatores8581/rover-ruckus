@@ -88,14 +88,16 @@ public class NewMineralLift {
             }
             if (!canSetPowerPositive)
                 value = UniversalFunctions.clamp(-1, value, 0);
-            liftMotor.setPower(value);
+                liftMotor.setPower(value);
             if(value > 0 && !botLimitSwitch.isPressed()){
                 pivot1.setPosition(PIVOT_TELE_DOWN_POS);
                 pivot2.setPosition(PIVOT_TELE_DOWN_POS);
+                mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
             }
             else if(botLimitSwitch.isPressed()){
                 pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
                 pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
+                mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION);
             }
         }
         else
