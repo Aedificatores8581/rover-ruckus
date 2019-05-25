@@ -108,7 +108,13 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         }
 
         // Extention movement
-        if(rightStick1.magnitude() > UniversalConstants.Triggered.TRIGGER){
+        if (rightStick1.y == 0) {
+            aextendo.aextendTM(0);
+        }
+        else {  
+            aextendo.aextendTM(rightStick1.y);
+        }
+/*        if(rightStick1.magnitude() > UniversalConstants.Triggered.TRIGGER){
             isRetracted = false;
             switch(extensionState){
                 case RESETTING:
@@ -144,7 +150,7 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
                     break;
             }
         }
-
+*/
 	//Gamepad2
 		//Hang Lift Controls
 		if (!gamepad2.right_stick_button) {
