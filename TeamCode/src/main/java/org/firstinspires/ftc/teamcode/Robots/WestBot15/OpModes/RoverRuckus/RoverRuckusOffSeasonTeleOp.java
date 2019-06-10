@@ -111,7 +111,7 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         if (rightStick1.y == 0) {
             aextendo.aextendTM(0);
         }
-        else {  
+        else {
             aextendo.aextendTM(rightStick1.y);
         }
 /*        if(rightStick1.magnitude() > UniversalConstants.Triggered.TRIGGER){
@@ -153,7 +153,13 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
 */
 	//Gamepad2
 		//Hang Lift Controls
-		if (!gamepad2.right_stick_button) {
+        if (0 == gamepad2.left_stick_y) {
+            mineralLift.liftMotor.setPower(gamepad2.left_trigger);
+        }
+        if (0 == gamepad2.left_stick_y) {
+            mineralLift.liftMotor.setPower(-gamepad2.right_trigger);
+        }
+        if (!gamepad2.right_stick_button) {
             lift.setPower(rightStick2.y);
         }
 		// Mineral Lift and Box Controls
@@ -210,10 +216,11 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
 */
 
 //Telemetry
-        telemetry.addData("INTAKE_ARTICULATOR_MIDDLE_POSITION", intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION);
+        telemetry.addData("INTAKE_ARTICULATOR_POSITION", intaek.articulator.getPosition());
 		telemetry.addData("Mineral Lift Top Sensor", mineralLift.canSetPowerPositive);
         telemetry.addLine(lift.toString());
         prevTime = UniversalFunctions.getTimeInSeconds();
+        telemetry.update();
 
         // Determines Whether to slow down the intake
        /* switch (extensionSafety) {

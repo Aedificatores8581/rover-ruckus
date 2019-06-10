@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Vision.UniversalVision;
 public class NewMineralLift {
 
     // region Fields
-    private DcMotor liftMotor;
+    public DcMotor liftMotor;
     private MotorEncoder liftEncoder;
 
     private MineralLiftState mineralLiftState;
@@ -35,7 +35,7 @@ public class NewMineralLift {
     public static final double LIFT_MOTOR_UP = 1;
     public static final double LIFT_MOTOR_DOWN = -0.5;
 
-    public static final double PIVOT_TELE_FORWARD_POS = 0.84;
+    public static final double PIVOT_TELE_FORWARD_POS = 0.86;
     public static final double PIVOT_TELE_UP_POS = 0.15;
     public static final double PIVOT_TELE_DOWN_POS = 0.87;
     // endregion
