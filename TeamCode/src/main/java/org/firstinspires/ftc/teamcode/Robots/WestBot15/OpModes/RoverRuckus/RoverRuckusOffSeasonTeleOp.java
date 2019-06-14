@@ -37,7 +37,8 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
 
         isAutonomous = false;
         usingIMU = false;
-
+        drivetrain.maxSpeed = 1;
+        drivetrain.turnMult = .5;
         super.init();
         extensionSafety = ExtensionSafety.DISABLED;
         intakeDoorState = IntakeDoorState.CLOSED;
@@ -62,18 +63,24 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
     updateGamepad2();
 	//Gamepad1 section
 		//Driving
-        drivetrain.maxSpeed = 0.7;
-        drivetrain.turnMult = 1;
 	    double fitemetheo = 1; //what is this for?
         drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
 			//Speed!
-        if (gamepad1.left_stick_button && gamepad1.right_stick_button && canSwitchSlowdown) {
-            slowdown = !slowdown;
+        if (gamepad1.left_stick_button && canSwitchSlowdown) {
             canSwitchSlowdown = false;
-        } else if (!(gamepad1.left_stick_button && gamepad1.right_stick_button))
+            slowdown = !slowdown;
+            if (slowdown){
+                drivetrain.maxSpeed = .3;
+                drivetrain.turnMult = .6;
+            } else
+            {
+                drivetrain.maxSpeed = 1;
+                drivetrain.turnMult = .5;
+            }
+        } else if (!gamepad1.left_stick_button)
             canSwitchSlowdown = true;
 
 		//Gamepad1 Intake    
@@ -86,101 +93,83 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         if (gamepad1.dpad_up) {
             intaek.articulator.setPosition(intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION);
 		}
-/* Gamepad1 just goes to middle spot not all the way in
-		if(gamepad1.dpad_up){
-            intaek.articulateUp();
-        }
-*/
+
         if (gamepad1.dpad_down){
             intaek.articulateDown();
         }
-		
-        if (gamepad1.left_bumper) {
+
+        if (gamepad1.left_bumper)
             intaek.setPower(1);
-            canSwitchTime = true;
-            time = UniversalFunctions.getTimeInSeconds();
-        } else if (gamepad1.right_bumper) {
+        else if (gamepad1.right_bumper && mineralLift.canSetPowerPositive)
             intaek.setPower(-1);
-        } else {
+        //lift
+        else if(gamepad1.right_bumper && !mineralLift.canSetPowerPositive)
+            mineralContainer.articulateBack(mineralContainer.BACK_OPEN_POSITION);
+        else if(gamepad2.right_bumper && !mineralLift.canSetPowerPositive)
+            mineralContainer.articulateBack(mineralContainer.BACK_OPEN_POSITION);
+        else {
+            mineralContainer.articulateBack(mineralContainer.BACK_CLOSED_POSITION);
             intaek.setPower(0);
-            canSwitchTime = true;
-            time = UniversalFunctions.getTimeInSeconds();
         }
 
-        // Extention movement
+        // Extension movement
         if (rightStick1.y == 0) {
             aextendo.aextendTM(0);
         }
-        else {
-            aextendo.aextendTM(rightStick1.y);
+        else if (gamepad1.right_stick_y != 0 && slowdown) {
+            aextendo.aextendTM(UniversalFunctions.clamp(-1, gamepad1.right_stick_y, 0));
+            lift.setPower(-gamepad1.right_stick_y);
         }
-/*        if(rightStick1.magnitude() > UniversalConstants.Triggered.TRIGGER){
-            isRetracted = false;
-            switch(extensionState){
-                case RESETTING:
-                    //intaek.articulateDown();
-                    extensionState = ExtensionState.NON_RESETTING;
-                    break;
-                case NON_RESETTING:
-                    aextendo.aextendTM(rightStick1.y);
-                    break;
-            }
+        if (gamepad1.right_stick_y == 0) {
+            lift.setPower(-gamepad2.right_stick_y);
         }
-        else{
-            switch(extensionState){
-                case RESETTING:
-                    isRetracted = true;
-                    aextendo.aextendTM(-1);
-                    if(aextendo.backSwitch.isPressed() || Math.abs(aextendo.extendo.getPower()) < 0.1) {
-                        //intaek.articulateDown();
-                        //intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
-                        extensionState = ExtensionState.NON_RESETTING;
-                    }
-                    else{
-                        //intaek.articulator.setPosition(intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION);
-                    }
-                    break;
-                case NON_RESETTING:
-                    if(isRetracted)
-                        //intaek.articulateDown();
-                    aextendo.aextendTM(0);
-                    if (gamepad1.a) {
-                        extensionState = ExtensionState.RESETTING;
-                    }
-                    break;
-            }
+        else aextendo.aextendTM(rightStick1.y);
+
+        //mineral lift automation
+        if(gamepad1.a && canSwitchSlowdown){
+            if(mineralLift.isAutomationAllowed())
+                mineralLift.allowAutomation(false);
+            else if(!mineralLift.isAutomationAllowed())
+                mineralLift.allowAutomation(true);
+            canSwitchSlowdown = false;
         }
-*/
+        else if(!gamepad1.a)
+            canSwitchSlowdown = true;
+
+        if(gamepad1.b && canSwitchSlowdown && !mineralLift.isMovingLift()){
+            mineralLift.automatedMineralLift();
+            canSwitchSlowdown = false;
+        }
+        else if(!gamepad1.b)
+            canSwitchSlowdown = true;
 	//Gamepad2
 		//Hang Lift Controls
-        if (0 == gamepad2.left_stick_y) {
-            mineralLift.liftMotor.setPower(gamepad2.left_trigger);
-        }
-        if (0 == gamepad2.left_stick_y) {
-            mineralLift.liftMotor.setPower(-gamepad2.right_trigger);
-        }
-        if (!gamepad2.right_stick_button) {
-            lift.setPower(rightStick2.y);
-        }
+
+
 		// Mineral Lift and Box Controls
+        if (gamepad2.left_stick_button && canSwitchSlowdown) {
+            mineralLift.mineral_lift_stuck = !mineralLift.mineral_lift_stuck;
+            mineralLift.allowAutomation(false);
+            canSwitchSlowdown = false;
+        } else if (!gamepad2.left_stick_button)
+            canSwitchSlowdown = true;
+
         if (!gamepad2.left_stick_button) {
             mineralLift.setLiftPower(leftStick2.y);
         }
+
         if(gamepad2.y){
             mineralLift.pivot1.setPosition(mineralLift.PIVOT_TELE_FORWARD_POS);
             mineralLift.pivot2.setPosition(mineralLift.PIVOT_TELE_FORWARD_POS);
-            //mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
+            mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
         }
         if (gamepad2.dpad_up) {
                 mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION);
             } else if (gamepad2.dpad_down) {
                 mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
             }
-        if(gamepad2.right_bumper && !mineralLift.canSetPowerPositive)
-            mineralContainer.articulateBack(mineralContainer.BACK_OPEN_POSITION);
-        else
-            mineralContainer.articulateBack(mineralContainer.BACK_CLOSED_POSITION);
-		//Intake controls
+
+        //Intake controls
 		if(gamepad2.a){
             intaek.articulateUp();
         }
@@ -195,55 +184,20 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
             intaek.openDispensor();
         }
 		
-/* Code makes no sense commenting out
-        if (!gamepad1.left_stick_button && aextendo.getExtensionLength() > 10) {
-            drivetrain.turnMult = (1.0 - 1.0 / 2.0 * (aextendo.getExtensionLength() - 10) / (aextendo.MAX_EXTENSION_LENGTH - 10));
-        }
-        if(aextendo.getExtensionLength() > 4){
-            intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        }
-*/
-
-
-
-// may be needed for middle position     intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION = UniversalFunctions.clamp(Intake.OPEN_DISPENSOR_POSITION, intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION, Intake.CLOSED_DISPENSOR_POSITION);
-/* not used
-        telemetry.addData("slow turning when extended: ", slowdown);
-        telemetry.addData("extensionLength", aextendo.getExtensionLength());
-        telemetry.addData("extension encoder val", aextendo.encoder.currentPosition);
-        telemetry.addData("extension state", extensionState);
-        telemetry.addData("backSwitch", aextendo.backSwitch.isPressed());
-*/
 
 //Telemetry
         telemetry.addData("INTAKE_ARTICULATOR_POSITION", intaek.articulator.getPosition());
-		telemetry.addData("Mineral Lift Top Sensor", mineralLift.canSetPowerPositive);
-        telemetry.addLine(lift.toString());
+        telemetry.addData("Mineral Lift Stuck", mineralLift.mineral_lift_stuck);
+        telemetry.addData("Slowdown - False = Fast - True = Slow", slowdown);
+        telemetry.addData("Speed", drivetrain.maxSpeed);
+        telemetry.addData("Drivetrain turning multiplier", drivetrain.turnMult);
+        telemetry.addData("Mineral Lift State", mineralLift.getMineralLiftState());
+        telemetry.addData("Mineral Lift Automation", mineralLift.isAutomationAllowed());
+        telemetry.addData("Controller Delay", canSwitchSlowdown);
         prevTime = UniversalFunctions.getTimeInSeconds();
         telemetry.update();
 
-        // Determines Whether to slow down the intake
-       /* switch (extensionSafety) {
-            case ENABLED:
-                drivetrain.turnMult = (1.0 - 2.0/3.0 * (aextendo.getExtensionLength()-10) / (aextendo.MAX_EXTENSION_LENGTH-10));
-                if (gamepad1.y && canSwitchExtensionSafetyState) {
-                    extensionSafety = ExtensionSafety.DISABLED;
-                    canSwitchExtensionSafetyState = false;
-                } else if (!gamepad1.y) {
-                    canSwitchExtensionSafetyState = true;
-                }
-                break;
-            case DISABLED:
-                if (gamepad1.y && canSwitchExtensionSafetyState) {
-                    extensionSafety = ExtensionSafety.ENABLED;
-                    canSwitchExtensionSafetyState = false;
-                }  else if (!gamepad1.y) {
-                    canSwitchExtensionSafetyState = true;
-                }
-                break;
-        }*/
-
-    //error catching maybe
+     //error catching maybe
 	try {
             prev1.copy(gamepad1);
         } catch (RobotCoreException e) {
