@@ -39,6 +39,8 @@ public class NewMineralLift {
     public static final double PIVOT_TELE_FORWARD_POS = 0.98;
     public static final double PIVOT_TELE_UP_POS = 0.15;
     public static final double PIVOT_TELE_DOWN_POS = 1;
+    private int Upcount = 1;
+    private int Downcount =1;
     // endregion
 
     public void init(HardwareMap hardwareMap){
@@ -147,6 +149,7 @@ public class NewMineralLift {
         if(automationAllowed) {
                 switch (mineralLiftState) {
                     case EXTEND_LIFT:
+                        mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
                         setLiftPower(LIFT_MOTOR_UP);
                         if (topLimitSwitch.isPressed()) {
                             mineralLiftState = MineralLiftState.ARTICULATE_PIVOTS_UP;
@@ -158,10 +161,14 @@ public class NewMineralLift {
                         mineralLiftState = MineralLiftState.DONE_RAISING;
                         break;
                     case DONE_RAISING:
-                        mineralLiftState = MineralLiftState.ARTICULATE_PIVOTS_DOWN;
+                        //Upcount = Upcount + 1;
+                        if (Upcount > 20) {
+                            mineralLiftState = MineralLiftState.ARTICULATE_PIVOTS_DOWN;
+                            Upcount = 1;
+                        }
                         break;
                     case ARTICULATE_PIVOTS_DOWN:
-                        articulatePivots(getPivotPosition() + 0.01);
+                        articulatePivots(getPivotPosition() + 0.03);
                         if (getPivotPosition() >= PIVOT_TELE_DOWN_POS) {
                             mineralLiftState = MineralLiftState.RETRACT_LIFT;
                         }
@@ -174,7 +181,11 @@ public class NewMineralLift {
                         }
                         break;
                     case DONE_LOWERING:
-                        mineralLiftState = MineralLiftState.EXTEND_LIFT;
+                        //Downcount = Downcount + 1;
+                        if (Downcount > 20) {
+                            mineralLiftState = MineralLiftState.EXTEND_LIFT;
+                            Downcount = 1;
+                        }
                         break;
                 }
             }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.MineralLiftState;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
@@ -136,25 +137,39 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         else if(!gamepad1.a)
             canSwitchSlowdown = true;
 
-        if(gamepad1.b && canSwitchSlowdown && !mineralLift.isMovingLift()){
+        if(!mineralLift.isAutomationAllowed())
+            mineralLift.mineral_lift_stuck = true;
+        else
+            mineralLift.mineral_lift_stuck = false;
+
+        if(gamepad1.b && mineralLift.isAutomationAllowed()){
+            if (mineralLift.getMineralLiftState() == MineralLiftState.DONE_RAISING)
+                mineralLift.setMineralLiftState(MineralLiftState.ARTICULATE_PIVOTS_DOWN);
             mineralLift.automatedMineralLift();
-            canSwitchSlowdown = false;
         }
         else if(!gamepad1.b)
             canSwitchSlowdown = true;
+
+        if(gamepad1.y && mineralLift.isAutomationAllowed()){
+            if (mineralLift.getMineralLiftState() == MineralLiftState.DONE_LOWERING)
+                mineralLift.setMineralLiftState(MineralLiftState.EXTEND_LIFT);
+            mineralLift.automatedMineralLift();
+        }
+
+
 	//Gamepad2
 		//Hang Lift Controls
 
 
 		// Mineral Lift and Box Controls
         if (gamepad2.left_stick_button && canSwitchSlowdown) {
-            mineralLift.mineral_lift_stuck = !mineralLift.mineral_lift_stuck;
+            mineralLift.mineral_lift_stuck = true;
             mineralLift.allowAutomation(false);
             canSwitchSlowdown = false;
         } else if (!gamepad2.left_stick_button)
             canSwitchSlowdown = true;
 
-        if (!gamepad2.left_stick_button) {
+        if (!gamepad2.left_stick_button && !mineralLift.isAutomationAllowed()) {
             mineralLift.setLiftPower(leftStick2.y);
         }
 
