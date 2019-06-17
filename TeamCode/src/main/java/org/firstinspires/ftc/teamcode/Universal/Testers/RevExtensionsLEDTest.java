@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Universal.Testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevExtensions2;
 
+@Disabled
 @Autonomous(name = "Rev Led", group = "rev")
 public class RevExtensionsLEDTest extends OpMode {
     ExpansionHubEx hub;

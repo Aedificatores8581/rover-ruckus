@@ -10,17 +10,11 @@ import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
-@TeleOp (name = "OffSeason Tele Op")
-public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
-    ExtensionState extensionState = ExtensionState.NON_RESETTING;
+@TeleOp (name = "RR2 Outreach")
+public class RR2OutreachTeleOp extends WestBot15 {
     double prevTime = 0;
 
     Gamepad prev1;
-    ExtensionSafety extensionSafety;
-    boolean canSwitchExtensionSafetyState;
-
-    IntakeDoorState intakeDoorState;
-    boolean canSwitchIntakeDoorState;
     double time = 0;
     boolean canSwitchTime = true;
     boolean canSwitchSlowdown = true, slowdown = true;
@@ -33,7 +27,6 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
     @Override
     public void init(){
         prev1 = new Gamepad();
-        canSwitchExtensionSafetyState = true;
         try {
             prev1.copy(gamepad1);
         } catch (RobotCoreException e) {
@@ -45,8 +38,6 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         drivetrain.maxSpeed = 1;
         drivetrain.turnMult = .5;
         super.init();
-        extensionSafety = ExtensionSafety.DISABLED;
-        intakeDoorState = IntakeDoorState.CLOSED;
         activateGamepad1();
         activateGamepad2();
         prevTime = 0;
@@ -57,40 +48,36 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         aextendo.isAutonomous = false;
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
-        extensionState = ExtensionState.NON_RESETTING;
     }
-    public void loop() {
-	updateGamepad1();
-    updateGamepad2();
 
-    //modifier section
-    if (slowdown){
-        drivetrain.maxSpeed = .3;
-        drivetrain.turnMult = .6;
+    public void loop() {
+        updateGamepad1();
+        updateGamepad2();
+
+        //modifier section
+        if (slowdown){
+            drivetrain.maxSpeed = .3;
+            drivetrain.turnMult = .8;
         } else {
-            drivetrain.maxSpeed = 1;
+            drivetrain.maxSpeed = .7;
             drivetrain.turnMult = .5;
         }
-	//Gamepad1 section
-
-		//Driving
+        //Gamepad1 section
+        //Driving
         drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
-			//Speed!
+        //Speed!
         if (gamepad1.left_stick_button && canSwitchSlowdown) {
             canSwitchSlowdown = false;
             slowdown = !slowdown;
         } else if (!gamepad1.left_stick_button)
             canSwitchSlowdown = true;
 
-
-		//Gamepad1 Intake and Mineral Container back position open for gamepad1 & gamepad2
-		if (gamepad1.dpad_left) intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
+        //Gamepad1 Intake and Mineral Container back position open for gamepad1 & gamepad2
+        if (gamepad1.dpad_left) intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
         if (gamepad1.dpad_right) intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        if (gamepad1.dpad_up) intaek.articulator.setPosition(intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION);
-        if (gamepad1.dpad_down) intaek.articulateDown();
 
         if (gamepad1.left_bumper)
             intaek.setPower(1);
@@ -105,23 +92,15 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
             intaek.setPower(0);
         }
 
-        // Extension movement
-        if (rightStick1.y == 0) aextendo.aextendTM(0);
-        else if (gamepad1.right_stick_y != 0 && slowdown && soloDrive)
-            lift.setPower(-gamepad1.right_stick_y);
-        else aextendo.aextendTM(rightStick1.y);
-
-        if (!soloDrive) lift.setPower(-gamepad2.right_stick_y);
-
         //mineral lift automation
-        if(gamepad1.a && mineralLiftSlowdown){
+        if(gamepad2.a && mineralLiftSlowdown){
             if(mineralLift.isAutomationAllowed())
                 mineralLift.allowAutomation(false);
             else if(!mineralLift.isAutomationAllowed())
                 mineralLift.allowAutomation(true);
             mineralLiftSlowdown = false;
         }
-        else if(!gamepad1.a)
+        else if(!gamepad2.a)
             mineralLiftSlowdown = true;
 
         if(!mineralLift.isAutomationAllowed()) mineralLift.mineral_lift_stuck = true;
@@ -140,7 +119,7 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         //Automate!
         if(mineralLift.isAutomationAllowed()) mineralLift.automatedMineralLift();
 
-	//Gamepad2
+        //Gamepad2
         //Two Drivers
         if (gamepad2.y && soloDriveSlowdown) {
             soloDrive = !soloDrive;
@@ -148,7 +127,7 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         }
         else if (!gamepad2.y) soloDriveSlowdown = true;
 
-		// Mineral Lift and Box Controls
+        // Mineral Lift and Box Controls
         if (gamepad2.left_stick_button && mineralLiftGamepad2Slowdown) {
             mineralLift.mineral_lift_stuck = true;
             mineralLift.allowAutomation(false);
@@ -159,29 +138,6 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         if (!gamepad2.left_stick_button && !mineralLift.isAutomationAllowed()) {
             mineralLift.setLiftPower(leftStick2.y);
         }
-
-        if (gamepad2.dpad_up) {
-                mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION);
-            } else if (gamepad2.dpad_down) {
-                mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
-            }
-
-        //Intake controls
-		if(gamepad2.a){
-            intaek.articulateUp();
-        }
-        else if(gamepad2.b){
-            intaek.articulateDown();
-        }
-
-        if(gamepad2.dpad_left){
-            intaek.closeDispensor();
-        }
-        if(gamepad2.dpad_right){
-            intaek.openDispensor();
-        }
-		
-
 //Telemetry
         telemetry.addData("INTAKE_ARTICULATOR_POSITION", intaek.articulator.getPosition());
         telemetry.addData("Mineral Lift Stuck", mineralLift.mineral_lift_stuck);
@@ -193,27 +149,6 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         telemetry.addData( "Solo Driving", soloDrive);
         prevTime = UniversalFunctions.getTimeInSeconds();
         telemetry.update();
-
-     //error catching maybe
-	try {
-            prev1.copy(gamepad1);
-        } catch (RobotCoreException e) {
-            telemetry.addLine(e.getMessage());
-        }
     }
 
-    enum ExtensionState{
-        RESETTING,
-        NON_RESETTING
-    }
-
-    enum ExtensionSafety {
-        ENABLED,
-        DISABLED
-    }
-
-    enum IntakeDoorState {
-        OPEN,
-        CLOSED
-    }
 }

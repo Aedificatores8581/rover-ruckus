@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Universal.Testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.SensorBot.SensorBot;
@@ -16,6 +17,7 @@ import java.io.IOException;
  * writes that to a log file.
  * */
 
+@Disabled
 @Autonomous(name = "Telemetry Logger Tester: Threaded", group = "Tele Test")
 public class TelemetryLoggerThreadTester extends OpMode {
     private TelemetryLoggerThread loggerThread;

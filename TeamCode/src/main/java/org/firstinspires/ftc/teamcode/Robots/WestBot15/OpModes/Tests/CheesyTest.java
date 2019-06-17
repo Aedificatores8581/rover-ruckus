@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 
+@Disabled
 @TeleOp(name = "Cheesy Test Drive", group = "wcd")
 public class CheesyTest extends WestBot15 {
     @Override

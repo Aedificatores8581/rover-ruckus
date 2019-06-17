@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
@@ -16,6 +17,7 @@ import org.opencv.core.Point;
 
 import ftc.vision.Detector;
 
+@Disabled
 @Autonomous(name = "sampling test", group = "none")
 public class SamplingTest extends WestBot15 {
     GoldDetector detector;

@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 
+@Disabled
 @TeleOp(name = "motorTest")
 public class MotorTest extends WestBot15 {
 

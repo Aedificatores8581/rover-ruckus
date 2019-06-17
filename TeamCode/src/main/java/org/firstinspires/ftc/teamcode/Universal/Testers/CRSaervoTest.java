@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Universal.Testers;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
+
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.CRSaervo;
 
+@Disabled
 @TeleOp(name = "CR Servo test", group = "test")
 public class CRSaervoTest extends OpMode {
     CRSaervo saervo;

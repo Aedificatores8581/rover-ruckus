@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
  * Created by Frank Portman on 6/1/2018
  */
 
+@Disabled
 @TeleOp(name = "West Coast 15 Test Drive", group = "West Coast 15")
 public class WestBot15TestDrive extends WestBot15 {
     boolean canSwitchControlState = false;

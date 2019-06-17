@@ -5,11 +5,13 @@ import android.util.Log;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
+@Disabled
 @Autonomous(name = "Rev 2m Distance Test", group = "test")
 public class Rev2MDistanceTest extends OpMode {
     Rev2mDistanceSensor sensor;

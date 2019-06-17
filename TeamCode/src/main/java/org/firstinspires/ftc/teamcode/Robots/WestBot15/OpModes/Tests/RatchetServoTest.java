@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 
+@Disabled
 @TeleOp(name = "Ratchet Servo Test", group = "tests")
 public class RatchetServoTest extends OpMode {
 

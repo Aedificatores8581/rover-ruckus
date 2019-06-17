@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
@@ -20,6 +21,7 @@ import ftc.vision.Detector;
 
 import static org.firstinspires.ftc.teamcode.Universal.UniversalConstants.MS_STUCK_DETECT_INIT_DEFAULT;
 
+@Disabled
 @Autonomous (name = "Crater auto", group = "competition autonomous   ")
 public class CraterAuto1 extends WestBot15 {
     // double hardNewY;

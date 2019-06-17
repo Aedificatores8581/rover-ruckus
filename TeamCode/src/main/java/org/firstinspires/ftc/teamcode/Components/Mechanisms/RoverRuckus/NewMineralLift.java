@@ -28,19 +28,18 @@ public class NewMineralLift {
     private TouchSensor topLimitSwitch = new TouchSensor(), botLimitSwitch = new TouchSensor();
     public boolean canSetPowerPositive = true, canSwitchTime = false;
     public boolean mineral_lift_stuck = false;
-    private boolean automationAllowed = false;
+    private boolean automationAllowed = true;
     double prevTime = 0;
     // endregion
 
     // region Constants
     public static final double LIFT_MOTOR_UP = 1;
-    public static final double LIFT_MOTOR_DOWN = -0.5;
+    public static final double LIFT_MOTOR_DOWN = -0.3;
 
     public static final double PIVOT_TELE_FORWARD_POS = 0.98;
     public static final double PIVOT_TELE_UP_POS = 0.15;
     public static final double PIVOT_TELE_DOWN_POS = 1;
-    private int Upcount = 1;
-    private int Downcount =1;
+
     // endregion
 
     public void init(HardwareMap hardwareMap){
@@ -145,6 +144,15 @@ public class NewMineralLift {
         return mineralLiftState;
     }
 
+    public boolean isTopPushed () {
+        if (topLimitSwitch.isPressed()) return true;
+        else return false;
+    }
+
+    public boolean isbottomPushed () {
+        if (botLimitSwitch.isPressed()) return true;
+        else return false;
+    }
     public synchronized void automatedMineralLift() {
         if(automationAllowed) {
                 switch (mineralLiftState) {
@@ -152,23 +160,14 @@ public class NewMineralLift {
                         mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
                         setLiftPower(LIFT_MOTOR_UP);
                         if (topLimitSwitch.isPressed()) {
-                            mineralLiftState = MineralLiftState.ARTICULATE_PIVOTS_UP;
                             setLiftPower(0.0);
+                            mineralLiftState = MineralLiftState.DONE_RAISING;
                         }
-                        break;
-                    case ARTICULATE_PIVOTS_UP:
-                        articulatePivots(PIVOT_TELE_UP_POS);
-                        mineralLiftState = MineralLiftState.DONE_RAISING;
                         break;
                     case DONE_RAISING:
-                        //Upcount = Upcount + 1;
-                        if (Upcount > 20) {
-                            mineralLiftState = MineralLiftState.ARTICULATE_PIVOTS_DOWN;
-                            Upcount = 1;
-                        }
                         break;
                     case ARTICULATE_PIVOTS_DOWN:
-                        articulatePivots(getPivotPosition() + 0.03);
+                        articulatePivots(getPivotPosition() + 0.04);
                         if (getPivotPosition() >= PIVOT_TELE_DOWN_POS) {
                             mineralLiftState = MineralLiftState.RETRACT_LIFT;
                         }
@@ -181,11 +180,6 @@ public class NewMineralLift {
                         }
                         break;
                     case DONE_LOWERING:
-                        //Downcount = Downcount + 1;
-                        if (Downcount > 20) {
-                            mineralLiftState = MineralLiftState.EXTEND_LIFT;
-                            Downcount = 1;
-                        }
                         break;
                 }
             }

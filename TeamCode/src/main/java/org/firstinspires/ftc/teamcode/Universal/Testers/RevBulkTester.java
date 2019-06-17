@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.Universal.Testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+
 
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.RevExtensions2;
 
+@Disabled
 @Autonomous(name = "Rev Bulk Tester", group = "rev")
 public class RevBulkTester extends OpMode{
 
