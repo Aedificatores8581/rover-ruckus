@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.MineralLift;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.MineralLiftState;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
@@ -53,7 +54,6 @@ public class RR2OutreachTeleOp extends WestBot15 {
     public void loop() {
         updateGamepad1();
         updateGamepad2();
-
         //modifier section
         if (slowdown){
             drivetrain.maxSpeed = .3;
@@ -62,10 +62,11 @@ public class RR2OutreachTeleOp extends WestBot15 {
             drivetrain.maxSpeed = .7;
             drivetrain.turnMult = .5;
         }
+        if (mineralLift.ServoAdjust == .04) mineralLift.ServoAdjust = .01;
         //Gamepad1 section
         //Driving
-        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.leftPow = (gamepad1.left_stick_y) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = (gamepad1.left_stick_y) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
         //Speed!
@@ -146,6 +147,7 @@ public class RR2OutreachTeleOp extends WestBot15 {
         telemetry.addData("Drivetrain turning multiplier", drivetrain.turnMult);
         telemetry.addData("Mineral Lift State", mineralLift.getMineralLiftState());
         telemetry.addData("Mineral Lift Automation", mineralLift.isAutomationAllowed());
+        telemetry.addData("Mineral Lift Servo Speed", mineralLift.ServoAdjust);
         telemetry.addData( "Solo Driving", soloDrive);
         prevTime = UniversalFunctions.getTimeInSeconds();
         telemetry.update();

@@ -24,11 +24,14 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
     double time = 0;
     boolean canSwitchTime = true;
     boolean canSwitchSlowdown = true, slowdown = true;
+    boolean canSwitchMedium = true, Meduim = true;
     boolean isRetracted = false;
     double fitemetheo = 1;
     boolean soloDrive = true, soloDriveSlowdown = true;
     boolean mineralLiftSlowdown = true;
     boolean mineralLiftGamepad2Slowdown = true;
+    private drivetrainspeed drivetrainspeed;
+
 
     @Override
     public void init(){
@@ -58,32 +61,52 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
         extensionState = ExtensionState.NON_RESETTING;
+        drivetrainspeed = drivetrainspeed.medium;
     }
     public void loop() {
 	updateGamepad1();
     updateGamepad2();
 
     //modifier section
-    if (slowdown){
-        drivetrain.maxSpeed = .3;
-        drivetrain.turnMult = .6;
-        } else {
+    switch(drivetrainspeed) {
+        case slow:
+            drivetrain.maxSpeed = .3;
+            drivetrain.turnMult = .7;
+            break;
+        case fast:
             drivetrain.maxSpeed = 1;
             drivetrain.turnMult = .5;
-        }
+            break;
+        case medium:
+            drivetrain.maxSpeed = .6;
+            drivetrain.turnMult = .6;
+            break;
+    }
+
+    if (mineralLift.ServoAdjust == .01) mineralLift.ServoAdjust = .04;
 	//Gamepad1 section
 
 		//Driving
-        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
+        //drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+       // drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.leftPow = (gamepad1.left_stick_y) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = (gamepad1.left_stick_y) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
 			//Speed!
         if (gamepad1.left_stick_button && canSwitchSlowdown) {
             canSwitchSlowdown = false;
-            slowdown = !slowdown;
+            if(drivetrainspeed == drivetrainspeed.medium) drivetrainspeed = drivetrainspeed.slow;
+            else if(drivetrainspeed == drivetrainspeed.slow) drivetrainspeed = drivetrainspeed.fast;
+            else if (drivetrainspeed == drivetrainspeed.fast) drivetrainspeed = drivetrainspeed.slow;
         } else if (!gamepad1.left_stick_button)
             canSwitchSlowdown = true;
+
+        if (gamepad1.right_stick_button && canSwitchMedium) {
+            canSwitchMedium = false;
+            drivetrainspeed = drivetrainspeed.medium;
+        } else if (!gamepad1.left_stick_button)
+            canSwitchMedium = true;
 
 
 		//Gamepad1 Intake and Mineral Container back position open for gamepad1 & gamepad2
@@ -106,8 +129,11 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         }
 
         // Extension movement
-        if (rightStick1.y == 0) aextendo.aextendTM(0);
-        else if (gamepad1.right_stick_y != 0 && slowdown && soloDrive)
+        if (rightStick1.y == 0) {
+            aextendo.aextendTM(0);
+            lift.setPower(0);
+        }
+        else if (gamepad1.right_stick_y != 0 && drivetrainspeed == drivetrainspeed.slow && soloDrive)
             lift.setPower(-gamepad1.right_stick_y);
         else aextendo.aextendTM(rightStick1.y);
 
@@ -185,11 +211,12 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
 //Telemetry
         telemetry.addData("INTAKE_ARTICULATOR_POSITION", intaek.articulator.getPosition());
         telemetry.addData("Mineral Lift Stuck", mineralLift.mineral_lift_stuck);
-        telemetry.addData("Slowdown - False = Fast - True = Slow", slowdown);
+        telemetry.addData ("Drivetrain Speed", drivetrainspeed);
         telemetry.addData("Speed", drivetrain.maxSpeed);
         telemetry.addData("Drivetrain turning multiplier", drivetrain.turnMult);
         telemetry.addData("Mineral Lift State", mineralLift.getMineralLiftState());
         telemetry.addData("Mineral Lift Automation", mineralLift.isAutomationAllowed());
+        telemetry.addData("Mineral Lift Servo Speed", mineralLift.ServoAdjust);
         telemetry.addData( "Solo Driving", soloDrive);
         prevTime = UniversalFunctions.getTimeInSeconds();
         telemetry.update();
@@ -216,4 +243,10 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         OPEN,
         CLOSED
     }
+}
+
+ enum drivetrainspeed {
+    fast,
+    medium,
+    slow
 }
