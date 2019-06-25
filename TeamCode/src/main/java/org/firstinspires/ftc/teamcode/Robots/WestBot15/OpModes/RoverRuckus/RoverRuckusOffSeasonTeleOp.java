@@ -83,14 +83,14 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
             break;
     }
 
-    if (mineralLift.ServoAdjust == .01) mineralLift.ServoAdjust = .04;
+    if (mineralLift.ServoAdjust == .01) mineralLift.ServoAdjust = .02 ;
 	//Gamepad1 section
 
 		//Driving
-        //drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
-       // drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
-        drivetrain.leftPow = (gamepad1.left_stick_y) + fitemetheo * leftStick1.x * drivetrain.turnMult;
-        drivetrain.rightPow = (gamepad1.left_stick_y) - fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.leftPow = (gamepad1.right_trigger - gamepad1.left_trigger) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+        drivetrain.rightPow = (gamepad1.right_trigger - gamepad1.left_trigger) - fitemetheo * leftStick1.x * drivetrain.turnMult;
+       // drivetrain.leftPow = (gamepad1.left_stick_y) + fitemetheo * leftStick1.x * drivetrain.turnMult;
+       // drivetrain.rightPow = (gamepad1.left_stick_y) - fitemetheo * leftStick1.x * drivetrain.turnMult;
         drivetrain.setLeftPow();
         drivetrain.setRightPow();
 			//Speed!
@@ -112,7 +112,7 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
 		//Gamepad1 Intake and Mineral Container back position open for gamepad1 & gamepad2
 		if (gamepad1.dpad_left) intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
         if (gamepad1.dpad_right) intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        if (gamepad1.dpad_up) intaek.articulator.setPosition(intaek.INTAKE_ARTICULATOR_MIDDLE_POSITION);
+        if (gamepad1.dpad_up) intaek.articulator.setPosition(intaek.INTAKE_ARTICULATOR_UP_POSITION);
         if (gamepad1.dpad_down) intaek.articulateDown();
 
         if (gamepad1.left_bumper)
