@@ -308,7 +308,6 @@ public class DepotAuto extends WestBot15 {
                 case CLAIM:
                     // maerkr.setPosition(MARKER_OPEN_POSITION);
                     maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
-                    maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
 
                     autoState = AutoState.PARK;
                     craterVect = new Vector2();

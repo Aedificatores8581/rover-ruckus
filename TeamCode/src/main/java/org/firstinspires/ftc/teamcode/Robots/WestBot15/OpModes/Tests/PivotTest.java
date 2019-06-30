@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 
+@Disabled
 @TeleOp(name = "Pivot Tests")
 public class PivotTest extends OpMode {
     Servo pivot[];

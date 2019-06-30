@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.TankDrivetrains.TankDT;
+import org.firstinspires.ftc.teamcode.Components.Mechanisms.RoverRuckus.Intake;
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
@@ -243,7 +244,7 @@ public class CraterAuto2 extends WestBot15 {
                     Pose relativeDTPosition = new Pose(drivetrain.position.clone());
                     relativeDTPosition.x -= temporaryPose.x;
                     relativeDTPosition.y -= temporaryPose.y;
-                    if (relativeDTPosition.toVector().magnitude() > 8)
+                    if (relativeDTPosition.toVector().magnitude() > 22.5)
                         autoState = AutoState.FACE_THE_DEPOT;
                 }
                 if (!canDriveForwardIntermediate) {
@@ -279,9 +280,7 @@ public class CraterAuto2 extends WestBot15 {
 
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                    //TODO: Add claiming condition
-                maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
-                maerkrRight.setPosition(UniversalConstants.MarkerServoConstants.RIGHT_OPEN.getPos());
+                maerkrLeft.setPosition(0.4);
                 drivetrain.driveToPoint(intermediatePoint.x, intermediatePoint.y, robotAngle, Drivetrain.Direction.FOR, 4);
                 if(drivetrain.position.y > intermediatePoint.y - 6 / Math.sqrt(2))
                     autoState = AutoState.TO_THE_CRATER;
@@ -290,25 +289,31 @@ public class CraterAuto2 extends WestBot15 {
                 drivetrain.maxSpeed = 0.8;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.setRightPow(1);
-                drivetrain.setRightPow(1);
-                //TODO:INSERT PARKING CODE
+
+                if (!onCrater) {
+                    if (!onCrater)
+                        onCrater = Math.abs(UniversalFunctions.normalizeAngle180(normalizeGyroAngleY())) > ON_CRATER_RIM_THRESHOLD;
+                    drivetrain.setLeftPow(1);
+                    drivetrain.setRightPow(1);
+                } else
+                    drivetrain.stop();//TODO:INSERT PARKING CODE
                 break;
             case SAMPLE:
                 lift.setPower(-1);
-                if(aextendo.getExtensionLength() > 5)
-                    intaek.setPower(-1);
+                intaek.setPower(1);
+                intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
                 intaek.articulateDown();
                 drivetrain.turnMult = 1.3;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.maxSpeed = 0.65;
+                drivetrain.maxSpeed = 0.55;
                 aextendIntake(sampleVect, robotAngle, 6);
-                if(intakePosition.y > sampleVect.y) {
+                if(intakePosition.y + 2 > sampleVect.y) {
                     drivetrain.stop();
                     autoState = AutoState.RETRAECT;
                     sampleTime = UniversalFunctions.getTimeInSeconds();
                     intaek.setPower(0);
+                    drivetrain.stop();
                 }
                 break;
             case RETRAECT:

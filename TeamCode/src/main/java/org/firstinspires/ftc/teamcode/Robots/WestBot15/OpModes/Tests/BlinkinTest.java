@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinLEDControl;
@@ -19,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.Components.Blinkin.BlinkinLEDContro
  *
  */
 
+@Disabled
 @TeleOp(name = "Blinkin Test", group = "tests")
 public class BlinkinTest extends WestBot15 {
     public BlinkinLEDControl blinkinLEDControl;

@@ -8,14 +8,13 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 public class MineralContainer {
     private Servo front, back;
     public final double FRONT_DOWN_POSITION = 0,
-                        FRONT_UP_POSITION = 1,
-                        BACK_OPEN_POSITION = 1,
-                        BACK_CLOSED_POSITION = 0;
+                        FRONT_UP_POSITION = 0.32,
+                        BACK_OPEN_POSITION = 0,
+                        BACK_CLOSED_POSITION = 1;
 
     public void init(HardwareMap hardwareMap){
         front = hardwareMap.servo.get(UniversalConfig.MINERAL_CONTAINER_FRONT_SERVO);
         back = hardwareMap.servo.get(UniversalConfig.MINERAL_CONTAINER_BACK_SERVO);
-        front.setPosition(FRONT_DOWN_POSITION);
         back.setPosition(BACK_CLOSED_POSITION);
     }
 
@@ -28,7 +27,7 @@ public class MineralContainer {
     }
 
     public void articulateBack(double pos) {
-        front.setPosition(pos);
+        back.setPosition(pos);
     }
 
     public double getBackPos() {

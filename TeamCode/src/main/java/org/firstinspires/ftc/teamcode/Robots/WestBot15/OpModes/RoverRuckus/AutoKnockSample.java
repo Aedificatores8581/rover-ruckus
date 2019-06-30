@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Mechanisms.Drivetrains.Drivetrain;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
@@ -20,6 +20,7 @@ import ftc.vision.Detector;
  * Tested: No
  */
 
+@Disabled
 @Autonomous(name = "KnockSample", group = "Auto Testing")
 public class AutoKnockSample extends WestBot15 {
     GoldDetector detector;

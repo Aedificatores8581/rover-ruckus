@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Universal.Testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Universal.JSONAutonGetter;
@@ -12,6 +13,7 @@ import java.io.IOException;
 * A Tester Opmode for JSONAutonGetter
 * TODO: MAKE BETTER CLASS NAME FOR "JSONAutonGetter"
 * */
+@Disabled
 @Autonomous(name = "Autonomous with JSON", group = "testers")
 public class JSONAutonomousTester extends OpMode {
     JSONAutonGetter jsonHandler;

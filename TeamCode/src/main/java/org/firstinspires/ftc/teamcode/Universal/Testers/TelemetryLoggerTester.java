@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Universal.Testers;
 import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.SensorBot.SensorBot;
@@ -15,6 +16,7 @@ import java.io.IOException;
  * writes that to a log file.
  * */
 
+@Disabled
 @Autonomous(name = "Telemetry Logger Tester: Non-Threaded", group = "Tele Test")
 public class TelemetryLoggerTester extends OpMode {
 

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 /**
  * Created by Frank Portman on 6/17/2018
  */
+@Disabled
 @TeleOp(name = "Field Centric Test", group = "")
 public class DriveBotFieldCentricTest extends WestBot15 {
     boolean switchControlState    = false,

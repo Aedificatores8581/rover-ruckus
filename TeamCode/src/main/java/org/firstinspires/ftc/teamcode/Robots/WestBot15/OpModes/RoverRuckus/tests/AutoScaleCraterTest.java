@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -16,7 +17,7 @@ import org.opencv.core.Point3;
  *
  * This is a test, among many.
  */
-
+@Disabled
 @Autonomous(name = "ScaleCrater", group = "Auto Testing")
 public class AutoScaleCraterTest extends WestBot15 {
     MotoG4 motoG4;
