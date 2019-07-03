@@ -39,7 +39,7 @@ public class NewMineralLift {
     public static final double PIVOT_TELE_FORWARD_POS = 0.98;
     public static final double PIVOT_TELE_UP_POS = 0.3;
     public static final double PIVOT_TELE_DOWN_POS = 1;
-    public static double ServoAdjust = .01;
+    public static double ServoAdjust = .005;
 
     // endregion
 
