@@ -34,7 +34,7 @@ public class NewMineralLift {
 
     // region Constants
     public static final double LIFT_MOTOR_UP = 1;
-    public static final double LIFT_MOTOR_DOWN = -0.3;
+    public static final double LIFT_MOTOR_DOWN = -0.4 ;
 
     public static final double PIVOT_TELE_FORWARD_POS = 0.98;
     public static final double PIVOT_TELE_UP_POS = 0.3;

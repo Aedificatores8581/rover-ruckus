@@ -83,7 +83,7 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
             break;
     }
 
-    if (mineralLift.ServoAdjust == .01) mineralLift.ServoAdjust = .02 ;
+    if (mineralLift.ServoAdjust == .01) mineralLift.ServoAdjust = .03 ;
 	//Gamepad1 section
 
 		//Driving

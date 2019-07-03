@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConfig;
 public class MineralContainer {
     private Servo front, back;
     public final double FRONT_DOWN_POSITION = 0,
-                        FRONT_UP_POSITION = 0.32,
-                        BACK_OPEN_POSITION = 0,
-                        BACK_CLOSED_POSITION = 1;
+                        FRONT_UP_POSITION = 0.8,
+                        BACK_OPEN_POSITION = 1,
+                        BACK_CLOSED_POSITION = 0;
 
     public void init(HardwareMap hardwareMap){
         front = hardwareMap.servo.get(UniversalConfig.MINERAL_CONTAINER_FRONT_SERVO);
