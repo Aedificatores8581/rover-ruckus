@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ2AVJGN" parentModuleAddress="1">
+        <LynxModule name="Expansion Hub 1" port="1">
+            <NeveRest20Gearmotor name="lf" port="0" />
+            <NeveRest20Gearmotor name="la" port="1" />
+            <NeveRest20Gearmotor name="rf" port="2" />
+            <NeveRest20Gearmotor name="ra" port="3" />
+            <Servo name="idis" port="0" />
+            <Servo name="iart" port="1" />
+            <Servo name="rmrkr" port="2" />
+            <Servo name="mrkr" port="3" />
+            <Servo name="p1" port="4" />
+            <Servo name="p2" port="5" />
+            <DigitalDevice name="lim" port="2" />
+            <DigitalDevice name="HESb" port="4" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="dist" port="0" bus="1" />
+        </LynxModule>
+        <LynxModule name="Expansion Hub 2" port="2">
+            <NeveRest20Gearmotor name="hangLift" port="0" />
+            <NeveRest20Gearmotor name="aetm" port="1" />
+            <NeveRest20Gearmotor name="lift" port="2" />
+            <NeveRest3.7v1Gearmotor name="int" port="3" />
+            <Servo name="lmrkr" port="0" />
+            <Servo name="con2" port="1" />
+            <Servo name="con1" port="2" />
+            <Servo name="vex1" port="4" />
+            <Servo name="vex2" port="5" />
+            <DigitalDevice name="top" port="1" />
+            <DigitalDevice name="bot" port="3" />
+            <DigitalDevice name="HESf" port="4" />
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
