@@ -35,7 +35,7 @@ public class RR2OutreachTeleOp extends WestBot15 {
         aextendo.isAutonomous = false;
         super.start();
         prevTime = UniversalFunctions.getTimeInSeconds();
-        if (mineralLift.ServoAdjust == .04) mineralLift.ServoAdjust = .005;
+        if (mineralLift.ServoAdjust == .03) mineralLift.ServoAdjust = .005;
     }
 
     public void loop() {
