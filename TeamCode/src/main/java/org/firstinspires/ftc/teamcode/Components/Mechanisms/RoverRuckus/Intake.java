@@ -14,7 +14,7 @@ public class Intake {
 
     public double maxSpeed = 1;
     //TODO: find these values
-    public static final double CLOSED_DISPENSOR_POSITION = 1 , OPEN_DISPENSOR_POSITION = 0;
+    public static final double CLOSED_DISPENSOR_POSITION = 1 , OPEN_DISPENSOR_POSITION = 0.4;
     public double INTAKE_ARTICULATOR_MIDDLE_POSITION = 0.4 ;
 
     //adjusted from .455 for middle articulator and open dispensor to 0

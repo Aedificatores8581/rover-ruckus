@@ -58,24 +58,28 @@ public class AExtendotm {
                 case DRIVER:
                     break;
                 case START_TRANSFER:
-                    if(backSwitch.isPressed()) AExtendoState = AExtendoState.LIFTING_INTAKE;
+                    if(backSwitch.isPressed()) AExtendoState = AExtendoState.OPENING_DISPENSOR;
                     else AExtendoState = AExtendoState.RETRACTING;
                     break;
                 case RETRACTING:
                     if(backSwitch.isPressed()) {
                         aextendTM(0);
-                        AExtendoState = AExtendoState.LIFTING_INTAKE;
+                        AExtendoState = AExtendoState.OPENING_DISPENSOR;
                     }
                     else aextendTM(-1);
                     break;
-                case LIFTING_INTAKE:
+                case RUN_INTAKE:
                     //intek.articulateUp();
                     startwait = UniversalFunctions.getTimeInSeconds();
-                    AExtendoState = AExtendoState.LIFTING_WAIT;
+                    AExtendoState = AExtendoState.WAIT_INTAKE;
                     break;
-                case LIFTING_WAIT:
+                case WAIT_INTAKE:
                     waitcheck = UniversalFunctions.getTimeInSeconds();
-                    if (waitcheck - startwait >= 1) AExtendoState = AExtendoState.OPENING_DISPENSOR;
+                    if (waitcheck - startwait >= .5) AExtendoState = AExtendoState.WAIT;
+                    break;
+                case WAIT:
+                    waitcheck = UniversalFunctions.getTimeInSeconds();
+                    if (waitcheck - startwait >= 1) AExtendoState = AExtendoState.RUN_INTAKE2;
                     break;
                 case OPENING_DISPENSOR:
                     //intake.openDispensor();
@@ -84,43 +88,25 @@ public class AExtendotm {
                     break;
                 case OPEN_WAIT:
                     waitcheck = UniversalFunctions.getTimeInSeconds();
-                    if (waitcheck - startwait >= .5) AExtendoState = AExtendoState.CLOSE_DISPENSOR;
+                    if (waitcheck - startwait >= .2) AExtendoState = AExtendoState.RUN_INTAKE;
                     break;
-                case OPENING_DISPENSOR2:
+                case RUN_INTAKE2:
                     //intake.openDispensor();
                     startwait = UniversalFunctions.getTimeInSeconds();
-                    AExtendoState = AExtendoState.OPEN_WAIT2;
+                    AExtendoState = AExtendoState.WAIT_INTAKE2;
                     break;
-                case OPEN_WAIT2:
+                case WAIT_INTAKE2:
                     waitcheck = UniversalFunctions.getTimeInSeconds();
-                    if (waitcheck - startwait >= .5) AExtendoState = AExtendoState.LOWER_INTAKE;
+                    if (waitcheck - startwait >= .5) AExtendoState = AExtendoState.WAIT2;
+                    break;
+                case WAIT2:
+                    waitcheck = UniversalFunctions.getTimeInSeconds();
+                    if (waitcheck - startwait >= 1) AExtendoState = AExtendoState.CLOSE_DISPENSOR;
                     break;
                 case CLOSE_DISPENSOR:
                     //intake.closeDispensor();
-                    startwait = UniversalFunctions.getTimeInSeconds();
-                    AExtendoState = AExtendoState.CLOSE_WAIT;
-                    break;
-                case CLOSE_WAIT:
-                    waitcheck = UniversalFunctions.getTimeInSeconds();
-                    if (waitcheck - startwait >= .5) AExtendoState = AExtendoState.OPENING_DISPENSOR2;
-                    break;
-                case CLOSE_DISPENSOR2:
-                    //intake.closeDispensor();
-                    startwait = UniversalFunctions.getTimeInSeconds();
-                    AExtendoState = AExtendoState.CLOSE_WAIT2;
-                    break;
-                case CLOSE_WAIT2:
-                    waitcheck = UniversalFunctions.getTimeInSeconds();
-                    if (waitcheck - startwait >= .5) AExtendoState = AExtendoState.DONE_TRANSFER;
-                    break;
-                case LOWER_INTAKE:
-                    //intake.articulateDown();
-                    startwait = UniversalFunctions.getTimeInSeconds();
-                    AExtendoState = AExtendoState.LOWER_WAIT;
-                    break;
-                case LOWER_WAIT:
-                    waitcheck = UniversalFunctions.getTimeInSeconds();
-                    if (waitcheck - startwait >= 1) AExtendoState = AExtendoState.CLOSE_DISPENSOR2;
+                    //startwait = UniversalFunctions.getTimeInSeconds();
+                    AExtendoState = AExtendoState.DONE_TRANSFER;
                     break;
                 case DONE_TRANSFER:
                     AExtendoState = AExtendoState.DRIVER;
