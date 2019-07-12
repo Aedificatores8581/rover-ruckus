@@ -37,7 +37,7 @@ public class NewMineralLift {
     public static final double LIFT_MOTOR_DOWN = -0.4 ;
 
     public static double PIVOT_TELE_FORWARD_POS = 0.9 ;
-    public static double PIVOT_TELE_UP_POS = 0.2  ;
+    public static double PIVOT_TELE_UP_POS = 0.292  ;
     public static double PIVOT_TELE_DOWN_POS = .94  ;
     public static double ServoAdjust = .005;
 
@@ -68,21 +68,21 @@ public class NewMineralLift {
         if(UniversalFunctions.getTimeInSeconds() - prevTime > 0.7) {
             if(botLimitSwitch.isPressed() && !mineral_lift_stuck) {
                 value = UniversalFunctions.clamp(0, value, 1);
-                pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
-                pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
+                //pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                //pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
                 mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION);
                 prevTime = UniversalFunctions.getTimeInSeconds();
             }
             if (topLimitSwitch.isPressed() && !mineral_lift_stuck)
                 value = UniversalFunctions.clamp(-1, value, 0);
             if(!botLimitSwitch.isPressed() && !topLimitSwitch.isPressed() && canSetPowerPositive) {
-                pivot1.setPosition(PIVOT_TELE_DOWN_POS);
-                pivot2.setPosition(PIVOT_TELE_DOWN_POS);
+                //pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+               // pivot2.setPosition(PIVOT_TELE_DOWN_POS);
                 mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
             }
             if (topLimitSwitch.isPressed()) {
-                pivot1.setPosition(PIVOT_TELE_UP_POS);
-                pivot2.setPosition(PIVOT_TELE_UP_POS);
+                //pivot1.setPosition(PIVOT_TELE_UP_POS);
+                //pivot2.setPosition(PIVOT_TELE_UP_POS);
                 prevTime = UniversalFunctions.getTimeInSeconds();
                 canSetPowerPositive = false;
             }
@@ -123,10 +123,12 @@ public class NewMineralLift {
         return pivot1.getPosition();
     }
     public synchronized void articulateUp(){
-        articulatePivots(PIVOT_TELE_UP_POS);
+        pivot1.setPosition(PIVOT_TELE_UP_POS);
+        pivot2.setPosition(PIVOT_TELE_UP_POS);
     }
     public synchronized void articulateDown(){
-        articulatePivots(PIVOT_TELE_DOWN_POS);
+        pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+        pivot2.setPosition(PIVOT_TELE_DOWN_POS);
     }
     //endregion
 
@@ -159,10 +161,14 @@ public class NewMineralLift {
                 switch (mineralLiftState) {
                     case EXTEND_LIFT:
                         mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
+                        pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+                        pivot2.setPosition(PIVOT_TELE_DOWN_POS);
                         setLiftPower(LIFT_MOTOR_UP);
                         if (topLimitSwitch.isPressed()) {
                             setLiftPower(0.0);
                             mineralLiftState = MineralLiftState.DONE_RAISING;
+                            pivot1.setPosition(PIVOT_TELE_UP_POS);
+                            pivot2.setPosition(PIVOT_TELE_UP_POS);
                         }
                         break;
                     case DONE_RAISING:
@@ -175,13 +181,22 @@ public class NewMineralLift {
                         break;
                     case RETRACT_LIFT:
                         setLiftPower(LIFT_MOTOR_DOWN);
+                        pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+                        pivot2.setPosition(PIVOT_TELE_DOWN_POS);
                         if (botLimitSwitch.isPressed()) {
                             mineralLiftState = MineralLiftState.DONE_LOWERING;
                             setLiftPower(0.0);
+                            pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                            pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
                         }
                         break;
                     case DONE_LOWERING:
+                        setLiftPower(0.0);
+                        pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                        pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
                         break;
+                    case STUCK:
+                        if(isAutomationAllowed()) mineralLiftState = MineralLiftState.DONE_LOWERING;
                 }
             }
     }
