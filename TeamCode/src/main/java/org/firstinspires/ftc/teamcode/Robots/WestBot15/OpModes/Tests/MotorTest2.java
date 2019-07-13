@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 /*
 DO NOT CHANGE THIS FILE EVER
  */
-@Disabled
+//@Disabled
 @TeleOp(name = "sanity test")
 public class MotorTest2 extends OpMode {
     DcMotor rightfront, rightback, leftfront, leftback;

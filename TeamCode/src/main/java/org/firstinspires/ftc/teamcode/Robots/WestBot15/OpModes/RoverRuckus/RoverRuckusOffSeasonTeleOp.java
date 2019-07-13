@@ -134,12 +134,14 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
         //Gamepad1 Intake and Mineral Container back position open for gamepad1 & gamepad2
         if (gamepad1.dpad_left) intaek.dispensor.setPosition(Intake.OPEN_DISPENSOR_POSITION);
         if (gamepad1.dpad_right) intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
-        if (gamepad1.dpad_up) mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION );
-        if (gamepad1.dpad_down) mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
+        if (gamepad1.dpad_up && !mineralLift.isAutomationAllowed()) mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION );
+        else if (gamepad1.dpad_up && mineralLift.isAutomationAllowed()) intaek.articulateUp();
+        if (gamepad1.dpad_down && !mineralLift.isAutomationAllowed()) mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
+        else if (gamepad1.dpad_down && mineralLift.isAutomationAllowed()) intaek.articulateDown();
 
         if (gamepad1.left_bumper)
             intaek.setPower(1);
-        if (gamepad1.right_bumper && mineralLift.canSetPowerPositive)
+        else if (gamepad1.right_bumper && mineralLift.canSetPowerPositive)
             intaek.setPower(-1);
         else if (gamepad1.right_bumper && !mineralLift.canSetPowerPositive)
             mineralContainer.articulateBack(mineralContainer.BACK_OPEN_POSITION);
@@ -224,16 +226,16 @@ public class RoverRuckusOffSeasonTeleOp extends WestBot15 {
             //Two Drivers
 
 //Telemetry
-            telemetry.addData("INTAKE_ARTICULATOR_POSITION", intaek.articulator.getPosition());
+            //telemetry.addData("INTAKE_ARTICULATOR_POSITION", intaek.articulator.getPosition());
             //telemetry.addData("Mineral Lift Stuck", mineralLift.mineral_lift_stuck);
             telemetry.addData("Drivetrain Speed", drivetrainspeed);
-            telemetry.addData("Speed", drivetrain.maxSpeed);
-            telemetry.addData("Drivetrain turning multiplier", drivetrain.turnMult);
+            //telemetry.addData("Speed", drivetrain.maxSpeed);
+            //telemetry.addData("Drivetrain turning multiplier", drivetrain.turnMult);
             telemetry.addData("Mineral Lift State", mineralLift.getMineralLiftState());
             telemetry.addData("Extension State", aextendo.getAExtendoState());
             telemetry.addData("Automation", mineralLift.isAutomationAllowed());
             telemetry.addData("Mineral Lift Servo Speed", mineralLift.ServoAdjust);
-            telemetry.addData("Solo Driving", soloDrive);
+            //telemetry.addData("Solo Driving", soloDrive);
             prevTime = UniversalFunctions.getTimeInSeconds();
             telemetry.update();
 

@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 import org.firstinspires.ftc.teamcode.Vision.Detectors.GoldDetector;
 
+import java.util.concurrent.CancellationException;
+
 import ftc.vision.Detector;
 /*
 cleaner version of DepotAuto
@@ -23,6 +25,7 @@ public class DepotAuto2 extends WestBot15 {
     private final static boolean USING_VECTOR_FIELDS = false;
     private final static int ON_CRATER_RIM_THRESHOLD = 15;
     boolean isTIMED = false;
+    private boolean CanSwitchTimer2 = false;
     private boolean isDoubleSampling = false;
     Pose poseAfterSample = new Pose();
     private GoldDetector detector;
@@ -33,7 +36,7 @@ public class DepotAuto2 extends WestBot15 {
 
     private double startTime = 0;
     double initialPosition = 0;
-    private double sampleDelay = 0, claimDelay = 0, parkingDelay = 0, doubleSampleDelay = 0;
+    private double sampleDelay = 0, claimDelay = 0, parkingDelay = 5, doubleSampleDelay = 0;
 
     private boolean is_aextending = false;
     private boolean onCrater = false;
@@ -71,60 +74,43 @@ public class DepotAuto2 extends WestBot15 {
         zeroDegreeAngle = getGyroAngle();
         intaek.articulateUp();
     }
+
     public void init_loop() {
         lift.setPower(-1);
         activateGamepad1();
         updateGamepad1();
 
-        double increment = rightStick1.y * UniversalFunctions.getTimeInSeconds() - prevTime;
+        double increment = 1;
         if(gamepad1.a)
             isDoubleSampling = true;
         if(gamepad1.b)
             isDoubleSampling = false;
-        switch (autoState) {
-            case SAMPLE:
+        if (gamepad1.left_bumper && canSwitchTimer) {
+            if (autoState == AutoState.SAMPLE)
                 sampleDelay += increment;
-
-                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.CLAIM;
-                    canSwitchTimer = false;
-                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.PARK;
-                    canSwitchTimer = false;
-                }
-
-                canSwitchTimer = gamepad1.left_trigger < UniversalConstants.Triggered.TRIGGER && gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER;
-                break;
-
-            case CLAIM:
+            if (autoState == AutoState.CLAIM)
                 claimDelay += increment;
-
-                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.PARK;
-                    canSwitchTimer = false;
-                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.SAMPLE;
-                    canSwitchTimer = false;
-                }
-
-                canSwitchTimer = gamepad1.left_trigger < UniversalConstants.Triggered.TRIGGER && gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER;
-                break;
-
-            case PARK:
+            if (autoState == AutoState.PARK)
                 parkingDelay += increment;
-
-                if (gamepad1.right_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.SAMPLE;
-                    canSwitchTimer = false;
-                } else if (gamepad1.left_trigger > UniversalConstants.Triggered.TRIGGER && canSwitchTimer) {
-                    autoState = AutoState.CLAIM;
-                    canSwitchTimer = false;
-                }
-
-                canSwitchTimer = gamepad1.left_trigger < UniversalConstants.Triggered.TRIGGER && gamepad1.right_trigger < UniversalConstants.Triggered.TRIGGER;
-                break;
-
+            canSwitchTimer = false;
         }
+        else if (!gamepad1.left_bumper)
+            canSwitchTimer = true;
+
+        if (gamepad1.right_bumper && CanSwitchTimer2) {
+            if (autoState == AutoState.LAND)
+            autoState = AutoState.SAMPLE;
+            else if (autoState == AutoState.SAMPLE)
+                autoState = AutoState.CLAIM;
+            else if (autoState == AutoState.CLAIM)
+                autoState = AutoState.PARK;
+            else if (autoState == AutoState.PARK)
+                autoState = AutoState.SAMPLE;
+            CanSwitchTimer2 = false;
+        }
+        else if (!gamepad1.right_bumper)
+            CanSwitchTimer2 = true;
+
 
         if (gamepad1.dpad_left) {
             crater = Crater.LEFT;
@@ -150,6 +136,8 @@ public class DepotAuto2 extends WestBot15 {
         telemetry.addData("double-sample delay ", doubleSampleDelay);
         telemetry.addData("is extending?", is_aextending);
         telemetry.addData("Crater", crater);
+        telemetry.addData ("Can Switch Timer", canSwitchTimer);
+        telemetry.addData ("Can Switch Timer2", CanSwitchTimer2);
         telemetry.addData("robotAngle", robotAngle.angle());
     }
 
@@ -204,13 +192,13 @@ public class DepotAuto2 extends WestBot15 {
 
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.maxSpeed = 0.7;
+                drivetrain.maxSpeed = 0.4;
 
                 intaek.articulateDown();
 
                 if (drivetrain.position.y - initialPosition < 2) {
-                    drivetrain.setLeftPow(1);
-                    drivetrain.setRightPow(1);
+                    drivetrain.setLeftPow(.6);
+                    drivetrain.setRightPow(.6);
                 } else {
                     autoState = AutoState.SAMPLE;
                 }
@@ -222,7 +210,7 @@ public class DepotAuto2 extends WestBot15 {
                 lift.setPower(-1);
 
                 drivetrain.updateLocation();
-                drivetrain.maxSpeed = 0.55;
+                drivetrain.maxSpeed = 0.4;
                 Vector2 nearDrivingVect = new Vector2(sampleVect.x, sampleVect.y);
                 nearDrivingVect.subtract(drivetrain.position.toVector());
 
