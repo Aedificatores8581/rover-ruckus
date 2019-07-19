@@ -39,6 +39,7 @@ public class DepotAuto2 extends WestBot15 {
     private double sampleDelay = 0, claimDelay = 0, parkingDelay = 5, doubleSampleDelay = 0;
 
     private boolean is_aextending = false;
+    private boolean Auto_Early_Stop = true;
     private boolean onCrater = false;
     private double prevTime = 0;
     private boolean canSwitchTimer = true;
@@ -127,6 +128,9 @@ public class DepotAuto2 extends WestBot15 {
         if (gamepad1.dpad_down) {
             is_aextending = false;
         }
+        if (gamepad1.y){
+            Auto_Early_Stop = !Auto_Early_Stop;
+        }
         sampleDelay = UniversalFunctions.clamp(2, sampleDelay, 20);
 
         telemetry.addData("Active Timer: ", autoState);
@@ -138,7 +142,9 @@ public class DepotAuto2 extends WestBot15 {
         telemetry.addData("Crater", crater);
         telemetry.addData ("Can Switch Timer", canSwitchTimer);
         telemetry.addData ("Can Switch Timer2", CanSwitchTimer2);
+        telemetry.addData ("Stop Auto after Sample", Auto_Early_Stop);
         telemetry.addData("robotAngle", robotAngle.angle());
+        telemetry.update();
     }
 
     @Override
@@ -222,13 +228,14 @@ public class DepotAuto2 extends WestBot15 {
                 if (UniversalFunctions.maxAbs(drivetrain.leftFore.getPower(), drivetrain.rightFore.getPower()) < 0.52) {
                     intaek.articulateUp();
 
-                    autoState = AutoState.FORWARD_AFTER_SAMPLPE;
+                    if (!Auto_Early_Stop) autoState = AutoState.FORWARD_AFTER_SAMPLPE;
+                    else autoState = AutoState.FINISHED;
                     poseAfterSample = drivetrain.position.clone();
-
-                    if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
+                    if ((UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) && !Auto_Early_Stop) {
                         autoState = AutoState.FORWARD_AFTER_SAMPLPE;
                         poseAfterSample = drivetrain.position.clone();
                     }
+                    else if ((UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) && Auto_Early_Stop) autoState = AutoState.FINISHED;
                 }
                 break;
             case FORWARD_AFTER_SAMPLPE:
@@ -305,11 +312,14 @@ public class DepotAuto2 extends WestBot15 {
                 } else {
                     drivetrain.stop();
                     aextendo.extendo.setPower(0);
+                    autoState = AutoState.FINISHED;
                     if (is_aextending) {
                         //intaek.articulateDown();
                         //intaek.setPower(1);
                     }
                     }
+                break;
+            case FINISHED:
                 break;
         }
 
@@ -346,6 +356,7 @@ public class DepotAuto2 extends WestBot15 {
         TO_THE_LANDER,
         DISPENSE,
         TO_THE_CRATER,
+        FINISHED,
         FACE_THE_CRATER
     }
 }
