@@ -97,7 +97,7 @@ public abstract class WestBot15 extends Robot {
             vector.setFromPolar(1, vector.angle());
         else
             vector.scalarMultiply(1.0 / threshold);
-        double angleBetween = UniversalFunctions.normalizeAngleRadians(vector.angle(), angle.angle());
+        double angleBetween = UniversalFunctions.normalizeAngleRadians(vector.angle() - (Math.PI/2 - Math.acos(0.455/(destination.magnitude())-drivetrain.position.y)), angle.angle());
         double tempTurnMult = 0;
         double directionMult = 1;
         if (Math.sin(angleBetween) < 0) {

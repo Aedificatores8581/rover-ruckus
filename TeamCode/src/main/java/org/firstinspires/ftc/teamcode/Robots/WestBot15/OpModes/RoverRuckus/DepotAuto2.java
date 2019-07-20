@@ -205,9 +205,8 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.7;
-
+                intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
                 intaek.articulateDown();
-
                 if (drivetrain.position.y - initialPosition < 2) {
                     drivetrain.setLeftPow(1);
                     drivetrain.setRightPow(1);
@@ -217,6 +216,7 @@ public class DepotAuto2 extends WestBot15 {
                 break;
 
             case SAMPLE:
+                intaek.articulateDown();
                 intaek.setPower(-1);
                 maerkrLeft.setPosition(0.4);
                 lift.setPower(-1);

@@ -112,7 +112,6 @@ GoldDetector extends Detector {
         Core.inRange(invert, new Scalar(90, 0, 0), new Scalar(255, 90, 255), threshold);
 
         //Imgproc.threshold(invert.col(1), threshold, 70, 255, Imgproc.THRESH_BINARY);
-
         Mat erosionFactor = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
 
         Imgproc.erode(threshold, threshold, erosionFactor);

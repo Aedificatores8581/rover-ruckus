@@ -39,7 +39,6 @@ public abstract class Robot extends OpMode {
     public Vector2 robotAngle;
     public double opModeStartTime = 0;
     Module   module      = Module.REV;
-
     public Robot(Module mod, boolean isUsingIMU){
         usingIMU = isUsingIMU;
         module = mod;
@@ -179,7 +178,9 @@ public abstract class Robot extends OpMode {
     public double getCurrentTime(){
         return UniversalFunctions.getTimeInSeconds() - opModeStartTime;
     }
+    public void initializeComponentMap(Map3 map){
 
+    }
     public void updateComponentLocations(Pose robotPose){
 
     }

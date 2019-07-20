@@ -244,7 +244,7 @@ public class CraterAuto2 extends WestBot15 {
                     Pose relativeDTPosition = new Pose(drivetrain.position.clone());
                     relativeDTPosition.x -= temporaryPose.x;
                     relativeDTPosition.y -= temporaryPose.y;
-                    if (relativeDTPosition.toVector().magnitude() > 22.5)
+                    if (relativeDTPosition.toVector().magnitude() > 24.5)
                         autoState = AutoState.FACE_THE_DEPOT;
                 }
                 if (!canDriveForwardIntermediate) {

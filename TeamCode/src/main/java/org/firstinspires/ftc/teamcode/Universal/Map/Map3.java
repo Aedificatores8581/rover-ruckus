@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Map3 {
     public Pose3 location;
     public ArrayList<Map3.Component> components = new ArrayList<Map3.Component>();
+
     public Map3(){
         location = new Pose3();
     }

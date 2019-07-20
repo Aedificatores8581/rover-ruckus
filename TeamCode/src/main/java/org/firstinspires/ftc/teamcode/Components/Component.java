@@ -5,15 +5,15 @@ import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose3;
 
 public class Component {
-    public Pose3 relativeLocation;
-    public Pose3 position;
+    public Pose3 relativePosition;
+    public Pose3 absolutePosition;
 
     public Component(){
-        relativeLocation = new Pose3();
-        position = relativeLocation;
+        relativePosition = new Pose3();
+        absolutePosition = relativePosition;
     }
     public Component(Pose3 startingPosition){
-        relativeLocation = startingPosition;
-        position = relativeLocation;
+        relativePosition = startingPosition;
+        absolutePosition = relativePosition;
     }
 }

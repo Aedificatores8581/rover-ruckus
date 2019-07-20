@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.Vision;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,8 @@ import java.util.List;
 import ftc.vision.Detector;
 
 public class UniversalVision {
-
+    //TODO: add Detect method to detector (should return image)
+    /*
     public Mat combinedDetection(Mat image, Detector detector1, Detector detector2){
         detector1.detect(image.clone());
         detector2.detect(image.clone());
@@ -24,7 +27,7 @@ public class UniversalVision {
         Core.add(detector1.result(), detector2.result(), temp, output);
         return output;
     }
-
+*/
     public static void rgb2hsvThresh(Mat rgb, Mat threshold, Scalar min, Scalar max){
         Mat hsv = new Mat();
         Imgproc.cvtColor(rgb, hsv, Imgproc.COLOR_RGB2HSV_FULL);
@@ -58,13 +61,6 @@ public class UniversalVision {
         Imgproc.cvtColor(rgb, lab, Imgproc.COLOR_RGB2Lab);
         Core.inRange(lab, min, max, threshold);
         lab.release();
-    }
-
-    public static void rgb2labThresh(Mat rgb, Mat threshold, Scalar min, Scalar max, Mat mask){
-        Mat temp = new Mat();
-        rgb2labThresh(rgb, temp, min, max);
-        temp.copyTo(threshold, mask);
-        temp.release();
     }
 
     public static void rgb2yuvThresh(Mat rgb, Mat threshold, Scalar min, Scalar max){
@@ -119,6 +115,16 @@ public class UniversalVision {
         gray.release();
         return contours;
     }
+
+    //TODO: Fix this to make it not suck and actually do something useful
+    public static Mat maskSurfaceView(Mat mask, Mat surfaceView){
+        Mat realMask = new Mat(0);
+        realMask = mask.clone();
+        Imgproc.cvtColor(realMask, mask, Imgproc.COLOR_RGB2RGBA);
+
+        mask.release();
+        return surfaceView;
+    }
 /*
     public static List<MatOfPoint> drawContours(Mat rgb, Mat dst, double gausianSize, Detector detector){
         Mat gray = new Mat();
@@ -146,6 +152,19 @@ public class UniversalVision {
         mat = new Mat();
     or remember to release the mat before reinstantiating it
      */
+    public static List<Point> bolbCountourCenterApproximation(Mat input){
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(input, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        List<Point> centers = new ArrayList<>();
+        for (int i = 0; i < contours.size(); i++) {
+            MatOfPoint c = contours.get(i);
+            MatOfPoint2f c2f = new MatOfPoint2f(c.toArray());
+            Moments moments = Imgproc.moments(c2f);
+            centers.add(new Point(moments.get_m10() / moments.get_m00(), moments.get_m01() / moments.get_m00()));
+        }
+        return centers;
+    }
+
     public static void newMat(Mat mat){
         mat.release();
         mat = new Mat(new Size(), 0);
