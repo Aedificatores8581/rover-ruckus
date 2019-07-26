@@ -239,7 +239,7 @@ public class DepotAuto2 extends WestBot15 {
 
                     if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
                         autoState = AutoState.FORWARD_AFTER_SAMPLPE;
-                        poseAfterSample = drivetrain.position.clone();
+                            poseAfterSample = drivetrain.position.clone();
                     }
                 }
                 break;
