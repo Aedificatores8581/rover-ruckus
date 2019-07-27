@@ -5,11 +5,14 @@ import android.sax.TextElementListener;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 
 import org.firstinspires.ftc.teamcode.Robots.WestBot15.WestBot15;
 import org.firstinspires.ftc.teamcode.Universal.Math.Pose;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
+
+@Disabled
 @TeleOp(name = "locationTestWCD", group = "WestBot15")
 public class WCD15LocationTest extends WestBot15{
     double prevRight = 0, prevLeft = 0;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Universal.UniversalConstants;
 import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 import ftc.vision.Detector;
-
+@Disabled
 @Autonomous(name = "visiontuning", group = "vision")
 public class VisionTuningTest extends OpMode {
     Adjust adjust = Adjust.CAN;

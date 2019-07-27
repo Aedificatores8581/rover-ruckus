@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Universal.Testers;
 
 import com.google.gson.annotations.JsonAdapter;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 //Todo: Test!
+@Disabled
 @Autonomous(name = "JSONVisionInfoSaverTester", group = "tester")
 public class JSONVisionInfoSaverTester extends OpMode {
     private JSONAutonGetter jsonAutonGetter;

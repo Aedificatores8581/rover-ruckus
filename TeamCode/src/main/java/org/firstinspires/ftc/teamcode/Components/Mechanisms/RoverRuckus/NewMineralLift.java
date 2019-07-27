@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Vision.UniversalVision;
 public class NewMineralLift {
 
     // region Fields
-    private DcMotor liftMotor;
+    public DcMotor liftMotor;
     private MotorEncoder liftEncoder;
 
     private MineralLiftState mineralLiftState;
@@ -27,17 +27,20 @@ public class NewMineralLift {
     public Servo pivot1, pivot2;
     private TouchSensor topLimitSwitch = new TouchSensor(), botLimitSwitch = new TouchSensor();
     public boolean canSetPowerPositive = true, canSwitchTime = false;
-    private boolean automationAllowed;
+    public boolean mineral_lift_stuck = false;
+    private boolean automationAllowed = true;
     double prevTime = 0;
     // endregion
 
     // region Constants
-    public static final double LIFT_MOTOR_UP = 0.75;
-    public static final double LIFT_MOTOR_DOWN = -0.75;
+    public static final double LIFT_MOTOR_UP = 1;
+    public static final double LIFT_MOTOR_DOWN = -0.4 ;
 
-    public static final double PIVOT_TELE_FORWARD_POS = 0.84;
-    public static final double PIVOT_TELE_UP_POS = 0.15;
-    public static final double PIVOT_TELE_DOWN_POS = 0.89;
+    public static double PIVOT_TELE_FORWARD_POS = 0.9 ;
+    public static double PIVOT_TELE_UP_POS = 0.214  ;
+    public static double PIVOT_TELE_DOWN_POS = .872  ;
+    public static double ServoAdjust = .005;
+
     // endregion
 
     public void init(HardwareMap hardwareMap){
@@ -57,49 +60,38 @@ public class NewMineralLift {
         topLimitSwitch.init(hardwareMap, UniversalConfig.MINERAL_LIFT_TOP_LIMIT);
         botLimitSwitch.init(hardwareMap, UniversalConfig.MINERAL_LIFT_BOT_LIMIT);
 
-        mineralLiftState = MineralLiftState.EXTEND_LIFT;
-
-        allowAutomation(true);
+        mineralLiftState = MineralLiftState.DONE_LOWERING;
     }
 
     // region Lift Motor
     public synchronized void setLiftPower(double value){
         if(UniversalFunctions.getTimeInSeconds() - prevTime > 0.7) {
-            if(botLimitSwitch.isPressed())
+            if(botLimitSwitch.isPressed() && !mineral_lift_stuck) {
                 value = UniversalFunctions.clamp(0, value, 1);
-
-            if (value < 0) {
-                if(!canSetPowerPositive) {
-                    prevTime = UniversalFunctions.getTimeInSeconds();
-                    pivot1.setPosition(PIVOT_TELE_DOWN_POS);
-                    pivot2.setPosition(PIVOT_TELE_DOWN_POS);
-                }
-                canSetPowerPositive = true;
-            }
-            if (canSwitchTime)
+                //pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                //pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
+                mineralContainer.articulateFront(mineralContainer.FRONT_UP_POSITION);
                 prevTime = UniversalFunctions.getTimeInSeconds();
-            else if (topLimitSwitch.isPressed()) {
-                if(canSetPowerPositive){
-                    pivot1.setPosition(PIVOT_TELE_UP_POS);
-                    pivot2.setPosition(PIVOT_TELE_UP_POS);
-                }
+            }
+            if (topLimitSwitch.isPressed() && !mineral_lift_stuck)
+                value = UniversalFunctions.clamp(-1, value, 0);
+            if(!botLimitSwitch.isPressed() && !topLimitSwitch.isPressed() && canSetPowerPositive) {
+                //pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+               // pivot2.setPosition(PIVOT_TELE_DOWN_POS);
+                mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
+            }
+            if (topLimitSwitch.isPressed()) {
+                //pivot1.setPosition(PIVOT_TELE_UP_POS);
+                //pivot2.setPosition(PIVOT_TELE_UP_POS);
+                prevTime = UniversalFunctions.getTimeInSeconds();
                 canSetPowerPositive = false;
-                value = UniversalFunctions.clamp(-1, value, 0);
             }
-            if (!canSetPowerPositive)
-                value = UniversalFunctions.clamp(-1, value, 0);
+            else if (value < 0)
+                canSetPowerPositive = true;
             liftMotor.setPower(value);
-            if(value > 0 && !botLimitSwitch.isPressed()){
-                pivot1.setPosition(PIVOT_TELE_DOWN_POS);
-                pivot2.setPosition(PIVOT_TELE_DOWN_POS);
-            }
-            else if(botLimitSwitch.isPressed()){
-                pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
-                pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
-            }
         }
         else
-            liftMotor.setPower(0);
+            liftMotor.setPower(value);
     }
 
     public synchronized void initEncoder(){
@@ -131,10 +123,12 @@ public class NewMineralLift {
         return pivot1.getPosition();
     }
     public synchronized void articulateUp(){
-        articulatePivots(PIVOT_TELE_UP_POS);
+        pivot1.setPosition(PIVOT_TELE_UP_POS);
+        pivot2.setPosition(PIVOT_TELE_UP_POS);
     }
     public synchronized void articulateDown(){
-        articulatePivots(PIVOT_TELE_DOWN_POS);
+        pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+        pivot2.setPosition(PIVOT_TELE_DOWN_POS);
     }
     //endregion
 
@@ -148,67 +142,71 @@ public class NewMineralLift {
                 getMineralLiftState() == MineralLiftState.DONE_RAISING);
     }
 
-    public synchronized void automatedRaise() {
-        new Thread(() -> {
-            while(mineralLiftState != MineralLiftState.DONE_RAISING && isAutomationAllowed()) {
-                switch (mineralLiftState) {
-
-                    case EXTEND_LIFT:
-                        setLiftPower(LIFT_MOTOR_UP);
-                        if (topLimitSwitch.isPressed()) {
-                            mineralLiftState = MineralLiftState.ARTICULATE_PIVOTS_UP;
-                            setLiftPower(0.0);
-                        }
-                        break;
-
-                    case ARTICULATE_PIVOTS_UP:
-                        articulatePivots(PIVOT_TELE_UP_POS);
-                        mineralLiftState = MineralLiftState.DONE_RAISING;
-                        break;
-
-                    case DONE_RAISING:
-                        break;
-                }
-            }
-        });
+    public MineralLiftState setMineralLiftState(MineralLiftState value) {
+        mineralLiftState = value;
+        return mineralLiftState;
     }
 
-    public synchronized void automatedLower() {
-        new Thread(() -> {
-            while(mineralLiftState != MineralLiftState.DONE_LOWERING && isAutomationAllowed()) {
-                switch (mineralLiftState) {
+    public boolean isTopPushed () {
+        if (topLimitSwitch.isPressed()) return true;
+        else return false;
+    }
 
-                    // Incrementally sets servo position to prevent the lift from retracting while the servo moves
-                    // A downside is in order for this to be fast, the servo down position will be slightly
-                    // inaccurate (adding a constant value will make go over the PIVOT_TELE_DOWN_POS)
+    public boolean isbottomPushed () {
+        if (botLimitSwitch.isPressed()) return true;
+        else return false;
+    }
+    public synchronized void automatedMineralLift() {
+        if(automationAllowed) {
+                switch (mineralLiftState) {
+                    case EXTEND_LIFT:
+                        mineralContainer.articulateFront(mineralContainer.FRONT_DOWN_POSITION);
+                        pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+                        pivot2.setPosition(PIVOT_TELE_DOWN_POS);
+                        setLiftPower(LIFT_MOTOR_UP);
+                        if (topLimitSwitch.isPressed()) {
+                            setLiftPower(0.0);
+                            mineralLiftState = MineralLiftState.DONE_RAISING;
+                            pivot1.setPosition(PIVOT_TELE_UP_POS);
+                            pivot2.setPosition(PIVOT_TELE_UP_POS);
+                        }
+                        break;
+                    case DONE_RAISING:
+                        break;
                     case ARTICULATE_PIVOTS_DOWN:
-                        articulatePivots(getPivotPosition() + 0.01);
+                        articulatePivots(getPivotPosition() + ServoAdjust);
                         if (getPivotPosition() >= PIVOT_TELE_DOWN_POS) {
                             mineralLiftState = MineralLiftState.RETRACT_LIFT;
                         }
                         break;
-
                     case RETRACT_LIFT:
                         setLiftPower(LIFT_MOTOR_DOWN);
+                        pivot1.setPosition(PIVOT_TELE_DOWN_POS);
+                        pivot2.setPosition(PIVOT_TELE_DOWN_POS);
                         if (botLimitSwitch.isPressed()) {
                             mineralLiftState = MineralLiftState.DONE_LOWERING;
                             setLiftPower(0.0);
+                            pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                            pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
                         }
                         break;
-
                     case DONE_LOWERING:
+                        setLiftPower(0.0);
+                        pivot1.setPosition(PIVOT_TELE_FORWARD_POS);
+                        pivot2.setPosition(PIVOT_TELE_FORWARD_POS);
                         break;
+                    case STUCK:
+                        if(isAutomationAllowed()) mineralLiftState = MineralLiftState.DONE_LOWERING;
                 }
             }
-        });
     }
 
-    public synchronized void allowAutomation(boolean val) {
-        this.automationAllowed = val;
+    public void allowAutomation(boolean val) {
+        automationAllowed = val;
     }
 
     public boolean isAutomationAllowed() {
-        return this.automationAllowed;
+        return automationAllowed;
     }
 
 }

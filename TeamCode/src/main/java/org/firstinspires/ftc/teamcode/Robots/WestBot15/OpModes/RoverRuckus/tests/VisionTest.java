@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus.test
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.teamcode.Components.Sensors.Cameras.MotoG4;
 import org.firstinspires.ftc.teamcode.Universal.Math.Vector2;
@@ -12,6 +12,7 @@ import org.opencv.core.Point3;
 
 import ftc.vision.Detector;
 
+@Disabled
 @Autonomous(name = "Block Detector Test", group = "none")
 public class VisionTest extends OpMode {
     GoldDetector detector;

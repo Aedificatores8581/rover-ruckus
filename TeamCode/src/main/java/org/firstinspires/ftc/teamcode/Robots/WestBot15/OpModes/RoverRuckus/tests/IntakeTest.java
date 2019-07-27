@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus.test
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @TeleOp (name = "intake", group = "")
 public class IntakeTest extends OpMode {
     CRServo front, back;

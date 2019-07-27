@@ -6,6 +6,7 @@ public enum MineralLiftState {
     DONE_RAISING,
     ARTICULATE_PIVOTS_DOWN,
     RETRACT_LIFT,
-    DONE_LOWERING
+    DONE_LOWERING,
+    STUCK
 
 }

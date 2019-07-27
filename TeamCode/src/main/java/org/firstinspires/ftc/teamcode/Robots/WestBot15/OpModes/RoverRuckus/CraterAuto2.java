@@ -299,21 +299,37 @@ public class CraterAuto2 extends WestBot15 {
                     drivetrain.stop();//TODO:INSERT PARKING CODE
                 break;
             case SAMPLE:
+                // Retract Lift
                 lift.setPower(-1);
+
+                // Run Intake
                 intaek.setPower(1);
                 intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
                 intaek.articulateDown();
+
+
                 drivetrain.turnMult = 1.3;
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.55;
-                aextendIntake(sampleVect, robotAngle, 6);
-                if(intakePosition.y + 2 > sampleVect.y) {
-                    drivetrain.stop();
-                    autoState = AutoState.RETRAECT;
-                    sampleTime = UniversalFunctions.getTimeInSeconds();
-                    intaek.setPower(0);
-                    drivetrain.stop();
+
+                if (is_aextending) {
+                    aextendIntake(sampleVect, robotAngle, 6);
+                    if(intakePosition.y + 2 > sampleVect.y) {
+                        drivetrain.stop();
+                        autoState = AutoState.RETRAECT;
+                        sampleTime = UniversalFunctions.getTimeInSeconds();
+                        intaek.setPower(0);
+                        drivetrain.stop();
+                    }
+                } else {
+                    if(intakePosition.y > sampleVect.y) {
+                        drivetrain.stop();
+                        autoState = AutoState.TO_THE_DEPOT;
+                        sampleTime = UniversalFunctions.getTimeInSeconds();
+                        intaek.setPower(0);
+                        drivetrain.stop();
+                    }
                 }
                 break;
             case RETRAECT:

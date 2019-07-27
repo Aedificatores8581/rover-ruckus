@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.Robots.Robot;
  * Created by Frank Portman on 6/1/2018
  */
 public abstract class MecBot2_4 extends Robot {
-    LinearOpMode
     public Mecanum2_4 drivetrain = new Mecanum2_4();
 
     @Override

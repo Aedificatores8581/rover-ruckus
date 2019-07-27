@@ -43,6 +43,7 @@ public class DepotAuto2 extends WestBot15 {
     double time = 0;
     Vector2 craterVect = new Vector2();
     public double prevTimeInit = 0;
+
     public void init() {
         prevTime = UniversalFunctions.getTimeInSeconds();
         drivetrain.position = new Pose();
@@ -71,15 +72,16 @@ public class DepotAuto2 extends WestBot15 {
         zeroDegreeAngle = getGyroAngle();
         intaek.articulateUp();
     }
+
     public void init_loop() {
         lift.setPower(-1);
         activateGamepad1();
         updateGamepad1();
 
         double increment = rightStick1.y * UniversalFunctions.getTimeInSeconds() - prevTime;
-        if(gamepad1.a)
+        if (gamepad1.a)
             isDoubleSampling = true;
-        if(gamepad1.b)
+        if (gamepad1.b)
             isDoubleSampling = false;
         switch (autoState) {
             case SAMPLE:
@@ -205,8 +207,9 @@ public class DepotAuto2 extends WestBot15 {
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
                 drivetrain.maxSpeed = 0.7;
-                intaek.dispensor.setPosition(Intake.CLOSED_DISPENSOR_POSITION);
+
                 intaek.articulateDown();
+
                 if (drivetrain.position.y - initialPosition < 2) {
                     drivetrain.setLeftPow(1);
                     drivetrain.setRightPow(1);
@@ -216,7 +219,6 @@ public class DepotAuto2 extends WestBot15 {
                 break;
 
             case SAMPLE:
-                intaek.articulateDown();
                 intaek.setPower(-1);
                 maerkrLeft.setPosition(0.4);
                 lift.setPower(-1);
@@ -239,7 +241,7 @@ public class DepotAuto2 extends WestBot15 {
 
                     if (UniversalFunctions.getTimeInSeconds() - startTime > claimDelay) {
                         autoState = AutoState.FORWARD_AFTER_SAMPLPE;
-                            poseAfterSample = drivetrain.position.clone();
+                        poseAfterSample = drivetrain.position.clone();
                     }
                 }
                 break;
@@ -249,7 +251,7 @@ public class DepotAuto2 extends WestBot15 {
                 temp2.subtract(poseAfterSample.clone().toVector());
                 drivetrain.setLeftPow(1);
                 drivetrain.setRightPow(1);
-                if(temp2.magnitude() > (sampleVect.x < -8 ? 3 : 5)) {
+                if (temp2.magnitude() > (sampleVect.x < -8 ? 3 : 5)) {
                     autoState = AutoState.TO_THE_DEPOT;
                 }
                 break;
@@ -296,7 +298,7 @@ public class DepotAuto2 extends WestBot15 {
 
                 autoState = AutoState.PARK;
                 craterVect = new Vector2();
-                craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4 - (crater == Crater.RIGHT ? -1 : 1) * Math.toRadians(3));
+                craterVect.setFromPolar(1, Math.PI / 2 + (crater == Crater.RIGHT ? -1 : 1) * 3 * Math.PI / 4 - (crater == Crater.RIGHT ? -1 : 1) * Math.toRadians(7.5));
                 break;
 
             case PARK:
@@ -305,27 +307,15 @@ public class DepotAuto2 extends WestBot15 {
                 telemetry.addData("y angle", normalizeGyroAngleY());
                 drivetrain.updateLocation();
                 drivetrain.position.angle = robotAngle.angle();
-                drivetrain.turnMult = 2;
-                if(drivetrain.leftFore.getPower() - drivetrain.rightFore.getPower() < 0.2){
+                drivetrain.turnMult = 1.2;
+                if (drivetrain.leftFore.getPower() - drivetrain.rightFore.getPower() < 0.2) {
                     maerkrLeft.setPosition(UniversalConstants.MarkerServoConstants.LEFT_OPEN.getPos());
                 }
                 if (!onCrater) {
-                    if(!is_aextending){
-                        if (!onCrater)
-                            onCrater = Math.abs(UniversalFunctions.normalizeAngle180(normalizeGyroAngleY())) > ON_CRATER_RIM_THRESHOLD;
-                        drivetrain.maxSpeed = 0.75;
-                        drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
-                    }
-                    else {
-                        if(drivetrain.position.y < 35){
-                            drivetrain.stop();
-                            aextendo.aextendTM(1);
-                        }
-                        else{
-                            drivetrain.maxSpeed = 0.75;
-                            drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
-                        }
-                    }
+                    if (!onCrater)
+                        onCrater = Math.abs(UniversalFunctions.normalizeAngle180(normalizeGyroAngleY())) > ON_CRATER_RIM_THRESHOLD;
+                    drivetrain.maxSpeed = 0.75;
+                    drivetrain.newFieldCentric(craterVect, robotAngle, 0.00000000000000001);
                 } else {
                     drivetrain.stop();
                     aextendo.extendo.setPower(0);
@@ -333,7 +323,7 @@ public class DepotAuto2 extends WestBot15 {
                         //intaek.articulateDown();
                         //intaek.setPower(1);
                     }
-                    }
+                }
                 break;
         }
 
@@ -346,17 +336,17 @@ public class DepotAuto2 extends WestBot15 {
         telemetry.addData("topPressed", lift.topPressed());
     }
 
-    public void stop(){
+    public void stop() {
         super.stop();
         detector.isInitialized = false;
     }
 
-    enum Crater{
+    enum Crater {
         LEFT,
         RIGHT
     }
 
-    public enum AutoState{
+    public enum AutoState {
         LAND,
         VISION,
         FORWARD,
@@ -367,9 +357,6 @@ public class DepotAuto2 extends WestBot15 {
         PARK,
         INTAKE,
         DOUBLE_SAMPLE,
-        TO_THE_LANDER,
-        DISPENSE,
-        TO_THE_CRATER,
         FACE_THE_CRATER
     }
 }

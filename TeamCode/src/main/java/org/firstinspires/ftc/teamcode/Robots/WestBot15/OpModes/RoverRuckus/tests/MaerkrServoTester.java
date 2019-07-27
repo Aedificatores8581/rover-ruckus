@@ -3,11 +3,14 @@ package org.firstinspires.ftc.teamcode.Robots.WestBot15.OpModes.RoverRuckus.test
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 /**
  * OpMode to test Different Servo sides
  */
 // .3 closed left
 // 1.0 closed right
+
+@Disabled
 @Autonomous(name = "Marker Test")
 public class MaerkrServoTester extends OpMode {
 

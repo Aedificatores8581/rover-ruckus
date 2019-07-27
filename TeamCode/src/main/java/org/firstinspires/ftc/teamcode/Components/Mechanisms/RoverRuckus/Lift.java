@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.Sensors.TouchSensor;
+import org.firstinspires.ftc.teamcode.Universal.UniversalFunctions;
 
 public class Lift {
     public DcMotor liftMotor;
@@ -28,10 +29,11 @@ public class Lift {
     }
 
     public void setPower(double pow) {
-        if((pow < 0 && topPressed()) || (pow > 0 && bottomPressed()))
-            this.liftMotor.setPower(0);
-        else
-            this.liftMotor.setPower(pow);
+        if(topTouchSensor.isPressed())
+            pow = UniversalFunctions.clamp(0, pow, 1);
+        else if (bottomTouchSensor.isPressed())
+            pow = UniversalFunctions.clamp(-1, pow, 0);
+        liftMotor.setPower(pow);
 
     }
 
